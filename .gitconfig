@@ -70,3 +70,5 @@
 	amend = commit --amend --reuse-message=HEAD
 [init]
 	defaultBranch = main
+[status]
+    short = true

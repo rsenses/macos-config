@@ -36,6 +36,7 @@ alias df='df -h'                          # human-readable sizes
 
 # ls options: A = include hidden (but not . or ..), F = put `/` after folders, h = byte unit suffixes
 alias ls='gls -AFh ${colorflag} --group-directories-first'
+alias ll='gls -Falh --group-directories-first ${colorflag}'
 
 # Recursively delete `.DS_Store` files
 alias dsstore="find . -name '*.DS_Store' -type f -ls -delete"
