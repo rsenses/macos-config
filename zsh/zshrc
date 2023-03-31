@@ -20,6 +20,8 @@ autoload -U up-line-or-beginning-search
 autoload -U down-line-or-beginning-search
 zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
+bindkey "^[[A" up-line-or-beginning-search # Up
+bindkey "^[[B" down-line-or-beginning-search # Down
 
 # Colors
 autoload -Uz colors && colors
@@ -45,8 +47,6 @@ bindkey -s '^f' 'zi\n'
 bindkey -s '^v' 'nvim\n'
 bindkey -s '^z' 'zi\n'
 bindkey '^[[P' delete-char
-bindkey "^p" up-line-or-beginning-search # Up
-bindkey "^n" down-line-or-beginning-search # Down
 
 # FZF
 source /opt/homebrew/Cellar/fzf/0.38.0/shell/key-bindings.zsh
