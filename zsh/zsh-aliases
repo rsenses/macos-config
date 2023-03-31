@@ -1,0 +1,60 @@
+#!/bin/sh
+alias j='z'
+alias f='zi'
+alias tm='tmux a || tmux'
+alias zsh-update-plugins="find "$ZDOTDIR/plugins" -type d -exec test -e '{}/.git' ';' -print0 | xargs -I {} -0 git -C {} pull -q"
+
+# Colorize grep output (good for log files)
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+
+# confirm before overwriting something
+alias cp="cp -i"
+alias mv='mv -i'
+alias rm='trash-put'
+
+# easier to read disk
+alias df='df -h'                          # human-readable sizes
+alias free='free -m'                      # show sizes in MB
+
+alias ip="curl ifconfig.co/"
+alias ctags="phpctags"
+
+# use coreutils `ls` if possible…
+hash gls >/dev/null 2>&1 || alias gls="ls"
+
+# always use color, even when piping (to awk,grep,etc)
+if gls --color > /dev/null 2>&1; then colorflag="--color"; else colorflag="-G"; fi;
+export CLICOLOR_FORCE=1
+
+# ls options: A = include hidden (but not . or ..), F = put `/` after folders, h = byte unit suffixes
+alias ls='gls -AFh ${colorflag} --group-directories-first'
+alias lsd='ls -l --color=auto | grep "^d"' # only directories
+
+# Recursively delete `.DS_Store` files
+alias dsstore="find . -name '*.DS_Store' -type f -ls -delete"
+
+# Shortcuts
+alias g="git"
+alias v="nvim"
+alias vi="nvim"
+
+# File size
+alias fs="stat -f \"%z bytes\""
+
+# Update installed Ruby gems, Homebrew, npm, and their installed packages
+alias brewupdate="brew -v update; brew upgrade --force-bottle; brew cleanup; brew doctor"
+alias composerupdate='composer global update'
+alias npmupdate='composer global update; npm -g update; npm -g upgrade; npm cache clean --force'
+alias nodeupdate='nvm install $(nvm current | sed -rn "s/v([[:digit:]]+).*/\1/p") --reinstall-packages-from=$(nvm current)'
+
+# ImageOptim, se puede usar . o nombre de archivo
+alias imageoptim="open -a ImageOptim"
+
+# Python
+alias python='/opt/homebrew/bin/python3'
+
+# PHP
+alias php8='/opt/homebrew/opt/php@8.0/bin/php'
+alias php7='/opt/homebrew/opt/php@7.4/bin/php'
