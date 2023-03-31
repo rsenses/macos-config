@@ -1,6 +1,23 @@
 #!/bin/sh
-alias j='z'
-alias f='zi'
+
+# use coreutils `ls` if possible…
+hash gls >/dev/null 2>&1 || alias gls="ls"
+
+# always use color, even when piping (to awk,grep,etc)
+if gls --color > /dev/null 2>&1; then colorflag="--color"; else colorflag="-G"; fi;
+export CLICOLOR_FORCE=1
+
+# Bookmarks
+alias a="cd ~/dev/apps"
+alias c="cd ~/.config"
+alias d="cd ~/Downloads"
+alias e="cd ~/dev/email"
+alias n="cd ~/.config/nvim"
+alias w="cd ~/dev/www"
+
+# zeoxide, zsh y tmux
+# alias j='z'
+# alias f='zi'
 alias tm='tmux a || tmux'
 alias zsh-update-plugins="find "$ZDOTDIR/plugins" -type d -exec test -e '{}/.git' ';' -print0 | xargs -I {} -0 git -C {} pull -q"
 
@@ -16,32 +33,16 @@ alias rm='trash-put'
 
 # easier to read disk
 alias df='df -h'                          # human-readable sizes
-alias free='free -m'                      # show sizes in MB
-
-alias ip="curl ifconfig.co/"
-alias ctags="phpctags"
-
-# use coreutils `ls` if possible…
-hash gls >/dev/null 2>&1 || alias gls="ls"
-
-# always use color, even when piping (to awk,grep,etc)
-if gls --color > /dev/null 2>&1; then colorflag="--color"; else colorflag="-G"; fi;
-export CLICOLOR_FORCE=1
 
 # ls options: A = include hidden (but not . or ..), F = put `/` after folders, h = byte unit suffixes
 alias ls='gls -AFh ${colorflag} --group-directories-first'
-alias lsd='ls -l --color=auto | grep "^d"' # only directories
 
 # Recursively delete `.DS_Store` files
 alias dsstore="find . -name '*.DS_Store' -type f -ls -delete"
 
 # Shortcuts
-alias g="git"
-alias v="nvim"
 alias vi="nvim"
-
-# File size
-alias fs="stat -f \"%z bytes\""
+alias vim="nvim"
 
 # Update installed Ruby gems, Homebrew, npm, and their installed packages
 alias brewupdate="brew -v update; brew upgrade --force-bottle; brew cleanup; brew doctor"

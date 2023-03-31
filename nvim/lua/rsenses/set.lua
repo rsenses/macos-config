@@ -8,6 +8,10 @@ vim.opt.expandtab = true
 
 vim.opt.smartindent = true
 
+-- stop automatic newline comment
+vim.cmd("autocmd BufEnter * set formatoptions-=cro")
+vim.cmd("autocmd BufEnter * setlocal formatoptions-=cro")
+
 vim.opt.swapfile = false
 vim.opt.backup = false
 vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
