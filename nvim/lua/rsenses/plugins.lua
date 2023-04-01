@@ -67,8 +67,7 @@ require('lazy').setup({
             'lewis6991/gitsigns.nvim',
         }
     },
-    'folke/tokyonight.nvim',
-    { "bluz71/vim-moonfly-colors", name = "moonfly", lazy = true, priority = 1000 },
+    "sheerun/vim-polyglot",
     "rebelot/kanagawa.nvim",
 })
 
