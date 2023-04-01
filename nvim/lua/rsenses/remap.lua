@@ -40,6 +40,7 @@ vim.keymap.set("n", "<leader><space>", require("telescope.builtin").buffers, { d
 vim.keymap.set("n", "<leader>pw", require("telescope.builtin").lsp_workspace_symbols, {desc = "[W]orkspace symbols"})
 vim.keymap.set("n", "<leader>ps", require("telescope.builtin").lsp_document_symbols, {desc = "[D]ocument symbols"})
 vim.keymap.set("n", "<leader>pc", require("telescope.builtin").git_bcommits, {desc = "[C]ommits current buffer"})
+vim.keymap.set("n", "<leader>pC", require("telescope.builtin").git_bcommits, {desc = "[C]ommits"})
 vim.keymap.set("i", "<C-r>", require("telescope.builtin").registers, {desc = "[R]egisters"})
 vim.keymap.set("n", "<leader>vd", require("telescope.builtin").diagnostics, {desc = "[D]iagnostics"})
 vim.keymap.set("n", "<leader>vh", require("telescope.builtin").help_tags, { desc = "[H]elp tags"})
@@ -47,9 +48,8 @@ vim.keymap.set("n", "<leader>vm", require("telescope.builtin").man_pages, { desc
 
 -- LSP
 vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, {desc = "[G]oto [D]efinition"})
+vim.keymap.set("n", "gD", function() vim.lsp.buf.declaration() end, {desc = "[G]oto [D]eclaration"})
 vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, {})
 vim.keymap.set("n", "<leader>f", function() vim.lsp.buf.format() end, {desc = "[F]ormat"})
 vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, {})
 vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, {})
-
--- Veamos que tal si pongo algo mal aguí
