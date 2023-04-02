@@ -19,8 +19,10 @@ require('lazy').setup("rsenses.plugins")
 
 require("rsenses.remap")
 
+-- Autocommands
+
 local augroup = vim.api.nvim_create_augroup
-local ThePrimeagenGroup = augroup('ThePrimeagen', {})
+local rsensesGroup = augroup('rsenses', {})
 
 local autocmd = vim.api.nvim_create_autocmd
 local yank_group = augroup('HighlightYank', {})
@@ -41,7 +43,18 @@ autocmd('TextYankPost', {
 })
 
 autocmd({"BufWritePre"}, {
-    group = ThePrimeagenGroup,
+    group = rsensesGroup,
     pattern = "*",
     command = [[%s/\s\+$//e]],
 })
+
+-- Diagnostics Signs
+vim.diagnostic.config {
+  virtual_text = false,
+}
+
+local signs = { Error = "", Warn = "", Hint = "", Info = "" }
+for type, icon in pairs(signs) do
+  local hl = "DiagnosticSign" .. type
+  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
+end
