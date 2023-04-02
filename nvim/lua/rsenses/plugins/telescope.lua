@@ -32,23 +32,22 @@ return {
             -- load_extension, somewhere after setup function:
             require("telescope").load_extension("fzf")
 
-            -- Telescope
-            vim.keymap.set("n", "<leader>/", require("telescope.builtin").current_buffer_fuzzy_find,
+            -- Telescope Keymaps
+            local builtin = require("telescope.builtin")
+
+            vim.keymap.set("n", "<leader>/", builtin.current_buffer_fuzzy_find,
             { desc = "[/] Search current buffer" })
-            vim.keymap.set("n", "<leader>pf", require("telescope.builtin").find_files, { desc = "[F]ind files" })
-            vim.keymap.set("n", "<leader>pg", require("telescope.builtin").live_grep, { desc = "[G]rep find" })
-            vim.keymap.set("n", "<leader><space>", require("telescope.builtin").buffers, { desc = "[B]uffers find" })
-            vim.keymap.set("n", "<leader>pw", require("telescope.builtin").lsp_workspace_symbols,
-            { desc = "[W]orkspace symbols" })
-            vim.keymap.set("n", "<leader>ps", require("telescope.builtin").lsp_document_symbols,
-            { desc = "[D]ocument symbols" })
-            vim.keymap.set("n", "<leader>pc", require("telescope.builtin").git_bcommits,
-            { desc = "[C]ommits current buffer" })
-            vim.keymap.set("n", "<leader>pC", require("telescope.builtin").git_commits, { desc = "[C]ommits" })
-            vim.keymap.set("i", "<C-r>", require("telescope.builtin").registers, { desc = "[R]egisters" })
-            vim.keymap.set("n", "<leader>vd", require("telescope.builtin").diagnostics, { desc = "[D]iagnostics" })
-            vim.keymap.set("n", "<leader>vh", require("telescope.builtin").help_tags, { desc = "[H]elp tags" })
-            vim.keymap.set("n", "<leader>vm", require("telescope.builtin").man_pages, { desc = "[M]an pages" })
+            vim.keymap.set("n", "<leader>pf", builtin.find_files, { desc = "[F]ind files" })
+            vim.keymap.set("n", "<leader>pg", builtin.live_grep, { desc = "[G]rep find" })
+            vim.keymap.set("n", "<leader><space>", builtin.buffers, { desc = "[B]uffers find" })
+            vim.keymap.set("n", "<leader>pw", builtin.lsp_workspace_symbols, { desc = "[W]orkspace symbols" })
+            vim.keymap.set("n", "<leader>ps", builtin.lsp_document_symbols, { desc = "[D]ocument symbols" })
+            vim.keymap.set("n", "<leader>pc", builtin.git_bcommits, { desc = "[C]ommits current buffer" })
+            vim.keymap.set("n", "<leader>pC", builtin.git_commits, { desc = "[C]ommits" })
+            vim.keymap.set("i", "<C-r>", builtin.registers, { desc = "[R]egisters" })
+            vim.keymap.set("n", "<leader>vd", builtin.diagnostics, { desc = "[D]iagnostics" })
+            vim.keymap.set("n", "<leader>vh", builtin.help_tags, { desc = "[H]elp tags" })
+            vim.keymap.set("n", "<leader>vm", builtin.man_pages, { desc = "[M]an pages" })
         end
     }
 }

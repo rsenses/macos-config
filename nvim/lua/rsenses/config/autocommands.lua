@@ -6,10 +6,6 @@ local rsensesGroup = augroup('rsenses', {})
 local autocmd = vim.api.nvim_create_autocmd
 local yank_group = augroup('HighlightYank', {})
 
-function R(name)
-    require("plenary.reload").reload_module(name)
-end
-
 autocmd('TextYankPost', {
     group = yank_group,
     pattern = '*',
@@ -25,4 +21,19 @@ autocmd({"BufWritePre"}, {
     group = rsensesGroup,
     pattern = "*",
     command = [[%s/\s\+$//e]],
+})
+
+-- Activate spell on some filetypes
+autocmd("FileType", {
+  pattern = { "gitcommit", "markdown", "NeogitCommitMessage" },
+  callback = function()
+    vim.opt_local.spell = true
+  end,
+})
+
+-- resize splits if window got resized
+autocmd({ "VimResized" }, {
+  callback = function()
+    vim.cmd "tabdo wincmd ="
+  end,
 })
