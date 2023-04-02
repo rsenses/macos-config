@@ -4,7 +4,12 @@ return {
   dependencies = {
     -- LSP Support
     { 'neovim/nvim-lspconfig' },
-    { 'williamboman/mason.nvim' },
+    {                                      -- Optional
+      'williamboman/mason.nvim',
+      build = function()
+        pcall(vim.cmd, 'MasonUpdate')
+      end,
+    },
     { 'williamboman/mason-lspconfig.nvim' },
 
     -- Autocompletion
@@ -59,8 +64,8 @@ return {
       ["<C-Space>"] = cmp.mapping.complete(),
     })
 
-    cmp_mappings['<Tab>'] = nil
-    cmp_mappings['<S-Tab>'] = nil
+    -- cmp_mappings['<Tab>'] = nil
+    -- cmp_mappings['<S-Tab>'] = nil
 
     lsp.setup_nvim_cmp({
       mapping = cmp_mappings
@@ -68,12 +73,7 @@ return {
 
     lsp.set_preferences({
       suggest_lsp_servers = false,
-      sign_icons = {
-        error = 'E',
-        warn = 'W',
-        hint = 'H',
-        info = 'I'
-      }
+      sign_icons = { error = "", warn = "", hint = "", info = "" }
     })
 
     lsp.on_attach(function(client, bufnr)
@@ -103,7 +103,6 @@ return {
     })
 
     lsp.on_attach(function(client, bufnr)
-      local opts = {}
       -- LSP
       vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, { buffer = bufnr, remap = false, desc = "[G]oto [D]efinition"})
       vim.keymap.set("n", "gD", function() vim.lsp.buf.declaration() end, { buffer = bufnr, remap = false, desc = "[G]oto [D]eclaration"})
@@ -111,14 +110,14 @@ return {
       vim.keymap.set("n", "<leader>f", function() vim.lsp.buf.format() end, { buffer = bufnr, remap = false, desc = "[F]ormat"})
       vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, { buffer = bufnr, remap = false })
       vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, { buffer = bufnr, remap = false })
-      vim.keymap.set("n", "<leader>vc", function() vim.lsp.buf.code_action() end, { desc = "[C]ode actions"})
+      vim.keymap.set("n", "<leader>vc", function() vim.lsp.buf.code_action() end, { buffer = bufnr, remap = false, desc = "[C]ode actions"})
 
     end)
 
     lsp.setup()
 
     vim.diagnostic.config({
-      virtual_text = true
+      virtual_text = false
     })
   end
 }

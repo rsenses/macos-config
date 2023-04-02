@@ -1,4 +1,5 @@
 vim.g.mapleader = " "
+vim.g.maplocalleader = " "
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -18,4 +19,3 @@ require("lazy").setup("rsenses.plugins")
 require("rsenses.config.options")
 require("rsenses.config.keymaps")
 require("rsenses.config.autocommands")
-require("rsenses.config.diagnostics")
