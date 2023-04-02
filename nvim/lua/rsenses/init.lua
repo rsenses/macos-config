@@ -1,6 +1,6 @@
 vim.g.mapleader = " "
 
-require("rsenses.set")
+require("rsenses.config.options")
 
 local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
@@ -17,44 +17,6 @@ vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup("rsenses.plugins")
 
-require("rsenses.remap")
-
--- Autocommands
-
-local augroup = vim.api.nvim_create_augroup
-local rsensesGroup = augroup('rsenses', {})
-
-local autocmd = vim.api.nvim_create_autocmd
-local yank_group = augroup('HighlightYank', {})
-
-function R(name)
-    require("plenary.reload").reload_module(name)
-end
-
-autocmd('TextYankPost', {
-    group = yank_group,
-    pattern = '*',
-    callback = function()
-        vim.highlight.on_yank({
-            higroup = 'IncSearch',
-            timeout = 40,
-        })
-    end,
-})
-
-autocmd({"BufWritePre"}, {
-    group = rsensesGroup,
-    pattern = "*",
-    command = [[%s/\s\+$//e]],
-})
-
--- Diagnostics Signs
-vim.diagnostic.config {
-  virtual_text = false,
-}
-
-local signs = { Error = "", Warn = "", Hint = "", Info = "" }
-for type, icon in pairs(signs) do
-  local hl = "DiagnosticSign" .. type
-  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
-end
+require("rsenses.config.keymaps")
+require("rsenses.config.autocommands")
+require("rsenses.config.diagnostics")
