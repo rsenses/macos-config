@@ -71,4 +71,4 @@
 [init]
 	defaultBranch = main
 [status]
-    short = true
+	short = true
