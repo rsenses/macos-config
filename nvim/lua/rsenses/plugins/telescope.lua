@@ -16,15 +16,14 @@ return {
                         "vendor",
                         "build",
                         "dist",
-                        ".git"
                     }
                 },
                 extensions = {
                     fzf = {
-                        fuzzy = true,               -- false will only do exact matching
+                        fuzzy = true,                   -- false will only do exact matching
                         override_generic_sorter = true, -- override the generic sorter
-                        override_file_sorter = true, -- override the file sorter
-                        case_mode = "smart_case",   -- or "ignore_case" or "respect_case"
+                        override_file_sorter = true,    -- override the file sorter
+                        case_mode = "smart_case",       -- or "ignore_case" or "respect_case"
                     }
                 }
             }
@@ -36,7 +35,8 @@ return {
             local builtin = require("telescope.builtin")
 
             vim.keymap.set("n", "<leader>/", builtin.current_buffer_fuzzy_find,
-            { desc = "[/] Search current buffer" })
+                { desc = "[/] Search current buffer" })
+            vim.keymap.set("n", "<leader>pF", builtin.git_files, { desc = "[F]ind files" })
             vim.keymap.set("n", "<leader>pf", builtin.find_files, { desc = "[F]ind files" })
             vim.keymap.set("n", "<leader>pg", builtin.live_grep, { desc = "[G]rep find" })
             vim.keymap.set("n", "<leader><space>", builtin.buffers, { desc = "[B]uffers find" })

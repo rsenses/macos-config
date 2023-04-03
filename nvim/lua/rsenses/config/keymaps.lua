@@ -10,14 +10,23 @@ local opts = { noremap = true, silent = true }
 
 vim.keymap.set("n", "-", vim.cmd.Ex)
 
+-- When text is wrapped, move by terminal rows, not lines, unless a count is provided
+vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true })
+vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true })
+
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
 
-vim.keymap.set("n", "J", "mzJ`z")
+vim.keymap.set("n", "J", "mzJ`z") -- No mueve el cursor al unir líneas
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "n", "nzzzv")
 vim.keymap.set("n", "N", "Nzzzv")
+
+-- Maintain the cursor position when yanking a visual selection
+-- http://ddrscott.github.io/blog/2016/yank-without-jank/
+vim.keymap.set('v', 'y', 'myy`y')
+vim.keymap.set('v', 'Y', 'myY`y')
 
 vim.keymap.set("n", "Q", "<nop>")
 
@@ -43,6 +52,13 @@ vim.keymap.set("n", "<S-h>", ":bprevious<CR>", opts)
 -- Stay in indent mode
 vim.keymap.set("v", "<", "<gv")
 vim.keymap.set("v", ">", ">gv")
+
+-- Easy insertion of a trailing ; or , from insert mode
+vim.keymap.set('i', ';;', '<Esc>A;<Esc>')
+vim.keymap.set('i', ',,', '<Esc>A,<Esc>')
+
+-- Disable annoying command line thing
+vim.keymap.set('n', 'q:', ':q<CR>')
 
 -- greatest remap ever
 vim.keymap.set("x", "<leader>p", [["_dP]], { desc = "[P]aste over without yanking"})
