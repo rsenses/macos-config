@@ -2,7 +2,6 @@
 
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-ln -sf $DOTFILES/zsh/zshrc $HOME/.zshrc
 rm -rf $HOME/.config/zsh
 ln -sf $DOTFILES/zsh/zprofile $HOME/.zprofile
 ln -s $DOTFILES/zsh $HOME/.config/zsh
