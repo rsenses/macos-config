@@ -10,5 +10,6 @@ return {
     },
     "mbbill/undotree",
     "github/copilot.vim",
+    "tpope/vim-sleuth",
     "sheerun/vim-polyglot",
 }
