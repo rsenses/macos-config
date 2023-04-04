@@ -10,10 +10,11 @@ export CLICOLOR_FORCE=1
 # Bookmarks
 alias w="t ~/dev/www"
 alias a="t ~/dev/apps"
-alias c="t ~/.config"
-alias d="t ~/Downloads"
+alias c="cd ~/.config"
+alias d="cd ~/Downloads"
 alias e="t ~/dev/email"
-alias n="t ~/.config/nvim"
+alias h="cd ~/"
+alias n="cd ~/.config/nvim"
 
 # zeoxide, zsh y tmux
 # alias j='z'
