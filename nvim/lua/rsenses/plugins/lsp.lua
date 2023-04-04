@@ -56,8 +56,6 @@ return {
             ["<Tab>"] = function(fallback)
                 if cmp.visible() then
                     cmp.select_next_item(cmp_select)
-                elseif vim.fn["vsnip#available"](1) > 0 then
-                    require("utils").input("<Plug>(vsnip-expand-or-jump)")
                 else
                     local copilot_keys = vim.fn["copilot#Accept"]()
                     if copilot_keys ~= "" then

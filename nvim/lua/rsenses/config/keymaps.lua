@@ -69,6 +69,9 @@ vim.keymap.set('n', 'q:', ':q<CR>')
 -- Set Esc to nohlsearch
 vim.keymap.set('n', '<Esc><Esc>', ':nohlsearch<CR>')
 
+-- Delete buffer with leader+q
+vim.keymap.set("n", "<leader>q", "<cmd>bd<CR>", { desc = "[Q]uit buffer"})
+
 -- greatest remap ever
 vim.keymap.set("x", "<leader>p", [["_dP]], { desc = "[P]aste over without yanking"})
 
