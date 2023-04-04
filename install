@@ -18,6 +18,9 @@ ln -s $DOTFILES/kitty $HOME/.config/kitty
 rm -rf $HOME/.config/tmux
 ln -sf $DOTFILES/tmux $HOME/.config/tmux
 
+rm -rf $HOME/.config/vifm
+ln -sf $DOTFILES/vifm $HOME/.config/vifm
+
 ln -sf $DOTFILES/git/gitconfig $HOME/.gitconfig
 
 ln -sf $DOTFILES/git/gitignore $HOME/.gitignore
