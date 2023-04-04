@@ -1,6 +1,7 @@
 return {
     {
         "nvim-treesitter/nvim-treesitter",
+        lazy = true,
         build = ":TSUpdate",
         dependencies = {
             "nvim-tree/nvim-web-devicons",
@@ -8,8 +9,13 @@ return {
             "lukas-reineke/indent-blankline.nvim",
         },
     },
-    "mbbill/undotree",
-    "github/copilot.vim",
-    "tpope/vim-sleuth",
-    "sheerun/vim-polyglot",
+    {
+        "mbbill/undotree",
+        cmd = { "UndotreeShow", "UndotreeToggle", "UndotreeHide", "UndotreeFocus" },
+    },
+    { "github/copilot.vim", lazy = false },
+    {
+        "sheerun/vim-polyglot",
+        lazy = false,
+    },
 }

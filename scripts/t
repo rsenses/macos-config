@@ -1,20 +1,116 @@
-#!/usr/bin/env bash
+#!/bin/bash
+#
+# Attach or create tmux session named the same as current directory.
+#
+# # Attach
+#
+# If called with --start or without a directory name ta will create a plain
+# single window layout
+#
+# ╭──────────────────────────────────────────────────────────╮
+# │ my_project on  main [!?] via 🐍 v3.8.8 via ©conda-env   │
+# │ ❯                                                        │
+# │                                                          │
+# │                                                          │
+# │                                                          │
+# │                                                          │
+# │                                                          │
+# │                                                          │
+# │                                                          │
+# │                                                          │
+# │                                                          │
+# │                                                          │
+# ╰──────────────────────────────────────────────────────────╯
+#
+# # Split Layout
+#
+# When called to a specific directory ta will first ask which project to open
+# then attach or create anew session split with neovim on top.
+#
+# ╭──────────────────────────────────────────────────────────╮
+# │                                                          │
+# │                                                          │
+# │                          nvim                            │
+# │                                                          │
+# │                                                          │
+# ├──────────────────────────────────────────────────────────┤
+# │ my_project on  main [!?] via 🐍 v3.8.8 via ©conda-env   │
+# │ ❯                                                        │
+# │                                                          │
+# │                                                          │
+# │                                                          │
+# │                                                          │
+# ╰──────────────────────────────────────────────────────────╯
 
-# Credit to ThePrimeagen
+ not_in_tmux() {
+   [ -z "$TMUX" ]
+ }
 
-if [[ $# -eq 1 ]]; then
-    selected=$1
+DIR=$1
+
+# If no arguments are passed in try to immediately attach or start without further input
+echo $DIR
+if [ -z "$DIR" ]; then
+   if not_in_tmux; then
+       /opt/homebrew/bin/tmux attach && exit 1 || DIR="--start"
+   else
+       exit 1
+   fi
+fi
+
+# If --start was passed in immediately start a new session based on the current directory
+if [ "$DIR" == "--start" ]; then
+    echo "starting"
+    path_name="$(basename "$PWD" | tr . -)"
+    session_name=${path_name//./_}
 else
-    items=`find ~/dev -maxdepth 2 -mindepth 1 -type d`
-    items+=`find ~/.config -maxdepth 1 -mindepth 1 -type d`
-    selected=`echo "$items" | fzf`
+    # ask the user which directory to start in
+    _session_name=$(cd $DIR && ls -d */ | sed  "s|/||g" | /opt/homebrew/bin/fzf --reverse --header="Select project from $(basename $DIR) >")
+    session_name=${_session_name//./_}
+    path_name=$DIR/$_session_name
 fi
 
-dirname=`basename $selected | sed 's/\./_/g'`
+echo session name is \"$session_name\"
+echo path name is $path_name
 
-tmux switch-client -t =$dirname
-if [[ $? -eq 0 ]]; then
-    exit 0
+if [ -z "$session_name" ]; then
+    # operation cancelled by user
+    exit 1
 fi
 
-tmux new-session -c $selected -d -s $dirname && tmux switch-client -t $dirname || tmux new -c $selected -A -s $dirname
+session_exists() {
+    # checks if the $session_name exists
+    /opt/homebrew/bin/tmux has-session -t "=$session_name"
+}
+
+create_detached_session() {
+if [ "$DIR" == "--start" ]; then
+    (TMUX=''
+    /opt/homebrew/bin/tmux new-session -Ad -s "$session_name" -c $path_name
+    )
+else
+    (TMUX=''
+    /opt/homebrew/bin/tmux new-session -Ad -s "$session_name" -c $path_name;
+    # /opt/homebrew/bin/tmux split-window -vb -t "$session_name" -c $path_name -p 80;
+    /opt/homebrew/bin/tmux send-keys -t "$session_name" "nvim '+Telescope find_files'" Enter;
+    )
+fi
+ }
+
+create_if_needed_and_attach() {
+    if not_in_tmux; then
+        /opt/homebrew/bin/tmux new-session -As "$session_name" -c $path_name
+    else
+        if ! session_exists; then
+        create_detached_session
+        fi
+        /opt/homebrew/bin/tmux switch-client -t "$session_name"
+    fi
+}
+
+ attatch_to_first_session() {
+     /opt/homebrew/bin/tmux attach -t $(/opt/homebrew/bin/tmux list-sessions -F "${session_name}" | head -n 1)
+     /opt/homebrew/bin/tmux choose-tree -Za
+}
+
+create_if_needed_and_attach || attatch_to_first_session

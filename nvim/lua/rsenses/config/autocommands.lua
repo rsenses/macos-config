@@ -28,6 +28,7 @@ autocmd("FileType", {
     pattern = { "gitcommit", "markdown", "NeogitCommitMessage" },
     callback = function()
         vim.opt_local.spell = true
+        vim.opt_local.spelllang = "es"
     end,
 })
 

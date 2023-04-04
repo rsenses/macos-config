@@ -1,6 +1,8 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
+require("rsenses.config.options")
+
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
     vim.fn.system({
@@ -14,8 +16,25 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-require("lazy").setup("rsenses.plugins")
+require("lazy").setup("rsenses.plugins", {
+    defaults = { lazy = true },
+    install = { colorscheme = { "kanagawa" } },
+    checker = { enabled = true },
+    performance = {
+        rtp = {
+            disabled_plugins = {
+                "gzip",
+                "matchit",
+                "matchparen",
+                "tarPlugin",
+                "tohtml",
+                "tutor",
+                "zipPlugin",
+            },
+        },
+    },
+})
 
-require("rsenses.config.options")
 require("rsenses.config.keymaps")
+require("rsenses.config.statusline")
 require("rsenses.config.autocommands")

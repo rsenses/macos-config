@@ -1,3 +1,2 @@
-if [ "$TMUX" = "" ]; then /opt/homebrew/bin/tmux a || /opt/homebrew/bin/tmux; fi
-
+# Z Profile
 source $ZDOTDIR/.zshrc
