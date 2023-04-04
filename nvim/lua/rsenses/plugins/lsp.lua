@@ -6,7 +6,7 @@ return {
         -- LSP Support
         { 'neovim/nvim-lspconfig' },
         {
-        -- Optional
+            -- Optional
             'williamboman/mason.nvim',
             build = function()
                 pcall(vim.cmd, 'MasonUpdate')
@@ -46,25 +46,27 @@ return {
             'tailwindcss'
         })
 
-        -- Fix Undefined global 'vim'
-        lsp.configure('lua-language-server', {
-            settings = {
-                Lua = {
-                    diagnostics = {
-                        globals = { 'vim' }
-                    }
-                }
-            }
-        })
-
         local cmp = require('cmp')
         local cmp_select = { behavior = cmp.SelectBehavior.Select }
         local cmp_mappings = lsp.defaults.cmp_mappings({
             ['<S-Tab>'] = cmp.mapping.select_prev_item(cmp_select),
-            ['<Tab>'] = cmp.mapping.select_next_item(cmp_select),
             ['<CR>'] = cmp.mapping.confirm({ select = true }),
             ['<C-c>'] = cmp.mapping.close({ select = true }),
             ["<C-Space>"] = cmp.mapping.complete(),
+            ["<Tab>"] = function(fallback)
+                if cmp.visible() then
+                    cmp.select_next_item(cmp_select)
+                elseif vim.fn["vsnip#available"](1) > 0 then
+                    require("utils").input("<Plug>(vsnip-expand-or-jump)")
+                else
+                    local copilot_keys = vim.fn["copilot#Accept"]()
+                    if copilot_keys ~= "" then
+                        vim.api.nvim_feedkeys(copilot_keys, "i", true)
+                    else
+                        fallback()
+                    end
+                end
+            end,
         })
 
         lsp.setup_nvim_cmp({
@@ -75,10 +77,6 @@ return {
             suggest_lsp_servers = false,
             sign_icons = { error = "", warn = "", hint = "", info = "" }
         })
-
-        lsp.on_attach(function(client, bufnr)
-            lsp.default_keymaps({ buffer = bufnr })
-        end)
 
         local null_ls = require("null-ls")
 
@@ -103,24 +101,25 @@ return {
         })
 
         lsp.on_attach(function(client, bufnr)
-            -- LSP
+            lsp.default_keymaps({ buffer = bufnr })
+
             vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end,
-            { buffer = bufnr, remap = false, desc = "[G]oto [D]efinition" })
+                { buffer = bufnr, remap = false, desc = "[G]oto [D]efinition" })
             vim.keymap.set("n", "gD", function() vim.lsp.buf.declaration() end,
-            { buffer = bufnr, remap = false, desc = "[G]oto [D]eclaration" })
+                { buffer = bufnr, remap = false, desc = "[G]oto [D]eclaration" })
             vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, { buffer = bufnr, remap = false })
             vim.keymap.set("n", "<leader>f", function() vim.lsp.buf.format() end,
-            { buffer = bufnr, remap = false, desc = "[F]ormat" })
+                { buffer = bufnr, remap = false, desc = "[F]ormat" })
             vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, { buffer = bufnr, remap = false })
             vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, { buffer = bufnr, remap = false })
             vim.keymap.set("n", "<leader>vc", function() vim.lsp.buf.code_action() end,
-            { buffer = bufnr, remap = false, desc = "[C]ode actions" })
+                { buffer = bufnr, remap = false, desc = "[C]ode actions" })
+
+            vim.diagnostic.config({
+                virtual_text = false
+            })
         end)
 
         lsp.setup()
-
-        vim.diagnostic.config({
-            virtual_text = false
-        })
     end
 }

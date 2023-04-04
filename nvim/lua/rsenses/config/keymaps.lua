@@ -14,6 +14,7 @@ vim.keymap.set("n", "<Right>", "<nop>", opts)
 --   command_mode = "c",
 
 vim.keymap.set("n", "-", vim.cmd.Ex)
+vim.keymap.set("n", "<leader>^", vim.cmd.bnext, { desc =  "Switch next buffer" })
 
 -- When text is wrapped, move by terminal rows, not lines, unless a count is provided
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true })
@@ -64,6 +65,9 @@ vim.keymap.set('i', ',,', '<Esc>A,<Esc>')
 
 -- Disable annoying command line thing
 vim.keymap.set('n', 'q:', ':q<CR>')
+
+-- Set Esc to nohlsearch
+vim.keymap.set('n', '<Esc><Esc>', ':nohlsearch<CR>')
 
 -- greatest remap ever
 vim.keymap.set("x", "<leader>p", [["_dP]], { desc = "[P]aste over without yanking"})
