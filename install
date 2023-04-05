@@ -21,6 +21,9 @@ ln -sf $DOTFILES/tmux $HOME/.config/tmux
 rm -rf $HOME/.config/vifm
 ln -sf $DOTFILES/vifm $HOME/.config/vifm
 
+rm -rf $HOME/.config/phpactor
+ln -s $DOTFILES/phpactor $HOME/.config/phpactor
+
 ln -sf $DOTFILES/git/gitconfig $HOME/.gitconfig
 
 ln -sf $DOTFILES/git/gitignore $HOME/.gitignore

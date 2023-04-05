@@ -75,8 +75,9 @@ return {
                 { buffer = bufnr, remap = false, desc = "[G]oto [D]efinition" })
             vim.keymap.set("n", "gD", function() vim.lsp.buf.declaration() end,
                 { buffer = bufnr, remap = false, desc = "[G]oto [D]eclaration" })
-            vim.keymap.set('n', 'gr', ':Telescope lsp_references<CR>', { buffer = bufnr })
+            vim.keymap.set('n', 'gr', ':Telescope lsp_references<CR>', { buffer = bufnr, desc = "[G]oto [R]eferences" })
             vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, { buffer = bufnr, remap = false })
+            vim.keymap.set("n", "<leader>rn", function() vim.lsp.buf.rename() end, { buffer = bufnr, remap = false })
             vim.keymap.set("n", "<leader>f", function() vim.lsp.buf.format() end,
                 { buffer = bufnr, remap = false, desc = "[F]ormat" })
             vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, { buffer = bufnr, remap = false })
@@ -95,9 +96,10 @@ return {
             'cssls',
             'emmet_ls',
             'html',
+            'bashls',
             'eslint',
             'jsonls',
-            'intelephense',
+            'phpactor',
             'tailwindcss'
         })
 
@@ -118,12 +120,12 @@ return {
             capabilities = capabilities,
         })
 
-        require('lspconfig').intelephense.setup({
-            on_attach = function(client, bufnr)
-                on_attach(client, bufnr)
-                client.server_capabilities.documentFormattingProvider = false
-                client.server_capabilities.documentRangeFormattingProvider = false
-            end,
+        require('lspconfig').phpactor.setup({
+            on_attach = on_attach,
+            init_options = {
+                ["language_server_phpstan.enabled"] = false,
+                ["language_server_psalm.enabled"] = false,
+            },
             capabilities = capabilities,
         })
 
