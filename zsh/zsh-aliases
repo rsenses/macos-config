@@ -17,9 +17,6 @@ alias h="cd ~/"
 alias n="cd ~/.config/nvim"
 
 # zeoxide, zsh y tmux
-# alias j='z'
-# alias f='zi'
-alias tm='tmux a || tmux'
 alias zsh-update-plugins="find "$ZDOTDIR/plugins" -type d -exec test -e '{}/.git' ';' -print0 | xargs -I {} -0 git -C {} pull -q"
 
 # Colorize grep output (good for log files)
@@ -43,7 +40,6 @@ alias ll='gls -Falh --group-directories-first ${colorflag}'
 alias dsstore="find . -name '*.DS_Store' -type f -ls -delete"
 
 # Shortcuts
-alias vi="nvim"
 alias vim="nvim"
 
 # Update installed Ruby gems, Homebrew, npm, and their installed packages
