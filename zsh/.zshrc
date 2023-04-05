@@ -38,20 +38,15 @@ zsh_add_file "zsh-prompt"
 # Plugins
 zsh_add_plugin "zsh-users/zsh-autosuggestions"
 zsh_add_plugin "zsh-users/zsh-syntax-highlighting"
+source "$ZDOTDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 # For more plugins: https://github.com/unixorn/awesome-zsh-plugins
 # More completions https://github.com/zsh-users/zsh-completions
 
 # Key-bindings
-bindkey -s '^o' 'ranger\n'
-bindkey -s '^f' 'zi\n'
+bindkey -s '^o' 'vifm\n'
 bindkey -s '^v' 'nvim\n'
 bindkey -s '^z' 'zi\n'
 bindkey '^[[P' delete-char
-
-# FZF
-# source /opt/homebrew/Cellar/fzf/0.39.0/shell/key-bindings.zsh
-# source /opt/homebrew/Cellar/fzf/0.39.0/shell/completion.zsh
-# export FZF_DEFAULT_COMMAND='rg --hidden -l ""'
 
 # Edit line in vim with ctrl-e:
 autoload edit-command-line; zle -N edit-command-line
