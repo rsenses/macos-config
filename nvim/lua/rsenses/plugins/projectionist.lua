@@ -7,11 +7,6 @@ return {
         config = function()
             vim.g.projectionist_heuristics = {
                 artisan = {
-                    ['*'] = {
-                        start = 'php artisan serve',
-                        console = 'php artisan tinker',
-                        make = 'npm run dev',
-                    },
                     ['app/Models/*.php'] = {
                         type = 'model',
                     },
