@@ -70,26 +70,11 @@ local function sep(item, opts, show)
   if not show then
     return ''
   end
-  local no_after = opts.no_after or false
-  local no_before = opts.no_before or false
   local sep_color = opts.sep_color or '%#StSep#'
   local color = opts.color or '%#StItem#'
-  local side = opts.side or 'left'
 
-  local sep_before = '█'
-  local sep_after = '█'
-  if side ~= 'left' then
-    sep_before = '█'
-    sep_after = '█'
-  end
-
-  if no_before then
-    sep_before = '█'
-  end
-
-  if no_after then
-    sep_after = '█'
-  end
+  local sep_before = '█'
+  local sep_after = '▊'
 
   return sep_color .. sep_before .. color .. item .. sep_color .. sep_after .. '%*'
 end

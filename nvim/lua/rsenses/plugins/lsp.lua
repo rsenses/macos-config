@@ -149,9 +149,6 @@ return {
                 client.server_capabilities.documentFormattingProvider = false
                 client.server_capabilities.documentRangeFormattingProvider = false
             end,
-            on_new_config = function(new_config, new_root_dir)
-                new_config.init_options.typescript.serverPath = get_typescript_server_path(new_root_dir)
-            end,
             capabilities = capabilities,
             -- Enable "Take Over Mode" where volar will provide all TS LSP services
             -- This drastically improves the responsiveness of diagnostic updates on change
