@@ -8,8 +8,8 @@ return {
             vim.g.projectionist_heuristics = {
                 artisan = {
                     ['*'] = {
-                        start = 'sail up',
-                        console = 'sail tinker',
+                        start = 'php artisan serve',
+                        console = 'php artisan tinker',
                         make = 'npm run dev',
                     },
                     ['app/Models/*.php'] = {

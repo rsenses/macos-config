@@ -77,7 +77,7 @@ return {
                 { buffer = bufnr, remap = false, desc = "[G]oto [D]eclaration" })
             vim.keymap.set('n', 'gr', ':Telescope lsp_references<CR>', { buffer = bufnr, desc = "[G]oto [R]eferences" })
             vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, { buffer = bufnr, remap = false })
-            vim.keymap.set("n", "<leader>rn", function() vim.lsp.buf.rename() end, { buffer = bufnr, remap = false })
+            vim.keymap.set("n", "<leader>rn", function() vim.lsp.buf.rename() end, { buffer = bufnr, remap = false, desc = "[R]ename" })
             vim.keymap.set("n", "<leader>f", function() vim.lsp.buf.format() end,
                 { buffer = bufnr, remap = false, desc = "[F]ormat" })
             vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, { buffer = bufnr, remap = false })
