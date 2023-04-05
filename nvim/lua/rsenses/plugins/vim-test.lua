@@ -2,6 +2,12 @@ return {
     {
         "vim-test/vim-test",
         lazy = true,
+        ft = {
+          "php",
+          "javascript",
+          "typescript",
+          "javascript"
+        },
         config = function()
             vim.keymap.set('n', '<Leader>tn', ':TestNearest<CR>')
             vim.keymap.set('n', '<Leader>tf', ':TestFile<CR>')
