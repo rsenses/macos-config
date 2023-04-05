@@ -30,7 +30,8 @@ vim.opt.confirm = true -- ask for confirmation instead of erroring
 
 vim.opt.scrolloff = 8
 vim.opt.sidescrolloff = 4
-vim.opt.signcolumn = "yes"
+vim.opt.signcolumn = "yes:2"
+vim.opt.wildmode = 'longest:full,full' -- complete the longest common match, and allow tabbing the results to fully complete them
 
 vim.opt.updatetime = 4001 -- Set updatime to 1ms longer than the default to prevent polyglot from changing it
 vim.opt.redrawtime = 10000 -- Allow more time for loading syntax on large files
@@ -40,5 +41,5 @@ vim.g.netrw_browse_split = 0
 vim.g.netrw_banner = 0
 vim.g.netrw_winsize = 25
 
--- Status
+-- Only one global Status Line
 vim.opt.laststatus = 3

@@ -6,6 +6,7 @@ return {
         "nvim-tree/nvim-web-devicons",
         "nvim-treesitter/nvim-treesitter-context",
         "lukas-reineke/indent-blankline.nvim",
+        "JoosepAlviste/nvim-ts-context-commentstring",
     },
     config = function()
         require "nvim-web-devicons".setup {}
@@ -33,6 +34,9 @@ return {
             },
             indent = {
                 enable = true
+            },
+            context_commentstring = {
+                enable = true,
             },
         }
 

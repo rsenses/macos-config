@@ -87,4 +87,5 @@ vim.keymap.set("n", "<leader>vs", "<cmd>setlocal spell spelllang=es<CR>", { desc
 vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle, { desc = "[U]ndoTree"})
 
 -- Keymaps for LSP in plugins/lsp.lua
+-- Keymaps for test in plugins/vim-test.lua
 -- Keymaps for treesitter in plugins/treesitter

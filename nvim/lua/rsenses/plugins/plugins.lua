@@ -1,5 +1,15 @@
 return {
     {
+        'lewis6991/gitsigns.nvim',
+        lazy = false,
+        dependencies = 'nvim-lua/plenary.nvim',
+        config = function()
+            require('gitsigns').setup({
+                sign_priority = 20,
+            })
+        end,
+    },
+    {
         "nvim-treesitter/nvim-treesitter",
         lazy = true,
         build = ":TSUpdate",
