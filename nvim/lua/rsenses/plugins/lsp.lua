@@ -38,25 +38,35 @@ return {
         local cmp = require('cmp')
         local cmp_action = require('lsp-zero').cmp_action()
         local cmp_select = { behavior = cmp.SelectBehavior.Select }
+        local luasnip = require('luasnip')
         local cmp_mappings = lsp.defaults.cmp_mappings({
-            ['<S-Tab>'] = cmp.mapping.select_prev_item(cmp_select),
             ['<CR>'] = cmp.mapping.confirm({ select = true }),
             ['<Esc>'] = cmp.mapping.close({ select = true }),
             ["<C-Space>"] = cmp.mapping.complete(),
-            ["<Tab>"] = function(fallback)
+            ["<Tab>"] = cmp.mapping(function(fallback)
                 if cmp.visible() then
                     cmp.select_next_item(cmp_select)
+                elseif luasnip.expand_or_jumpable() then
+                    luasnip.expand_or_jump()
                 else
-                    local copilot_keys = vim.fn["copilot#Accept"]()
-                    if copilot_keys ~= "" then
-                        vim.api.nvim_feedkeys(copilot_keys, "i", true)
-                    else
-                        fallback()
-                    end
+                    fallback()
+                    -- local copilot_keys = vim.fn["copilot#Accept"]()
+                    -- if copilot_keys ~= "" then
+                    --     vim.api.nvim_feedkeys(copilot_keys, "i", true)
+                    -- else
+                    --     fallback()
+                    -- end
                 end
-            end,
-            ['<C-f>'] = cmp_action.luasnip_jump_forward(),
-            ['<C-b>'] = cmp_action.luasnip_jump_backward(),
+            end, { "i", "s" }),
+            ["<S-Tab>"] = cmp.mapping(function(fallback)
+                if cmp.visible() then
+                    cmp.select_prev_item(cmp_select)
+                elseif luasnip.expand_or_jumpable() then
+                    luasnip.luasnip_jump_backward()
+                else
+                    fallback()
+                end
+            end, { "i", "s" }),
         })
 
         lsp.setup_nvim_cmp({
