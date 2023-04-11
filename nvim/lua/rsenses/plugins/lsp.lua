@@ -129,11 +129,6 @@ return {
 
 		local lspconfig = require("lspconfig")
 
-		lspconfig.bashls.setup({
-			on_attach = on_attach,
-			capabilities = capabilities,
-		})
-
 		lspconfig.emmet_ls.setup({
 			on_attach = on_attach,
 			capabilities = capabilities,
@@ -153,11 +148,6 @@ return {
 			},
 		})
 
-		lspconfig.html.setup({
-			on_attach = on_attach,
-			capabilities = capabilities,
-		})
-
 		lspconfig.phpactor.setup({
 			on_attach = on_attach,
 			init_options = {
@@ -175,10 +165,6 @@ return {
 					schemas = require("schemastore").json.schemas(),
 				},
 			},
-		})
-		lspconfig.tailwindcss.setup({
-			on_attach = on_attach,
-			capabilities = capabilities,
 		})
 
 		lspconfig.volar.setup({
@@ -242,10 +228,6 @@ return {
 
 		ls.add_snippets("typescript", {
 			ls.parser.parse_snippet("import", "import $1 from '$0'"),
-		})
-
-		ls.add_snippets("vue", {
-			ls.parser.parse_snippet("defineProps", "defineProps<{\n  $0\n}>()"),
 		})
 	end,
 }
