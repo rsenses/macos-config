@@ -38,24 +38,9 @@ return {
 		local luasnip = require("luasnip")
 		local cmp_mappings = lsp.defaults.cmp_mappings({
 			["<CR>"] = cmp.mapping.confirm({ select = true }),
-			["<Tab>"] = cmp.mapping(function(fallback)
-				if cmp.visible() then
-					cmp.select_next_item(cmp_select)
-				elseif luasnip.expand_or_jumpable() then
-					luasnip.expand_or_jump()
-				else
-					fallback()
-				end
-			end, { "i", "s" }),
-			["<S-Tab>"] = cmp.mapping(function(fallback)
-				if cmp.visible() then
-					cmp.select_prev_item(cmp_select)
-				elseif luasnip.expand_or_jumpable() then
-					luasnip.luasnip_jump_backward()
-				else
-					fallback()
-				end
-			end, { "i", "s" }),
+			-- ["<C-j>"] = cmp.mapping.select_next_item(cmp_select),
+			-- ["<C-k>"] = cmp.mapping.select_prev_item(cmp_select),
+			['<Tab>'] = cmp.config.disable,
 		})
 
 		lsp.setup_nvim_cmp({
@@ -168,6 +153,7 @@ return {
 				null_ls.builtins.formatting.stylua,
 				null_ls.builtins.formatting.prettier,
 				null_ls.builtins.formatting.blade_formatter,
+				null_ls.builtins.formatting.phpcsfixer,
 			},
 		})
 
