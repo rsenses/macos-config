@@ -28,7 +28,6 @@ return {
 
 		-- Formatter
 		{ "jose-elias-alvarez/null-ls.nvim" },
-		{ "b0o/schemastore.nvim" },
 	},
 	config = function()
 		local lsp = require("lsp-zero")
@@ -36,13 +35,10 @@ return {
 		lsp.preset("recommended")
 
 		local cmp = require("cmp")
-		local cmp_action = require("lsp-zero").cmp_action()
 		local cmp_select = { behavior = cmp.SelectBehavior.Select }
 		local luasnip = require("luasnip")
 		local cmp_mappings = lsp.defaults.cmp_mappings({
 			["<CR>"] = cmp.mapping.confirm({ select = true }),
-			["<Esc>"] = cmp.mapping.close({ select = true }),
-			["<C-Space>"] = cmp.mapping.complete(),
 			["<Tab>"] = cmp.mapping(function(fallback)
 				if cmp.visible() then
 					cmp.select_next_item(cmp_select)
@@ -50,12 +46,6 @@ return {
 					luasnip.expand_or_jump()
 				else
 					fallback()
-					-- local copilot_keys = vim.fn["copilot#Accept"]()
-					-- if copilot_keys ~= "" then
-					--     vim.api.nvim_feedkeys(copilot_keys, "i", true)
-					-- else
-					--     fallback()
-					-- end
 				end
 			end, { "i", "s" }),
 			["<S-Tab>"] = cmp.mapping(function(fallback)
@@ -74,7 +64,7 @@ return {
 		})
 
 		lsp.set_preferences({
-			suggest_lsp_servers = false,
+			-- suggest_lsp_servers = false,
 			sign_icons = { error = "", warn = "", hint = "", info = "" },
 		})
 
@@ -157,16 +147,6 @@ return {
 			capabilities = capabilities,
 		})
 
-		lspconfig.jsonls.setup({
-			on_attach = on_attach,
-			capabilities = capabilities,
-			settings = {
-				json = {
-					schemas = require("schemastore").json.schemas(),
-				},
-			},
-		})
-
 		lspconfig.volar.setup({
 			on_attach = function(client, bufnr)
 				on_attach(client, bufnr)
@@ -194,11 +174,11 @@ return {
 
 		local ls = require("luasnip")
 
-		ls.config.set_config({
-			history = true,
-			updateevents = "TextChanged,TextChangedI",
-		})
+		-- ls.config.set_config({
+		-- 	history = true,
+		-- 	updateevents = "TextChanged,TextChangedI",
+		-- })
 
-		require("luasnip.loaders.from_vscode").lazy_load({paths = "~/.config/nvim/snippets"})
+		require("luasnip.loaders.from_vscode").lazy_load({ paths = "~/.config/nvim/snippets" })
 	end,
 }
