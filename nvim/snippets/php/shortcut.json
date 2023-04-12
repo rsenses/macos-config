@@ -1,0 +1,37 @@
+{
+  "return": {
+    "prefix": ["r", "re"],
+    "body": ["return "],
+    "description": "return"
+  },
+  "print_r": {
+    "prefix": "pr",
+    "body": ["print_r($0);"],
+    "description": "print_r"
+  },
+  "var_dump": {
+    "prefix": "vd",
+    "body": ["var_dump($0);"],
+    "description": "var_dump"
+  },
+  "$this->": {
+    "prefix": "th",
+    "body": ["\\$this->"],
+    "description": "$this->"
+  },
+  "self::": {
+    "prefix": "se",
+    "body": ["self::$0"],
+    "description": "self::"
+  },
+  "$this->$property": {
+    "prefix": "thp",
+    "body": ["\\$this->$1 = \\$$1;"],
+    "description": "$this->$property"
+  },
+  "dirname(__DIR__)": {
+    "prefix": "dirname-dir",
+    "body": ["dirname(__DIR__$0)"],
+    "description": "dirname(__DIR__)"
+  }
+}

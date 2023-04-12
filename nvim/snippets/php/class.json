@@ -1,0 +1,80 @@
+{
+  "php class": {
+    "prefix": "php-class",
+    "body": ["class $TM_FILENAME_BASE", "{", "\t$0", "}", ""],
+    "description": "php class"
+  },
+  "php class extends": {
+    "prefix": "php-class-extends",
+    "body": ["class $TM_FILENAME_BASE extends $1", "{", "\t$0", "}", ""],
+    "description": "php class with extends"
+  },
+  "php class implements": {
+    "prefix": "php-class-implements",
+    "body": ["class $TM_FILENAME_BASE implements $1", "{", "\t$0", "}", ""],
+    "description": "php class with implements"
+  },
+  "php abstract class": {
+    "prefix": "php-abstract-class",
+    "body": ["abstract class $TM_FILENAME_BASE", "{", "\t$0", "}", ""],
+    "description": "php abstract class"
+  },
+  "php abstract class extends": {
+    "prefix": "php-abstract-class-extends",
+    "body": [
+      "abstract class $TM_FILENAME_BASE extends $1",
+      "{",
+      "\t$0",
+      "}",
+      ""
+    ],
+    "description": "php abstract class with extends"
+  },
+  "php abstract class implements": {
+    "prefix": "php-abstract-class-implements",
+    "body": [
+      "abstract class $TM_FILENAME_BASE implements $1",
+      "{",
+      "\t$0",
+      "}",
+      ""
+    ],
+    "description": "php abstract class with implements"
+  },
+  "php final class": {
+    "prefix": "php-final-class",
+    "body": ["final class $TM_FILENAME_BASE", "{", "\t$0", "}", ""],
+    "description": "php final class"
+  },
+  "php final class extends": {
+    "prefix": "php-final-class-extends",
+    "body": ["final class $TM_FILENAME_BASE extends $1", "{", "\t$0", "}", ""],
+    "description": "php final class with extends"
+  },
+  "php final class implements": {
+    "prefix": "php-final-class-implements",
+    "body": [
+      "final class $TM_FILENAME_BASE implements $1",
+      "{",
+      "\t$0",
+      "}",
+      ""
+    ],
+    "description": "php final class with implements"
+  },
+  "php interface": {
+    "prefix": "php-interface",
+    "body": ["interface $TM_FILENAME_BASE", "{", "\t$0", "}", ""],
+    "description": "php interface"
+  },
+  "php interface extends": {
+    "prefix": "php-interface-extends",
+    "body": ["interface $TM_FILENAME_BASE extends $1", "{", "\t$0", "}", ""],
+    "description": "php interface with extends"
+  },
+  "php trait": {
+    "prefix": "php-trait",
+    "body": ["trait $TM_FILENAME_BASE", "{", "\t$0", "}", ""],
+    "description": "php trait"
+  }
+}

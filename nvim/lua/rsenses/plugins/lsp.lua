@@ -179,25 +179,6 @@ return {
 			filetypes = { "typescript", "javascript", "javascriptreact", "typescriptreact", "vue" },
 		})
 
-		lsp.format_mapping("gq", {
-			format_opts = {
-				async = false,
-				timeout_ms = 10000,
-			},
-			servers = {
-				["null-ls"] = {
-					"javascript",
-					"typescript",
-					"lua",
-					"vue",
-					"php",
-					"blade",
-					"html",
-					"css",
-				},
-			},
-		})
-
 		lsp.setup()
 
 		local null_ls = require("null-ls")
@@ -207,6 +188,7 @@ return {
 				-- Replace these with the tools you have installed
 				null_ls.builtins.formatting.stylua,
 				null_ls.builtins.formatting.prettier,
+				null_ls.builtins.formatting.blade_formatter,
 			},
 		})
 
@@ -217,17 +199,6 @@ return {
 			updateevents = "TextChanged,TextChangedI",
 		})
 
-		ls.add_snippets("php", {
-			ls.parser.parse_snippet("class", "class $1\n{\n    $0\n}"),
-			ls.parser.parse_snippet("pubf", "public function $1($2): $3\n{\n    $0\n}"),
-			ls.parser.parse_snippet("prif", "private function $1($2): $3\n{\n    $0\n}"),
-			ls.parser.parse_snippet("prof", "protected function $1($2): $3\n{\n    $0\n}"),
-			ls.parser.parse_snippet("testt", "public function test_$1()\n{\n    $0\n}"),
-			ls.parser.parse_snippet("testa", "/** @test */\npublic function $1()\n{\n    $0\n}"),
-		})
-
-		ls.add_snippets("typescript", {
-			ls.parser.parse_snippet("import", "import $1 from '$0'"),
-		})
+		require("luasnip.loaders.from_vscode").lazy_load({paths = "~/.config/nvim/snippets"})
 	end,
 }
