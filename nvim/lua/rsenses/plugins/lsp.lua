@@ -64,7 +64,7 @@ return {
 		})
 
 		lsp.set_preferences({
-			-- suggest_lsp_servers = false,
+			suggest_lsp_servers = false,
 			sign_icons = { error = "", warn = "", hint = "", info = "" },
 		})
 
@@ -173,11 +173,6 @@ return {
 		})
 
 		local ls = require("luasnip")
-
-		-- ls.config.set_config({
-		-- 	history = true,
-		-- 	updateevents = "TextChanged,TextChangedI",
-		-- })
 
 		require("luasnip.loaders.from_vscode").lazy_load({ paths = "~/.config/nvim/snippets" })
 	end,
