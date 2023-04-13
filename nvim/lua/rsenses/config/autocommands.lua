@@ -59,3 +59,10 @@ autocmd({ "BufRead", "BufNewFile" }, {
     pattern = "*.blade.php",
     command = "set filetype=blade"
 })
+
+-- Elimina conceal en todos los archivos
+autocmd({ "BufRead", "BufNewFile" }, {
+    group = rsensesGroup,
+    pattern = "*",
+    command = "set conceallevel=0"
+})
