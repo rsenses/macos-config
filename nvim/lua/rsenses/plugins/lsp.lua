@@ -38,9 +38,27 @@ return {
 		local luasnip = require("luasnip")
 		local cmp_mappings = lsp.defaults.cmp_mappings({
 			["<CR>"] = cmp.mapping.confirm({ select = true }),
-			-- ["<C-j>"] = cmp.mapping.select_next_item(cmp_select),
-			-- ["<C-k>"] = cmp.mapping.select_prev_item(cmp_select),
-			['<Tab>'] = cmp.config.disable,
+			["<Tab>"] = cmp.config.disable,
+			["<C-n>"] = cmp.mapping(function(fallback)
+				if cmp.visible() then
+					cmp.select_next_item()
+					-- You could replace the expand_or_jumpable() calls with expand_or_locally_jumpable()
+					-- they way you will only jump inside the snippet region
+				elseif luasnip.expand_or_jumpable() then
+					luasnip.expand_or_jump()
+				else
+					fallback()
+				end
+			end, { "i", "s" }),
+			["<C-p>"] = cmp.mapping(function(fallback)
+				if cmp.visible() then
+					cmp.select_prev_item()
+				elseif luasnip.jumpable(-1) then
+					luasnip.jump(-1)
+				else
+					fallback()
+				end
+			end, { "i", "s" }),
 		})
 
 		lsp.setup_nvim_cmp({
