@@ -32,6 +32,10 @@ return {
         end
     },
     {
+        "tpope/vim-fugitive",
+        lazy = false,
+    },
+    {
         "sheerun/vim-polyglot",
         lazy = false,
     },
