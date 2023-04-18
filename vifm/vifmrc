@@ -58,6 +58,7 @@ set undolevels=100
 
 " Visualize line numbers
 set number
+set relativenumber
 
 " Use Vim's format of help file (has highlighting and "hyperlinks").
 " If you would rather use a plain text help file set novimhelp.
@@ -455,5 +456,6 @@ nnoremap <c-u> <c-w>x
 " ------------------------------------------------------------------------------
 " Icon decorations example
 " ------------------------------------------------------------------------------
-
 " https://github.com/cirala/vifm_devicons
+
+source ~/.config/vifm/favicons.vifm
