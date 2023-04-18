@@ -63,4 +63,4 @@ alias sail='[ -f sail ] && sh sail || sh vendor/bin/sail'
 alias artisan='php artisan'
 
 # http-server
-alias serve='http-server -p 8000 -c-1'
+alias serve='http-server -c-1'
