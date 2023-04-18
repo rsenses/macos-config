@@ -23,6 +23,7 @@ config.window_padding = {
 	top = 2,
 	bottom = 0,
 }
+config.window_background_opacity = 0.95
 
 -- For example, changing the color scheme:
 config.color_scheme = "kanagawabones"

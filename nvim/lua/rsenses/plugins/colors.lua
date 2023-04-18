@@ -1,12 +1,16 @@
 return {
-    "rebelot/kanagawa.nvim",
-    lazy = false,
-    name = "kanagawa",
-    config = function()
-        -- Kanagawa
-        vim.o.background = "dark"
+	"rebelot/kanagawa.nvim",
+	lazy = false,
+	name = "kanagawa",
+	config = function()
+		-- Kanagawa
+		vim.o.background = "dark"
 
-        -- setup must be called before loading
-        vim.cmd("colorscheme kanagawa")
-    end,
+		require("kanagawa").setup({
+			transparent = true, -- do not set background color
+		})
+
+		-- setup must be called before loading
+		vim.cmd("colorscheme kanagawa")
+	end,
 }

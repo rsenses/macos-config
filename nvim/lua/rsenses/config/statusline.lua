@@ -9,7 +9,7 @@ local lsp = {
 }
 
 function statusline.set_colors()
-  c.normal_bg = vim.fn.synIDattr(vim.fn.hlID('Normal'), 'bg')
+  c.normal_bg = "#000000"
   c.normal_fg = vim.fn.synIDattr(vim.fn.hlID('Normal'), 'fg')
   c.statusline_bg = vim.fn.synIDattr(vim.fn.hlID('Statusline'), 'bg')
   c.comment_fg = vim.fn.synIDattr(vim.fn.hlID('Comment'), 'fg')
