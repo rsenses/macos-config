@@ -64,3 +64,6 @@ alias artisan='php artisan'
 
 # http-server
 alias serve='http-server -c-1'
+
+# iniciar nvm
+alias nvminit='. "$(brew --prefix nvm)/nvm.sh"'
