@@ -18,7 +18,7 @@ vim.opt.swapfile = false
 vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
 vim.opt.undofile = true
 vim.opt.backup = true -- automatically save a backup file
-vim.opt.backupdir:remove('.') -- keep backups out of the current directory
+vim.opt.backupdir:remove(".") -- keep backups out of the current directory
 
 vim.opt.incsearch = true
 vim.opt.ignorecase = true
@@ -26,7 +26,7 @@ vim.opt.smartcase = true
 
 vim.opt.termguicolors = true
 
-vim.opt.mouse = 'a' -- enable mouse for all modes
+vim.opt.mouse = "a" -- enable mouse for all modes
 vim.opt.splitbelow = true
 vim.opt.splitright = true
 
@@ -37,7 +37,7 @@ vim.opt.sidescrolloff = 4
 vim.opt.signcolumn = "yes:2"
 vim.opt.cursorline = true -- highlight the current line
 vim.opt.list = true -- show whitespace characters
-vim.opt.listchars:append('space:·') -- show tabs as »·
+vim.opt.listchars:append("space:·") -- show tabs as »·
 
 vim.opt.updatetime = 4001 -- Set updatime to 1ms longer than the default to prevent polyglot from changing it
 vim.opt.redrawtime = 10000 -- Allow more time for loading syntax on large files
@@ -49,3 +49,6 @@ vim.g.netrw_winsize = 25
 
 -- Only one global Status Line
 vim.opt.laststatus = 3
+
+-- Disable preselect of completion items
+vim.opt.completeopt = "menu,menuone,noselect"

@@ -33,38 +33,6 @@ return {
 
 		lsp.preset("recommended")
 
-		local cmp = require("cmp")
-		local cmp_select = { behavior = cmp.SelectBehavior.Select }
-		local luasnip = require("luasnip")
-		local cmp_mappings = lsp.defaults.cmp_mappings({
-			["<CR>"] = cmp.mapping.confirm({ select = true }),
-			["<Tab>"] = cmp.config.disable,
-			["<C-n>"] = cmp.mapping(function(fallback)
-				if cmp.visible() then
-					cmp.select_next_item()
-					-- You could replace the expand_or_jumpable() calls with expand_or_locally_jumpable()
-					-- they way you will only jump inside the snippet region
-				elseif luasnip.expand_or_jumpable() then
-					luasnip.expand_or_jump()
-				else
-					fallback()
-				end
-			end, { "i", "s" }),
-			["<C-p>"] = cmp.mapping(function(fallback)
-				if cmp.visible() then
-					cmp.select_prev_item()
-				elseif luasnip.jumpable(-1) then
-					luasnip.jump(-1)
-				else
-					fallback()
-				end
-			end, { "i", "s" }),
-		})
-
-		lsp.setup_nvim_cmp({
-			mapping = cmp_mappings,
-		})
-
 		lsp.set_preferences({
 			suggest_lsp_servers = false,
 			sign_icons = { error = "", warn = "", hint = "", info = "" },
@@ -175,8 +143,57 @@ return {
 			},
 		})
 
-		local ls = require("luasnip")
+		local cmp = require("cmp")
+		local luasnip = require("luasnip")
 
 		require("luasnip.loaders.from_vscode").lazy_load({ paths = "~/.config/nvim/snippets" })
+
+		local types = require("cmp.types")
+
+		local cmp_mappings = lsp.defaults.cmp_mappings({
+			["<CR>"] = cmp.mapping.confirm({ select = false }),
+			["<Tab>"] = cmp.mapping(function(fallback)
+				if luasnip.expand_or_jumpable() then
+					luasnip.expand_or_jump()
+				else
+					fallback()
+				end
+			end, { "i", "s" }),
+			["<S-Tab>"] = cmp.mapping(function(fallback)
+				if luasnip.jumpable(-1) then
+					luasnip.jump(-1)
+				else
+					fallback()
+				end
+			end, { "i", "s" }),
+			["<C-n>"] = cmp.mapping(function(fallback)
+				if cmp.visible() then
+					cmp.select_next_item({ behavior = types.cmp.SelectBehavior.Select })
+					-- You could replace the expand_or_jumpable() calls with expand_or_locally_jumpable()
+					-- they way you will only jump inside the snippet region
+				else
+					fallback()
+				end
+			end, { "i", "s" }),
+			["<C-p>"] = cmp.mapping(function(fallback)
+				if cmp.visible() then
+					cmp.select_prev_item({ behavior = types.cmp.SelectBehavior.Select })
+				else
+					fallback()
+				end
+			end, { "i", "s" }),
+		})
+
+		cmp.setup({
+			preselect = types.cmp.PreselectMode.None,
+			completion = {
+				completeopt = "menu,menuone,noselect,noinsert",
+			},
+			sources = {
+				{ name = "nvim_lsp" },
+				{ name = "luasnip" },
+			},
+			mapping = cmp_mappings,
+		})
 	end,
 }
