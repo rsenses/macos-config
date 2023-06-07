@@ -10,18 +10,19 @@ return {
 		end,
 	},
 	{
-		"nvim-treesitter/nvim-treesitter",
-		lazy = true,
-		build = ":TSUpdate",
-		dependencies = {
-			"nvim-tree/nvim-web-devicons",
-			"nvim-treesitter/nvim-treesitter-context",
-			"lukas-reineke/indent-blankline.nvim",
-		},
-	},
-	{
 		"mbbill/undotree",
 		cmd = { "UndotreeShow", "UndotreeToggle", "UndotreeHide", "UndotreeFocus" },
+	},
+	{
+		"windwp/nvim-ts-autotag",
+		dependencies = "nvim-treesitter/nvim-treesitter",
+		config = function()
+			require("nvim-ts-autotag").setup({
+				-- your config
+			})
+		end,
+		lazy = true,
+		event = "VeryLazy",
 	},
 	-- {
 	-- 	"github/copilot.vim",
