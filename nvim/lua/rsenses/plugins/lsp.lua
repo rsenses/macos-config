@@ -151,9 +151,13 @@ return {
 		local types = require("cmp.types")
 
 		local cmp_mappings = lsp.defaults.cmp_mappings({
-			["<CR>"] = cmp.mapping.confirm({
+			["<A-CR>"] = cmp.mapping.confirm({
 				behavior = cmp.ConfirmBehavior.Insert,
 				select = true,
+			}),
+			["<CR>"] = cmp.mapping.confirm({
+				behavior = cmp.ConfirmBehavior.Insert,
+				select = false,
 			}),
 			["<Tab>"] = cmp.mapping(function(fallback)
 				if luasnip.expand_or_jumpable() then

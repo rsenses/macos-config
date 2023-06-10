@@ -36,7 +36,7 @@ return {
 		"exafunction/codeium.vim",
 		lazy = false,
 		config = function()
-			vim.keymap.set("i", "<c-g>", function()
+			vim.keymap.set("i", "<a-space>", function()
 				return vim.fn["codeium#Accept"]()
 			end, { expr = true })
 			vim.keymap.set("i", "<c-n>", function()
