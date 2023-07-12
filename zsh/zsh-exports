@@ -5,16 +5,16 @@ HISTSIZE=1000000
 SAVEHIST=1000000
 
 eval "$(/opt/homebrew/bin/brew shellenv)" # This loads brew on M1
-eval "$(zoxide init zsh)"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+eval "$(zoxide init zsh)" # This loads zoxide
+. "$(brew --prefix nvm)/nvm.sh" --no-use # This loads nvm
 
-export GOBIN=$HOME/.go/bin
+# export GOBIN=$HOME/.go/bin
 
 export PATH="/opt/homebrew/bin":$PATH
 export PATH="$HOME/.local/bin":$PATH
 export PATH="$HOME/.composer/vendor/bin":$PATH
-export PATH="$HOME/.go/bin":$PATH
-export PATH="$HOME/.cargo/bin":$PATH
+# export PATH="$HOME/.go/bin":$PATH
+# export PATH="$HOME/.cargo/bin":$PATH
 export PATH="/Applications/Visual Studio Code - Insiders.app/Contents/Resources/app/bin":$PATH
 
 source $(brew --prefix php-version)/php-version.sh # Incializa php-versions
