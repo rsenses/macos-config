@@ -1,18 +1,18 @@
 return {
-	{
-		"lewis6991/gitsigns.nvim",
-		lazy = false,
-		dependencies = "nvim-lua/plenary.nvim",
-		config = function()
-			require("gitsigns").setup({
-				sign_priority = 20,
-			})
-		end,
-	},
-	{
-		"mbbill/undotree",
-		cmd = { "UndotreeShow", "UndotreeToggle", "UndotreeHide", "UndotreeFocus" },
-	},
+	-- {
+	-- 	"lewis6991/gitsigns.nvim",
+	-- 	lazy = false,
+	-- 	dependencies = "nvim-lua/plenary.nvim",
+	-- 	config = function()
+	-- 		require("gitsigns").setup({
+	-- 			sign_priority = 20,
+	-- 		})
+	-- 	end,
+	-- },
+	-- {
+	-- 	"mbbill/undotree",
+	-- 	cmd = { "UndotreeShow", "UndotreeToggle", "UndotreeHide", "UndotreeFocus" },
+	-- },
 	{
 		"windwp/nvim-ts-autotag",
 		dependencies = "nvim-treesitter/nvim-treesitter",
@@ -56,7 +56,7 @@ return {
 		lazy = false,
 		config = function()
 			vim.g.codeium_disable_bindings = 1
-			vim.keymap.set("i", "<C-Space>", function()
+			vim.keymap.set("i", "<C-c>", function()
 				return vim.fn["codeium#Accept"]()
 			end, { expr = true })
 			vim.keymap.set("i", "<C-n>", function()
