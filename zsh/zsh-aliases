@@ -4,17 +4,17 @@
 hash gls >/dev/null 2>&1 || alias gls="ls"
 
 # always use color, even when piping (to awk,grep,etc)
-if gls --color > /dev/null 2>&1; then colorflag="--color"; else colorflag="-G"; fi;
+if gls --color >/dev/null 2>&1; then colorflag="--color"; else colorflag="-G"; fi
 export CLICOLOR_FORCE=1
 
 # Bookmarks
 alias w="t ~/dev/www"
+alias notes="nvim ~/Library/CloudStorage/OneDrive-Metech,TransformaciónDigital/notes/index.md"
 alias a="t ~/dev/apps"
 alias c="cd ~/.config"
 alias d="cd ~/Downloads"
 alias e="t ~/dev/email"
 alias h="cd ~/"
-alias n="cd ~/.config/nvim"
 
 # zeoxide, zsh y tmux
 alias zsh-update-plugins="find "$ZDOTDIR/plugins" -type d -exec test -e '{}/.git' ';' -print0 | xargs -I {} -0 git -C {} pull -q"
@@ -30,7 +30,7 @@ alias mv='mv -i'
 alias rm='trash-put'
 
 # easier to read disk
-alias df='df -h'                          # human-readable sizes
+alias df='df -h' # human-readable sizes
 
 # ls options: A = include hidden (but not . or ..), F = put `/` after folders, h = byte unit suffixes
 alias ls='gls -AFh ${colorflag} --group-directories-first'
