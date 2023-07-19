@@ -55,7 +55,8 @@ alias imageoptim="open -a ImageOptim"
 alias python='/opt/homebrew/bin/python3'
 
 # PHP
-alias php8='/opt/homebrew/opt/php@8.0/bin/php'
+alias php81='/opt/homebrew/opt/php@8.1/bin/php'
+alias php80='/opt/homebrew/opt/php@8.0/bin/php'
 alias php7='/opt/homebrew/opt/php@7.4/bin/php'
 
 # Laravel Sail & Artisan
