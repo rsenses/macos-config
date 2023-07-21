@@ -5,8 +5,8 @@ HISTSIZE=1000000
 SAVEHIST=1000000
 
 eval "$(/opt/homebrew/bin/brew shellenv)" # This loads brew on M1
-eval "$(zoxide init zsh)" # This loads zoxide
-. "$(brew --prefix nvm)/nvm.sh" --no-use # This loads nvm
+eval "$(zoxide init zsh)"                 # This loads zoxide
+. "$(brew --prefix nvm)/nvm.sh" --no-use  # This loads nvm
 
 # export GOBIN=$HOME/.go/bin
 
@@ -18,4 +18,6 @@ export PATH="$HOME/.composer/vendor/bin":$PATH
 export PATH="/Applications/Visual Studio Code - Insiders.app/Contents/Resources/app/bin":$PATH
 
 source $(brew --prefix php-version)/php-version.sh # Incializa php-versions
-php-version 8.1 # Set PHP version
+php-version 8.1                                    # Set PHP version
+
+source "$HOME/.cargo/env"
