@@ -16,6 +16,8 @@ return -- add more treesitter parsers
           "typescriptreact",
           "vue",
           "php",
+          "phtml",
+          "twig",
           "blade",
         },
       },
@@ -25,6 +27,11 @@ return -- add more treesitter parsers
           "scss",
           "less",
           "sass",
+        },
+      },
+      phpactor = {
+        filetypes = {
+          "php",
         },
       },
     },
