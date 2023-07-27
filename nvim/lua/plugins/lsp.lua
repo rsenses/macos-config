@@ -19,6 +19,14 @@ return -- add more treesitter parsers
           "blade",
         },
       },
+      stylelint_lsp = {
+        filetypes = {
+          "css",
+          "scss",
+          "less",
+          "sass",
+        },
+      },
     },
   },
 }
