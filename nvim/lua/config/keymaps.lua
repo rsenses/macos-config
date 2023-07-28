@@ -3,3 +3,11 @@
 -- Add any additional keymaps here
 
 vim.keymap.set("n", "-", require("oil").open, { desc = "Open parent directory" })
+-- vim.keymap.del("n", "<C-h>")
+-- vim.keymap.del("n", "<C-j>")
+-- vim.keymap.del("n", "<C-k>")
+-- vim.keymap.del("n", "<C-l>")
+vim.keymap.set("n", "<C-h>", ":<C-U>TmuxNavigateLeft<cr>", { desc = "Go to left window", remap = true })
+vim.keymap.set("n", "<C-j>", ":<C-U>TmuxNavigateDown<cr>", { desc = "Go to lower window", remap = true })
+vim.keymap.set("n", "<C-k>", ":<C-U>TmuxNavigateUp<cr>", { desc = "Go to upper window", remap = true })
+vim.keymap.set("n", "<C-l>", ":<C-U>TmuxNavigateRight<cr>", { desc = "Go to right window", remap = true })
