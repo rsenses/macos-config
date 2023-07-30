@@ -10,14 +10,8 @@ export CLICOLOR_FORCE=1
 # Bookmarks
 alias w="t ~/dev/www"
 alias notes="nvim ~/Library/CloudStorage/OneDrive-Metech,TransformaciónDigital/notes/index.md"
-alias a="t ~/dev/apps"
-alias c="cd ~/.config"
-alias d="cd ~/Downloads"
-alias e="t ~/dev/email"
-alias h="cd ~/"
-
-# zeoxide, zsh y tmux
-alias zsh-update-plugins="find "$ZDOTDIR/plugins" -type d -exec test -e '{}/.git' ';' -print0 | xargs -I {} -0 git -C {} pull -q"
+alias v="fd --type f --hidden --exclude .git | fzf-tmux -p --reverse | xargs nvim"
+alias help='tldr --list | fzf --preview "tldr {1}" --preview-window=right,70% | xargs tldr'
 
 # Colorize grep output (good for log files)
 alias grep='grep --color=auto'
@@ -32,21 +26,20 @@ alias rm='trash-put'
 # easier to read disk
 alias df='df -h' # human-readable sizes
 
-# ls options: A = include hidden (but not . or ..), F = put `/` after folders, h = byte unit suffixes
-alias ls='gls -AFh ${colorflag} --group-directories-first'
-alias ll='gls -Falh --group-directories-first ${colorflag}'
-
 # Recursively delete `.DS_Store` files
 alias dsstore="find . -name '*.DS_Store' -type f -ls -delete"
 
 # Shortcuts
 alias vim="nvim"
+alias vi="nvim"
 
 # Update installed Ruby gems, Homebrew, npm, and their installed packages
 alias brewupdate="brew -v update; brew upgrade --force-bottle; brew cleanup; brew doctor"
 alias composerupdate='composer global update'
 alias npmupdate='composer global update; npm -g update; npm -g upgrade; npm cache clean --force'
 alias nodeupdate='nvm install $(nvm current | sed -rn "s/v([[:digit:]]+).*/\1/p") --reinstall-packages-from=$(nvm current)'
+# zeoxide, zsh y tmux
+alias zsh-update-plugins="find "$ZDOTDIR/plugins" -type d -exec test -e '{}/.git' ';' -print0 | xargs -I {} -0 git -C {} pull -q"
 
 # ImageOptim, se puede usar . o nombre de archivo
 alias imageoptim="open -a ImageOptim"
@@ -68,3 +61,11 @@ alias serve='http-server -c-1'
 
 # iniciar nvm
 alias nvminit='. "$(brew --prefix nvm)/nvm.sh"'
+
+# less con color
+alias less='less -r'
+
+# executables
+alias ls='exa -al --color=always --group-directories-first'
+alias lt='exa -aT --color=always --group-directories-first'
+alias cat='bat --plain --wrap character'
