@@ -41,3 +41,14 @@ mkdir -p $HOME/.local/bin
 
 rm -rf $HOME/.local/bin/t
 ln -sf $DOTFILES/scripts/t $HOME/.local/bin/t
+chmod +x $HOME/.local/bin/t
+
+rm -rf $HOME/.tmux-cht-languages
+ln -sf $DOTFILES/tmux/.tmux-cht-languages $HOME/.tmux-cht-languages
+
+rm -rf $HOME/.tmux-cht-command
+ln -sf $DOTFILES/tmux/.tmux-cht-command $HOME/.tmux-cht-command
+
+rm -rf $HOME/.local/bin/tmux-cht.sh
+ln -sf $DOTFILES/scripts/tmux-cht.sh $HOME/.local/bin/tmux-cht.sh
+chmod +x $HOME/.local/bin/tmux-cht.sh
