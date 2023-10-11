@@ -19,7 +19,6 @@ return -- add more treesitter parsers
           "phtml",
           "twig",
           "blade",
-          "twig",
           "html.twig",
         },
       },
