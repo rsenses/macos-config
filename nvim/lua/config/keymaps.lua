@@ -11,3 +11,5 @@ vim.keymap.set("n", "<C-h>", ":<C-U>TmuxNavigateLeft<cr>", { desc = "Go to left 
 vim.keymap.set("n", "<C-j>", ":<C-U>TmuxNavigateDown<cr>", { desc = "Go to lower window", remap = true })
 vim.keymap.set("n", "<C-k>", ":<C-U>TmuxNavigateUp<cr>", { desc = "Go to upper window", remap = true })
 vim.keymap.set("n", "<C-l>", ":<C-U>TmuxNavigateRight<cr>", { desc = "Go to right window", remap = true })
+-- Not LSP formatter
+vim.keymap.set("n", "<Leader>cf", "gg=G''", { desc = "Go to right window", remap = true })

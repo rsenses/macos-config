@@ -89,3 +89,7 @@
 
 [merge]
     conflictstyle = diff3
+[http]
+	sslVerify = true
+[credential]
+	helper = osxkeychain
