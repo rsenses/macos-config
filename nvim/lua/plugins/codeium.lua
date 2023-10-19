@@ -1,5 +1,7 @@
 return {
   "exafunction/codeium.vim",
+  cmd = "Codeium",
+  build = ":Codeium Auth",
   lazy = false,
   config = function()
     vim.g.codeium_disable_bindings = 1
