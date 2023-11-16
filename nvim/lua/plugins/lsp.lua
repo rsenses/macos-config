@@ -15,7 +15,6 @@ return -- add more treesitter parsers
           "svelte",
           "typescriptreact",
           "vue",
-          "php",
           "phtml",
           "twig",
           "blade",
