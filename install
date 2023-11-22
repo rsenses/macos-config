@@ -18,6 +18,9 @@ ln -s $DOTFILES/alacritty $HOME/.config/alacritty
 rm -rf $HOME/.config/kitty
 ln -s $DOTFILES/kitty $HOME/.config/kitty
 
+rm -rf $HOME/.wezterm.lua
+ln -s $DOTFILES/.wezterm.lua $HOME/.wezterm.lua
+
 rm -rf $HOME/.config/wezterm
 ln -s $DOTFILES/wezterm $HOME/.config/wezterm
 

@@ -10,7 +10,7 @@ oo__          _      _          __oo    ||     ·----·     ||
 oo""                            ""oo    ||     ·----·     ||
       ]]
 
-    logo = string.rep("\n", 8) .. logo .. "\n\n"
+    logo = string.rep("\n", 2) .. logo .. "\n\n"
 
     local opts = {
       theme = "doom",
