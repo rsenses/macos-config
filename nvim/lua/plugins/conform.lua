@@ -19,15 +19,8 @@ return {
         jsonc = { { "prettierd", "prettier" } },
         yaml = { { "prettierd", "prettier" } },
         markdown = { { "prettierd", "prettier" } },
-        php = { "phpcsfixer" },
-        blade = { "blade-formatter" },
-      },
-      formatters = {
-        phpcsfixer = {
-          command = "/opt/homebrew/bin/php-cs-fixer",
-          args = { "fix", "$FILENAME" },
-          stdin = false,
-        },
+        php = { "php_cs_fixer" },
+        blade = { "php_cs_fixer", "blade-formatter" },
       },
     },
   },
