@@ -27,6 +27,7 @@ config.window_decorations = "RESIZE"
 config.window_background_opacity = 0.98
 config.hide_tab_bar_if_only_one_tab = true
 config.macos_window_background_blur = 10
+config.send_composed_key_when_left_alt_is_pressed = true
 
 -- and finally, return the configuration to wezterm
 return config
