@@ -7,7 +7,6 @@ return {
       opts.sources = opts.sources or {}
       table.insert(opts.sources, nls.builtins.formatting.prettierd)
       table.insert(opts.sources, nls.builtins.formatting.blade_formatter)
-      table.insert(opts.sources, nls.builtins.formatting.phpcsfixer)
     end,
   },
 }
