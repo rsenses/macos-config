@@ -13,3 +13,6 @@ vim.keymap.set("n", "<C-k>", ":<C-U>TmuxNavigateUp<cr>", { desc = "Go to upper w
 vim.keymap.set("n", "<C-l>", ":<C-U>TmuxNavigateRight<cr>", { desc = "Go to right window", remap = true })
 -- Not LSP formatter
 vim.keymap.set("n", "<Leader>cf", "gg=G''", { desc = "Go to right window", remap = true })
+-- Move lines in visual mode
+vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move lines down", remap = true })
+vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move lines up", remap = true })
