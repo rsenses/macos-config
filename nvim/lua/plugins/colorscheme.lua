@@ -1,15 +1,4 @@
 return {
-  -- {
-  --   "folke/tokyonight.nvim",
-  --   opts = {
-  --     transparent = true,
-  --     styles = {
-  --       sidebars = "transparent",
-  --       floats = "transparent",
-  --     },
-  --   },
-  -- },
-
   {
     "rebelot/kanagawa.nvim",
     opts = {
@@ -17,7 +6,7 @@ return {
     },
   },
 
-  -- Configure LazyVim to load gruvbox
+  -- Configure LazyVim to load kanagawa
   {
     "LazyVim/LazyVim",
     opts = {
