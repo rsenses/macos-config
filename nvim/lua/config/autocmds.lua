@@ -11,13 +11,22 @@ autocmd({ "BufEnter" }, {
   pattern = "*",
   callback = function()
     vim.cmd("set formatoptions-=cro")
+    vim.cmd("setlocal formatoptions-=cro")
   end,
 })
 
-autocmd({ "BufEnter" }, {
+-- Turn off paste mode when leaving insert
+autocmd("InsertLeave", {
   pattern = "*",
+  command = "set nopaste",
+})
+
+-- Disable the concealing in some file formats
+-- The default conceallevel is 3 in LazyVim
+autocmd("FileType", {
+  pattern = { "json", "jsonc", "markdown" },
   callback = function()
-    vim.cmd("setlocal formatoptions-=cro")
+    vim.opt.conceallevel = 0
   end,
 })
 

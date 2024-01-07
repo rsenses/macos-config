@@ -3,7 +3,6 @@
 -- Add any additional options here
 
 vim.opt.wrap = true -- Wrap long lines
-vim.opt.conceallevel = 0 -- Not remove anything from json
 vim.opt.breakindent = true -- maintain indent when wrapping indented lines
 vim.opt.swapfile = false
 vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
