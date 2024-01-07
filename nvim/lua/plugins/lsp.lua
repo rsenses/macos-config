@@ -1,5 +1,4 @@
-return -- add more treesitter parsers
-{
+return {
   "neovim/nvim-lspconfig",
   opts = {
     servers = {
