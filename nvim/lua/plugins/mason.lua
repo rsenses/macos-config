@@ -2,7 +2,6 @@ return {
   "williamboman/mason.nvim",
   opts = {
     ensure_installed = {
-      "bash-language-server",
       "blade-formatter",
       "eslint_d",
       "html-lsp",
@@ -14,6 +13,7 @@ return {
       "shfmt",
       "stylua",
       "tailwindcss-language-server",
+      "css-lsp",
     },
   },
 }

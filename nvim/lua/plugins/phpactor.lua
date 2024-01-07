@@ -1,7 +1,7 @@
 return {
   {
     "gbprod/phpactor.nvim",
-    ft = { "php", "yaml", "blade" },
+    ft = { "php" },
     cmd = { "PhpActor" },
     keys = {
       { "<leader>cp", ":PhpActor context_menu<cr>", desc = "PhpActor context menu" },

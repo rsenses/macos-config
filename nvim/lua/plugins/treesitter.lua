@@ -3,7 +3,6 @@ return {
   "nvim-treesitter/nvim-treesitter",
   opts = {
     ensure_installed = {
-      "bash",
       "html",
       "javascript",
       "json",
@@ -11,11 +10,13 @@ return {
       "markdown",
       "markdown_inline",
       "php",
-      "query",
       "regex",
       "typescript",
       "vim",
       "yaml",
+      "css",
+      "gitignore",
+      "scss",
     },
   },
 }
