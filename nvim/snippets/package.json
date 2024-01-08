@@ -1,0 +1,22 @@
+{
+  "name": "personal-snippets",
+  "engines": {
+    "vscode": "^1.11.0"
+  },
+  "contributes": {
+    "snippets": [
+      {
+        "language": "blade",
+        "path": "./helpers.json"
+      },
+      {
+        "language": "blade",
+        "path": "./livewire.json"
+      },
+      {
+        "language": "blade",
+        "path": "./snippets.json"
+      }
+    ]
+  }
+}

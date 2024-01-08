@@ -46,7 +46,7 @@ autocmd("LspAttach", {
     vim.schedule(function()
       -- Check if the attached client is 'intelephense'
       for _, client in ipairs(vim.lsp.get_active_clients()) do
-        if client.name == "intelephense" and client.attached_buffers[args.buf] then
+        if client.name == "phpactor" and client.attached_buffers[args.buf] then
           vim.api.nvim_buf_set_option(args.buf, "filetype", "blade")
           break
         end
