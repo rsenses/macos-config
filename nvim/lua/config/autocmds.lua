@@ -48,6 +48,7 @@ autocmd("LspAttach", {
       for _, client in ipairs(vim.lsp.get_active_clients()) do
         if client.name == "phpactor" and client.attached_buffers[args.buf] then
           vim.api.nvim_buf_set_option(args.buf, "filetype", "blade")
+          vim.api.nvim_buf_set_option(args.buf, "syntax", "blade")
           break
         end
       end
