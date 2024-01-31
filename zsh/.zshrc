@@ -47,7 +47,30 @@ bindkey -s '^o' 'vifm\n'
 bindkey -s '^v' 'nvim\n'
 bindkey -s '^z' 'zi\n'
 bindkey '^[[P' delete-char
+bindkey "ç" fzf-cd-widget
 
 # Edit line in vim with ctrl-e:
 autoload edit-command-line; zle -N edit-command-line
 bindkey '^e' edit-command-line
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+eval "$(nodenv init -)"
+
+# Herd injected PHP binary.
+export PATH="/Users/rubensilvarodriguez/Library/Application Support/Herd/bin/":$PATH
+
+
+# Herd injected PHP 8.2 configuration.
+export HERD_PHP_82_INI_SCAN_DIR="/Users/rubensilvarodriguez/Library/Application Support/Herd/config/php/82/"
+
+
+# Herd injected PHP 8.1 configuration.
+export HERD_PHP_81_INI_SCAN_DIR="/Users/rubensilvarodriguez/Library/Application Support/Herd/config/php/81/"
+
+
+# Herd injected PHP 8.0 configuration.
+export HERD_PHP_80_INI_SCAN_DIR="/Users/rubensilvarodriguez/Library/Application Support/Herd/config/php/80/"
+
+
+# Herd injected PHP 7.4 configuration.
+export HERD_PHP_74_INI_SCAN_DIR="/Users/rubensilvarodriguez/Library/Application Support/Herd/config/php/74/"
