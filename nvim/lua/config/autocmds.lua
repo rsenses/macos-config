@@ -55,3 +55,12 @@ autocmd("LspAttach", {
     end)
   end,
 })
+
+-- Autocommand to temporarily change 'phtml' filetype to 'html' when opening for LSP server activation
+autocmd({ "BufRead", "BufNewFile" }, {
+  group = augroup,
+  pattern = "*.latte",
+  callback = function()
+    vim.bo.filetype = "html"
+  end,
+})

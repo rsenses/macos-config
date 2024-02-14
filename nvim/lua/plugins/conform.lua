@@ -23,7 +23,7 @@ return {
         jsonc = { { "prettierd", "prettier" } },
         yaml = { { "prettierd", "prettier" } },
         markdown = { { "prettierd", "prettier" } },
-        php = { "pint" },
+        php = { "pint", "prettierd" },
         blade = { "blade-formatter", "rustywind" },
       },
       -- LazyVim will merge the options you set here with builtin formatters.
