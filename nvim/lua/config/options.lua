@@ -8,4 +8,4 @@ vim.opt.swapfile = false
 vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
 vim.opt.backup = true -- automatically save a backup file
 vim.opt.backupdir:remove(".") -- keep backups out of the current directory
-vim.opt.listchars:append("space:·") -- show tabs as »·
+-- vim.opt.listchars:append("space:·") -- show tabs as »·
