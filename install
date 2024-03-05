@@ -7,7 +7,7 @@ ln -sf $DOTFILES/zsh/.zshrc $HOME/.zshrc
 ln -s $DOTFILES/zsh $HOME/.config/zsh
 
 rm -rf $HOME/.config/nvim
-ln -s $DOTFILES/nvim $HOME/.config/nvim
+ln -s $DOTFILES/nvim-kickstart $HOME/.config/nvim
 
 rm -rf $HOME/.config/nvim.bak
 ln -s $DOTFILES/nvim.bak $HOME/.config/nvim.bak
