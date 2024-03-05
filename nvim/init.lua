@@ -207,6 +207,8 @@ vim.keymap.set({ 'n', 'v' }, '<leader>d', [["_d]], { desc = 'Delete without chan
 -- Trabajo con buffers
 vim.keymap.set({ 'n' }, '<leader>bd', ':bd<cr>', { desc = 'Delete Buffer' })
 vim.keymap.set({ 'n' }, '<leader>bp', ':bufdo bd<cr>', { desc = 'Delete all Buffers' })
+-- GitDiff
+vim.keymap.set({ 'n' }, '<leader>gd', ':DiffviewOpen<cr>', { desc = '[G]it [D]iff' })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -334,6 +336,7 @@ require('lazy').setup {
         ['<leader>b'] = { name = '[B]uffers', _ = 'which_key_ignore' },
         ['<leader>l'] = { name = '[L]aravel', _ = 'which_key_ignore' },
         ['<leader>u'] = { name = '[U]ndotree', _ = 'which_key_ignore' },
+        ['<leader>g'] = { name = '[G]it', _ = 'which_key_ignore' },
       }
     end,
   },
