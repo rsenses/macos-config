@@ -188,6 +188,9 @@ vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower win
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
 -- Personal keymaps
+-- Disable annoying command line thing
+vim.keymap.set('n', 'q:', ':q<CR>')
+-- Tmux navigation
 vim.keymap.set('n', '<C-h>', ':<C-U>TmuxNavigateLeft<cr>', { desc = 'Go to left window' })
 vim.keymap.set('n', '<C-j>', ':<C-U>TmuxNavigateDown<cr>', { desc = 'Go to lower window' })
 vim.keymap.set('n', '<C-k>', ':<C-U>TmuxNavigateUp<cr>', { desc = 'Go to upper window' })
