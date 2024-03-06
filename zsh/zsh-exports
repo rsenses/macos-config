@@ -14,12 +14,3 @@ export PATH="/opt/homebrew/bin":$PATH
 export PATH="$HOME/.local/bin":$PATH
 export PATH="$HOME/.composer/vendor/bin":$PATH
 export PATH="/Applications/Visual Studio Code - Insiders.app/Contents/Resources/app/bin":$PATH
-export PATH="/Users/rubensilvarodriguez/Library/Application Support/Herd/bin/":$PATH
-# Herd injected PHP 8.2 configuration.
-export HERD_PHP_82_INI_SCAN_DIR="/Users/rubensilvarodriguez/Library/Application Support/Herd/config/php/82/"
-# Herd injected PHP 7.4 configuration.
-export HERD_PHP_74_INI_SCAN_DIR="/Users/rubensilvarodriguez/Library/Application Support/Herd/config/php/74/"
-# Herd injected PHP 8.0 configuration.
-export HERD_PHP_80_INI_SCAN_DIR="/Users/rubensilvarodriguez/Library/Application Support/Herd/config/php/80/"
-# Herd injected PHP 8.1 configuration.
-export HERD_PHP_81_INI_SCAN_DIR="/Users/rubensilvarodriguez/Library/Application Support/Herd/config/php/81/"
