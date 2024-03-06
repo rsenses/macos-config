@@ -55,3 +55,6 @@ ln -sf $DOTFILES/tmux/.tmux-cht-command $HOME/.tmux-cht-command
 rm -rf $HOME/.local/bin/tmux-cht.sh
 ln -sf $DOTFILES/scripts/tmux-cht.sh $HOME/.local/bin/tmux-cht.sh
 chmod +x $HOME/.local/bin/tmux-cht.sh
+
+rm -rf $HOME/.editorconfig
+ln -sf $DOTFILES/.editorconfig $HOME/.editorconfig
