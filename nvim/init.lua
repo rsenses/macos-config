@@ -164,14 +164,6 @@ vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagn
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
--- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
--- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
--- is not what someone will guess without a bit more experience.
---
--- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
--- or just use <C-\><C-n> to exit terminal mode
-vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
-
 -- TIP: Disable arrow keys in normal mode
 vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
 vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
@@ -210,6 +202,10 @@ vim.keymap.set({ 'n', 'v' }, '<leader>d', [["_d]], { desc = 'Delete without chan
 -- Trabajo con buffers
 vim.keymap.set({ 'n' }, '<leader>bd', ':bd<cr>', { desc = 'Delete Buffer' })
 vim.keymap.set({ 'n' }, '<leader>bp', ':bufdo bd<cr>', { desc = 'Delete all Buffers' })
+-- Formatting
+vim.keymap.set({ 'n', 'v' }, '<leader>cf', 'gg=G', { desc = '[C]ode [F]ormat' })
+-- Mini files
+vim.keymap.set({ 'n' }, '-', '<cmd>lua MiniFiles.open()<cr>', { desc = 'Open parent directory' })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -255,7 +251,9 @@ vim.api.nvim_create_autocmd('FileType', {
 -- Filetypes --
 vim.filetype.add {
   pattern = {
-    ['.*%.blade%.php'] = 'blade',
+    ['.*.blade.php'] = 'blade',
+    ['.*.html.twig'] = 'twig',
+    ['.*.latte'] = 'html',
   },
 }
 
@@ -371,7 +369,7 @@ require('lazy').setup {
       -- Useful for getting pretty icons, but requires special font.
       --  If you already have a Nerd Font, or terminal set up with fallback fonts
       --  you can enable this
-      -- { 'nvim-tree/nvim-web-devicons' }
+      { 'nvim-tree/nvim-web-devicons' }
     },
     config = function()
       -- Telescope is a fuzzy finder that comes with a lot of different things that
@@ -607,6 +605,7 @@ require('lazy').setup {
         -- tsserver = {},
         --
 
+        -- html = { filetypes = { 'html', 'twig', 'hbs' } },
         prettierd = {},
         tailwindcss = {},
         emmet_ls = {
@@ -710,11 +709,22 @@ require('lazy').setup {
 
   { -- Autoformat
     'stevearc/conform.nvim',
+    dependencies = { 'mason.nvim' },
+    lazy = true,
+    cmd = 'ConformInfo',
+    keys = {
+      {
+        '<leader>cF',
+        function()
+          require('conform').format { async = true, lsp_fallback = true }
+        end,
+        mode = { 'n', 'v' },
+        desc = '[C]ode [F]ormat LSP',
+      },
+    },
     opts = {
-      notify_on_error = false,
       format_on_save = {
-        timeout_ms = 500,
-        lsp_fallback = true,
+        timeout_ms = 10000,
       },
       formatters_by_ft = {
         -- Conform can also run multiple formatters sequentially
@@ -722,7 +732,7 @@ require('lazy').setup {
         --
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
-        -- javascript = { { "prettierd", "prettier" } },
+
         lua = { 'stylua' },
         javascript = { { 'prettierd', 'prettier' } },
         typescript = { { 'prettierd', 'prettier' } },
@@ -730,14 +740,29 @@ require('lazy').setup {
         css = { { 'prettierd', 'prettier' } },
         scss = { { 'prettierd', 'prettier' } },
         less = { { 'prettierd', 'prettier' } },
-        html = { { 'prettierd', 'prettier' } },
-        -- twig = { { "prettierd", "prettier" } },
+        html = { { 'prettier' } },
+        twig = { { 'prettierd', 'prettier' } },
         json = { { 'prettierd', 'prettier' } },
         jsonc = { { 'prettierd', 'prettier' } },
         yaml = { { 'prettierd', 'prettier' } },
         markdown = { { 'prettierd', 'prettier' } },
         php = { 'pint' },
         blade = { 'blade-formatter' },
+      },
+    },
+  },
+
+  -- Copilot
+  {
+    'zbirenbaum/copilot.lua',
+    cmd = 'Copilot',
+    build = ':Copilot auth',
+    opts = {
+      suggestion = { enabled = false },
+      panel = { enabled = false },
+      filetypes = {
+        markdown = true,
+        help = true,
       },
     },
   },
@@ -775,24 +800,22 @@ require('lazy').setup {
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-path',
 
+      {
+        'zbirenbaum/copilot-cmp',
+        dependencies = 'copilot.lua',
+        opts = {},
+        config = function(_, opts)
+          local copilot_cmp = require 'copilot_cmp'
+          copilot_cmp.setup(opts)
+        end,
+      },
+
       -- If you want to add a bunch of pre-configured snippets,
       --    you can use this plugin to help you. It even has snippets
       --    for various frameworks/libraries/etc. but you will have to
       --    set up the ones that are useful for you.
       -- 'rafamadriz/friendly-snippets',
     },
-    opts = function(_, opts)
-      local cmp = require 'cmp'
-
-      -- Elimina preselect y virtual text
-      opts.preselect = cmp.PreselectMode.None
-      opts.completion = {
-        completeopt = 'noselect',
-      }
-      opts.experimental = {
-        ghost_text = false,
-      }
-    end,
     config = function()
       -- See `:help cmp`
       local cmp = require 'cmp'
@@ -805,7 +828,7 @@ require('lazy').setup {
             luasnip.lsp_expand(args.body)
           end,
         },
-        completion = { completeopt = 'menu,menuone,noinsert' },
+        completion = { completeopt = 'menu,menuone,noinsert,noselect' },
 
         -- For an understanding of why these mappings were
         -- chosen, you will need to read `:help ins-completion`
@@ -820,7 +843,7 @@ require('lazy').setup {
           -- Accept ([y]es) the completion.
           --  This will auto-import if your LSP supports it.
           --  This will expand snippets if the LSP sent a snippet.
-          ['<C-y>'] = cmp.mapping.confirm { select = true },
+          ['<C-y>'] = cmp.mapping.confirm { select = false },
 
           -- Manually trigger a completion from nvim-cmp.
           --  Generally you don't need this, because nvim-cmp will display
@@ -847,9 +870,12 @@ require('lazy').setup {
           end, { 'i', 's' }),
         },
         sources = {
-          { name = 'nvim_lsp' },
-          { name = 'luasnip' },
-          { name = 'path' },
+          -- Copilot Source
+          { name = 'copilot', group_index = 2, priority = 100 },
+          -- Other Sources
+          { name = 'nvim_lsp', group_index = 2 },
+          { name = 'path', group_index = 2 },
+          { name = 'luasnip', group_index = 2 },
         },
       }
     end,
@@ -884,7 +910,7 @@ require('lazy').setup {
       --  - va)  - [V]isually select [A]round [)]paren
       --  - yinq - [Y]ank [I]nside [N]ext [']quote
       --  - ci'  - [C]hange [I]nside [']quote
-      require('mini.ai').setup { n_lines = 500 }
+      -- require('mini.ai').setup { n_lines = 500 }
 
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
       --
@@ -897,6 +923,13 @@ require('lazy').setup {
 
       -- "gc" to comment visual regions/lines
       require('mini.comment').setup()
+
+      -- file manager
+      require('mini.files').setup()
+
+      -- Notifications
+      require('mini.notify').setup()
+      vim.notify = require('mini.notify').make_notify()
 
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
@@ -925,6 +958,16 @@ require('lazy').setup {
     },
     config = function()
       -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
+      local parser_config = require('nvim-treesitter.parsers').get_parser_configs()
+
+      parser_config.blade = {
+        install_info = {
+          url = 'https://github.com/EmranMR/tree-sitter-blade',
+          files = { 'src/parser.c' },
+          branch = 'main',
+        },
+        filetype = 'blade',
+      }
 
       ---@diagnostic disable-next-line: missing-fields
       require('nvim-treesitter.configs').setup {
@@ -959,16 +1002,6 @@ require('lazy').setup {
       --    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
       --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
       --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
-      local parser_config = require('nvim-treesitter.parsers').get_parser_configs()
-
-      parser_config.blade = {
-        install_info = {
-          url = 'https://github.com/EmranMR/tree-sitter-blade',
-          files = { 'src/parser.c' },
-          branch = 'main',
-        },
-        filetype = 'blade',
-      }
     end,
   },
 
@@ -990,6 +1023,7 @@ require('lazy').setup {
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   --    For additional information, see `:help lazy.nvim-lazy.nvim-structuring-your-plugins`
   { import = 'custom.plugins' },
+
   performance = {
     rtp = {
       -- disable some rtp plugins
