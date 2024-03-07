@@ -155,4 +155,17 @@ return {
     },
     event = 'InsertEnter',
   },
+  {
+    'JoosepAlviste/nvim-ts-context-commentstring',
+    dependencies = {
+      { 'nvim-treesitter/nvim-treesitter' },
+    },
+    event = 'InsertEnter',
+    config = function()
+      vim.g.skip_ts_context_commentstring_module = true
+      require('nvim-treesitter.configs').setup {
+        enable_autocmd = false,
+      }
+    end,
+  },
 }
