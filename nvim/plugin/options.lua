@@ -9,6 +9,9 @@ local opt = vim.opt
 opt.termguicolors = true
 vim.g.have_nerd_font = true
 
+-- Global Status bar
+opt.laststatus = 3
+
 -- Ignore compiled files
 opt.wildignore = '__pycache__'
 opt.wildignore:append { '*.o', '*~', '*.pyc', '*pycache*' }

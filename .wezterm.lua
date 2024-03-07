@@ -17,12 +17,17 @@ config.color_scheme = "kanagawa (Gogh)"
 config.font = wezterm.font("Terminess Nerd Font Mono")
 config.font_size = 19
 config.line_height = 1.2
+
+-- default is true, has more "native" look
+config.use_fancy_tab_bar = false
+
 config.window_padding = {
 	left = 10,
 	right = 0,
 	top = 10,
 	bottom = 0,
 }
+config.enable_scroll_bar = false
 config.window_decorations = "RESIZE"
 config.window_background_opacity = 0.98
 config.hide_tab_bar_if_only_one_tab = true
