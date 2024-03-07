@@ -22,7 +22,12 @@ return {
     require('mini.comment').setup()
 
     -- Notifications
-    require('mini.notify').setup()
+    require('mini.notify').setup {
+      lsp_progress = {
+        -- Whether to enable showing
+        enable = false,
+      },
+    }
     vim.notify = require('mini.notify').make_notify()
 
     -- Simple and easy statusline.
