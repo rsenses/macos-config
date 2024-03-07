@@ -7,6 +7,7 @@
 local opt = vim.opt
 
 opt.termguicolors = true
+vim.g.have_nerd_font = true
 
 -- Ignore compiled files
 opt.wildignore = '__pycache__'
