@@ -13,16 +13,13 @@ insert_final_newline = true
 
 # Spaces in coffee
 [**.coffee]
-indent_style = space
 indent_size = 2
 
 [*.{js,ts,json}]
-indent_style = space
 indent_size = 2
 
 # Tabs in less
-[*.{less,css,sass,scss}]
-indent_style = space
+[*.css]
 indent_size = 2
 
 [**.html]

@@ -22,7 +22,6 @@ opt.pumblend = 17
 opt.wildmode = 'longest:full'
 opt.wildoptions = 'pum'
 
-opt.showmode = false
 opt.showcmd = true
 opt.cmdheight = 1 -- Height of the command bar
 opt.incsearch = true -- Makes search act like search in modern browsers
