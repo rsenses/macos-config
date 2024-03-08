@@ -212,7 +212,15 @@ return {
     --    :Mason
     --
     --  You can press `g?` for help in this menu
-    require('mason').setup()
+    require('mason').setup({
+      ui = {
+        icons = {
+          package_installed = "✓",
+          package_pending = "➜",
+          package_uninstalled = "✗",
+        },
+      },
+    })
 
     -- You can add other tools here that you want Mason to install
     -- for you, so that they are available from within Neovim.
@@ -228,7 +236,7 @@ return {
       'stylua',
       'tailwindcss-language-server',
     })
-    require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+    require('mason-tool-installer').setup { ensure_installed = ensure_installed, automatic_installation = true }
 
     require('mason-lspconfig').setup {
       handlers = {

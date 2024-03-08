@@ -129,8 +129,7 @@ opt.cursorline = true
 
 -- Netrw settings
 -- Netew winsize
--- @default = 20
-vim.g.netrw_winsize = 30
+vim.g.netrw_winsize = 20
 
 -- Netrw banner
 -- 0 : Disable banner
