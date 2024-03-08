@@ -29,9 +29,11 @@ vim.keymap.set('n', '<C-u>', '<C-u>zz')
 vim.keymap.set('n', 'n', 'nzzzv')
 vim.keymap.set('n', 'N', 'Nzzzv')
 
--- Copiar, pegar y borrar sin usar el registro
+-- Copiar, pegar y borrar sin usar el registro, x lo hace por defecto, para no llenar de basurilla el registro
 vim.keymap.set('x', '<leader>p', [["_dP]], { desc = 'Paste without change register' })
 vim.keymap.set({ 'n', 'v' }, '<leader>d', [["_d]], { desc = 'Delete without change register' })
+vim.keymap.set({ 'n', 'v' }, 'x', [["_x]], { desc = 'Delete without change register' })
+vim.keymap.set({ 'n', 'v' }, 'X', [["_X]], { desc = 'Delete without change register' })
 
 -- Resize window using <ctrl> arrow keys
 vim.keymap.set('n', '<C-Up>', '<cmd>resize +2<cr>', { desc = 'Increase window height' })
