@@ -1,23 +1,24 @@
 -- Autoformat
 return {
   'stevearc/conform.nvim',
-  dependencies = { 'mason.nvim' },
-  lazy = true,
-  cmd = 'ConformInfo',
+  dependencies = { 'williamboman/mason.nvim' },
+  event = { 'BufReadPre', 'BufNewFile' },
   keys = {
     {
       '<leader>cf',
       function()
-        require('conform').format { async = true, lsp_fallback = true }
+        require('conform').format { async = true, lsp_fallback = true, timeout_ms = 5000 }
       end,
       mode = { 'n', 'v' },
       desc = '[C]ode [F]ormat LSP',
     },
   },
   opts = {
+    notify_on_error = true,
     format_on_save = {
       lsp_fallback = true,
-      timeout_ms = 10000,
+      async = false,
+      timeout_ms = 5000,
     },
     formatters_by_ft = {
       -- Conform can also run multiple formatters sequentially
