@@ -146,7 +146,7 @@ return {
       -- tsserver = {},
       --
 
-      -- html = { filetypes = { 'html', 'twig', 'hbs' } },
+      html = { filetypes = { 'html', 'twig', 'hbs' } },
       emmet_ls = {
         filetypes = {
           'css',
@@ -212,15 +212,15 @@ return {
     --    :Mason
     --
     --  You can press `g?` for help in this menu
-    require('mason').setup({
+    require('mason').setup {
       ui = {
         icons = {
-          package_installed = "✓",
-          package_pending = "➜",
-          package_uninstalled = "✗",
+          package_installed = '✓',
+          package_pending = '➜',
+          package_uninstalled = '✗',
         },
       },
-    })
+    }
 
     -- You can add other tools here that you want Mason to install
     -- for you, so that they are available from within Neovim.

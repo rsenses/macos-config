@@ -9,11 +9,7 @@ return {
     require('mini.surround').setup { n_lines = 500 }
 
     require('mini.indentscope').setup {
-      -- Options which control scope computation
       options = {
-        -- Whether to first check input line to be a border of adjacent scope.
-        -- Use it if you want to place cursor on function header to get scope of
-        -- its body.
         try_as_border = true,
       },
     }
@@ -34,7 +30,9 @@ return {
     --  You could remove this setup call if you don't like it,
     --  and try some other statusline plugin
     local statusline = require 'mini.statusline'
-    statusline.setup()
+    statusline.setup {
+      set_vim_settings = true,
+    }
 
     -- You can configure sections in the statusline by overriding their
     -- default behavior. For example, here we set the section for
