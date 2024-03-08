@@ -61,6 +61,59 @@ return {
         end,
       },
       completion = { completeopt = 'menu,menuone,noinsert,noselect' },
+      window = {
+        completion = cmp.config.window.bordered(),
+        documentation = cmp.config.window.bordered(),
+      },
+      formatting = {
+        -- changing the order of fields so the icon is the first
+        fields = { 'menu', 'abbr', 'kind' },
+
+        -- here is where the change happens
+        format = function(entry, item)
+          local menu_icon = {
+            nvim_lsp = 'λ',
+            luasnip = '⋗',
+            buffer = 'Ω',
+            path = '',
+            copilot = '',
+            nvim_lua = 'Π',
+          }
+          local kind_icons = {
+            Text = ' ',
+            Method = ' ',
+            Function = ' ',
+            Constructor = ' ',
+            Field = ' ﴲ ',
+            Variable = '[]',
+            Class = '  ',
+            Interface = ' ﰮ ',
+            Module = ' ',
+            Property = ' 襁',
+            Unit = ' ',
+            Value = '  ',
+            Enum = ' 練',
+            Keyword = ' ',
+            Snippet = ' ',
+            Color = '  ',
+            File = ' ',
+            Reference = '  ',
+            Folder = ' ',
+            EnumMember = ' ',
+            Constant = ' ﲀ',
+            Struct = ' ﳤ',
+            Event = '  ',
+            Operator = ' ',
+            TypeParameter = '  ',
+          }
+
+          item.kind = (kind_icons[item.kind] or '') .. ' ' .. item.kind
+
+          item.menu = menu_icon[entry.source.name]
+
+          return item
+        end,
+      },
 
       -- For an understanding of why these mappings were
       -- chosen, you will need to read `:help ins-completion`
@@ -102,12 +155,10 @@ return {
         end, { 'i', 's' }),
       },
       sources = {
-        -- Copilot Source
-        { name = 'copilot', group_index = 2, priority = 100 },
-        -- Other Sources
         { name = 'nvim_lsp', group_index = 2 },
-        { name = 'path', group_index = 2 },
         { name = 'luasnip', group_index = 2 },
+        { name = 'copilot', group_index = 2 },
+        { name = 'path', group_index = 2 },
       },
     }
   end,
