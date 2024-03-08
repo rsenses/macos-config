@@ -14,6 +14,7 @@ tags
 vendor-tags
 .ssh
 _ide_helper.php
+_ide_helper_models.php
 .lvimrc
 .projections.json
 .php-cs-fixer.cache
