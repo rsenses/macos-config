@@ -130,7 +130,7 @@ opt.cursorline = true
 -- Netrw settings
 -- Netew winsize
 -- @default = 20
-vim.g.netrw_winsize = 20
+vim.g.netrw_winsize = 30
 
 -- Netrw banner
 -- 0 : Disable banner
@@ -139,7 +139,7 @@ vim.g.netrw_banner = 0
 
 -- Keep the current directory and the browsing directory synced.
 -- This helps you avoid the move files error.
-vim.g.netrw_keepdir = 0
+-- vim.g.netrw_keepdir = 0
 
 -- Show directories first (sorting)
 vim.g.netrw_sort_sequence = [[[\/]$,*]]
