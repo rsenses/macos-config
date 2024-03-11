@@ -78,4 +78,4 @@ vim.keymap.set('n', '<leader>w-', '<C-W>s', { desc = 'Split window below', remap
 vim.keymap.set('n', '<leader>w|', '<C-W>v', { desc = 'Split window right', remap = true })
 
 -- NetRW
-vim.keymap.set({ 'n' }, '-', ':Ex %:p:h<cr>', { desc = 'Open parent directory' })
+vim.keymap.set({ 'n' }, '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
