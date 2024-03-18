@@ -125,3 +125,14 @@ opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 
 -- Show which line your cursor is on
 opt.cursorline = true
+
+-- Spell check
+vim.g.loaded_spellfile_plugin = 0
+vim.g.spellfile_URL = 'https://ftp.nluug.nl/vim/runtime/spell/'
+opt.spelllang = { 'es_es', 'en_us' }
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = { 'markdown', 'text' },
+  callback = function()
+    vim.opt_local.spell = true
+  end,
+})
