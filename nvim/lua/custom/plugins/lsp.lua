@@ -147,6 +147,7 @@ return {
       --
 
       html = { filetypes = { 'html', 'twig', 'hbs' } },
+      elixirls = {},
       emmet_ls = {
         filetypes = {
           'css',

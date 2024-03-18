@@ -64,7 +64,21 @@ return {
       -- },
       -- pickers = {}
       defaults = {
-        file_ignore_patterns = { '.git/.*', '.cache', '%.o', '%.a', '%.out', '%.class', '%.pdf', '%.mkv', '%.mp4', '%.zip' },
+        file_ignore_patterns = {
+          '.git/.*',
+          '.cache',
+          '%.o',
+          '%.a',
+          '%.out',
+          '%.class',
+          '%.pdf',
+          '%.mkv',
+          '%.mp4',
+          '%.zip',
+          '.elixir_ls/*',
+          'deps/*',
+          '_build/',
+        },
       },
       extensions = {
         ['ui-select'] = {

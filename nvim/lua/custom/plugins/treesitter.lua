@@ -25,8 +25,11 @@ return {
     },
     opts = {
       ensure_installed = {
+        'eex',
+        'elixir',
+        'erlang',
+        'heex',
         'bash',
-        'c',
         'html',
         'lua',
         'markdown',
