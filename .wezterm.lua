@@ -31,7 +31,7 @@ config.window_padding = {
 }
 config.enable_scroll_bar = false
 config.window_decorations = "RESIZE"
-config.window_background_opacity = 0.98
+config.window_background_opacity = 0.95
 config.hide_tab_bar_if_only_one_tab = true
 config.macos_window_background_blur = 10
 config.send_composed_key_when_left_alt_is_pressed = true

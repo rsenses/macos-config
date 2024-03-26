@@ -19,6 +19,9 @@ return {
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`
     'rebelot/kanagawa.nvim',
     priority = 1000, -- make sure to load this before all the other start plugins
+    opts = {
+      transparent = true,
+    },
     init = function()
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
