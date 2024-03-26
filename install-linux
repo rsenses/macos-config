@@ -4,23 +4,17 @@ DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 rm -rf $HOME/.config/zsh
 ln -s $DOTFILES/zsh $HOME/.config/zsh
-ln -sf $DOTFILES/zsh/zshrc $HOME/.config/.zshrc
+ln -sf $DOTFILES/zsh/zshrc-linux $HOME/.config/.zshrc
 ln -sf $DOTFILES/zsh/zshenv $HOME/.zshenv
 
 rm -rf $HOME/.config/nvim
 ln -s $DOTFILES/nvim $HOME/.config/nvim
 
-rm -rf $HOME/.wezterm.lua
-ln -s $DOTFILES/.wezterm.lua $HOME/.wezterm.lua
-
-rm -rf $HOME/.config/wezterm
-ln -s $DOTFILES/wezterm $HOME/.config/wezterm
+rm -rf $HOME/.config/kitty
+ln -s $DOTFILES/kitty $HOME/.config/kitty
 
 rm -rf $HOME/.config/tmux
 ln -sf $DOTFILES/tmux $HOME/.config/tmux
-
-rm -rf $HOME/.config/yabai
-ln -sf $DOTFILES/yabai $HOME/.config/yabai
 
 ln -sf $DOTFILES/git/gitconfig $HOME/.gitconfig
 

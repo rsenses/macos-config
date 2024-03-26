@@ -21,7 +21,7 @@ alias fgrep='fgrep --color=auto'
 # confirm before overwriting something
 alias cp="cp -i"
 alias mv='mv -i'
-alias rm='trash-put'
+# alias rm='trash-put'
 
 # easier to read disk
 alias df='df -h' # human-readable sizes
