@@ -180,7 +180,7 @@ screen.connect_signal("property::geometry", set_wallpaper)
 awesome.set_preferred_icon_size(32)
 
 awful.screen.connect_for_each_screen(function(s)
-    local tags = { "  ", "  ", " 󱃪 ", " 󰺵 ", "  " }
+    local tags = { "  ", "  ", " 󱃪 ", " 󰺵 ", "   " }
 
     -- Each screen has its own tag table.
     awful.tag(tags, s, awful.layout.layouts[1])
