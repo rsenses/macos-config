@@ -48,5 +48,9 @@ rm -rf $HOME/.local/bin/tmux-cht.sh
 ln -sf $DOTFILES/scripts/tmux-cht.sh $HOME/.local/bin/tmux-cht.sh
 chmod +x $HOME/.local/bin/tmux-cht.sh
 
+rm -rf $HOME/.local/bin/rofi-power-menu
+ln -sf $DOTFILES/scripts/rofi-power-menu $HOME/.local/bin/rofi-power-menu
+chmod +x $HOME/.local/bin/rofi-power-menu
+
 rm -rf $HOME/.editorconfig
 ln -sf $DOTFILES/.editorconfig $HOME/.editorconfig
