@@ -351,11 +351,14 @@ globalkeys = gears.table.join(
     awful.key({ modkey }, "u", awful.client.urgent.jumpto, { description = "jump to urgent client", group = "client" }),
     -- Focus screen
     awful.key({ modkey }, "Tab", function()
-        awful.screen.focus_relative(1)
-    end, { description = "focus the next screen", group = "screen" }),
-    awful.key({ modkey, "Shift" }, "Tab", function()
-        awful.screen.focus_relative(-1)
-    end, { description = "focus the previous screen", group = "screen" }),
+        local c = awful.client.focus.history.list[2]
+        client.focus = c
+        local t = client.focus and client.focus.first_tag or nil
+        if t then
+            t:view_only()
+        end
+        c:raise()
+    end, { description = "go back", group = "client" }),
 
     -- Standard program
     awful.key({ modkey }, "Return", function()
