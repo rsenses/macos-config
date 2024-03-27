@@ -1,1 +1,0 @@
-/Users/rubensilvarodriguez/dev/contrib/dotfiles/zsh/zshrc
