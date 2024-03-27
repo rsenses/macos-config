@@ -316,13 +316,38 @@ globalkeys = gears.table.join(
         mymainmenu:show()
     end, { description = "show main menu", group = "awesome" }),
 
-    -- Layout manipulation
+    -- Moving windows between positions works between desktops
+    awful.key({ modkey, "Shift" }, "h", function()
+        awful.client.swap.global_bydirection("left")
+    end, { description = "swap with left client", group = "client" }),
+    awful.key({ modkey, "Shift" }, "l", function()
+        awful.client.swap.global_bydirection("right")
+    end, { description = "swap with right client", group = "client" }),
     awful.key({ modkey, "Shift" }, "j", function()
-        awful.client.swap.byidx(1)
-    end, { description = "swap with next client by index", group = "client" }),
+        awful.client.swap.global_bydirection("down")
+    end, { description = "swap with down client", group = "client" }),
     awful.key({ modkey, "Shift" }, "k", function()
-        awful.client.swap.byidx(-1)
-    end, { description = "swap with previous client by index", group = "client" }),
+        awful.client.swap.global_bydirection("up")
+    end, { description = "swap with up client", group = "client" }),
+
+    awful.key({ modkey }, "+", function()
+        awful.tag.incmwfact(0.05)
+    end, { description = "increase master width factor", group = "layout" }),
+    awful.key({ modkey }, "-", function()
+        awful.tag.incmwfact(-0.05)
+    end, { description = "decrease master width factor", group = "layout" }),
+
+    awful.key({ modkey, "Control" }, "+", function()
+        awful.tag.incncol(1, nil, true)
+    end, { description = "increase the number of columns", group = "layout" }),
+    awful.key({ modkey, "Control" }, "-", function()
+        awful.tag.incncol(-1, nil, true)
+    end, { description = "decrease the number of columns", group = "layout" }),
+    -- awful.key({ modkey, "Shift" }, "space", function()
+    --     awful.layout.inc(-1)
+    -- end, { description = "select previous", group = "layout" }),
+
+    -- Layout manipulation
     awful.key({ modkey, "Control" }, "j", function()
         awful.screen.focus_relative(1)
     end, { description = "focus the next screen", group = "screen" }),
@@ -346,22 +371,6 @@ globalkeys = gears.table.join(
     awful.key({ modkey }, "space", function()
         awful.spawn.with_shell("rofi -show drun &>> /tmp/rofi.log")
     end, { description = "execute app", group = "awesome" }),
-
-    awful.key({ modkey, "Shift" }, "l", function()
-        awful.tag.incmwfact(0.05)
-    end, { description = "increase master width factor", group = "layout" }),
-    awful.key({ modkey, "Shift" }, "h", function()
-        awful.tag.incmwfact(-0.05)
-    end, { description = "decrease master width factor", group = "layout" }),
-    awful.key({ modkey, "Control" }, "h", function()
-        awful.tag.incncol(1, nil, true)
-    end, { description = "increase the number of columns", group = "layout" }),
-    awful.key({ modkey, "Control" }, "l", function()
-        awful.tag.incncol(-1, nil, true)
-    end, { description = "decrease the number of columns", group = "layout" }),
-    -- awful.key({ modkey, "Shift" }, "space", function()
-    --     awful.layout.inc(-1)
-    -- end, { description = "select previous", group = "layout" }),
 
     awful.key({ modkey, "Control" }, "n", function()
         local c = awful.client.restore()
