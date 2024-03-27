@@ -525,6 +525,7 @@ awful.rules.rules = {
                 "DTA", -- Firefox addon DownThemAll.
                 "copyq", -- Includes session name in class.
                 "pinentry",
+                "Devtools", -- Firefox devtools
             },
             class = {
                 "Arandr",
@@ -537,6 +538,8 @@ awful.rules.rules = {
                 "Wpa_gui",
                 "veromix",
                 "xtightvncviewer",
+                "Lxappearance",
+                "Rofi",
             },
 
             -- Note that the name property shown in xprop might be set slightly after creation of the client
@@ -548,6 +551,7 @@ awful.rules.rules = {
                 "AlarmWindow", -- Thunderbird's calendar.
                 "ConfigManager", -- Thunderbird's about:config.
                 "pop-up", -- e.g. Google Chrome's (detached) Developer Tools.
+                "GtkFileChooserDialog",
             },
         },
         properties = { floating = true },
