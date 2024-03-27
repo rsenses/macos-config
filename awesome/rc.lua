@@ -330,14 +330,14 @@ globalkeys = gears.table.join(
         awful.client.swap.global_bydirection("up")
     end, { description = "swap with up client", group = "client" }),
 
-    awful.key({ modkey }, "+", function()
+    awful.key({ modkey }, "=", function()
         awful.tag.incmwfact(0.05)
     end, { description = "increase master width factor", group = "layout" }),
     awful.key({ modkey }, "-", function()
         awful.tag.incmwfact(-0.05)
     end, { description = "decrease master width factor", group = "layout" }),
 
-    awful.key({ modkey, "Control" }, "+", function()
+    awful.key({ modkey, "Control" }, "=", function()
         awful.tag.incncol(1, nil, true)
     end, { description = "increase the number of columns", group = "layout" }),
     awful.key({ modkey, "Control" }, "-", function()
@@ -348,12 +348,12 @@ globalkeys = gears.table.join(
     -- end, { description = "select previous", group = "layout" }),
 
     -- Layout manipulation
-    awful.key({ modkey, "Control" }, "j", function()
-        awful.screen.focus_relative(1)
-    end, { description = "focus the next screen", group = "screen" }),
-    awful.key({ modkey, "Control" }, "k", function()
-        awful.screen.focus_relative(-1)
-    end, { description = "focus the previous screen", group = "screen" }),
+    -- awful.key({ modkey, "Control" }, "j", function()
+    --     awful.screen.focus_relative(1)
+    -- end, { description = "focus the next screen", group = "screen" }),
+    -- awful.key({ modkey, "Control" }, "k", function()
+    --     awful.screen.focus_relative(-1)
+    -- end, { description = "focus the previous screen", group = "screen" }),
     awful.key({ modkey }, "u", awful.client.urgent.jumpto, { description = "jump to urgent client", group = "client" }),
     awful.key({ modkey }, "Tab", function()
         awful.client.focus.history.previous()
@@ -437,17 +437,17 @@ clientkeys = gears.table.join(
     awful.key({ modkey }, "m", function(c)
         c.maximized = not c.maximized
         c:raise()
-    end, { description = "(un)maximize", group = "client" }),
+    end, { description = "(un)maximize", group = "client" })
 
-    awful.key({ modkey, "Control" }, "m", function(c)
-        c.maximized_vertical = not c.maximized_vertical
-        c:raise()
-    end, { description = "(un)maximize vertically", group = "client" }),
+    -- awful.key({ modkey, "Control" }, "m", function(c)
+    --     c.maximized_vertical = not c.maximized_vertical
+    --     c:raise()
+    -- end, { description = "(un)maximize vertically", group = "client" }),
 
-    awful.key({ modkey, "Shift" }, "m", function(c)
-        c.maximized_horizontal = not c.maximized_horizontal
-        c:raise()
-    end, { description = "(un)maximize horizontally", group = "client" })
+    -- awful.key({ modkey, "Shift" }, "m", function(c)
+    --     c.maximized_horizontal = not c.maximized_horizontal
+    --     c:raise()
+    -- end, { description = "(un)maximize horizontally", group = "client" })
 )
 
 -- Bind all key numbers to tags.
