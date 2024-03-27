@@ -26,6 +26,8 @@ ln -sf $DOTFILES/git/gitconfig $HOME/.gitconfig
 
 ln -sf $DOTFILES/git/gitignore $HOME/.gitignore
 
+ln -sf $DOTFILES/.Xresources $HOME/.Xresources
+
 mkdir -p $HOME/.local/bin
 
 rm -rf $HOME/.local/bin/t
