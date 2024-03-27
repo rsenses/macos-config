@@ -7,4 +7,5 @@
 vifminfo.json
 zsh/plugins
 zsh/.zshrc
+zsh/.zprofile
 lazy-lock.json
