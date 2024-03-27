@@ -298,12 +298,24 @@ globalkeys = gears.table.join(
     awful.key({ modkey }, "Right", awful.tag.viewnext, { description = "view next", group = "tag" }),
     awful.key({ modkey }, "Escape", awful.tag.history.restore, { description = "go back", group = "tag" }),
 
-    awful.key({ modkey }, "j", function()
-        awful.client.focus.byidx(1)
-    end, { description = "focus next by index", group = "client" }),
-    awful.key({ modkey }, "k", function()
-        awful.client.focus.byidx(-1)
-    end, { description = "focus previous by index", group = "client" }),
+    -- Moving window focus works between desktops
+    awful.key({ modkey }, "j", function(c)
+        awful.client.focus.global_bydirection("down")
+        c:lower()
+    end, { description = "focus next window up", group = "client" }),
+    awful.key({ modkey }, "k", function(c)
+        awful.client.focus.global_bydirection("up")
+        c:lower()
+    end, { description = "focus next window down", group = "client" }),
+    awful.key({ modkey }, "l", function(c)
+        awful.client.focus.global_bydirection("right")
+        c:lower()
+    end, { description = "focus next window right", group = "client" }),
+    awful.key({ modkey }, "h", function(c)
+        awful.client.focus.global_bydirection("left")
+        c:lower()
+    end, { description = "focus next window left", group = "client" }),
+
     awful.key({ modkey }, "w", function()
         mymainmenu:show()
     end, { description = "show main menu", group = "awesome" }),
@@ -339,27 +351,21 @@ globalkeys = gears.table.join(
         awful.spawn.with_shell("rofi -show drun &>> /tmp/rofi.log")
     end, { description = "execute app", group = "awesome" }),
 
-    awful.key({ modkey }, "l", function()
+    awful.key({ modkey, "Shift" }, "l", function()
         awful.tag.incmwfact(0.05)
     end, { description = "increase master width factor", group = "layout" }),
-    awful.key({ modkey }, "h", function()
+    awful.key({ modkey, "Shift" }, "h", function()
         awful.tag.incmwfact(-0.05)
     end, { description = "decrease master width factor", group = "layout" }),
-    awful.key({ modkey, "Shift" }, "h", function()
-        awful.tag.incnmaster(1, nil, true)
-    end, { description = "increase the number of master clients", group = "layout" }),
-    awful.key({ modkey, "Shift" }, "l", function()
-        awful.tag.incnmaster(-1, nil, true)
-    end, { description = "decrease the number of master clients", group = "layout" }),
     awful.key({ modkey, "Control" }, "h", function()
         awful.tag.incncol(1, nil, true)
     end, { description = "increase the number of columns", group = "layout" }),
     awful.key({ modkey, "Control" }, "l", function()
         awful.tag.incncol(-1, nil, true)
     end, { description = "decrease the number of columns", group = "layout" }),
-    awful.key({ modkey, "Shift" }, "space", function()
-        awful.layout.inc(-1)
-    end, { description = "select previous", group = "layout" }),
+    -- awful.key({ modkey, "Shift" }, "space", function()
+    --     awful.layout.inc(-1)
+    -- end, { description = "select previous", group = "layout" }),
 
     awful.key({ modkey, "Control" }, "n", function()
         local c = awful.client.restore()
