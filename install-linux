@@ -5,6 +5,7 @@ DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 rm -rf $HOME/.config/zsh
 ln -s $DOTFILES/zsh $HOME/.config/zsh
 ln -sf $DOTFILES/zsh/zshrc-linux $HOME/.config/zsh/.zshrc
+ln -s $DOTFILES/zsh/zprofile $HOME/.config/zsh/.zprofile
 ln -sf $DOTFILES/zsh/zshenv $HOME/.zshenv
 
 rm -rf $HOME/.config/nvim
@@ -22,10 +23,13 @@ ln -sf $DOTFILES/tmux $HOME/.config/tmux
 rm -rf $HOME/.config/rofi
 ln -s $DOTFILES/rofi $HOME/.config/rofi
 
+rm -rf $HOME/.gitconfig
 ln -sf $DOTFILES/git/gitconfig $HOME/.gitconfig
 
+rm -rf $HOME/.gitignore
 ln -sf $DOTFILES/git/gitignore $HOME/.gitignore
 
+rm -rf $HOME/.Xresources
 ln -sf $DOTFILES/.Xresources $HOME/.Xresources
 
 mkdir -p $HOME/.local/bin
