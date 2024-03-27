@@ -367,7 +367,7 @@ globalkeys = gears.table.join(
     end, { description = "open a terminal", group = "launcher" }),
     awful.key({ modkey, "Control" }, "r", awesome.restart, { description = "reload awesome", group = "awesome" }),
     awful.key({ modkey, "Shift" }, "q", function()
-        awful.spawn.with_shell("rofi -show power-menu -modi power-menu:rofi-power-menu")
+        awful.spawn.with_shell("rofi -show power-menu -modi power-menu:~/.local/bin/rofi-power-menu")
     end, { description = "open a terminal", group = "launcher" }),
     -- awful.key({ modkey, "Shift" }, "q", awesome.quit, { description = "quit awesome", group = "awesome" }),
     awful.key({ modkey }, "space", function()
