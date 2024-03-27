@@ -299,21 +299,17 @@ globalkeys = gears.table.join(
     awful.key({ modkey }, "Escape", awful.tag.history.restore, { description = "go back", group = "tag" }),
 
     -- Moving window focus works between desktops
-    awful.key({ modkey }, "j", function(c)
+    awful.key({ modkey }, "j", function()
         awful.client.focus.global_bydirection("down")
-        c:lower()
     end, { description = "focus next window up", group = "client" }),
-    awful.key({ modkey }, "k", function(c)
+    awful.key({ modkey }, "k", function()
         awful.client.focus.global_bydirection("up")
-        c:lower()
     end, { description = "focus next window down", group = "client" }),
-    awful.key({ modkey }, "l", function(c)
+    awful.key({ modkey }, "l", function()
         awful.client.focus.global_bydirection("right")
-        c:lower()
     end, { description = "focus next window right", group = "client" }),
-    awful.key({ modkey }, "h", function(c)
+    awful.key({ modkey }, "h", function()
         awful.client.focus.global_bydirection("left")
-        c:lower()
     end, { description = "focus next window left", group = "client" }),
 
     awful.key({ modkey }, "w", function()
