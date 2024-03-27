@@ -11,7 +11,7 @@ rm -rf $HOME/.config/nvim
 ln -s $DOTFILES/nvim $HOME/.config/nvim
 
 rm -rf $HOME/.config/awesome
-ln -s $DOTFILES/nvim $HOME/.config/awesome
+ln -s $DOTFILES/awesome $HOME/.config/awesome
 
 rm -rf $HOME/.config/kitty
 ln -s $DOTFILES/kitty $HOME/.config/kitty
