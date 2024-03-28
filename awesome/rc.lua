@@ -289,7 +289,7 @@ awful.screen.connect_for_each_screen(function(s)
     })
 
     -- Volumen Widget
-    -- myvolume = volume_widget:new({})
+    myvolume = volume_widget:new({})
 
     -- Create the wibox
     s.mywibox = awful.wibar({ position = "top", screen = s })
@@ -307,7 +307,7 @@ awful.screen.connect_for_each_screen(function(s)
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             mykeyboardlayout,
-            -- myvolume,
+            myvolume.widget,
             wibox.layout.margin(wibox.widget.systray(), 3, 3, 3, 3),
             mytextclock,
             -- s.mylayoutbox,
