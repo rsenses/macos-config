@@ -254,6 +254,17 @@ awful.screen.connect_for_each_screen(function(s)
             },
             id = "background_role",
             widget = wibox.container.background,
+            create_callback = function(self, c, index, objects)
+                local text_box = self:get_children_by_id("text_role")[1]
+                local oset_mark_up_silently = text_box.set_markup_silently
+
+                text_box.set_markup_silently = function(self, text)
+                    if #c.icon_sizes ~= 0 then
+                        text = string.gsub(text, "-[^-]+</span>", "</span>")
+                    end
+                    return oset_mark_up_silently(self, text)
+                end
+            end,
         },
     })
 
