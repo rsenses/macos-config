@@ -203,7 +203,7 @@ local function worker(user_args)
     local popup = awful.popup({
         ontop = true,
         visible = false,
-        shape = rounded_shape(10),
+        shape = rounded_shape(8),
         offset = { y = 5 },
         border_width = beautiful.border_width,
         border_color = calendar_themes[theme].border,
