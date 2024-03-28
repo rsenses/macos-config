@@ -14,6 +14,7 @@ local gears = require("gears")
 local beautiful = require("beautiful")
 local watch = require("awful.widget.watch")
 local utils = require("widgets.volume.utils")
+local widget_type = require("widgets.volume.icon-and-text-widget")
 
 local LIST_DEVICES_CMD = [[sh -c "pacmd list-sinks; pacmd list-sources"]]
 local function GET_VOLUME_CMD(card, device, mixctrl, value_type)
@@ -29,13 +30,6 @@ local function TOG_VOLUME_CMD(card, device, mixctrl)
     return "amixer -c " .. card .. " -D " .. device .. " sset " .. mixctrl .. " toggle"
 end -- luacheck: ignore
 
-local widget_types = {
-    icon_and_text = require("widgets.volume.icon-and-text-widget"),
-    -- icon = require("widgets.volume.icon-widget"),
-    -- arc = require("widgets.volume.arc-widget"),
-    -- horizontal_bar = require("widgets.volume.horizontal-bar-widget"),
-    -- vertical_bar = require("widgets.volume.vertical-bar-widget"),
-}
 local volume = {}
 
 local rows = { layout = wibox.layout.fixed.vertical }
@@ -191,7 +185,6 @@ local function worker(user_args)
     local args = user_args or {}
 
     local mixer_cmd = args.mixer_cmd or "pavucontrol"
-    local widget_type = args.widget_type
     local refresh_rate = args.refresh_rate or 1
     local step = args.step or 5
     local card = args.card or 1
@@ -200,11 +193,7 @@ local function worker(user_args)
     local value_type = args.value_type or "-M"
     local toggle_cmd = args.toggle_cmd or nil
 
-    if widget_types[widget_type] == nil then
-        volume.widget = widget_types["icon_and_text"].get_widget(args.icon_and_text_args)
-    else
-        volume.widget = widget_types[widget_type].get_widget(args)
-    end
+    volume.widget = widget_type.get_widget(args.icon_and_text_args)
 
     local function update_graphic(widget, stdout)
         local mute = string.match(stdout, "%[(o%D%D?)%]") -- \[(o\D\D?)\] - [on] or [off]
