@@ -1,274 +1,122 @@
--------------------------------------------------
--- The Ultimate Volume Widget for Awesome Window Manager
--- More details could be found here:
--- https://github.com/streetturtle/awesome-wm-widgets/tree/master/volume-widget
-
--- @author Pavel Makhov
--- @copyright 2020 Pavel Makhov
--------------------------------------------------
-
-local awful = require("awful")
 local wibox = require("wibox")
-local spawn = require("awful.spawn")
-local gears = require("gears")
-local beautiful = require("beautiful")
-local watch = require("awful.widget.watch")
-local utils = require("widgets.volume.utils")
-local widget_type = require("widgets.volume.icon-and-text-widget")
+local awful = require("awful")
+require("math")
+require("string")
 
-local LIST_DEVICES_CMD = [[sh -c "pacmd list-sinks; pacmd list-sources"]]
-local function GET_VOLUME_CMD(card, device, mixctrl, value_type)
-    return "amixer -c " .. card .. " -D " .. device .. " sget " .. mixctrl .. " " .. value_type
-end
-local function INC_VOLUME_CMD(card, device, mixctrl, value_type, step)
-    return "amixer -c " .. card .. " -D " .. device .. " sset " .. mixctrl .. " " .. value_type .. " " .. step .. "%+"
-end -- luacheck: ignore
-local function DEC_VOLUME_CMD(card, device, mixctrl, value_type, step)
-    return "amixer -c " .. card .. " -D " .. device .. " sset " .. mixctrl .. " " .. value_type .. " " .. step .. "%-"
-end -- luacheck: ignore
-local function TOG_VOLUME_CMD(card, device, mixctrl)
-    return "amixer -c " .. card .. " -D " .. device .. " sset " .. mixctrl .. " toggle"
-end -- luacheck: ignore
+local Volume = { mt = {}, wmt = {} }
+Volume.wmt.__index = Volume
+Volume.__index = Volume
 
-local volume = {}
+config = awful.util.getdir("config")
 
-local rows = { layout = wibox.layout.fixed.vertical }
-
-local popup = awful.popup({
-    bg = beautiful.bg_normal,
-    fg = beautiful.fg_normal,
-    ontop = true,
-    visible = false,
-    shape = gears.shape.rounded_rect,
-    border_width = 1,
-    border_color = beautiful.bg_focus,
-    maximum_width = 400,
-    offset = { y = 5 },
-    widget = {},
-})
-
-local function build_main_line(device)
-    if device.active_port ~= nil and device.ports[device.active_port] ~= nil then
-        return device.properties.device_description .. " · " .. device.ports[device.active_port]
-    else
-        return device.properties.device_description
-    end
+local function run(command)
+    local prog = io.popen(command)
+    local result = prog:read("*all")
+    prog:close()
+    return result
 end
 
-local function build_rows(devices, on_checkbox_click, device_type)
-    local device_rows = { layout = wibox.layout.fixed.vertical }
-    for _, device in pairs(devices) do
-        local checkbox = wibox.widget({
-            checked = device.is_default,
-            color = beautiful.fg_normal,
-            paddings = 2,
-            shape = gears.shape.circle,
-            forced_width = 20,
-            forced_height = 20,
-            check_color = beautiful.fg_normal,
-            widget = wibox.widget.checkbox,
-        })
+function Volume:new(args)
+    local obj = setmetatable({}, Volume)
 
-        checkbox:connect_signal("button::press", function()
-            spawn.easy_async(string.format([[sh -c 'pacmd set-default-%s "%s"']], device_type, device.name), function()
-                on_checkbox_click()
-            end)
-        end)
-
-        local row = wibox.widget({
-            {
-                {
-                    {
-                        checkbox,
-                        valign = "center",
-                        layout = wibox.container.place,
-                    },
-                    {
-                        {
-                            text = build_main_line(device),
-                            align = "left",
-                            widget = wibox.widget.textbox,
-                        },
-                        left = 10,
-                        layout = wibox.container.margin,
-                    },
-                    spacing = 8,
-                    layout = wibox.layout.align.horizontal,
-                },
-                margins = 4,
-                layout = wibox.container.margin,
-            },
-            bg = beautiful.bg_normal,
-            fg = beautiful.fg_normal,
-            widget = wibox.container.background,
-        })
-
-        row:connect_signal("mouse::enter", function(c)
-            checkbox:set_color(beautiful.fg_focus)
-            checkbox:set_check_color(beautiful.fg_focus)
-            c:set_fg(beautiful.fg_focus)
-            c:set_bg(beautiful.bg_focus)
-        end)
-        row:connect_signal("mouse::leave", function(c)
-            checkbox:set_color(beautiful.fg_normal)
-            checkbox:set_check_color(beautiful.fg_normal)
-            c:set_fg(beautiful.fg_normal)
-            c:set_bg(beautiful.bg_normal)
-        end)
-
-        local old_cursor, old_wibox
-        row:connect_signal("mouse::enter", function()
-            local wb = mouse.current_wibox
-            old_cursor, old_wibox = wb.cursor, wb
-            wb.cursor = "hand1"
-        end)
-        row:connect_signal("mouse::leave", function()
-            if old_wibox then
-                old_wibox.cursor = old_cursor
-                old_wibox = nil
-            end
-        end)
-
-        row:connect_signal("button::press", function()
-            spawn.easy_async(string.format([[sh -c 'pacmd set-default-%s "%s"']], device_type, device.name), function()
-                on_checkbox_click()
-            end)
-        end)
-
-        table.insert(device_rows, row)
+    obj.backend = args.backend or "alsa"
+    obj.step = args.step or 5
+    if obj.backend == "alsa" then
+        obj.device = args.device or "Master"
+    elseif obj.backend == "pulseaudio" then
+        obj.device = tonumber(args.device) or 0
     end
 
-    return device_rows
-end
+    -- Create imagebox widget
+    obj.widget = wibox.widget.imagebox()
+    obj.widget:set_resize(false)
+    obj.widget:set_image(config .. "/awesome.volume-widget/icons/0.png")
 
-local function build_header_row(text)
-    return wibox.widget({
-        {
-            markup = "<b>" .. text .. "</b>",
-            align = "center",
-            widget = wibox.widget.textbox,
-        },
-        bg = beautiful.bg_normal,
-        fg = beautiful.fg_normal,
-        widget = wibox.container.background,
+    -- Add a tooltip to the imagebox
+    obj.tooltip = awful.tooltip({
+        objects = { K },
+        timer_function = function()
+            return obj:tooltipText()
+        end,
     })
-end
+    obj.tooltip:add_to_object(obj.widget)
 
-local function rebuild_popup()
-    spawn.easy_async(LIST_DEVICES_CMD, function(stdout)
-        local sinks, sources = utils.extract_sinks_and_sources(stdout)
-
-        for i = 0, #rows do
-            rows[i] = nil
-        end
-
-        table.insert(rows, build_header_row("SINKS"))
-        table.insert(
-            rows,
-            build_rows(sinks, function()
-                rebuild_popup()
-            end, "sink")
-        )
-        table.insert(rows, build_header_row("SOURCES"))
-        table.insert(
-            rows,
-            build_rows(sources, function()
-                rebuild_popup()
-            end, "source")
-        )
-
-        popup:setup(rows)
+    -- Check the volume every 5 seconds
+    obj.timer = timer({ timeout = 5 })
+    obj.timer:connect_signal("timeout", function()
+        obj:update({})
     end)
+    obj.timer:start()
+
+    obj:update()
+
+    return obj
 end
 
-local function worker(user_args)
-    local args = user_args or {}
+function Volume:tooltipText()
+    return string.sub(self:getVolume(), 0, 2) .. "% Volume"
+end
 
-    local mixer_cmd = args.mixer_cmd or "pavucontrol"
-    local refresh_rate = args.refresh_rate or 1
-    local step = args.step or 5
-    local card = args.card or 1
-    local device = args.device or "pulse"
-    local mixctrl = args.mixctrl or "Master"
-    local value_type = args.value_type or "-M"
-    local toggle_cmd = args.toggle_cmd or nil
+function Volume:update(status)
+    local b = self:getVolume()
+    local img = math.floor((b / 100) * 5)
+    self.widget:set_image(config .. "/awesome.volume-widget/icons/" .. img .. ".png")
+end
 
-    volume.widget = widget_type.get_widget(args.icon_and_text_args)
+function Volume:up()
+    if self.backend == "alsa" then
+        run("amixer set " .. self.device .. " " .. self.step .. "+")
+    elseif self.backend == "pulseaudio" then
+        run("pactl set-sink-volume " .. self.device .. " +" .. self.step .. "%")
+    end
+    self:update({})
+end
 
-    local function update_graphic(widget, stdout)
-        local mute = string.match(stdout, "%[(o%D%D?)%]") -- \[(o\D\D?)\] - [on] or [off]
-        if mute == "off" then
-            widget:mute()
-        elseif mute == "on" then
-            widget:unmute()
-        end
-        local volume_level = string.match(stdout, "(%d?%d?%d)%%") -- (\d?\d?\d)\%)
-        volume_level = string.format("% 3d", volume_level)
-        widget:set_volume_level(volume_level)
+function Volume:down()
+    if self.backend == "alsa" then
+        run("amixer set " .. self.device .. " " .. self.step .. "-")
+    elseif self.backend == "pulseaudio" then
+        run("pactl set-sink-volume " .. self.device .. " -" .. self.step .. "%")
+    end
+    self:update({})
+end
+
+function Volume:getVolume()
+    local result
+    if self.backend == "alsa" then
+        result = run("amixer get " .. self.device)
+        return string.gsub(string.match(result, "%[%d*%%%]"), "%D", "")
+    elseif self.backend == "pulseaudio" then
+        -- Unfortunately, Pulse Audio doesn't have a nice way to get the
+        -- current volume, so we have this unfortunate hack. Likely the most
+        -- brittle part of the code
+        result = run(
+            "pactl list sinks | grep '^[[:space:]]Volume:' | head -n $(( "
+                .. (self.device + 1)
+                .. " )) | tail -n 1 | sed -e 's,.* \\([0-9][0-9]*\\)%.*,\\1,'"
+        )
+        return result
     end
 
-    function volume:inc(s)
-        spawn.easy_async(INC_VOLUME_CMD(card, device, mixctrl, value_type, s or step), function(stdout)
-            update_graphic(volume.widget, stdout)
-        end)
-    end
-
-    function volume:dec(s)
-        spawn.easy_async(DEC_VOLUME_CMD(card, device, mixctrl, value_type, s or step), function(stdout)
-            update_graphic(volume.widget, stdout)
-        end)
-    end
-
-    function volume:toggle()
-        if toggle_cmd == nil then
-            spawn.easy_async(TOG_VOLUME_CMD(card, device, mixctrl), function(stdout)
-                update_graphic(volume.widget, stdout)
-            end)
+    local volume_icon
+    if self.is_muted then
+        volume_icon = "󰝟 "
+    else
+        local new_value_num = tonumber(new_value)
+        if new_value_num >= 0 and new_value_num < 33 then
+            volume_icon = "󰕿 "
+        elseif new_value_num < 66 then
+            volume_icon = "󰖀 "
         else
-            spawn.easy_async(toggle_cmd, function(_stdout)
-                spawn.easy_async(GET_VOLUME_CMD(card, device, mixctrl, value_type), function(stdout)
-                    update_graphic(volume.widget, stdout)
-                end)
-            end)
+            volume_icon = "󰕾 "
         end
     end
 
-    function volume:mixer()
-        if mixer_cmd then
-            spawn.easy_async(mixer_cmd)
-        end
-    end
-
-    volume.widget:buttons(awful.util.table.join(
-        awful.button({}, 3, function()
-            if popup.visible then
-                popup.visible = not popup.visible
-            else
-                rebuild_popup()
-                popup:move_next_to(mouse.current_widget_geometry)
-            end
-        end),
-        awful.button({}, 4, function()
-            volume:inc()
-        end),
-        awful.button({}, 5, function()
-            volume:dec()
-        end),
-        awful.button({}, 2, function()
-            volume:mixer()
-        end),
-        awful.button({}, 1, function()
-            volume:toggle()
-        end)
-    ))
-
-    watch(GET_VOLUME_CMD(card, device, mixctrl, value_type), refresh_rate, update_graphic, volume.widget)
-
-    return volume.widget
+    return volume_icon .. string.gsub(string.match(result, "%[%d*%%%]"), "%D", "")
 end
 
-return setmetatable(volume, {
-    __call = function(_, ...)
-        return worker(...)
-    end,
-})
+function Volume.mt:__call(...)
+    return Volume.new(...)
+end
+
+return Volume
