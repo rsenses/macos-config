@@ -254,11 +254,11 @@ awful.screen.connect_for_each_screen(function(s)
             },
             id = "background_role",
             widget = wibox.container.background,
-            create_callback = function(self, c, index, objects)
+            create_callback = function(self, c)
                 local text_box = self:get_children_by_id("text_role")[1]
                 local set_markup_silently = text_box.set_markup_silently
 
-                text_box.set_markup_silently = function(self, text)
+                text_box.set_markup_silently = function(_, text)
                     local new_text = string.gsub(text, c.name, c.class:lower())
                     new_text = string.gsub(new_text, "_", "-")
                     if c.minimized then
