@@ -289,9 +289,9 @@ awful.screen.connect_for_each_screen(function(s)
     s.mywibox = awful.wibar({
         position = "top",
         screen = s,
-        shape = function(cr, width, height)
-            gears.shape.rounded_rect(cr, width, height, 10)
-        end,
+        -- shape = function(cr, width, height)
+        --     gears.shape.rounded_rect(cr, width, height, 10)
+        -- end,
         margins = {
             top = 10,
             left = 10,
