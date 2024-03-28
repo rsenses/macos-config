@@ -288,7 +288,7 @@ awful.screen.connect_for_each_screen(function(s)
     -- Brightness Widget
     local brightness_widget = require("widgets.brightness")
     -- Volumen Widget
-    local volume_widget = require("awesome-wm-widgets.volume-widget.volume")
+    local volume_widget = require("widgets.volume")
 
     -- Create the wibox
     s.mywibox = awful.wibar({ position = "top", screen = s })
