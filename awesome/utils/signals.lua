@@ -71,4 +71,10 @@ end)
 client.connect_signal("unfocus", function(c)
     c.border_color = beautiful.border_normal
 end)
+
+client.connect_signal("manage", function(c)
+    if not c.maximized then
+        c.shape = gears.shape.rounded_rect
+    end
+end)
 -- }}}
