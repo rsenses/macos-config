@@ -76,7 +76,7 @@ local function worker(user_args)
             weekend_day_bg = beautiful.bg_focus,
             weekday_fg = beautiful.fg,
             header_fg = beautiful.fg,
-            border = beautiful.border_normal,
+            border = beautiful.border_focus,
         },
     }
 
