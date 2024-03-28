@@ -305,9 +305,7 @@ awful.screen.connect_for_each_screen(function(s)
             layout = wibox.layout.fixed.horizontal,
             mykeyboardlayout,
             wibox.layout.margin(wibox.widget.systray(), 3, 3, 3, 3),
-            volume_widget({
-                widget_type = "icon_and_text",
-            }),
+            volume_widget(),
             mytextclock,
             -- s.mylayoutbox,
         },
