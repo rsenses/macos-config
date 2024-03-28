@@ -110,8 +110,16 @@ mykeyboardlayout = awful.widget.keyboardlayout()
 -- {{{ Wibar
 -- Create a textclock widget
 local calendar_widget = require("widgets.calendar")
-mytextclock = wibox.widget.textclock()
-local cw = calendar_widget()
+mytextclock = wibox.widget.textclock("%a %b %d %H:%M")
+local cw = calendar_widget({
+    theme = "nord",
+    placement = "top_right",
+    start_sunday = false,
+    radius = 0,
+    -- with customized next/previous (see table above)
+    previous_month_button = 1,
+    next_month_button = 3,
+})
 mytextclock:connect_signal("button::press", function(_, _, _, button)
     if button == 1 then
         cw.toggle()
