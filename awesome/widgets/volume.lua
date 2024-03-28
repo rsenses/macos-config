@@ -1,5 +1,6 @@
 local wibox = require("wibox")
 local awful = require("awful")
+local naughty = require("naughty")
 require("math")
 require("string")
 
@@ -98,6 +99,7 @@ function Volume:getVolume()
 end
 
 function Volume.mt:__call(...)
+    naughty.notify({ text = tostring(get_themes_dir()) })
     return Volume.new(...)
 end
 
