@@ -20,6 +20,9 @@ require("awful.hotkeys_popup.keys")
 local debian = require("debian.menu")
 local has_fdo, freedesktop = pcall(require, "freedesktop")
 
+-- Load widgets
+local volume_widget = require("widgets.volume")
+
 require("utils.error_handling")
 
 -- {{{ Variable definitions
@@ -286,8 +289,7 @@ awful.screen.connect_for_each_screen(function(s)
     })
 
     -- Volumen Widget
-    local volume_widget = require("widgets.volume")
-    myvolume = volume_widget:new({})
+    -- myvolume = volume_widget:new({})
 
     -- Create the wibox
     s.mywibox = awful.wibar({ position = "top", screen = s })
@@ -305,7 +307,7 @@ awful.screen.connect_for_each_screen(function(s)
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             mykeyboardlayout,
-            myvolume,
+            -- myvolume,
             wibox.layout.margin(wibox.widget.systray(), 3, 3, 3, 3),
             mytextclock,
             -- s.mylayoutbox,
