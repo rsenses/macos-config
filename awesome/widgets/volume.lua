@@ -27,11 +27,6 @@ function Volume:new(args)
         obj.device = tonumber(args.device) or 0
     end
 
-    -- Create imagebox widget
-    obj.widget = wibox.widget.imagebox()
-    obj.widget:set_resize(false)
-    obj.widget:set_image(config .. "/awesome.volume-widget/icons/0.png")
-
     -- Add a tooltip to the imagebox
     obj.tooltip = awful.tooltip({
         objects = { K },
@@ -54,30 +49,21 @@ function Volume:new(args)
 end
 
 function Volume:tooltipText()
-    return string.sub(self:getVolume(), 0, 2) .. "% Volume"
+    return string.sub(self:getVolume(), 0, 2) .. " Volume"
 end
 
 function Volume:update(status)
     local b = self:getVolume()
     local img = math.floor((b / 100) * 5)
-    self.widget:set_image(config .. "/awesome.volume-widget/icons/" .. img .. ".png")
 end
 
 function Volume:up()
-    if self.backend == "alsa" then
-        run("amixer set " .. self.device .. " " .. self.step .. "+")
-    elseif self.backend == "pulseaudio" then
-        run("pactl set-sink-volume " .. self.device .. " +" .. self.step .. "%")
-    end
+    run("awk -F\"[][]\" '/Left:/ { print $2 }' <(amixer sget Master)")
     self:update({})
 end
 
 function Volume:down()
-    if self.backend == "alsa" then
-        run("amixer set " .. self.device .. " " .. self.step .. "-")
-    elseif self.backend == "pulseaudio" then
-        run("pactl set-sink-volume " .. self.device .. " -" .. self.step .. "%")
-    end
+    run("awk -F\"[][]\" '/Left:/ { print $2 }' <(amixer sget Master)")
     self:update({})
 end
 
@@ -90,11 +76,7 @@ function Volume:getVolume()
         -- Unfortunately, Pulse Audio doesn't have a nice way to get the
         -- current volume, so we have this unfortunate hack. Likely the most
         -- brittle part of the code
-        result = run(
-            "pactl list sinks | grep '^[[:space:]]Volume:' | head -n $(( "
-                .. (self.device + 1)
-                .. " )) | tail -n 1 | sed -e 's,.* \\([0-9][0-9]*\\)%.*,\\1,'"
-        )
+        result = run("awk -F\"[][]\" '/Left:/ { print $2 }' <(amixer sget Master)")
         return result
     end
 
@@ -102,7 +84,7 @@ function Volume:getVolume()
     if self.is_muted then
         volume_icon = "󰝟 "
     else
-        local new_value_num = tonumber(new_value)
+        local new_value_num = tonumber(result)
         if new_value_num >= 0 and new_value_num < 33 then
             volume_icon = "󰕿 "
         elseif new_value_num < 66 then
