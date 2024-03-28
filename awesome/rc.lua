@@ -285,6 +285,11 @@ awful.screen.connect_for_each_screen(function(s)
         },
     })
 
+    -- Brightness Widget
+    local brightness_widget = require("widgets.brightness")
+    -- Volumen Widget
+    local volume_widget = require("awesome-wm-widgets.volume-widget.volume")
+
     -- Create the wibox
     s.mywibox = awful.wibar({ position = "top", screen = s })
 
@@ -302,6 +307,10 @@ awful.screen.connect_for_each_screen(function(s)
             layout = wibox.layout.fixed.horizontal,
             mykeyboardlayout,
             wibox.layout.margin(wibox.widget.systray(), 3, 3, 3, 3),
+            brightness_widget,
+            volume_widget({
+                widget_type = "icon_and_text",
+            }),
             mytextclock,
             -- s.mylayoutbox,
         },
