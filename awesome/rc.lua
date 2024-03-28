@@ -292,8 +292,17 @@ awful.screen.connect_for_each_screen(function(s)
         shape = function(cr, width, height)
             gears.shape.rounded_rect(cr, width, height, 10)
         end,
-        margins = 5,
-        border_width = 5,
+        margins = {
+            top = 10,
+            left = 10,
+            right = 10,
+            bottom = 0,
+        },
+        widget = {
+            halign = "center",
+            text = "non unform margins",
+            widget = wibox.widget.textbox,
+        },
     })
 
     -- Add widgets to the wibox
