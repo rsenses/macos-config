@@ -585,7 +585,7 @@ awful.rules.rules = {
         properties = {
             screen = 1,
             tag = "  ",
-            border_width = 2,
+            border_width = 1,
         },
     },
 
