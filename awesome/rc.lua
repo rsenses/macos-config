@@ -109,7 +109,14 @@ mykeyboardlayout = awful.widget.keyboardlayout()
 
 -- {{{ Wibar
 -- Create a textclock widget
+local calendar_widget = require("widgets.calendar")
 mytextclock = wibox.widget.textclock()
+local cw = calendar_widget()
+mytextclock:connect_signal("button::press", function(_, _, _, button)
+    if button == 1 then
+        cw.toggle()
+    end
+end)
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
