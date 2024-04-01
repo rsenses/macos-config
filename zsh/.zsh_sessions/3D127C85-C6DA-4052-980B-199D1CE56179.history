@@ -22,4 +22,3 @@ exit
 exit
 tmux
 less /tmp/bobko.aerospace/config-parse-error.txt
-tmux
