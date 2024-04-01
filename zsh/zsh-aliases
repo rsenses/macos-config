@@ -65,6 +65,8 @@ alias cat='bat --plain --wrap character'
 
 # spotify ncurses
 alias spotify='ncspot'
+#weather
+alias weather='curl wttr.in/Madrid'
 
 # Logout para xfce
 if [ "$DESKTOP_SESSION" = "xfce" ]; then

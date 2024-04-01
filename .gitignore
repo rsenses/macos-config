@@ -1,6 +1,7 @@
 .zcompdump
 .zcompdump.*
 .zsh_history
+.zsh_sessions
 .DS_Store
 /iterm2
 /github-copilot
