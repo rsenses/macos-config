@@ -64,7 +64,7 @@ alias lt='exa -aT --color=always --group-directories-first'
 alias cat='bat --plain --wrap character'
 
 # spotify ncurses
-alias spotify='ncspot'
+alias spotify='spotify_player'
 #weather
 alias weather='curl wttr.in/Madrid'
 
