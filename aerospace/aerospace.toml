@@ -1,3 +1,9 @@
+after-startup-command = [
+    # JankyBorders has a built-in detection of already running process,
+    # so it won't be run twice on AeroSpace restart
+    'exec-and-forget /opt/homebrew/opt/borders/bin/borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0'
+]
+
 # Start AeroSpace at login
 start-at-login = true
 
@@ -14,15 +20,15 @@ enable-normalization-opposite-orientation-for-nested-containers = false
 #                 Monitor pattern is the same as for 'workspace-to-monitor-force-assignment'.
 #                 See: https://nikitabobko.github.io/AeroSpace/guide#assign-workspaces-to-monitors
 [gaps]
-inner.horizontal = 5
-inner.vertical =   5
-outer.left =       5
-outer.bottom =     5
-outer.top =        5
-outer.right =      5
+inner.horizontal = 10
+inner.vertical =   10
+outer.left =       10
+outer.bottom =     10
+outer.top =        10
+outer.right =      10
 
 [mode.main.binding]
-alt-enter = 'exec-and-forget open -n /System/Applications/WezTerm.app'
+alt-enter = 'exec-and-forget open -n /Applications/WezTerm.app'
 
 alt-h = 'focus left'
 alt-j = 'focus down'

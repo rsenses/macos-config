@@ -63,6 +63,9 @@ alias ls='exa -al --color=always --group-directories-first'
 alias lt='exa -aT --color=always --group-directories-first'
 alias cat='bat --plain --wrap character'
 
+# spotify ncurses
+alias spotify='ncspot'
+
 # Logout para xfce
 if [ "$DESKTOP_SESSION" = "xfce" ]; then
     alias shutdown='xfce4-session-logout --halt'
