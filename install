@@ -19,14 +19,17 @@ ln -s $DOTFILES/wezterm $HOME/.config/wezterm
 rm -rf $HOME/.config/tmux
 ln -sf $DOTFILES/tmux $HOME/.config/tmux
 
-rm -rf $HOME/.config/aerospace
-ln -sf $DOTFILES/aerospace $HOME/.config/aerospace
+rm -rf $HOME/.config/yabai
+ln -sf $DOTFILES/yabai $HOME/.config/yabai
+
+rm -rf $HOME/.config/skhd
+ln -sf $DOTFILES/skhd $HOME/.config/skhd
 
 rm -rf $HOME/.config/borders
 ln -sf $DOTFILES/borders $HOME/.config/borders
 
-rm -rf $HOME/.config/ncspot
-ln -sf $DOTFILES/ncspot $HOME/.config/ncspot
+rm -rf $HOME/.config/spotify_player
+ln -sf $DOTFILES/spotify_player $HOME/.config/spotify_player
 
 ln -sf $DOTFILES/git/gitconfig $HOME/.gitconfig
 
