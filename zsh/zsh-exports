@@ -1,9 +1,5 @@
 #!/bin/sh
 
-HISTFILE=~/.zsh_history
-HISTSIZE=1000000
-SAVEHIST=1000000
-
 if [[ $(uname) == "Darwin" ]]; then
     eval "$(/opt/homebrew/bin/brew shellenv)" # This loads brew on M1
     eval "$(zoxide init zsh)"                 # This loads zoxide
