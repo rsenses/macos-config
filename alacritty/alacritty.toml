@@ -1,0 +1,24 @@
+live_config_reload = true
+
+import = [
+    "~/.config/alacritty/themes/kanagawa_wave.toml"
+]
+
+[env]
+TERM = "xterm-256color"
+
+[font]
+size = 17.0
+
+[font.normal]
+family = "IosevkaTerm Nerd Font"
+style = "Regular"
+
+[window]
+decorations = "buttonless"
+dynamic_padding = false
+blur = true
+
+[window.padding]
+x = 5
+y = 5

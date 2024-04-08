@@ -13,6 +13,9 @@ ln -s $DOTFILES/nvim $HOME/.config/nvim
 rm -rf $HOME/.wezterm.lua
 ln -s $DOTFILES/.wezterm.lua $HOME/.wezterm.lua
 
+rm -rf $HOME/.config/alacritty
+ln -s $DOTFILES/alacritty $HOME/.config/alacritty
+
 rm -rf $HOME/.config/tmux
 ln -sf $DOTFILES/tmux $HOME/.config/tmux
 
