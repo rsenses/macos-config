@@ -3,6 +3,8 @@
 
 setopt autocd extendedglob nomatch menucomplete
 setopt interactive_comments
+setopt append_history          # append to history file
+setopt extended_history        # write the history file in the ':start:elapsed;command' format
 stty stop undef		# Disable ctrl-s to freeze terminal.
 zle_highlight=('paste:none')
 
