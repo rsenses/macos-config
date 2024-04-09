@@ -1,2 +1,3 @@
 # ZSH config DIR
+export ARTISAN_OPEN_ON_MAKE_EDITOR=vim
 export ZDOTDIR=$HOME/.config/zsh
