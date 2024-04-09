@@ -3,8 +3,9 @@
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 rm -rf $HOME/.config/zsh
+rm -rf $HOME/.zshenv
+ln -sf $DOTFILES/zsh/zshrc $DOTFILES/zsh/.zshrc
 ln -s $DOTFILES/zsh $HOME/.config/zsh
-ln -sf $DOTFILES/zsh/zshrc $HOME/.config/zsh/.zshrc
 ln -sf $DOTFILES/zsh/zshenv $HOME/.zshenv
 
 rm -rf $HOME/.config/nvim
