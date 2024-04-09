@@ -21,7 +21,7 @@ alias fgrep='fgrep --color=auto'
 # confirm before overwriting something
 alias cp="cp -i"
 alias mv='mv -i'
-# alias rm='trash-put'
+alias rm='rm -iv'
 
 # easier to read disk
 alias df='df -h' # human-readable sizes
@@ -34,11 +34,11 @@ alias vim="nvim"
 alias vi="nvim"
 
 # Update installed Ruby gems, Homebrew, npm, and their installed packages
-alias brewupdate="brew -v update; brew upgrade --force-bottle; brew cleanup; brew doctor"
-alias composerupdate='composer global update'
-alias npmupdate='composer global update; npm -g update; npm -g upgrade; npm cache clean --force'
+alias brew-update="brew -v update; brew upgrade --force-bottle; brew cleanup; brew doctor"
+alias composer-update='composer global update'
+alias npm-update='composer global update; npm -g update; npm -g upgrade; npm cache clean --force'
 # zeoxide, zsh y tmux
-alias zsh-update-plugins="find "$ZDOTDIR/plugins" -type d -exec test -e '{}/.git' ';' -print0 | xargs -I {} -0 git -C {} pull -q"
+alias zsh-update="find "$ZDOTDIR/plugins" -type d -exec test -e '{}/.git' ';' -print0 | xargs -I {} -0 git -C {} pull -q"
 
 # ImageOptim, se puede usar . o nombre de archivo
 alias imageoptim="open -a ImageOptim"
@@ -47,6 +47,7 @@ alias imageoptim="open -a ImageOptim"
 alias python='/opt/homebrew/bin/python3'
 
 # PHP
+alias php83='/opt/homebrew/opt/php@8.2/bin/php'
 alias php82='/opt/homebrew/opt/php@8.2/bin/php'
 alias php81='/opt/homebrew/opt/php@8.1/bin/php'
 alias php80='/opt/homebrew/opt/php@8.0/bin/php'
@@ -59,8 +60,8 @@ alias sail='[ -f sail ] && sh sail || sh vendor/bin/sail'
 alias less='less -r'
 
 # executables
-alias ls='exa -al --color=always --group-directories-first'
-alias lt='exa -aT --color=always --group-directories-first'
+alias ls='ls --color=auto'
+alias ll='ls -lAF'
 alias cat='bat --plain --wrap character'
 
 # spotify ncurses

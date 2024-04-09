@@ -63,16 +63,16 @@ zsh_add_plugin "zsh-users/zsh-autosuggestions"
 zsh_add_plugin "zsh-users/zsh-syntax-highlighting"
 zsh_add_plugin "zsh-users/zsh-completions"
 zsh_add_plugin "jessarcher/zsh-artisan"
+zsh_add_plugin "MichaelAquilina/zsh-you-should-use"
 
 # Key-bindings
-bindkey -s '^o' 'vifm\n'
+bindkey -s '^o' 'ranger\n'
 bindkey -s '^v' 'nvim\n'
-bindkey -s '^z' 'zi\n'
+bindkey -s '^ ' 'zi\n'
+bindkey '^y' autosuggest-accept
 bindkey '^[[P' delete-char
 bindkey "ç" fzf-cd-widget
-
-# Edit line in vim with ctrl-e:
-autoload edit-command-line; zle -N edit-command-line
+autoload edit-command-line; zle -N edit-command-line # Edit line in vim with ctrl-e:
 bindkey '^e' edit-command-line
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -100,5 +100,3 @@ export HERD_PHP_83_INI_SCAN_DIR="/Users/rubensilvarodriguez/Library/Application 
 # [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
 # [[ -f "/Applications/Herd.app/Contents/Resources/config/shell/zshrc.zsh" ]] && builtin source "/Applications/Herd.app/Contents/Resources/config/shell/zshrc.zsh"
-
-# if [ "$TMUX" = "true" ]; then tmux; fi
