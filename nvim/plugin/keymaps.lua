@@ -71,11 +71,5 @@ vim.keymap.set('n', '<leader>l', '<cmd>Lazy<cr>', { desc = 'Lazy' })
 -- mason
 vim.keymap.set('n', '<leader>m', '<cmd>Mason<cr>', { desc = 'Mason' })
 
--- windows
-vim.keymap.set('n', '<leader>ww', '<C-W>p', { desc = 'Other window', remap = true })
-vim.keymap.set('n', '<leader>wd', '<C-W>c', { desc = 'Delete window', remap = true })
-vim.keymap.set('n', '<leader>w-', '<C-W>s', { desc = 'Split window below', remap = true })
-vim.keymap.set('n', '<leader>w|', '<C-W>v', { desc = 'Split window right', remap = true })
-
 -- NetRW
 vim.keymap.set({ 'n' }, '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
