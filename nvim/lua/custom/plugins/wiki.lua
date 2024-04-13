@@ -26,6 +26,6 @@ return {
     vim.g.vimwiki_hl_headers = 1 -- use alternating colours for different heading levels
     vim.g.vimwiki_markdown_link_ext = 1 -- add markdown file extension when generating links
     vim.g.taskwiki_markdown_syntax = 'markdown'
-    vim.g.indentLine_conceallevel = 2 -- indentline controlls concel
+    vim.g.vimwiki_conceallevel = 0 -- show all text
   end,
 }

@@ -64,6 +64,7 @@ return {
       -- },
       -- pickers = {}
       defaults = {
+        path_display = { 'smart' },
         file_ignore_patterns = {
           '.git/.*',
           '.cache',

@@ -23,15 +23,6 @@ api.nvim_create_autocmd('BufEnter', {
   end,
 })
 
--- Disable the concealing in some file formats
--- The default conceallevel is 3 in LazyVim
-api.nvim_create_autocmd('FileType', {
-  pattern = { 'json', 'jsonc', 'markdown' },
-  callback = function()
-    vim.opt.conceallevel = 0
-  end,
-})
-
 -- Filetypes --
 vim.filetype.add {
   pattern = {
@@ -42,10 +33,10 @@ vim.filetype.add {
 
 -- Disable the concealing in some file formats
 -- The default conceallevel is 3 in LazyVim
-api.nvim_create_autocmd({ "FileType" }, {
-  pattern = { "json", "jsonc", "markdown" },
+api.nvim_create_autocmd({ 'FileType' }, {
+  pattern = { 'json', 'jsonc', 'markdown', 'md' },
   callback = function()
+    vim.opt.conceallevel = 0
     vim.wo.conceallevel = 0
   end,
 })
-

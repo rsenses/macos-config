@@ -73,6 +73,9 @@ alias spotify='spotify_player'
 #weather
 alias weather='curl wttr.in/Madrid'
 
+# start nodenv
+alias nodenv-start='eval "$(nodenv init -)"'
+
 # Logout para xfce
 if [ "$DESKTOP_SESSION" = "xfce" ]; then
     alias shutdown='xfce4-session-logout --halt'
