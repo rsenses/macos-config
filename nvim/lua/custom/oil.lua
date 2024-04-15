@@ -1,5 +1,13 @@
 return {
   'stevearc/oil.nvim',
+  keys = {
+    {
+      '-',
+      '<CMD>Oil<CR>',
+      mode = { 'n' },
+      desc = 'Open parent directory',
+    },
+  },
   opts = {
     delete_to_trash = true,
     view_options = {
