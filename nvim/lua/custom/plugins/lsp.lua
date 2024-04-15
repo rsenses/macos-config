@@ -1,6 +1,7 @@
 -- LSP Configuration & Plugins
 return {
   'neovim/nvim-lspconfig',
+  event = { 'BufReadPre', 'BufNewFile' },
   dependencies = {
     -- Automatically install LSPs and related tools to stdpath for neovim
     'williamboman/mason.nvim',
@@ -181,7 +182,7 @@ return {
       },
       lua_ls = {
         -- cmd = {...},
-        -- filetypes { ...},
+        -- filetypes = { ...},
         -- capabilities = {},
         settings = {
           Lua = {

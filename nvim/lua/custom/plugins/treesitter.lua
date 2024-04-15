@@ -22,6 +22,7 @@ return {
         end,
       },
       'nvim-treesitter/nvim-treesitter-textobjects',
+      'windwp/nvim-ts-autotag',
     },
     opts = {
       ensure_installed = {
@@ -149,14 +150,6 @@ return {
       vim.keymap.set({ 'n', 'x', 'o' }, 't', ts_repeat_move.builtin_t)
       vim.keymap.set({ 'n', 'x', 'o' }, 'T', ts_repeat_move.builtin_T)
     end,
-  },
-  {
-    'windwp/nvim-ts-autotag',
-    after = { 'nvim-treesitter' },
-    dependencies = {
-      { 'nvim-treesitter/nvim-treesitter' },
-    },
-    event = 'InsertEnter',
   },
   {
     'JoosepAlviste/nvim-ts-context-commentstring',
