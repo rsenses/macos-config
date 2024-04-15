@@ -34,9 +34,31 @@ vim.filetype.add {
 -- Disable the concealing in some file formats
 -- The default conceallevel is 3 in LazyVim
 api.nvim_create_autocmd({ 'FileType' }, {
-  pattern = { 'json', 'jsonc', 'markdown', 'md' },
+  pattern = { 'json', 'jsonc', 'markdown' },
   callback = function()
     vim.opt.conceallevel = 0
     vim.wo.conceallevel = 0
+  end,
+})
+
+-- local group = api.nvim_create_augroup('CursorLineControl', { clear = true })
+-- local set_cursorline = function(event, value, pattern)
+--   api.nvim_create_autocmd(event, {
+--     group = group,
+--     pattern = pattern,
+--     callback = function()
+--       vim.opt_local.cursorline = value
+--     end,
+--   })
+-- end
+-- set_cursorline('WinLeave', false)
+-- set_cursorline('WinEnter', true)
+-- set_cursorline('FileType', false, 'TelescopePrompt')
+
+-- Set spell to tru on markdown
+api.nvim_create_autocmd('FileType', {
+  pattern = { 'markdown', 'text' },
+  callback = function()
+    vim.opt_local.spell = true
   end,
 })

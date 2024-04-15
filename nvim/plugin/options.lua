@@ -12,11 +12,6 @@ vim.g.have_nerd_font = true
 -- Global Status bar
 opt.laststatus = 3
 
--- Ignore compiled files
-opt.wildignore = '__pycache__'
-opt.wildignore:append { '*.o', '*~', '*.pyc', '*pycache*' }
-opt.wildignore:append { 'Cargo.lock', 'Cargo.Bazel.lock' }
-
 -- Cool floating window popup menu for completion on command line
 opt.pumblend = 17
 opt.wildmode = 'longest:full'
@@ -38,23 +33,7 @@ opt.updatetime = 1000 -- Make updates happen faster
 opt.timeoutlen = 300
 opt.hlsearch = true -- I wouldn't use this without my DoNoHL function
 opt.scrolloff = 10 -- Make it so there are always ten lines below my cursor
-
--- Cursorline highlighting control
---  Only have it on in the active buffer
 opt.cursorline = true -- Highlight the current line
-local group = vim.api.nvim_create_augroup('CursorLineControl', { clear = true })
-local set_cursorline = function(event, value, pattern)
-  vim.api.nvim_create_autocmd(event, {
-    group = group,
-    pattern = pattern,
-    callback = function()
-      vim.opt_local.cursorline = value
-    end,
-  })
-end
-set_cursorline('WinLeave', false)
-set_cursorline('WinEnter', true)
-set_cursorline('FileType', false, 'TelescopePrompt')
 
 -- Tabs
 opt.autoindent = true
@@ -92,7 +71,6 @@ opt.mouse = 'a'
 --   1. :center, :left, :right
 --   2. gw{motion} - Put cursor back after formatting motion.
 --
--- TODO: w, {v, b, l}
 opt.formatoptions = opt.formatoptions
   - 'a' -- Auto formatting is BAD.
   - 't' -- Don't auto format my code. I got linters for that.
@@ -130,12 +108,6 @@ opt.cursorline = true
 vim.g.loaded_spellfile_plugin = 0
 vim.g.spellfile_URL = 'https://ftp.nluug.nl/vim/runtime/spell/'
 opt.spelllang = { 'es_es', 'en_us' }
-vim.api.nvim_create_autocmd('FileType', {
-  pattern = { 'markdown', 'text' },
-  callback = function()
-    vim.opt_local.spell = true
-  end,
-})
 
 -- Netrw
 vim.g.netrw_fastbrowse = 0 -- always obtains fresh directory listings, never re-uses them.
