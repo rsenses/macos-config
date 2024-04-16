@@ -18,6 +18,7 @@ return {
   -- This is a way of load those plugins with kind of order/priority
 
   -- Highlight todo, notes, etc in comments
+  'tpope/vim-repeat',
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
   {
     'NvChad/nvim-colorizer.lua',
@@ -30,6 +31,25 @@ return {
           'javascript',
           html = { mode = 'foreground' },
         },
+      }
+    end,
+  },
+  {
+    'lukas-reineke/indent-blankline.nvim',
+    event = { 'BufReadPre', 'BufNewFile' },
+    main = 'ibl',
+    config = function()
+      local highlight = {
+        'Whitespace',
+        'SignColumn',
+      }
+      require('ibl').setup {
+        indent = { highlight = highlight, char = '' },
+        whitespace = {
+          highlight = highlight,
+          remove_blankline_trail = false,
+        },
+        scope = { enabled = true },
       }
     end,
   },

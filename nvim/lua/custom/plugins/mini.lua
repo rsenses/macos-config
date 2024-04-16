@@ -8,11 +8,11 @@ return {
     -- - sr)'  - [S]urround [R]eplace [)] [']
     require('mini.surround').setup { n_lines = 500 }
 
-    require('mini.indentscope').setup {
-      options = {
-        try_as_border = true,
-      },
-    }
+    -- require('mini.indentscope').setup {
+    --   options = {
+    --     try_as_border = true,
+    --   },
+    -- }
 
     -- "gc" to comment visual regions/lines
     require('mini.comment').setup()
