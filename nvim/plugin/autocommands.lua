@@ -34,7 +34,7 @@ vim.filetype.add {
 -- Disable the concealing in some file formats
 -- The default conceallevel is 3 in LazyVim
 api.nvim_create_autocmd({ 'FileType' }, {
-  pattern = { 'json', 'jsonc', 'markdown' },
+  pattern = { 'json', 'jsonc', 'markdown', 'md' },
   callback = function()
     vim.opt.conceallevel = 0
     vim.wo.conceallevel = 0
@@ -57,7 +57,7 @@ api.nvim_create_autocmd({ 'FileType' }, {
 
 -- Set spell to tru on markdown
 api.nvim_create_autocmd('FileType', {
-  pattern = { 'markdown', 'text' },
+  pattern = { 'markdown', 'text', 'md' },
   callback = function()
     vim.opt_local.spell = true
   end,

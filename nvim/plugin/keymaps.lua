@@ -72,4 +72,4 @@ vim.keymap.set('n', '<leader>l', '<cmd>Lazy<cr>', { desc = 'Lazy' })
 vim.keymap.set('n', '<leader>m', '<cmd>Mason<cr>', { desc = 'Mason' })
 
 -- Netrw
-vim.keymap.set({ 'n' }, '-', '<CMD>Ex<CR>', { desc = 'Open parent directory' })
+-- vim.keymap.set({ 'n' }, '-', '<CMD>Ex<CR>', { desc = 'Open parent directory' })

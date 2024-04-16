@@ -3,12 +3,26 @@ return {
   'zbirenbaum/copilot.lua',
   cmd = 'Copilot',
   build = ':Copilot auth',
-  opts = {
-    suggestion = { enabled = false },
-    panel = { enabled = false },
-    filetypes = {
-      markdown = true,
-      help = true,
-    },
-  },
+  event = 'InsertEnter',
+  config = function()
+    require('copilot').setup {
+      suggestion = {
+        enabled = true,
+        auto_trigger = true,
+        keymap = {
+          accept = '<C-y>',
+          next = '<C-n>',
+          prev = '<C-p>',
+          dismiss = '<C-e>',
+        },
+      },
+      panel = {
+        enabled = false,
+      },
+      filetypes = {
+        markdown = true,
+        help = true,
+      },
+    }
+  end,
 }

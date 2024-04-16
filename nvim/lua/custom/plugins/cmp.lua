@@ -33,22 +33,6 @@ return {
     --  into multiple repos for maintenance purposes.
     'hrsh7th/cmp-nvim-lsp',
     'hrsh7th/cmp-path',
-
-    {
-      'zbirenbaum/copilot-cmp',
-      dependencies = 'copilot.lua',
-      opts = {},
-      config = function(_, opts)
-        local copilot_cmp = require 'copilot_cmp'
-        copilot_cmp.setup(opts)
-      end,
-    },
-
-    -- If you want to add a bunch of pre-configured snippets,
-    --    you can use this plugin to help you. It even has snippets
-    --    for various frameworks/libraries/etc. but you will have to
-    --    set up the ones that are useful for you.
-    -- 'rafamadriz/friendly-snippets',
   },
   config = function()
     -- See `:help cmp`
@@ -155,12 +139,46 @@ return {
             luasnip.jump(-1)
           end
         end, { 'i', 's' }),
+        ['<C-e>'] = cmp.mapping.abort(),
       },
-      sources = {
-        { name = 'nvim_lsp', group_index = 2 },
-        { name = 'luasnip', group_index = 2 },
-        { name = 'copilot', group_index = 2 },
-        { name = 'path', group_index = 2 },
+      --    the order of your sources matter (by default). That gives them priority
+      --    you can configure:
+      --        keyword_length
+      --        priority
+      --        max_item_count
+      --        (more?)
+      sources = cmp.config.sources({
+        { name = 'nvim_lsp' },
+        { name = 'luasnip' },
+        -- { name = 'copilot' },
+      }, {
+        { name = 'path' },
+        { name = 'buffer', keyword_length = 5 },
+      }, {}),
+      sorting = {
+        comparators = {
+          cmp.config.compare.exact,
+          cmp.config.compare.score,
+          cmp.config.compare.recently_used,
+          cmp.config.compare.locality,
+          cmp.config.compare.offset,
+
+          -- copied from cmp-under, but I don't think I need the plugin for this.
+          -- I might add some more of my own.
+          function(entry1, entry2)
+            local _, entry1_under = entry1.completion_item.label:find '^_+'
+            local _, entry2_under = entry2.completion_item.label:find '^_+'
+            entry1_under = entry1_under or 0
+            entry2_under = entry2_under or 0
+            if entry1_under > entry2_under then
+              return false
+            elseif entry1_under < entry2_under then
+              return true
+            end
+          end,
+
+          cmp.config.compare.kind,
+        },
       },
     }
   end,
