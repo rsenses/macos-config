@@ -51,6 +51,13 @@ return {
         completion = cmp.config.window.bordered(),
         documentation = cmp.config.window.bordered(),
       },
+      experimental = {
+        -- I like the new menu better! Nice work hrsh7th
+        native_menu = false,
+
+        -- Let's play with this for a day or two
+        ghost_text = false,
+      },
       formatting = {
         -- changing the order of fields so the icon is the first
         fields = { 'menu', 'abbr', 'kind' },
@@ -58,39 +65,39 @@ return {
         -- here is where the change happens
         format = function(entry, item)
           local menu_icon = {
-            nvim_lsp = 'λ',
-            luasnip = '⋗',
-            buffer = 'Ω',
-            path = '',
-            copilot = '',
-            nvim_lua = 'Π',
+            nvim_lsp = '',
+            luasnip = '',
+            buffer = '',
+            path = '',
+            copilot = '',
+            nvim_lua = '',
           }
           local kind_icons = {
             Text = ' ',
-            Method = ' ',
-            Function = ' ',
+            Method = ' ',
+            Function = ' 󰊕',
             Constructor = ' ',
             Field = ' ﴲ ',
-            Variable = '[]',
-            Class = '  ',
-            Interface = ' ﰮ ',
-            Module = ' ',
-            Property = ' 襁',
+            Variable = ' $',
+            Class = ' ',
+            Interface = ' ',
+            Module = ' 󰕳',
+            Property = ' ',
             Unit = ' ',
-            Value = '  ',
-            Enum = ' 練',
+            Value = ' ',
+            Enum = ' ',
             Keyword = ' ',
             Snippet = ' ',
-            Color = '  ',
-            File = ' ',
-            Reference = '  ',
-            Folder = ' ',
+            Color = ' 󰌁',
+            File = ' ',
+            Reference = ' ',
+            Folder = ' ',
             EnumMember = ' ',
             Constant = ' ﲀ',
             Struct = ' ﳤ',
             Event = '  ',
-            Operator = ' ',
-            TypeParameter = '  ',
+            Operator = ' ',
+            TypeParameter = ' 󰼭',
           }
 
           item.kind = (kind_icons[item.kind] or '') .. ' ' .. item.kind

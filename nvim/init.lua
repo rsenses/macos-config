@@ -136,4 +136,19 @@ require('lazy').setup({ { import = 'custom.plugins' } }, {
   change_detection = {
     notify = false,
   },
+  ui = {
+    icons = {
+      cmd = '⌘',
+      config = '',
+      event = '',
+      ft = '',
+      init = '⏻',
+      keys = '',
+      plugin = '',
+      runtime = '',
+      source = '󰈔',
+      start = '',
+      task = '󰐃',
+    },
+  },
 })
