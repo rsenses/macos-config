@@ -234,6 +234,7 @@ return {
       'html-lsp',
       'phpactor',
       'pint',
+      'php-cs-fixer',
       'prettier',
       'stylua',
       'tailwindcss-language-server',

@@ -26,7 +26,7 @@ api.nvim_create_autocmd('BufEnter', {
 -- Filetypes --
 vim.filetype.add {
   pattern = {
-    ['.*.blade.php'] = 'blade',
+    ['.*%.blade%.php'] = 'blade',
     ['.*.html.twig'] = 'twig',
   },
 }

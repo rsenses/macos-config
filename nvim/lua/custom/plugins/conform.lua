@@ -14,7 +14,6 @@ return {
     },
   },
   opts = {
-    notify_on_error = true,
     format_on_save = {
       lsp_fallback = true,
       async = false,
@@ -43,5 +42,6 @@ return {
       php = { 'pint' },
       blade = { 'blade-formatter' },
     },
+    notify_on_error = true,
   },
 }
