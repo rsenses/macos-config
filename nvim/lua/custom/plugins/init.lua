@@ -19,7 +19,12 @@ return {
 
   -- Highlight todo, notes, etc in comments
   'tpope/vim-repeat',
-  { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
+  {
+    'folke/todo-comments.nvim',
+    event = 'VimEnter',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    opts = { signs = false },
+  },
   {
     'NvChad/nvim-colorizer.lua',
     config = function()

@@ -2,20 +2,20 @@
 .AppleDouble
 .LSOverride
 Icon
-
-# Thumbnails
-._*
-
-# Files that might appear on external disk
 .Spotlight-V100
 .Trashes
-
 tags
 vendor-tags
 .ssh
-_ide_helper.php
-_ide_helper_models.php
 .lvimrc
 .projections.json
 .php-cs-fixer.cache
 .phpactor.json
+_ide_helper.php
+_ide_helper_models.php
+.phpstorm.meta.php
+/.fleet
+/.idea
+/.vscode
+# Thumbnails
+._*

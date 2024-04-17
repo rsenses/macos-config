@@ -3,7 +3,19 @@ code_transform.class_new.variants:
     shift-task-test: shift-task-test
     shift-task: shift-task
 language_server_php_cs_fixer.enabled: true
+language_server_php_cs_fixer.show_diagnostics: true
 language_server_phpstan.enabled: true
 language_server_php_cs_fixer.bin: "/opt/homebrew/bin/php-cs-fixer"
 language_server_phpstan.bin: "/opt/homebrew/bin/phpstan"
+"language_server_worse_reflection.inlay_hints.enable": true
+language_server_worse_reflection.inlay_hints.params: true
+language_server_worse_reflection.inlay_hints.types: false
 phpunit.enabled: true
+composer.autoloader_path:
+    [
+        "%project_root%/vendor/autoload.php",
+        "%project_root%/app/public/vendor/autoload.php",
+    ]
+completion.dedupe: true
+completion.dedupe_match_fqn: true
+indexer.stub_paths: ["/Users/rubensilvarodriguez/dev/contrib/dotfiles/phpactor"]
