@@ -1,29 +1,20 @@
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
--- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
-
 -- TIP: Disable arrow keys in normal mode
 vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
 vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
 vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
 vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 
--- [[ Personal Keymaps ]]
--- Disable annoying command line thing
-vim.keymap.set('n', 'q:', ':q<CR>')
+-- Diagnostic keymaps
+vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
+vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
 
 -- Move lines in visual mode
 vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv", { desc = 'Move lines down' })
 vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv", { desc = 'Move lines up' })
 
 -- Mejoras en los movimientos
--- vim.keymap.set({ 'n', 'x' }, 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
--- vim.keymap.set({ 'n', 'x' }, 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
-vim.keymap.set('n', 'J', 'mzJ`z')
 vim.keymap.set('n', '<C-d>', '<C-d>zz')
 vim.keymap.set('n', '<C-u>', '<C-u>zz')
 vim.keymap.set('n', 'n', 'nzzzv')
@@ -35,15 +26,20 @@ vim.keymap.set({ 'n', 'v' }, '<leader>d', [["_d]], { desc = 'Delete without chan
 vim.keymap.set({ 'n', 'v' }, 'x', [["_x]], { desc = 'Delete without change register' })
 vim.keymap.set({ 'n', 'v' }, 'X', [["_X]], { desc = 'Delete without change register' })
 
--- Resize window using <ctrl> arrow keys
-vim.keymap.set('n', '<C-Up>', '<cmd>resize +2<cr>', { desc = 'Increase window height' })
-vim.keymap.set('n', '<C-Down>', '<cmd>resize -2<cr>', { desc = 'Decrease window height' })
-vim.keymap.set('n', '<C-Left>', '<cmd>vertical resize -2<cr>', { desc = 'Decrease window width' })
-vim.keymap.set('n', '<C-Right>', '<cmd>vertical resize +2<cr>', { desc = 'Increase window width' })
+-- Splits
+vim.keymap.set('n', '<C-w>-', function()
+  vim.cmd.split()
+end, { desc = 'Split window horizontally' })
 
--- Press 'H', 'L' to jump to start/end of a line (first/last char)
-vim.keymap.set({ 'n' }, 'H', '^', { desc = 'Go to beginning of line' })
-vim.keymap.set({ 'n' }, 'L', '$<left>', { desc = 'Go to end of line' })
+vim.keymap.set('n', '<C-w>|', function()
+  vim.cmd.vsplit()
+end, { desc = 'Split window vertically' })
+
+-- Resize window using <ctrl> arrow keys
+vim.keymap.set('n', '<C-w>k', '<cmd>resize +10<cr>', { desc = 'Increase window height' })
+vim.keymap.set('n', '<C-w>j', '<cmd>resize -10cr>', { desc = 'Decrease window height' })
+vim.keymap.set('n', '<C-w>h', '<cmd>vertical resize -10<cr>', { desc = 'Decrease window width' })
+vim.keymap.set('n', '<C-w>l', '<cmd>vertical resize +10<cr>', { desc = 'Increase window width' })
 
 -- Trabajo con buffers
 vim.keymap.set('n', '[b', '<cmd>bprevious<cr>', { desc = 'Prev buffer' })
@@ -60,10 +56,6 @@ vim.keymap.set({ 'n' }, 'S', function()
   local keys = vim.api.nvim_replace_termcodes(cmd, true, false, true)
   vim.api.nvim_feedkeys(keys, 'n', false)
 end, { desc = 'Find and replace word under cursor' })
-
--- better indenting
-vim.keymap.set('v', '<', '<gv')
-vim.keymap.set('v', '>', '>gv')
 
 -- lazy
 vim.keymap.set('n', '<leader>l', '<cmd>Lazy<cr>', { desc = 'Lazy' })

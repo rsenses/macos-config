@@ -85,3 +85,6 @@ if [ "$DESKTOP_SESSION" = "xfce" ]; then
     alias lock='xfce4-session-logout --lock-screen'
     alias logout='xfce4-session-logout --logout'
 fi
+
+# Zoxide
+alias cd="z"

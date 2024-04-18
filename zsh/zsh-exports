@@ -2,14 +2,19 @@
 
 if [[ $(uname) == "Darwin" ]]; then
     eval "$(/opt/homebrew/bin/brew shellenv)" # This loads brew on M1
-    eval "$(zoxide init zsh)"                 # This loads zoxide
-    eval "$(nodenv init -)"                   # This loads nodenv
-
     # source "$HOME/.cargo/env"
 
     export PATH="/opt/homebrew/bin":$PATH
     export PATH="/Applications/Visual Studio Code - Insiders.app/Contents/Resources/app/bin":$PATH
 fi
+
+eval "$(zoxide init zsh)"                 # This loads zoxide
+eval "$(nodenv init -)"                   # This loads nodenv
+# Set up fzf key bindings and fuzzy completion
+eval "$(fzf --zsh)"
+# thefuck alias
+eval $(thefuck --alias)
+eval $(thefuck --alias fk)
 
 export PATH="$HOME/.local/bin":$PATH
 export PATH="$HOME/.composer/vendor/bin":$PATH
