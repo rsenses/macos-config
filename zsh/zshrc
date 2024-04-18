@@ -102,12 +102,12 @@ export HERD_PHP_83_INI_SCAN_DIR="/Users/rubensilvarodriguez/Library/Application 
 # --- setup fzf theme ---
 fg="#dcd7ba"
 bg="#1f1f28"
-bg_highlight="#638980"
-purple="#957FB8"
+bg_highlight="#16161D"
+orange="#FFA066"
 blue="#7e9cd8"
 cyan="#6a9589"
 
-export FZF_DEFAULT_OPTS="--color=fg:${fg},bg:${bg},hl:${purple},fg+:${fg},bg+:${bg_highlight},hl+:${purple},info:${blue},prompt:${cyan},pointer:${cyan},marker:${cyan},spinner:${cyan},header:${cyan}"
+export FZF_DEFAULT_OPTS="--color=fg:${fg},bg:${bg},hl:${orange},fg+:${fg},bg+:${bg_highlight},hl+:${orange},info:${blue},prompt:${cyan},pointer:${cyan},marker:${cyan},spinner:${cyan},header:${cyan}"
 
 # -- Use fd instead of fzf --
 
