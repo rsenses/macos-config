@@ -98,7 +98,6 @@ return {
     vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
     vim.keymap.set('n', '<leader>st', builtin.builtin, { desc = '[S]earch select [T]elescope' })
     vim.keymap.set('n', '<leader>sc', ':TodoTelescope<cr>', { desc = '[S]earch TODO [C]omments' })
-    vim.keymap.set('n', '<leader>sy', ':Telescope neoclip<cr>', { desc = '[S]earch [Y]anks' })
     vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
     vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
     vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
