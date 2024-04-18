@@ -36,10 +36,18 @@ vim.keymap.set('n', '<C-w>|', function()
 end, { desc = 'Split window vertically' })
 
 -- Resize window using <ctrl> arrow keys
-vim.keymap.set('n', '<C-w>k', '<cmd>resize +10<cr>', { desc = 'Increase window height' })
-vim.keymap.set('n', '<C-w>j', '<cmd>resize -10cr>', { desc = 'Decrease window height' })
-vim.keymap.set('n', '<C-w>h', '<cmd>vertical resize -10<cr>', { desc = 'Decrease window width' })
-vim.keymap.set('n', '<C-w>l', '<cmd>vertical resize +10<cr>', { desc = 'Increase window width' })
+vim.keymap.set('n', '<C-w>h', function()
+  require('smart-splits').resize_left()
+end, { desc = 'Resize window left' })
+vim.keymap.set('n', '<C-w>j', function()
+  require('smart-splits').resize_down()
+end, { desc = 'Resize window down' })
+vim.keymap.set('n', '<C-w>k', function()
+  require('smart-splits').resize_up()
+end, { desc = 'Resize window up' })
+vim.keymap.set('n', '<C-w>l', function()
+  require('smart-splits').resize_right()
+end, { desc = 'Resize window right' })
 
 -- Trabajo con buffers
 vim.keymap.set('n', '[b', '<cmd>bprevious<cr>', { desc = 'Prev buffer' })
