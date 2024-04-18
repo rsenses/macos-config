@@ -3,10 +3,9 @@
 .zsh_history
 .zsh_sessions
 .DS_Store
-/iterm2
-/github-copilot
 vifminfo.json
 zsh/plugins
 zsh/.zshrc
 zsh/.zprofile
 lazy-lock.json
+tmux/plugins
