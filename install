@@ -40,9 +40,14 @@ ln -sf $DOTFILES/git/gitconfig $HOME/.gitconfig
 ln -sf $DOTFILES/git/gitignore $HOME/.gitignore
 
 mkdir -p $HOME/.local/bin
+
 rm -rf $HOME/.local/bin/t
 ln -sf $DOTFILES/scripts/t $HOME/.local/bin/t
 chmod +x $HOME/.local/bin/t
+
+rm -rf $HOME/.local/bin/ide
+ln -sf $DOTFILES/scripts/ide $HOME/.local/bin/ide
+chmod +x $HOME/.local/bin/ide
 
 rm -rf $HOME/.tmux-cht-languages
 ln -sf $DOTFILES/tmux/.tmux-cht-languages $HOME/.tmux-cht-languages
