@@ -21,9 +21,9 @@ style = "Regular"
 
 [window]
 decorations = "buttonless"
-dynamic_padding = false
+dynamic_padding = true
 blur = true
 
 [window.padding]
-x = 5
-y = 5
+x = 0
+y = 0

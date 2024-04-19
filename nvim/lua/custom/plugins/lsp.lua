@@ -1,7 +1,7 @@
 -- LSP Configuration & Plugins
 return {
   'neovim/nvim-lspconfig',
-  event = { 'BufReadPre', 'BufNewFile' },
+  -- event = { 'BufReadPre', 'BufNewFile' },
   dependencies = {
     -- Automatically install LSPs and related tools to stdpath for neovim
     'williamboman/mason.nvim',
@@ -175,10 +175,29 @@ return {
           'sass',
         },
       },
-      phpactor = {
+      -- phpactor = {
+      --   filetypes = {
+      --     'php',
+      --   },
+      -- },
+      intelephense = {
         filetypes = {
           'php',
         },
+        init_options = {
+          licenceKey = os.getenv 'HOME' .. '/.config/intelephense/licence.txt',
+        },
+        commands = {
+          IntelephenseIndex = {
+            function()
+              vim.lsp.buf.execute_command { command = 'intelephense.index.workspace' }
+            end,
+          },
+        },
+        on_attach = function(client)
+          client.server_capabilities.documentFormattingProvider = false
+          client.server_capabilities.documentRangeFormattingProvider = false
+        end,
       },
       lua_ls = {
         -- cmd = {...},
@@ -232,7 +251,8 @@ return {
       'emmet-ls',
       'eslint_d',
       'html-lsp',
-      'phpactor',
+      -- 'phpactor',
+      'intelephense',
       'pint',
       'php-cs-fixer',
       'prettier',

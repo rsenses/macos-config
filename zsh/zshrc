@@ -102,7 +102,7 @@ export HERD_PHP_83_INI_SCAN_DIR="/Users/rubensilvarodriguez/Library/Application 
 # --- setup fzf theme ---
 fg="#dcd7ba"
 bg="#1f1f28"
-bg_highlight="#16161D"
+bg_highlight="#363646"
 orange="#FFA066"
 blue="#7e9cd8"
 cyan="#6a9589"
