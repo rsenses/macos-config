@@ -62,11 +62,12 @@ fi
 if [ "$DIR" == "--start" ]; then
 	echo "starting"
 	path_name="$(basename "$PWD" | tr . -)"
-	session_name=${path_name//./_}
+    session_name=${path_name%%_*}
 else
 	# ask the user which directory to start in
 	_session_name=$(cd $DIR && find . -mindepth 1 -maxdepth 1 -type d | fzf --header="Select project from $(basename $DIR) >")
-	session_name=${_session_name//./_}
+    session_name=${_session_name:2}
+    session_name=${session_name%%.*}
 	path_name=$DIR/$_session_name
 fi
 
