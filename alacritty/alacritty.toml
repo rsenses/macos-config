@@ -4,9 +4,9 @@ import = [
     "~/.config/alacritty/themes/kanagawa_wave.toml"
 ]
 
-[shell]
-program = "/opt/homebrew/bin/zsh"
-args = [ "-c", "'t'" ]
+#[shell]
+# program = "/opt/homebrew/bin/zsh"
+# args = [ "-c", "'t'" ]
 
 [env]
 TERM = "xterm-256color"
