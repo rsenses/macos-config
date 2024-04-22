@@ -9,9 +9,7 @@ export CLICOLOR_FORCE=1
 
 # Bookmarks
 alias w="t ~/dev/www"
-alias notes="nvim ~/doc/notes/personal/index.md"
-alias notesw="nvim ~/doc/notes/work/index.md"
-alias notest="nvim ~/doc/notes/tutorials/index.md"
+alias notes="nvim ~/doc/notes/index.md"
 alias v="fd --type f --hidden --exclude .git | fzf-tmux -p --reverse | xargs nvim"
 alias help='tldr --list | fzf --preview "tldr {1}" --preview-window=right,70% | xargs tldr'
 

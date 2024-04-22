@@ -1,22 +1,12 @@
 return {
   'vimwiki/vimwiki',
   init = function()
-    local personal = {
-      path = '~/doc/notes/personal',
+    local notes = {
+      path = '~/doc/notes',
       syntax = 'markdown',
       ext = '.md',
     }
-    local work = {
-      path = '~/doc/notes/work',
-      syntax = 'markdown',
-      ext = '.md',
-    }
-    local tutorials = {
-      path = '~/doc/notes/tutorials',
-      syntax = 'markdown',
-      ext = '.md',
-    }
-    vim.g.vimwiki_list = { personal, work, tutorials }
+    vim.g.vimwiki_list = { notes }
     vim.g.vimwiki_ext2syntax = {
       ['.md'] = 'markdown',
       ['.markdown'] = 'markdown',

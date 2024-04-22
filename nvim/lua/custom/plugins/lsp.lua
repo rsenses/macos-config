@@ -148,6 +148,7 @@ return {
       --
 
       html = { filetypes = { 'html', 'twig', 'hbs' } },
+      marksman = {},
       elixirls = {},
       emmet_ls = {
         filetypes = {
@@ -258,6 +259,7 @@ return {
       'prettier',
       'stylua',
       'tailwindcss-language-server',
+      'marksman',
     })
     require('mason-tool-installer').setup { ensure_installed = ensure_installed, automatic_installation = true }
 
