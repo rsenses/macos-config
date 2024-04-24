@@ -2,4 +2,4 @@
 tmux split-window -v -l 25%
 tmux split-window -h -l 33%
 tmux select-pane -U
-nvim
+nvim -c "Telescope find_files"
