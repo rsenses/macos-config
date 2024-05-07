@@ -176,30 +176,30 @@ return {
           'sass',
         },
       },
-      -- phpactor = {
-      --   filetypes = {
-      --     'php',
-      --   },
-      -- },
-      intelephense = {
+      phpactor = {
         filetypes = {
           'php',
         },
-        init_options = {
-          licenceKey = os.getenv 'HOME' .. '/.config/intelephense/licence.txt',
-        },
-        commands = {
-          IntelephenseIndex = {
-            function()
-              vim.lsp.buf.execute_command { command = 'intelephense.index.workspace' }
-            end,
-          },
-        },
-        on_attach = function(client)
-          client.server_capabilities.documentFormattingProvider = false
-          client.server_capabilities.documentRangeFormattingProvider = false
-        end,
       },
+      -- intelephense = {
+      --   filetypes = {
+      --     'php',
+      --   },
+      --   init_options = {
+      --     licenceKey = os.getenv 'HOME' .. '/.config/intelephense/licence.txt',
+      --   },
+      --   commands = {
+      --     IntelephenseIndex = {
+      --       function()
+      --         vim.lsp.buf.execute_command { command = 'intelephense.index.workspace' }
+      --       end,
+      --     },
+      --   },
+      --   on_attach = function(client)
+      --     client.server_capabilities.documentFormattingProvider = false
+      --     client.server_capabilities.documentRangeFormattingProvider = false
+      --   end,
+      -- },
       lua_ls = {
         -- cmd = {...},
         -- filetypes = { ...},
@@ -252,8 +252,8 @@ return {
       'emmet-ls',
       'eslint_d',
       'html-lsp',
-      -- 'phpactor',
-      'intelephense',
+      'phpactor',
+      -- 'intelephense',
       'pint',
       'php-cs-fixer',
       'prettier',
