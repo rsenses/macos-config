@@ -20,3 +20,4 @@ _ide_helper_models.php
 /.vscode
 # Thumbnails
 ._*
+.valetrc
