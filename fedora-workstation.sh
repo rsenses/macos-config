@@ -122,13 +122,27 @@ trafotin_flathub () {
         "com.spotify.Client"
         "com.visualstudio.code"
         "com.anydesk.Anydesk"
+        "com.usebruno.Bruno"
+        "org.filezillaproject.Filezilla"
     )
     flatpak install -y flathub ${trafotin_flathub_install[*]}
 }
 trafotin_flathub
 
 # Install RPMs
-sudo dnf install -y dnf-plugins-core neovim sqlite3 zsh-autosuggestions zsh-syntax-highlighting ffmpeg compat-ffmpeg4 --best --allowerasing
+sudo dnf install -y dnf-plugins-core git lazygit neovim zoxide syncthing ripgrep tmux php composer python-nodeenv sqlite3 zsh-autosuggestions zsh-syntax-highlighting ffmpeg compat-ffmpeg4 pandoc --best --allowerasing
+
+# Install Tailscale
+sudo dnf config-manager --add-repo https://pkgs.tailscale.com/stable/fedora/tailscale.repo
+sudo dnf install tailscale
+sudo systemctl enable --now tailscaled
+# Para enlazar: sudo tailscale up
+# para ver mi ip: tailscale ip -4
+
+# Install codecs
+sudo dnf install gstreamer1-plugins-{bad-\*,good-\*,base} gstreamer1-plugin-openh264 gstreamer1-libav --exclude=gstreamer1-plugins-bad-free-devel -y
+sudo dnf install lame\* --exclude=lame-deve -y
+sudo dnf group upgrade --allowerasing --with-optional Multimedia -y
 
 # Harden the Kernel with Kicksecure's patches
 # Disables CD ROMs, FireWire, default writes, various kernel flags.
