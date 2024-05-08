@@ -3,25 +3,26 @@
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 rm -rf $HOME/.config/zsh
-ln -s $DOTFILES/zsh $HOME/.config/zsh
+rm -rf $HOME/.zshenv
 ln -sf $DOTFILES/zsh/zshenv $HOME/.zshenv
 ln -sf $DOTFILES/zsh/zprofile $DOTFILES/zsh/.zprofile
 ln -sf $DOTFILES/zsh/zshrc $DOTFILES/zsh/.zshrc
+ln -s $DOTFILES/zsh $HOME/.config/zsh
 
 rm -rf $HOME/.config/nvim
 ln -s $DOTFILES/nvim $HOME/.config/nvim
 
-rm -rf $HOME/.config/awesome
-ln -s $DOTFILES/awesome $HOME/.config/awesome
-
-rm -rf $HOME/.config/kitty
-ln -s $DOTFILES/kitty $HOME/.config/kitty
+rm -rf $HOME/.config/alacritty
+ln -s $DOTFILES/alacritty $HOME/.config/alacritty
 
 rm -rf $HOME/.config/tmux
 ln -sf $DOTFILES/tmux $HOME/.config/tmux
 
 rm -rf $HOME/.config/rofi
 ln -s $DOTFILES/rofi $HOME/.config/rofi
+
+rm -rf $HOME/.config/phpactor
+ln -sf $DOTFILES/phpactor $HOME/.config/phpactor
 
 rm -rf $HOME/.gitconfig
 ln -sf $DOTFILES/git/gitconfig $HOME/.gitconfig
@@ -32,11 +33,22 @@ ln -sf $DOTFILES/git/gitignore $HOME/.gitignore
 rm -rf $HOME/.Xresources
 ln -sf $DOTFILES/.Xresources $HOME/.Xresources
 
+rm -rf $HOME/.config/awesome
+ln -s $DOTFILES/awesome $HOME/.config/awesome
+
 mkdir -p $HOME/.local/bin
 
 rm -rf $HOME/.local/bin/t
 ln -sf $DOTFILES/scripts/t $HOME/.local/bin/t
 chmod +x $HOME/.local/bin/t
+
+rm -rf $HOME/.local/bin/ide
+ln -sf $DOTFILES/scripts/ide $HOME/.local/bin/ide
+chmod +x $HOME/.local/bin/ide
+
+rm -rf $HOME/.local/bin/notes
+ln -sf $DOTFILES/scripts/notes $HOME/.local/bin/notes
+chmod +x $HOME/.local/bin/notes
 
 rm -rf $HOME/.tmux-cht-languages
 ln -sf $DOTFILES/tmux/.tmux-cht-languages $HOME/.tmux-cht-languages

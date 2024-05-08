@@ -11,9 +11,6 @@ ln -s $DOTFILES/zsh $HOME/.config/zsh
 rm -rf $HOME/.config/nvim
 ln -s $DOTFILES/nvim $HOME/.config/nvim
 
-rm -rf $HOME/.wezterm.lua
-ln -s $DOTFILES/.wezterm.lua $HOME/.wezterm.lua
-
 rm -rf $HOME/.config/alacritty
 ln -s $DOTFILES/alacritty $HOME/.config/alacritty
 
@@ -35,8 +32,10 @@ ln -sf $DOTFILES/spotify_player $HOME/.config/spotify_player
 rm -rf $HOME/.config/phpactor
 ln -sf $DOTFILES/phpactor $HOME/.config/phpactor
 
+rm -rf $HOME/.gitconfig
 ln -sf $DOTFILES/git/gitconfig $HOME/.gitconfig
 
+rm -rf $HOME/.gitignore
 ln -sf $DOTFILES/git/gitignore $HOME/.gitignore
 
 mkdir -p $HOME/.local/bin
