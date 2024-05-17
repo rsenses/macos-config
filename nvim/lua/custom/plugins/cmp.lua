@@ -4,7 +4,6 @@ return {
   event = 'InsertEnter',
   dependencies = {
     -- Snippet Engine & its associated nvim-cmp source
-    'onsails/lspkind-nvim',
     'hrsh7th/cmp-nvim-lsp',
     'hrsh7th/cmp-path',
     'hrsh7th/cmp-buffer',
@@ -29,8 +28,6 @@ return {
     local cmp = require 'cmp'
     local luasnip = require 'luasnip'
     luasnip.config.setup {}
-    local lspkind = require 'lspkind'
-    lspkind.init {}
 
     cmp.setup {
       completion = { completeopt = 'menu,menuone,noselect' },
