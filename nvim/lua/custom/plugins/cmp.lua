@@ -4,6 +4,10 @@ return {
   event = 'InsertEnter',
   dependencies = {
     -- Snippet Engine & its associated nvim-cmp source
+    'onsails/lspkind-nvim',
+    'hrsh7th/cmp-nvim-lsp',
+    'hrsh7th/cmp-path',
+    'hrsh7th/cmp-buffer',
     {
       'L3MON4D3/LuaSnip',
       dependencies = {
@@ -16,37 +20,20 @@ return {
       keys = function()
         return {}
       end,
-      build = (function()
-        -- Build Step is needed for regex support in snippets
-        -- This step is not supported in many windows environments
-        -- Remove the below condition to re-enable on windows
-        if vim.fn.has 'win32' == 1 or vim.fn.executable 'make' == 0 then
-          return
-        end
-        return 'make install_jsregexp'
-      end)(),
+      build = 'make install_jsregexp',
     },
     'saadparwaiz1/cmp_luasnip',
-
-    -- Adds other completion capabilities.
-    --  nvim-cmp does not ship with all sources by default. They are split
-    --  into multiple repos for maintenance purposes.
-    'hrsh7th/cmp-nvim-lsp',
-    'hrsh7th/cmp-path',
   },
   config = function()
     -- See `:help cmp`
     local cmp = require 'cmp'
     local luasnip = require 'luasnip'
     luasnip.config.setup {}
+    local lspkind = require 'lspkind'
+    lspkind.init {}
 
     cmp.setup {
-      snippet = {
-        expand = function(args)
-          luasnip.lsp_expand(args.body)
-        end,
-      },
-      completion = { completeopt = 'menu,menuone,noinsert,noselect' },
+      completion = { completeopt = 'menu,menuone,noselect' },
       window = {
         completion = cmp.config.window.bordered(),
         documentation = cmp.config.window.bordered(),
@@ -54,8 +41,6 @@ return {
       experimental = {
         -- I like the new menu better! Nice work hrsh7th
         native_menu = false,
-
-        -- Let's play with this for a day or two
         ghost_text = false,
       },
       formatting = {
@@ -137,12 +122,12 @@ return {
         -- <c-l> will move you to the right of each of the expansion locations.
         -- <c-h> is similar, except moving you backwards.
         ['<C-j>'] = cmp.mapping(function()
-          if luasnip.expand_or_locally_jumpable() then
+          if luasnip.expand_or_jumpable() then
             luasnip.expand_or_jump()
           end
         end, { 'i', 's' }),
         ['<C-k>'] = cmp.mapping(function()
-          if luasnip.locally_jumpable(-1) then
+          if luasnip.jumpable(-1) then
             luasnip.jump(-1)
           end
         end, { 'i', 's' }),
@@ -154,14 +139,18 @@ return {
       --        priority
       --        max_item_count
       --        (more?)
-      sources = cmp.config.sources({
+      sources = {
         { name = 'nvim_lsp' },
         { name = 'luasnip' },
         -- { name = 'copilot' },
-      }, {
         { name = 'path' },
-        { name = 'buffer', keyword_length = 5 },
-      }, {}),
+        { name = 'buffer' },
+      },
+      snippet = {
+        expand = function(args)
+          luasnip.lsp_expand(args.body)
+        end,
+      },
       sorting = {
         comparators = {
           cmp.config.compare.exact,
