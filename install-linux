@@ -21,8 +21,8 @@ ln -sf $DOTFILES/tmux $HOME/.config/tmux
 rm -rf $HOME/.config/rofi
 ln -s $DOTFILES/rofi $HOME/.config/rofi
 
-rm -rf $HOME/.config/phpactor
-ln -sf $DOTFILES/phpactor $HOME/.config/phpactor
+rm -rf $HOME/.config/sesh
+ln -sf $DOTFILES/sesh $HOME/.config/sesh
 
 rm -rf $HOME/.gitconfig
 ln -sf $DOTFILES/git/gitconfig $HOME/.gitconfig
@@ -38,9 +38,9 @@ ln -s $DOTFILES/awesome $HOME/.config/awesome
 
 mkdir -p $HOME/.local/bin
 
-rm -rf $HOME/.local/bin/t
-ln -sf $DOTFILES/scripts/t $HOME/.local/bin/t
-chmod +x $HOME/.local/bin/t
+# rm -rf $HOME/.local/bin/t
+# ln -sf $DOTFILES/scripts/t $HOME/.local/bin/t
+# chmod +x $HOME/.local/bin/t
 
 rm -rf $HOME/.local/bin/ide
 ln -sf $DOTFILES/scripts/ide $HOME/.local/bin/ide

@@ -1,6 +1,5 @@
 # for this to work you must configure sudo such that
 # it will be able to run the command without password
-
 yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
 sudo yabai --load-sa
 
@@ -21,6 +20,7 @@ yabai -m config window_gap 10
 
 # center mouse on window with focus
 yabai -m config mouse_follows_focus on
+yabai -m config focus_follows_mouse off
 
 # modifier for clicking and dragging with mouse
 yabai -m config mouse_modifier alt
@@ -35,6 +35,8 @@ yabai -m mouse_drop_action swap
 # modify window shadows (default: on, options: on, off, float)
 # example: show shadows only for floating windows
 yabai -m config window_shadow float
+
+yabai -m config window_opacity off
 
 # disable specific apps
 yabai -m rule --add app="^System Settings$" manage=off

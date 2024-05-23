@@ -8,8 +8,6 @@ if gls --color >/dev/null 2>&1; then colorflag="--color"; else colorflag="-G"; f
 export CLICOLOR_FORCE=1
 
 # Bookmarks
-alias w="t ~/dev/www"
-alias v="fd --type f --hidden --exclude .git | fzf-tmux -p --reverse | xargs nvim"
 alias help='tldr --list | fzf --preview "tldr {1}" --preview-window=right,70% | xargs tldr'
 
 # Colorize grep output (good for log files)
@@ -24,9 +22,6 @@ alias diff='diff --color=auto'
 alias cp="cp -i"
 alias mv='mv -i'
 alias rm='rm -iv'
-
-# easier to read disk
-alias df='df -h' # human-readable sizes
 
 # i can't remove vim in mac
 alias vim='nvim'
