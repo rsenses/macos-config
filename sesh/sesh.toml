@@ -2,11 +2,14 @@
 startup_command = "ide"
 
 [[session]]
-name = "Downloads"
-path = "~/Downloads"
-startup_command = "ls"
+name = "home"
+path = "~/"
 
 [[session]]
-name = "Dotfiles"
+name = "downloads"
+path = "~/Downloads"
+
+[[session]]
+name = "dotfiles"
 path = "~/dev/contrib/dotfiles"
 startup_command = "nvim -c ':Telescope find_files'"
