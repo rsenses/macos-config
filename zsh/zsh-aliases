@@ -32,7 +32,7 @@ alias dsstore="find . -name '*.DS_Store' -type f -ls -delete"
 # Update installed Homebrew, npm, composer and zsh
 alias brew-update="brew -v update; brew upgrade --force-bottle; brew cleanup; brew doctor"
 alias composer-update='composer global update'
-alias npm-update='composer global update; npm -g update; npm -g upgrade; npm cache clean --force'
+alias npm-update='npm -g update; npm -g upgrade; npm cache clean --force'
 # zeoxide, zsh y tmux
 alias zsh-update="find "$ZDOTDIR/plugins" -type d -exec test -e '{}/.git' ';' -print0 | xargs -I {} -0 git -C {} pull -q"
 
