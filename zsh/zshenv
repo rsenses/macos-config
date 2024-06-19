@@ -1,3 +1,12 @@
 # ZSH config DIR
-export ARTISAN_OPEN_ON_MAKE_EDITOR=vim
 export ZDOTDIR=$HOME/.config/zsh
+# Bat Theme en ~/.config/bat/themes
+export BAT_THEME=kanagawa
+# Artisan editor
+export ARTISAN_OPEN_ON_MAKE_EDITOR=vim
+# Lang
+export LANG=es_ES.UTF-8
+# NVIM as editor
+export EDITOR=/opt/homebrew/bin/nvim
+# Brew
+export HOMEBREW_PREFIX=/opt/homebrew

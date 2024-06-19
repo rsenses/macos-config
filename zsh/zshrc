@@ -1,5 +1,4 @@
-# some useful options (man zshoptions)
-
+# OPTIONS ========================================
 setopt AUTOCD EXTENDEDGLOB MENUCOMPLETE NOMATCH
 setopt BANG_HIST              # Treat the '!' character specially during expansion.
 setopt EXTENDED_HISTORY       # Write the history file in the ':start:elapsed;command' format.
@@ -30,12 +29,58 @@ zle -N zle-line-init
 # beeping is annoying
 unsetopt BEEP
 
-# completions
+# Reevaluate the prompt string each time it's displaying a prompt
+setopt prompt_subst
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+autoload bashcompinit && bashcompinit
 autoload -Uz compinit
-zstyle ':completion:*' menu select
-# zstyle ':completion::complete:lsof:*' menu yes select
-zmodload zsh/complist
 compinit
+
+# Colors
+autoload -Uz colors && colors
+
+# SOURCES ========================================
+# starship
+eval "$(starship init zsh)"
+# source macos specific stuff
+if [[ $(uname) == "Darwin" ]]; then
+    # eval "$(/opt/homebrew/bin/brew shellenv)" # This loads brew on M1
+    # source "$HOME/.cargo/env"
+
+    export PATH="/opt/homebrew/bin":$PATH
+    export PATH="/Applications/Visual Studio Code - Insiders.app/Contents/Resources/app/bin":$PATH
+fi
+# zoxide
+eval "$(zoxide init zsh)"
+# nodenv
+eval "$(nodenv init -)"
+# Set up fzf key bindings and fuzzy completion
+eval "$(fzf --zsh)"
+# thefuck alias
+eval $(thefuck --alias)
+eval $(thefuck --alias fk)
+
+# EXPORTS ========================================
+export PATH="$HOME/.local/bin":$PATH
+export PATH="$HOME/.composer/vendor/bin":$PATH
+
+# ALIASES ========================================
+source $ZDOTDIR/zsh-aliases
+
+# FZF ========================================
+source $ZDOTDIR/zsh-fzf
+
+# ZSH PLUGINS ========================================
+source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# Hace que el inicio de zsh sea muy lento
+# if type brew &>/dev/null; then
+#     FPATH=$HOMEBREW_PREFIX/share/zsh-completions:$FPATH
+#
+#     autoload -Uz compinit
+#     compinit
+# fi
 
 autoload -U up-line-or-beginning-search
 autoload -U down-line-or-beginning-search
@@ -43,82 +88,4 @@ zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
 bindkey "^[[A" up-line-or-beginning-search
 bindkey "^[[B" down-line-or-beginning-search
-
-# Colors
-autoload -Uz colors && colors
-
-# Useful Functions
-source "$ZDOTDIR/zsh-functions"
-
-# Normal files to source
-zsh_add_file "zsh-exports"
-zsh_add_file "zsh-vim-mode"
-zsh_add_file "zsh-aliases"
-zsh_add_file "zsh-prompt"
-
-# Plugins
-# For more plugins: https://github.com/unixorn/awesome-zsh-plugins
-# More completions https://github.com/zsh-users/zsh-completions
-zsh_add_plugin "zsh-users/zsh-autosuggestions"
-zsh_add_plugin "zsh-users/zsh-syntax-highlighting"
-zsh_add_plugin "zsh-users/zsh-completions"
-# zsh_add_plugin "jessarcher/zsh-artisan"
-# zsh_add_plugin "MichaelAquilina/zsh-you-should-use"
-
-# Key-bindings
-bindkey -s '^o' 'ranger\n'
-bindkey -s '^v' 'nvim\n'
-bindkey -s '^ ' 'zi\n'
 bindkey '^y' autosuggest-accept
-bindkey '^p' fzf-cd-widget
-autoload edit-command-line; zle -N edit-command-line # Edit line in vim with ctrl-e:
-bindkey '^e' edit-command-line
-
-# FZF options
-# --- setup fzf theme ---
-fg="#dcd7ba"
-bg="#1f1f28"
-bg_highlight="#363646"
-orange="#FFA066"
-blue="#7e9cd8"
-cyan="#6a9589"
-
-export FZF_DEFAULT_OPTS="--color=fg:${fg},bg:${bg},hl:${orange},fg+:${fg},bg+:${bg_highlight},hl+:${orange},info:${blue},prompt:${cyan},pointer:${cyan},marker:${cyan},spinner:${cyan},header:${cyan}"
-
-# -- Use fd instead of fzf --
-
-export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
-export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
-
-# Use fd (https://github.com/sharkdp/fd) for listing path candidates.
-# - The first argument to the function ($1) is the base path to start traversal
-# - See the source code (completion.{bash,zsh}) for the details.
-_fzf_compgen_path() {
-  fd --hidden --exclude .git . "$1"
-}
-
-# Use fd to generate the list for directory completion
-_fzf_compgen_dir() {
-  fd --type=d --hidden --exclude .git . "$1"
-}
-
-export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always --line-range :500 {}'"
-export FZF_ALT_C_OPTS="--preview 'eza --tree --color=always {} | head -200'"
-
-# Advanced customization of fzf options via _fzf_comprun function
-# - The first argument to the function is the name of the command.
-# - You should make sure to pass the rest of the arguments to fzf.
-_fzf_comprun() {
-  local command=$1
-  shift
-
-  case "$command" in
-    export|unset) fzf --preview "eval 'echo \$'{}"         "$@" ;;
-    ssh)          fzf --preview 'dig {}'                   "$@" ;;
-    *)            fzf --preview "bat -n --color=always --line-range :500 {}" "$@" ;;
-  esac
-}
-
-# Bat Theme en ~/.config/bat/themes
-export BAT_THEME=kanagawa
