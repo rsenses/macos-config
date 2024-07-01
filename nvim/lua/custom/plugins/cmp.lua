@@ -13,7 +13,7 @@ return {
         'rafamadriz/friendly-snippets',
         config = function()
           require('luasnip.loaders.from_vscode').lazy_load()
-          require('luasnip').filetype_extend('php', { 'blade' })
+          require('luasnip').filetype_extend('php', { 'blade', 'phpdoc' })
         end,
       },
       keys = function()
@@ -22,6 +22,7 @@ return {
       build = 'make install_jsregexp',
     },
     'saadparwaiz1/cmp_luasnip',
+    'adoolaard/nvim-cmp-laravel',
   },
   config = function()
     -- See `:help cmp`
@@ -174,5 +175,6 @@ return {
         },
       },
     }
+    require('nvim-cmp-laravel').setup()
   end,
 }

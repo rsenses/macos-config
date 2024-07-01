@@ -40,8 +40,6 @@ compinit
 autoload -Uz colors && colors
 
 # SOURCES ========================================
-# starship
-eval "$(starship init zsh)"
 # source macos specific stuff
 if [[ $(uname) == "Darwin" ]]; then
     # eval "$(/opt/homebrew/bin/brew shellenv)" # This loads brew on M1
@@ -50,6 +48,10 @@ if [[ $(uname) == "Darwin" ]]; then
     export PATH="/opt/homebrew/bin":$PATH
     export PATH="/Applications/Visual Studio Code - Insiders.app/Contents/Resources/app/bin":$PATH
 fi
+# EXPORTS ========================================
+export PATH="$HOME/.local/bin":$PATH
+export PATH="$HOME/.composer/vendor/bin":$PATH
+
 # zoxide
 eval "$(zoxide init zsh)"
 # nodenv
@@ -59,10 +61,8 @@ eval "$(fzf --zsh)"
 # thefuck alias
 eval $(thefuck --alias)
 eval $(thefuck --alias fk)
-
-# EXPORTS ========================================
-export PATH="$HOME/.local/bin":$PATH
-export PATH="$HOME/.composer/vendor/bin":$PATH
+# starship
+eval "$(starship init zsh)"
 
 # ALIASES ========================================
 source $ZDOTDIR/zsh-aliases

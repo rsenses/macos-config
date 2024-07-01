@@ -62,5 +62,9 @@ rm -rf $HOME/.local/bin/tmux-cht.sh
 ln -sf $DOTFILES/scripts/tmux-cht.sh $HOME/.local/bin/tmux-cht.sh
 chmod +x $HOME/.local/bin/tmux-cht.sh
 
+# Phpactor
+rm -rf $HOME/.config/phpactor
+ln -s $DOTFILES/phpactor $HOME/.config/phpactor
+
 rm -rf $HOME/.editorconfig
 ln -sf $DOTFILES/.editorconfig $HOME/.editorconfig

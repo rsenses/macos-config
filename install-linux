@@ -64,5 +64,9 @@ rm -rf $HOME/.local/bin/rofi-power-menu
 ln -sf $DOTFILES/scripts/rofi-power-menu $HOME/.local/bin/rofi-power-menu
 chmod +x $HOME/.local/bin/rofi-power-menu
 
+# Phpactor
+rm -rf $HOME/.config/phpactor
+ln -s $DOTFILES/phpactor $HOME/.config/phpactor
+
 rm -rf $HOME/.editorconfig
 ln -sf $DOTFILES/.editorconfig $HOME/.editorconfig
