@@ -11,8 +11,9 @@ return {
   },
   opts = {
     install = {
-      path = vim.fn.stdpath 'data' .. '/mason/phpactor',
-      bin = vim.fn.stdpath 'data' .. '/mason/bin/phpactor',
+      path = vim.fn.expand '~/dev/contrib/phpactor',
+      bin = vim.fn.expand '~/dev/contrib/phpactor/bin/phpactor',
+      check_on_startup = 'daily',
     },
   },
   keys = {
