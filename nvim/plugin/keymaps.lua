@@ -62,10 +62,10 @@ vim.keymap.set({ 'n' }, 'S', function()
 end, { desc = 'Find and replace word under cursor' })
 
 -- lazy
-vim.keymap.set('n', '<leader>l', '<cmd>Lazy<cr>', { desc = 'Lazy' })
+vim.keymap.set('n', '<leader>wl', '<cmd>Lazy<cr>', { desc = 'Lazy' })
 
 -- mason
-vim.keymap.set('n', '<leader>m', '<cmd>Mason<cr>', { desc = 'Mason' })
+vim.keymap.set('n', '<leader>wm', '<cmd>Mason<cr>', { desc = 'Mason' })
 
 -- Netrw
 -- vim.keymap.set({ 'n' }, '-', '<CMD>Ex<CR>', { desc = 'Open parent directory' })

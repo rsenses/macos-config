@@ -107,15 +107,15 @@ return {
             group = highlight_augroup,
             callback = vim.lsp.buf.clear_references,
           })
-        end
 
-        vim.api.nvim_create_autocmd('LspDetach', {
-          group = vim.api.nvim_create_augroup('kickstart-lsp-detach', { clear = true }),
-          callback = function(event2)
-            vim.lsp.buf.clear_references()
-            vim.api.nvim_clear_autocmds { group = 'kickstart-lsp-highlight', buffer = event2.buf }
-          end,
-        })
+          vim.api.nvim_create_autocmd('LspDetach', {
+            group = vim.api.nvim_create_augroup('kickstart-lsp-detach', { clear = true }),
+            callback = function(event2)
+              vim.lsp.buf.clear_references()
+              vim.api.nvim_clear_autocmds { group = 'kickstart-lsp-highlight', buffer = event2.buf }
+            end,
+          })
+        end
 
         -- The following autocommand is used to enable inlay hints in your
         -- code, if the language server you are using supports them
@@ -188,41 +188,50 @@ return {
           'sass',
         },
       },
-      -- phpactor = {
-      --   filetypes = {
-      --     'php',
+      phpactor = {
+        filetypes = {
+          'php',
+          'blade',
+        },
+        root_dir = require('lspconfig.util').root_pattern('composer.json', '.git'),
+        on_attach = function(client)
+          client.server_capabilities.documentFormattingProvider = false
+          client.server_capabilities.documentRangeFormattingProvider = false
+        end,
+        init_options = {
+          ['language_server_psalm.enabled'] = false,
+          ['language_server_worse_reflection.inlay_hints.enable'] = true,
+          ['language_server_worse_reflection.inlay_hints.params'] = true,
+          ['language_server_configuration.auto_config'] = false,
+          ['code_transform.import_globals'] = true,
+          ['language_server_phpstan.enabled'] = true,
+          -- ['language_server_phpstan.level'] = 5,
+          -- ['language_server_phpstan.bin'] = 'phpstan',
+        },
+      },
+      -- intelephense = {
+      --   filetypes = { 'php', 'blade' },
+      --   files = {
+      --     associations = { '*.php', '*.blade.php' }, -- Associating .blade.php files as well
+      --     maxSize = 5000000,
+      --   },
+      --   init_options = {
+      --     licenceKey = os.getenv 'HOME' .. '/.config/intelephense/licence.txt',
+      --   },
+      --   commands = {
+      --     IntelephenseIndex = {
+      --       function()
+      --         vim.lsp.buf.execute_command { command = 'intelephense.index.workspace' }
+      --       end,
+      --     },
       --   },
       --   on_attach = function(client)
       --     client.server_capabilities.documentFormattingProvider = false
       --     client.server_capabilities.documentRangeFormattingProvider = false
       --   end,
-      --   init_options = {
-      --     ['language_server_phpstan.enabled'] = false,
-      --     ['language_server_psalm.enabled'] = false,
-      --   },
       -- },
-      intelephense = {
-        filetypes = { 'php', 'blade' },
-        files = {
-          associations = { '*.php', '*.blade.php' }, -- Associating .blade.php files as well
-          maxSize = 5000000,
-        },
-        init_options = {
-          licenceKey = os.getenv 'HOME' .. '/.config/intelephense/licence.txt',
-        },
-        commands = {
-          IntelephenseIndex = {
-            function()
-              vim.lsp.buf.execute_command { command = 'intelephense.index.workspace' }
-            end,
-          },
-        },
-        on_attach = function(client)
-          client.server_capabilities.documentFormattingProvider = false
-          client.server_capabilities.documentRangeFormattingProvider = false
-        end,
-      },
       tailwindcss = {
+        filetypes = { 'blade', 'html', 'svelte' },
         experimental = {
           classRegex = {
             '@?class\\(([^]*)\\)',
@@ -282,10 +291,9 @@ return {
       'emmet-ls',
       'eslint_d',
       'html-lsp',
-      -- 'phpactor',
-      'intelephense',
+      'phpactor',
+      -- 'intelephense',
       'pint',
-      -- 'php-cs-fixer',
       'prettier',
       'stylua',
       'tailwindcss-language-server',

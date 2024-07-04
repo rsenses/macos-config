@@ -17,7 +17,10 @@ return {
   -- Add a dependency to those plugins, then it will get loaded before the plugins get loaded.
   -- This is a way of load those plugins with kind of order/priority
 
-  -- Highlight todo, notes, etc in comments
+  {
+    'jwalton512/vim-blade',
+    enabled = false,
+  },
   'tpope/vim-repeat',
   {
     'folke/todo-comments.nvim',

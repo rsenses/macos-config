@@ -9,13 +9,12 @@ return {
     'hrsh7th/cmp-buffer',
     {
       'L3MON4D3/LuaSnip',
-      dependencies = {
-        'rafamadriz/friendly-snippets',
-        config = function()
-          require('luasnip.loaders.from_vscode').lazy_load()
-          require('luasnip').filetype_extend('php', { 'blade', 'phpdoc' })
-        end,
-      },
+      config = function()
+        require('luasnip.loaders.from_vscode').lazy_load {
+          paths = { vim.fn.stdpath 'config' .. '/snippets' },
+        }
+        require('luasnip').filetype_extend('php', { 'blade', 'phpdoc' })
+      end,
       keys = function()
         return {}
       end,
@@ -147,6 +146,7 @@ return {
       snippet = {
         expand = function(args)
           luasnip.lsp_expand(args.body)
+          -- vim.snippet.expand(args.body)
         end,
       },
       sorting = {
