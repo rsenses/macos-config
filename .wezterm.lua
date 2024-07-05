@@ -13,9 +13,10 @@ end
 -- This is where you actually apply your config choices
 
 -- For example, changing the color scheme:
-config.color_scheme = "kanagawabones"
+-- config.color_scheme = "kanagawabones"
 -- config.color_scheme = 'Catppuccin Mocha'
--- config.font = wezterm.font("Terminess Nerd Font Mono")
+config.color_scheme = "nord"
+
 config.font = wezterm.font("IosevkaTerm Nerd Font Mono")
 config.font = wezterm.font_with_fallback({
     "Iosevka Term",
@@ -31,14 +32,14 @@ config.use_fancy_tab_bar = false
 config.window_padding = {
     left = 10,
     right = 0,
-    top = 10,
+    top = 5,
     bottom = 0,
 }
 config.enable_scroll_bar = false
 config.window_decorations = "RESIZE"
 -- config.window_background_opacity = 0.95
 config.hide_tab_bar_if_only_one_tab = true
-config.macos_window_background_blur = 10
+-- config.macos_window_background_blur = 10
 config.send_composed_key_when_left_alt_is_pressed = true
 config.automatically_reload_config = true
 

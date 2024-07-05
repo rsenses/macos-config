@@ -42,23 +42,23 @@ return {
       }
     end,
   },
-  {
-    'lukas-reineke/indent-blankline.nvim',
-    event = { 'BufReadPre', 'BufNewFile' },
-    main = 'ibl',
-    config = function()
-      local highlight = {
-        'Whitespace',
-        'SignColumn',
-      }
-      require('ibl').setup {
-        indent = { highlight = highlight, char = '' },
-        whitespace = {
-          highlight = highlight,
-          remove_blankline_trail = false,
-        },
-        scope = { enabled = true },
-      }
-    end,
-  },
+  -- {
+  --   'lukas-reineke/indent-blankline.nvim',
+  --   event = { 'BufReadPre', 'BufNewFile' },
+  --   main = 'ibl',
+  --   config = function()
+  --     local highlight = {
+  --       'Whitespace',
+  --       'SignColumn',
+  --     }
+  --     require('ibl').setup {
+  --       indent = { highlight = highlight, char = '' },
+  --       whitespace = {
+  --         highlight = highlight,
+  --         remove_blankline_trail = false,
+  --       },
+  --       scope = { enabled = true },
+  --     }
+  --   end,
+  -- },
 }
