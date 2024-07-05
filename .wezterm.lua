@@ -16,9 +16,14 @@ end
 config.color_scheme = "kanagawabones"
 -- config.color_scheme = 'Catppuccin Mocha'
 -- config.font = wezterm.font("Terminess Nerd Font Mono")
-config.font = wezterm.font("IosevkaTerm Nerd Font")
+config.font = wezterm.font("IosevkaTerm Nerd Font Mono")
+config.font = wezterm.font_with_fallback({
+    "Iosevka Term",
+    { family = "Symbols Nerd Font Mono" },
+})
+
 config.font_size = 16
-config.line_height = 1.2
+-- config.line_height = 1.1
 
 -- default is true, has more "native" look
 config.use_fancy_tab_bar = false
@@ -36,6 +41,8 @@ config.hide_tab_bar_if_only_one_tab = true
 config.macos_window_background_blur = 10
 config.send_composed_key_when_left_alt_is_pressed = true
 config.automatically_reload_config = true
+
+config.default_prog = { "/opt/homebrew/bin/tmux" }
 
 -- and finally, return the configuration to wezterm
 return config

@@ -205,8 +205,6 @@ return {
           ['language_server_configuration.auto_config'] = false,
           ['code_transform.import_globals'] = true,
           ['language_server_phpstan.enabled'] = true,
-          -- ['language_server_phpstan.level'] = 5,
-          -- ['language_server_phpstan.bin'] = 'phpstan',
         },
       },
       -- intelephense = {
