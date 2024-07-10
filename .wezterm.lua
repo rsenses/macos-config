@@ -11,15 +11,36 @@ if wezterm.config_builder then
 end
 
 -- This is where you actually apply your config choices
+-- wezterm.gui is not available to the mux server, so take care to
+-- do something reasonable when this config is evaluated by the mux
+function get_appearance()
+    if wezterm.gui then
+        return wezterm.gui.get_appearance()
+    end
+    return "Dark"
+end
 
--- For example, changing the color scheme:
--- config.color_scheme = "kanagawabones"
--- config.color_scheme = 'Catppuccin Mocha'
-config.color_scheme = "nord"
+function scheme_for_appearance(appearance)
+    if appearance:find("Dark") then
+        -- return "nord"
+        -- return "Catppuccin Mocha"
+        -- return "Everforest Dark (Gogh)"
+        return "zenbones_dark"
+    else
+        -- return "kanagawabones"
+        -- return "Catppuccin Latte"
+        -- return "tokyonight-day"
+        -- return "Solarized Light (Gogh)"
+        -- return "Everforest Light (Gogh)"
+        return "zenbones"
+    end
+end
 
-config.font = wezterm.font("IosevkaTerm Nerd Font Mono")
+config.color_scheme = scheme_for_appearance(get_appearance())
+
+-- config.font = wezterm.font("IosevkaTerm Nerd Font Mono")
 config.font = wezterm.font_with_fallback({
-    "Iosevka Term",
+    "Iosevka Custom",
     { family = "Symbols Nerd Font Mono" },
 })
 
@@ -37,8 +58,8 @@ config.window_padding = {
 }
 config.enable_scroll_bar = false
 config.window_decorations = "RESIZE"
--- config.window_background_opacity = 0.95
 config.hide_tab_bar_if_only_one_tab = true
+-- config.window_background_opacity = 0.95
 -- config.macos_window_background_blur = 10
 config.send_composed_key_when_left_alt_is_pressed = true
 config.automatically_reload_config = true
