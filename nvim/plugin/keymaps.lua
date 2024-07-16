@@ -16,11 +16,10 @@ vim.keymap.set('n', '<C-u>', '<C-u>zz')
 vim.keymap.set('n', 'n', 'nzzzv')
 vim.keymap.set('n', 'N', 'Nzzzv')
 
--- Copiar, pegar y borrar sin usar el registro, x lo hace por defecto, para no llenar de basurilla el registro
-vim.keymap.set('x', '<leader>p', [["_dP]], { desc = 'Paste without change register' })
+-- Copiar, pegar y borrar del clipboard
+vim.keymap.set({ 'n', 'v' }, '<leader>y', [["+y]], { desc = 'Copy from clipboard' })
+vim.keymap.set({ 'n', 'v' }, '<leader>p', [["+p]], { desc = 'Paste from clipboard' })
 vim.keymap.set({ 'n', 'v' }, '<leader>d', [["_d]], { desc = 'Delete without change register' })
-vim.keymap.set({ 'n', 'v' }, 'x', [["_x]], { desc = 'Delete without change register' })
-vim.keymap.set({ 'n', 'v' }, 'X', [["_X]], { desc = 'Delete without change register' })
 
 -- Splits
 vim.keymap.set('n', '<C-w>-', function()

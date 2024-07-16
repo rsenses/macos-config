@@ -4,9 +4,11 @@ return {
   event = 'InsertEnter',
   dependencies = {
     -- Snippet Engine & its associated nvim-cmp source
-    'hrsh7th/cmp-nvim-lsp',
-    'hrsh7th/cmp-path',
     'hrsh7th/cmp-buffer',
+    'hrsh7th/cmp-path',
+    'hrsh7th/cmp-nvim-lsp',
+    'hrsh7th/cmp-cmdline',
+    'hrsh7th/cmp-git',
     {
       'L3MON4D3/LuaSnip',
       config = function()
@@ -51,7 +53,6 @@ return {
             luasnip = '',
             buffer = '',
             path = '',
-            copilot = '',
             nvim_lua = '',
           }
           local kind_icons = {
@@ -105,7 +106,7 @@ return {
         -- Accept ([y]es) the completion.
         --  This will auto-import if your LSP supports it.
         --  This will expand snippets if the LSP sent a snippet.
-        ['<C-y>'] = cmp.mapping.confirm { select = false },
+        ['<C-y>'] = cmp.mapping.confirm { select = false, behavior = cmp.ConfirmBehavior.Insert },
         -- Manually trigger a completion from nvim-cmp.
         --  Generally you don't need this, because nvim-cmp will display
         --  completions whenever it has completion options available.
@@ -130,6 +131,7 @@ return {
         end, { 'i', 's' }),
         ['<C-e>'] = cmp.mapping.abort(),
       },
+
       --    the order of your sources matter (by default). That gives them priority
       --    you can configure:
       --        keyword_length
@@ -139,7 +141,6 @@ return {
       sources = {
         { name = 'nvim_lsp' },
         { name = 'luasnip' },
-        -- { name = 'copilot' },
         { name = 'path' },
         { name = 'buffer' },
       },
@@ -175,6 +176,35 @@ return {
         },
       },
     }
+
     require('nvim-cmp-laravel').setup()
+
+    cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done { map_char = '' })
+
+    cmp.setup.filetype('gitcommit', {
+      sources = cmp.config.sources({
+        { name = 'git' }, -- You can specify the `git` source if [you were installed it](https://github.com/petertriho/cmp-git).
+      }, {
+        { name = 'buffer' },
+      }),
+    })
+
+    -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
+    cmp.setup.cmdline({ '/', '?' }, {
+      mapping = cmp.mapping.preset.cmdline(),
+      sources = {
+        { name = 'buffer' },
+      },
+    })
+
+    -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+    cmp.setup.cmdline(':', {
+      mapping = cmp.mapping.preset.cmdline(),
+      sources = cmp.config.sources({
+        { name = 'path' },
+      }, {
+        { name = 'cmdline' },
+      }),
+    })
   end,
 }

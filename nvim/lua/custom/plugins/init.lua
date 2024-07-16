@@ -22,43 +22,4 @@ return {
     enabled = false,
   },
   'tpope/vim-repeat',
-  {
-    'folke/todo-comments.nvim',
-    event = 'VimEnter',
-    dependencies = { 'nvim-lua/plenary.nvim' },
-    opts = { signs = false },
-  },
-  {
-    'NvChad/nvim-colorizer.lua',
-    config = function()
-      require('colorizer').setup {
-        filetypes = {
-          'css',
-          'scss',
-          'sass',
-          'javascript',
-          html = { mode = 'foreground' },
-        },
-      }
-    end,
-  },
-  -- {
-  --   'lukas-reineke/indent-blankline.nvim',
-  --   event = { 'BufReadPre', 'BufNewFile' },
-  --   main = 'ibl',
-  --   config = function()
-  --     local highlight = {
-  --       'Whitespace',
-  --       'SignColumn',
-  --     }
-  --     require('ibl').setup {
-  --       indent = { highlight = highlight, char = '' },
-  --       whitespace = {
-  --         highlight = highlight,
-  --         remove_blankline_trail = false,
-  --       },
-  --       scope = { enabled = true },
-  --     }
-  --   end,
-  -- },
 }

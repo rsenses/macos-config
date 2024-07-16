@@ -56,7 +56,7 @@ opt.foldlevel = 99 -- All folds open by default
 
 opt.belloff = 'all' -- Just turn the dang bell off
 
-opt.clipboard = 'unnamedplus'
+-- opt.clipboard = 'unnamedplus'
 
 -- Save undo history
 opt.undofile = true
@@ -90,4 +90,4 @@ opt.spelllang = { 'es_es', 'en_us' }
 
 -- THEMES
 opt.background = 'light' -- or 'light'
-vim.cmd.colorscheme 'zenbones'
+vim.cmd.colorscheme 'github_light_high_contrast'

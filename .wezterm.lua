@@ -22,17 +22,14 @@ end
 
 function scheme_for_appearance(appearance)
     if appearance:find("Dark") then
-        -- return "nord"
-        -- return "Catppuccin Mocha"
-        -- return "Everforest Dark (Gogh)"
-        return "zenbones_dark"
-    else
         -- return "kanagawabones"
-        -- return "Catppuccin Latte"
-        -- return "tokyonight-day"
-        -- return "Solarized Light (Gogh)"
-        -- return "Everforest Light (Gogh)"
-        return "zenbones"
+        -- return "zenbones_dark"
+        -- return "melange_dark"
+        return "Github Dark"
+    else
+        -- return "zenbones"
+        -- return "melange_light"
+        return "Github (base16)"
     end
 end
 
