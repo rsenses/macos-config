@@ -61,6 +61,8 @@ eval $(thefuck --alias)
 eval $(thefuck --alias fk)
 # starship
 eval "$(starship init zsh)"
+# copilot
+eval "$(gh copilot alias -- bash)"
 
 # ALIASES ========================================
 source $ZDOTDIR/zsh-aliases
