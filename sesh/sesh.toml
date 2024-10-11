@@ -1,15 +1,22 @@
-[default_session]
-startup_command = "ide"
-
 [[session]]
 name = "dotfiles"
 path = "~/dev/contrib/dotfiles"
 startup_command = "nvim -c ':Telescope find_files'"
 
 [[session]]
+name = "notes"
+path = "~/Nextcloud/Documents/notes"
+startup_command = "nvim -c ':Telescope find_files'"
+
+[[session]]
 name = "home"
 path = "~/"
+startup_command = "date"
 
 [[session]]
 name = "downloads"
 path = "~/Downloads"
+startup_command = "date"
+
+[default_session]
+startup_command = "ide"

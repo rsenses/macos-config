@@ -1,16 +1,49 @@
-# after-startup-command = [
-    # JankyBorders has a built-in detection of already running process,
-    # so it won't be run twice on AeroSpace restart
-    # 'exec-and-forget /opt/homebrew/opt/borders/bin/borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0'
-#]
+# Place a copy of this config to ~/.aerospace.toml
+# After that, you can edit ~/.aerospace.toml to your liking
+
+# It's not necessary to copy all keys to your config.
+# If the key is missing in your config, "default-config.toml" will serve as a fallback
+
+# You can use it to add commands that run after login to macOS user session.
+# 'start-at-login' needs to be 'true' for 'after-login-command' to work
+# Available commands: https://nikitabobko.github.io/AeroSpace/commands
+after-login-command = []
+
+# You can use it to add commands that run after AeroSpace startup.
+# 'after-startup-command' is run after 'after-login-command'
+# Available commands : https://nikitabobko.github.io/AeroSpace/commands
+after-startup-command = []
 
 # Start AeroSpace at login
 start-at-login = true
 
-# Reference: https://github.com/i3/i3/blob/next/etc/config
+# Normalizations. See: https://nikitabobko.github.io/AeroSpace/guide#normalization
+enable-normalization-flatten-containers = true
+enable-normalization-opposite-orientation-for-nested-containers = true
 
-enable-normalization-flatten-containers = false
-enable-normalization-opposite-orientation-for-nested-containers = false
+# See: https://nikitabobko.github.io/AeroSpace/guide#layouts
+# The 'accordion-padding' specifies the size of accordion padding
+# You can set 0 to disable the padding feature
+accordion-padding = 30
+
+# Possible values: tiles|accordion
+default-root-container-layout = 'tiles'
+
+# Possible values: horizontal|vertical|auto
+# 'auto' means: wide monitor (anything wider than high) gets horizontal orientation,
+#               tall monitor (anything higher than wide) gets vertical orientation
+default-root-container-orientation = 'auto'
+
+# Possible values: (qwerty|dvorak)
+# See https://nikitabobko.github.io/AeroSpace/guide#key-mapping
+key-mapping.preset = 'qwerty'
+
+# Mouse follows focus when focused monitor changes
+# Drop it from your config, if you don't like this behavior
+# See https://nikitabobko.github.io/AeroSpace/guide#on-focus-changed-callbacks
+# See https://nikitabobko.github.io/AeroSpace/commands#move-mouse
+on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
+on-focus-changed = "move-mouse window-lazy-center"
 
 # Gaps between windows (inner-*) and between monitor edges (outer-*).
 # Possible values:
@@ -28,96 +61,97 @@ outer.top =        15
 outer.right =      15
 
 [mode.main.binding]
-alt-enter = 'exec-and-forget open -n /Applications/WezTerm.app'
+ctrl-alt-space = ['mode alt']
 
-alt-h = 'focus left'
-alt-j = 'focus down'
-alt-k = 'focus up'
-alt-l = 'focus right'
+[mode.alt.binding]
+esc = ['mode main']
+space = ['mode main']
+backslash = ['reload-config', 'mode main']
 
-alt-shift-h = 'move left'
-alt-shift-j = 'move down'
-alt-shift-k = 'move up'
-alt-shift-l = 'move right'
+# See: https://nikitabobko.github.io/AeroSpace/commands#focus
+h = ['focus --boundaries-action stop left', 'move-mouse window-force-center']
+j = ['focus --boundaries-action stop down', 'move-mouse window-force-center']
+k = ['focus --boundaries-action stop up', 'move-mouse window-force-center']
+l = ['focus --boundaries-action stop right', 'move-mouse window-force-center']
 
-alt-minus = 'split horizontal'
-alt-equal = 'split vertical'
+# See: https://nikitabobko.github.io/AeroSpace/commands#move
+shift-h = 'move left'
+shift-j = 'move down'
+shift-k = 'move up'
+shift-l = 'move right'
 
-alt-f = 'fullscreen'
+# See: https://nikitabobko.github.io/AeroSpace/commands#workspace
+t = 'workspace T' # for Terminal
+b = 'workspace B' # for Browser
+i = 'workspace I' # for Internet
+c = 'workspace C' # for Coding
+f = 'workspace F' # for File Explorer (Finder)
+w = 'workspace W' # for Write
+o = 'workspace O' # for Other
 
-alt-s = 'layout v_accordion' # 'layout stacking' in i3
-alt-w = 'layout h_accordion' # 'layout tabbed' in i3
-alt-e = 'layout tiles horizontal vertical' # 'layout toggle split' in i3
+# See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
+shift-b = 'move-node-to-workspace B' # for Browser
+shift-c = 'move-node-to-workspace C' # for Coding
+shift-f = 'move-node-to-workspace F' # for File Explorer (Finder)
+shift-i = 'move-node-to-workspace I' # for Internet
+shift-o = 'move-node-to-workspace O' # for Other
+shift-t = 'move-node-to-workspace T' # for Terminal
+shift-w = 'move-node-to-workspace W' # for Write
 
-alt-shift-space = 'layout floating tiling' # 'floating toggle' in i3
+# See: https://nikitabobko.github.io/AeroSpace/commands#resize
+minus = 'resize smart -64'
+equal = 'resize smart +64'
 
-alt-1 = 'workspace 1'
-alt-2 = 'workspace 2'
-alt-3 = 'workspace 3'
-alt-4 = 'workspace 4'
-alt-5 = 'workspace 5'
-alt-6 = 'workspace 6'
+z = 'fullscreen'
 
-alt-shift-1 = 'move-node-to-workspace 1'
-alt-shift-2 = 'move-node-to-workspace 2'
-alt-shift-3 = 'move-node-to-workspace 3'
-alt-shift-4 = 'move-node-to-workspace 4'
-alt-shift-5 = 'move-node-to-workspace 5'
-alt-shift-6 = 'move-node-to-workspace 6'
-
-alt-shift-c = 'reload-config'
-
-alt-r = 'mode resize'
-
-[mode.resize.binding]
-h = 'resize width -50'
-j = 'resize height +50'
-k = 'resize height -50'
-l = 'resize width +50'
-enter = 'mode main'
-esc = 'mode main'
-
-[workspace-to-monitor-force-assignment]
-1 = 'main'
-2 = 'main'
-3 = 'main'
-4 = ['built-in', 'main'] # You can specify multiple patterns. The first matching pattern will be used
-5 = ['built-in', 'main']
-6 = ['main']
+# See: https://nikitabobko.github.io/AeroSpace/commands#workspace-back-and-forth
+tab = 'workspace-back-and-forth'
 
 [[on-window-detected]]
 if.app-id = 'com.github.wez.wezterm'
-run = 'move-node-to-workspace 1'
+run = 'move-node-to-workspace T'
 
 [[on-window-detected]]
-if.app-id = 'org.mozilla.floorp'
-run = 'move-node-to-workspace 2'
+if.app-id = 'com.brave.Browser'
+run = 'move-node-to-workspace B'
+
+[[on-window-detected]]
+if.app-id = 'org.mozilla.com.zen.browser'
+run = 'move-node-to-workspace I'
 
 [[on-window-detected]]
 if.app-id = 'com.apple.iWork.Pages'
-run = 'move-node-to-workspace 3'
+run = 'move-node-to-workspace W'
 
 [[on-window-detected]]
 if.app-id = 'com.apple.iWork.Numbers'
-run = 'move-node-to-workspace 3'
+run = 'move-node-to-workspace W'
 
 [[on-window-detected]]
 if.app-id = 'com.microsoft.VSCodeInsiders'
-run = 'move-node-to-workspace 4'
+run = 'move-node-to-workspace C'
 
 [[on-window-detected]]
 if.app-id = 'com.tinyapp.TablePlus'
-run = 'move-node-to-workspace 4'
+run = 'move-node-to-workspace C'
+
+[[on-window-detected]]
+if.app-id = 'com.usebruno.app'
+run = 'move-node-to-workspace C'
+
+[[on-window-detected]]
+if.app-id = 'com.todesktop.230313mzl4w4u9'
+run = 'move-node-to-workspace C'
 
 [[on-window-detected]]
 if.app-id = 'com.apple.finder'
-run = 'move-node-to-workspace 5'
+run = 'move-node-to-workspace E'
 
 [[on-window-detected]]
 if.app-id = 'org.filezilla-project.filezilla'
-run = 'move-node-to-workspace 5'
+run = 'move-node-to-workspace E'
 
 [[on-window-detected]]
 if.during-aerospace-startup = true                     # Run the callback only if the window detected during AeroSpace startup
 check-further-callbacks = true
-run = ['layout floating', 'move-node-to-workspace 6']
+run = ['layout floating', 'move-node-to-workspace O']

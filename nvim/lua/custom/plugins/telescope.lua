@@ -80,6 +80,14 @@ return {
           'deps/*',
           '_build/',
         },
+        mappings = {
+          i = {
+            ['<c-d>'] = require('telescope.actions').delete_buffer,
+          },
+          n = {
+            ['dd'] = require('telescope.actions').delete_buffer,
+          },
+        },
       },
       extensions = {
         ['ui-select'] = {
@@ -89,8 +97,10 @@ return {
     }
 
     -- Enable telescope extensions, if they are installed
-    pcall(require('telescope').load_extension, 'fzf')
-    pcall(require('telescope').load_extension, 'ui-select')
+    require('telescope').load_extension 'neoclip'
+    require('telescope').load_extension 'fzf'
+    require('telescope').load_extension 'ui-select'
+    require('telescope').load_extension 'noice'
 
     -- See `:help telescope.builtin`
     local builtin = require 'telescope.builtin'
@@ -102,6 +112,7 @@ return {
     vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
     vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
     vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
+    vim.keymap.set('n', '<leader>sy', ':Telescope neoclip<cr>', { desc = '[S]earch [Y]ank History' })
     vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
     vim.keymap.set('n', '<leader>,', builtin.buffers, { desc = '[ ] Find existing buffers' })
 

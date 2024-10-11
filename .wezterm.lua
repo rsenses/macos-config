@@ -60,6 +60,8 @@ config.hide_tab_bar_if_only_one_tab = true
 -- config.macos_window_background_blur = 10
 config.send_composed_key_when_left_alt_is_pressed = true
 config.automatically_reload_config = true
+config.window_close_confirmation = "NeverPrompt"
+config.default_cursor_style = "BlinkingBlock"
 
 config.default_prog = { "/opt/homebrew/bin/tmux" }
 

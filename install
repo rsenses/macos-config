@@ -48,6 +48,10 @@ rm -rf $HOME/.local/bin/ide
 ln -sf $DOTFILES/scripts/ide $HOME/.local/bin/ide
 chmod +x $HOME/.local/bin/ide
 
+rm -rf $HOME/.local/bin/idep
+ln -sf $DOTFILES/scripts/idep $HOME/.local/bin/idep
+chmod +x $HOME/.local/bin/idep
+
 rm -rf $HOME/.local/bin/notes
 ln -sf $DOTFILES/scripts/notes $HOME/.local/bin/notes
 chmod +x $HOME/.local/bin/notes

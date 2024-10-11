@@ -24,7 +24,10 @@ return {
     require('mini.pairs').setup()
 
     -- Tabline (show buffers on top)
-    require('mini.tabline').setup()
+    -- require('mini.tabline').setup()
+
+    -- File explorer
+    -- require('mini.files').setup()
 
     -- Highlight colors and TODOs
     local hipatterns = require 'mini.hipatterns'

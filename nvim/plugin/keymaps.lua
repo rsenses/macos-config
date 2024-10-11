@@ -30,20 +30,6 @@ vim.keymap.set('n', '<C-w>|', function()
   vim.cmd.vsplit()
 end, { desc = 'Split window vertically' })
 
--- Resize window using <ctrl> arrow keys
-vim.keymap.set('n', '<C-w>h', function()
-  require('smart-splits').resize_left()
-end, { desc = 'Resize window left' })
-vim.keymap.set('n', '<C-w>j', function()
-  require('smart-splits').resize_down()
-end, { desc = 'Resize window down' })
-vim.keymap.set('n', '<C-w>k', function()
-  require('smart-splits').resize_up()
-end, { desc = 'Resize window up' })
-vim.keymap.set('n', '<C-w>l', function()
-  require('smart-splits').resize_right()
-end, { desc = 'Resize window right' })
-
 -- Trabajo con buffers
 vim.keymap.set('n', '[b', '<cmd>bprevious<cr>', { desc = 'Prev buffer' })
 vim.keymap.set('n', ']b', '<cmd>bnext<cr>', { desc = 'Next buffer' })
@@ -65,6 +51,3 @@ vim.keymap.set('n', '<leader>wl', '<cmd>Lazy<cr>', { desc = 'Lazy' })
 
 -- mason
 vim.keymap.set('n', '<leader>wm', '<cmd>Mason<cr>', { desc = 'Mason' })
-
--- Netrw
--- vim.keymap.set({ 'n' }, '-', '<CMD>Ex<CR>', { desc = 'Open parent directory' })
