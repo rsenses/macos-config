@@ -16,4 +16,5 @@ inoreabbrev tihs this
 inoreabbrev waht what
 inoreabbrev widht width
 inoreabbrev tempalte template
+inoreabbrev resutl result
 ]]

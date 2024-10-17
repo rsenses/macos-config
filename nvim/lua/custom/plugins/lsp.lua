@@ -189,36 +189,53 @@ return {
         },
       },
       phpactor = {
-        filetypes = {
-          'php',
-          'blade',
-        },
-        root_dir = require('lspconfig.util').root_pattern('composer.json', '.git'),
-        init_options = {
-          ['language_server_worse_reflection.inlay_hints.enable'] = true,
+        cmd = { 'phpactor', 'language-server', '-vvv' },
+        on_attach = function(client)
+          client.server_capabilities.hoverProvider = false
+          client.server_capabilities.documentSymbolProvider = false
+          client.server_capabilities.referencesProvider = false
+          client.server_capabilities.completionProvider = false
+          client.server_capabilities.documentFormattingProvider = false
+          client.server_capabilities.definitionProvider = false
+          client.server_capabilities.implementationProvider = true
+          client.server_capabilities.typeDefinitionProvider = false
+          client.server_capabilities.diagnosticProvider = false
+        end,
+        filetypes = { 'php', 'blade' },
+        settings = {
+          phpactor = {
+            language_server_phpstan = { enabled = false },
+            language_server_psalm = { enabled = false },
+            inlayHints = {
+              enable = true,
+              parameterHints = true,
+              typeHints = true,
+            },
+          },
         },
       },
-      -- intelephense = {
-      --   filetypes = { 'php', 'blade' },
-      --   files = {
-      --     associations = { '*.php', '*.blade.php' }, -- Associating .blade.php files as well
-      --     maxSize = 5000000,
-      --   },
-      --   init_options = {
-      --     licenceKey = os.getenv 'HOME' .. '/.config/intelephense/licence.txt',
-      --   },
-      --   commands = {
-      --     IntelephenseIndex = {
-      --       function()
-      --         vim.lsp.buf.execute_command { command = 'intelephense.index.workspace' }
-      --       end,
-      --     },
-      --   },
-      --   on_attach = function(client)
-      --     client.server_capabilities.documentFormattingProvider = false
-      --     client.server_capabilities.documentRangeFormattingProvider = false
-      --   end,
-      -- },
+      intelephense = {
+        filetypes = { 'php', 'blade' },
+        files = {
+          associations = { '*.php', '*.blade.php' }, -- Associating .blade.php files as well
+          maxSize = 5000000,
+        },
+        init_options = {
+          licenceKey = os.getenv 'HOME' .. '/.config/intelephense/licence.txt',
+        },
+        cmd = { 'intelephense', '--stdio' },
+        commands = {
+          IntelephenseIndex = {
+            function()
+              vim.lsp.buf.execute_command { command = 'intelephense.index.workspace' }
+            end,
+          },
+        },
+        settings = { php = { completion = { callSnippet = 'Replace' } } },
+        on_attach = function(client)
+          client.server_capabilities.workspaceSymbolProvider = false
+        end,
+      },
       tailwindcss = {
         filetypes = { 'blade', 'html', 'svelte' },
         experimental = {
