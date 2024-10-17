@@ -112,6 +112,7 @@ return {
         -- Descriptions
         { mode = 'n', keys = '<leader>b', desc = '[B]uffers' },
         { mode = 'n', keys = '<leader>c', desc = '[C]ode' },
+        { mode = 'n', keys = '<leader>cp', desc = '[C]ode PHP' },
         { mode = 'n', keys = '<leader>d', desc = '[D]ocument' },
         { mode = 'n', keys = '<leader>g', desc = '[G]it' },
         { mode = 'n', keys = '<leader>h', desc = '[H]arpoon' },
