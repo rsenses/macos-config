@@ -25,11 +25,13 @@ function scheme_for_appearance(appearance)
         -- return "kanagawabones"
         -- return "zenbones_dark"
         -- return "melange_dark"
-        return "Github Dark"
+        -- return "Github Dark"
+        return "NvimDark"
     else
         -- return "zenbones"
         -- return "melange_light"
-        return "Github (base16)"
+        -- return "Github (base16)"
+        return "NvimLight"
     end
 end
 
