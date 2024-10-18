@@ -29,6 +29,32 @@ return {
     -- File explorer
     -- require('mini.files').setup()
 
+    -- GitSigns
+    require('mini.diff').setup {
+      view = {
+        -- Signs used for hunks with 'sign' view
+        signs = { add = ' ', change = ' ', delete = ' ' },
+      },
+      -- Module mappings. Use `''` (empty string) to disable one.
+      mappings = {
+        -- Apply hunks inside a visual/operator region
+        apply = 'gh',
+
+        -- Reset hunks inside a visual/operator region
+        reset = 'gH',
+
+        -- Hunk range textobject to be used inside operator
+        -- Works also in Visual mode if mapping differs from apply and reset
+        textobject = 'gh',
+
+        -- Go to hunk range in corresponding direction
+        goto_first = '[H',
+        goto_prev = '[h',
+        goto_next = ']h',
+        goto_last = ']H',
+      },
+    }
+
     -- Highlight colors and TODOs
     local hipatterns = require 'mini.hipatterns'
     hipatterns.setup {
