@@ -15,6 +15,12 @@ return {
     },
   },
   opts = {
+    log_level = vim.log.levels.WARN,
+    formatters = {
+      prettier = {
+        prepend_args = { '--ignore-unknown' },
+      },
+    },
     format_on_save = function(bufnr)
       -- Disable "format_on_save lsp_fallback" for languages that don't
       -- have a well standardized coding style. You can add additional
@@ -49,7 +55,11 @@ return {
       markdown = { 'prettierd', 'prettier', stop_after_first = true },
       php = { 'pint', 'php_cs_fixer', stop_after_first = true },
       blade = { 'blade-formatter', 'prettierd', 'prettier', stop_after_first = true },
+      ['*'] = { 'injected' },
     },
     notify_on_error = true,
+    init = function()
+      vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
+    end,
   },
 }

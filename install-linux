@@ -46,10 +46,6 @@ rm -rf $HOME/.local/bin/ide
 ln -sf $DOTFILES/scripts/ide $HOME/.local/bin/ide
 chmod +x $HOME/.local/bin/ide
 
-rm -rf $HOME/.local/bin/notes
-ln -sf $DOTFILES/scripts/notes $HOME/.local/bin/notes
-chmod +x $HOME/.local/bin/notes
-
 rm -rf $HOME/.tmux-cht-languages
 ln -sf $DOTFILES/tmux/.tmux-cht-languages $HOME/.tmux-cht-languages
 

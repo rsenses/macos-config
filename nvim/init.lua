@@ -129,9 +129,6 @@ vim.opt.rtp:prepend(lazypath)
 -- { import = 'kickstart.plugins.debug' },
 -- { import = 'kickstart.plugins.indent_line' },
 require('lazy').setup({ { import = 'custom.plugins' } }, {
-  install = {
-    colorscheme = { 'kanagawa-wave' },
-  },
   checker = {
     enabled = true,
     notify = false,
@@ -139,7 +136,15 @@ require('lazy').setup({ { import = 'custom.plugins' } }, {
   change_detection = {
     notify = false,
   },
+  performance = {
+    rtp = {
+      disabled_plugins = {
+        'netrwPlugin',
+      },
+    },
+  },
   ui = {
+    border = 'rounded',
     icons = {
       cmd = '⌘',
       config = '',

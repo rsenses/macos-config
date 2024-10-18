@@ -1,5 +1,5 @@
 #!/bin/bash
 tmux split-window -h -l 40%
-tmux split-window -v -l 30%
-tmux select-pane -U
+tmux split-window -v -l 50%
+tmux select-pane -L
 nvim -c "Telescope find_files"

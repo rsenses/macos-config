@@ -3,6 +3,12 @@ return {
   config = function()
     -- Add/delete/replace surroundings (brackets, quotes, etc.)
     --
+    -- Add surrounding with sa (in visual mode or on motion).
+    -- Delete surrounding with sd.
+    -- Replace surrounding with sr.
+    -- Find surrounding with sf or sF (move cursor right or left).
+    -- Highlight surrounding with sh.
+    --
     -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
     -- - sd'   - [S]urround [D]elete [']quotes
     -- - sr)'  - [S]urround [R]eplace [)] [']
@@ -26,8 +32,8 @@ return {
     -- Tabline (show buffers on top)
     -- require('mini.tabline').setup()
 
-    -- File explorer
-    -- require('mini.files').setup()
+    -- Trail Space visualizer
+    require('mini.trailspace').setup()
 
     -- GitSigns
     require('mini.diff').setup {
@@ -136,13 +142,13 @@ return {
         miniclue.gen_clues.z(),
 
         -- Descriptions
+        { mode = 'n', keys = '<leader>a', desc = '[A]vante' },
         { mode = 'n', keys = '<leader>b', desc = '[B]uffers' },
         { mode = 'n', keys = '<leader>c', desc = '[C]ode' },
         { mode = 'n', keys = '<leader>cp', desc = '[C]ode PHP' },
         { mode = 'n', keys = '<leader>d', desc = '[D]ocument' },
         { mode = 'n', keys = '<leader>g', desc = '[G]it' },
-        { mode = 'n', keys = '<leader>h', desc = '[H]arpoon' },
-        { mode = 'n', keys = '<leader>l', desc = '[L]aravel' },
+        { mode = 'n', keys = '<leader>r', desc = '[R]efactor' },
         { mode = 'n', keys = '<leader>s', desc = '[S]earch' },
         { mode = 'n', keys = '<leader>w', desc = '[W]indows' },
       },

@@ -201,7 +201,7 @@ return {
           client.server_capabilities.typeDefinitionProvider = false
           client.server_capabilities.diagnosticProvider = false
         end,
-        filetypes = { 'php', 'blade' },
+        filetypes = { 'php' },
         settings = {
           phpactor = {
             language_server_phpstan = { enabled = false },
@@ -215,7 +215,7 @@ return {
         },
       },
       intelephense = {
-        filetypes = { 'php', 'blade' },
+        filetypes = { 'php' },
         files = {
           associations = { '*.php', '*.blade.php' }, -- Associating .blade.php files as well
           maxSize = 5000000,

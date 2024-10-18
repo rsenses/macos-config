@@ -1,6 +1,9 @@
 -- Highlight, edit, and navigate code
 return {
   {
+    'JoosepAlviste/nvim-ts-context-commentstring',
+  },
+  {
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     event = { 'BufRead', 'BufNewFile' },
@@ -18,6 +21,13 @@ return {
               branch = 'main',
             },
             filetype = 'blade',
+          }
+
+          -- Filetypes --
+          vim.filetype.add {
+            pattern = {
+              ['.*%.blade%.php'] = 'blade',
+            },
           }
         end,
       },
@@ -49,17 +59,7 @@ return {
       auto_install = true,
       highlight = { enable = true },
       indent = { enable = true },
-
-      -- There are additional nvim-treesitter modules that you can use to interact
-      -- with nvim-treesitter. You should go explore a few and see what interests you:
-      --
-      --    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
-      --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
-      --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
-
-      autotag = {
-        enable = true,
-      },
+      autotag = { enable = true },
       incremental_selection = {
         enable = true,
         keymaps = {
@@ -144,19 +144,6 @@ return {
       vim.keymap.set({ 'n', 'x', 'o' }, 'F', ts_repeat_move.builtin_F)
       vim.keymap.set({ 'n', 'x', 'o' }, 't', ts_repeat_move.builtin_t)
       vim.keymap.set({ 'n', 'x', 'o' }, 'T', ts_repeat_move.builtin_T)
-    end,
-  },
-  {
-    'JoosepAlviste/nvim-ts-context-commentstring',
-    dependencies = {
-      { 'nvim-treesitter/nvim-treesitter' },
-    },
-    event = 'InsertEnter',
-    config = function()
-      vim.g.skip_ts_context_commentstring_module = true
-      require('nvim-treesitter.configs').setup {
-        enable_autocmd = false,
-      }
     end,
   },
 }

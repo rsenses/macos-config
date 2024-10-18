@@ -52,10 +52,6 @@ rm -rf $HOME/.local/bin/idep
 ln -sf $DOTFILES/scripts/idep $HOME/.local/bin/idep
 chmod +x $HOME/.local/bin/idep
 
-rm -rf $HOME/.local/bin/notes
-ln -sf $DOTFILES/scripts/notes $HOME/.local/bin/notes
-chmod +x $HOME/.local/bin/notes
-
 rm -rf $HOME/.tmux-cht-languages
 ln -sf $DOTFILES/tmux/.tmux-cht-languages $HOME/.tmux-cht-languages
 
