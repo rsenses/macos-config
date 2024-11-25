@@ -50,6 +50,7 @@ return {
         'json',
         'vue',
         'php',
+        'php_only',
         'scss',
         'yaml',
         'gitignore',

@@ -207,9 +207,9 @@ return {
             language_server_phpstan = { enabled = false },
             language_server_psalm = { enabled = false },
             inlayHints = {
-              enable = true,
-              parameterHints = true,
-              typeHints = true,
+              enable = false,
+              parameterHints = false,
+              typeHints = false,
             },
           },
         },
@@ -222,6 +222,7 @@ return {
         },
         init_options = {
           licenceKey = os.getenv 'HOME' .. '/.config/intelephense/licence.txt',
+          inlayHints = true,
         },
         cmd = { 'intelephense', '--stdio' },
         commands = {
@@ -320,10 +321,11 @@ return {
       },
     }
 
-    local signs = { Error = '󰅚 ', Warn = '󰀪 ', Hint = '󰌶 ', Info = ' ' }
+    local signs = { ERROR = '󰅚 ', WARN = '󰀪 ', HINT = '󰌶 ', INFO = ' ' }
+    local diagnostic_signs = {}
     for type, icon in pairs(signs) do
-      local hl = 'DiagnosticSign' .. type
-      vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
+      diagnostic_signs[vim.diagnostic.severity[type]] = icon
     end
+    vim.diagnostic.config { signs = { text = diagnostic_signs } }
   end,
 }

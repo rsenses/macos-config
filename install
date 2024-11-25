@@ -48,9 +48,9 @@ rm -rf $HOME/.local/bin/ide
 ln -sf $DOTFILES/scripts/ide $HOME/.local/bin/ide
 chmod +x $HOME/.local/bin/ide
 
-rm -rf $HOME/.local/bin/idep
-ln -sf $DOTFILES/scripts/idep $HOME/.local/bin/idep
-chmod +x $HOME/.local/bin/idep
+rm -rf $HOME/.local/bin/home
+ln -sf $DOTFILES/scripts/home $HOME/.local/bin/home
+chmod +x $HOME/.local/bin/home
 
 rm -rf $HOME/.tmux-cht-languages
 ln -sf $DOTFILES/tmux/.tmux-cht-languages $HOME/.tmux-cht-languages

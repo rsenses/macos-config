@@ -56,6 +56,10 @@
         "path": "./typescript.json"
       },
       {
+        "language": "markdown",
+        "path": "./markdown.json"
+      },
+      {
         "language": "php",
         "path": "./php/php.json"
       },

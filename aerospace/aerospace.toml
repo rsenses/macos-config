@@ -12,7 +12,13 @@ after-login-command = []
 # You can use it to add commands that run after AeroSpace startup.
 # 'after-startup-command' is run after 'after-login-command'
 # Available commands : https://nikitabobko.github.io/AeroSpace/commands
-after-startup-command = []
+after-startup-command = ['exec-and-forget sketchybar']
+
+# Notify Sketchybar about workspace change
+exec-on-workspace-change = ['/bin/bash', '-c',
+  'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE',
+]
+
 
 # Start AeroSpace at login
 start-at-login = true
@@ -53,12 +59,12 @@ on-focus-changed = "move-mouse window-lazy-center"
 #                 Monitor pattern is the same as for 'workspace-to-monitor-force-assignment'.
 #                 See: https://nikitabobko.github.io/AeroSpace/guide#assign-workspaces-to-monitors
 [gaps]
-inner.horizontal = 20
-inner.vertical =   20
+inner.horizontal = 15
+inner.vertical =   15
 outer.left =       15
 outer.bottom =     15
 outer.top =        15
-outer.right =      15
+outer.right =      55
 
 [mode.main.binding]
 ctrl-alt-space = ['mode alt']
@@ -140,6 +146,14 @@ if.app-id = 'com.usebruno.app'
 run = 'move-node-to-workspace C'
 
 [[on-window-detected]]
+if.app-id = 'cc.arduino.IDE'
+run = 'move-node-to-workspace C'
+
+[[on-window-detected]]
+if.app-id = 'com.postmanlabs.ma'
+run = 'move-node-to-workspace C'
+
+[[on-window-detected]]
 if.app-id = 'com.todesktop.230313mzl4w4u9'
 run = 'move-node-to-workspace C'
 
@@ -150,6 +164,10 @@ run = 'move-node-to-workspace E'
 [[on-window-detected]]
 if.app-id = 'org.filezilla-project.filezilla'
 run = 'move-node-to-workspace E'
+
+[[on-window-detected]]
+if.app-id = 'com.spotify.client'
+run = 'move-node-to-workspace O'
 
 [[on-window-detected]]
 if.during-aerospace-startup = true                     # Run the callback only if the window detected during AeroSpace startup

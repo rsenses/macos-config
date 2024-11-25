@@ -1,6 +1,7 @@
 -- PHP Refactoring Tools
 return {
   'phpactor/phpactor',
+  event = 'VeryLazy',
   build = 'composer install --no-dev --optimize-autoloader',
   ft = 'php',
   keys = {

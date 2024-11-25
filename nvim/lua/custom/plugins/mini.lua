@@ -26,6 +26,9 @@ return {
     }
     vim.notify = require('mini.notify').make_notify()
 
+    -- Movement helpers, for example ciq to change inside quotes, cib to change inside brackets, etc.
+    require('mini.ai').setup()
+
     -- Autopairs
     require('mini.pairs').setup()
 
@@ -39,7 +42,7 @@ return {
     require('mini.diff').setup {
       view = {
         -- Signs used for hunks with 'sign' view
-        signs = { add = ' ', change = ' ', delete = ' ' },
+        signs = { add = ' ', change = '󰏫 ', delete = '󰆴 ' },
       },
       -- Module mappings. Use `''` (empty string) to disable one.
       mappings = {
@@ -142,7 +145,6 @@ return {
         miniclue.gen_clues.z(),
 
         -- Descriptions
-        { mode = 'n', keys = '<leader>a', desc = '[A]vante' },
         { mode = 'n', keys = '<leader>b', desc = '[B]uffers' },
         { mode = 'n', keys = '<leader>c', desc = '[C]ode' },
         { mode = 'n', keys = '<leader>cp', desc = '[C]ode PHP' },

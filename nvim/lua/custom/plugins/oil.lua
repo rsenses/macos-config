@@ -20,7 +20,6 @@ return {
       is_always_hidden = function(name, bufnr)
         local ignored_files = {}
         table.insert(ignored_files, '.git')
-        table.insert(ignored_files, 'vendor')
         table.insert(ignored_files, 'node_modules')
         table.insert(ignored_files, '.idea')
         table.insert(ignored_files, '.DS_Store')

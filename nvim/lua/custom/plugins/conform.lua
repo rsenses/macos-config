@@ -32,10 +32,17 @@ return {
       else
         lsp_format_opt = 'fallback'
       end
-      return {
-        timeout_ms = 2500,
-        lsp_format = lsp_format_opt,
-      }
+
+      local bufname = vim.api.nvim_buf_get_name(bufnr)
+
+      if bufname:match '/notifications/email.blade.php' then
+        return
+      else
+        return {
+          timeout_ms = 2500,
+          lsp_format = lsp_format_opt,
+        }
+      end
     end,
     formatters_by_ft = {
       -- Conform can also run multiple formatters sequentially

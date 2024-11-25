@@ -4,12 +4,12 @@ code_transform.class_new.variants:
     laravel-test: laravel-test
     shift-task-test: shift-task-test
     shift-task: shift-task
-language_server_php_cs_fixer.enabled: true
-language_server_phpstan.enabled: true
-language_server_php_cs_fixer.bin: "/opt/homebrew/bin/php-cs-fixer"
-language_server_phpstan.bin: "/opt/homebrew/bin/phpstan"
+language_server_php_cs_fixer.enabled: false
+language_server_phpstan.enabled: false
+# language_server_phpstan.bin: "/opt/homebrew/bin/phpstan"
 phpunit.enabled: true
 composer.autoloader_path: ["%project_root%/vendor/autoload.php"]
 language_server_worse_reflection.inlay_hints.enable: true
 language_server_worse_reflection.inlay_hints.params: true
-language_server_worse_reflection.inlay_hints.types: false
+language_server_worse_reflection.inlay_hints.types: true
+symfony.enabled: true

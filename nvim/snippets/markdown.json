@@ -1,0 +1,7 @@
+{
+  "todo": {
+    "prefix": "todo",
+    "body": "- [ ] ",
+    "description": "Añade todo a markdown"
+  }
+}

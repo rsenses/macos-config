@@ -7,7 +7,7 @@ return {
   --   'jwalton512/vim-blade',
   --   enabled = false,
   -- },
-  'tpope/vim-repeat',
+  -- 'tpope/vim-repeat',
   {
     'folke/ts-comments.nvim',
     opts = {

@@ -1,0 +1,18 @@
+#!/bin/bash
+tmux split-window -h -l 50%
+# tmux split-window -v -l 50%
+# Seleccionar el primer panel
+tmux select-pane -t 0
+
+# Ejecutar la aplicación yazi en el segundo panel
+# tmux send-keys "yazi" C-m
+
+# Seleccionar el segundo panel
+tmux select-pane -t 1
+
+# Ejecutar el comando cd y nvim en el primer panel
+tmux send-keys "cd /Users/rubensilvarodriguez/Nextcloud/Documents/notes" C-m
+tmux send-keys "nvim work/todo.md" C-m
+
+# Seleccionar el tercer panel
+# tmux select-pane -t 2

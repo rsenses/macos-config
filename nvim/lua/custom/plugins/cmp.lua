@@ -32,16 +32,23 @@ return {
     luasnip.config.setup {}
 
     cmp.setup {
-      completion = { completeopt = 'menu,menuone,noselect' },
-      window = {
-        completion = cmp.config.window.bordered(),
-        documentation = cmp.config.window.bordered(),
+      snippet = {
+        expand = function(args)
+          luasnip.lsp_expand(args.body)
+          -- vim.snippet.expand(args.body)
+        end,
       },
-      experimental = {
-        -- I like the new menu better! Nice work hrsh7th
-        native_menu = false,
-        ghost_text = false,
-      },
+      -- completion = { completeopt = 'menu,menuone,noselect' },
+      completion = { completeopt = 'menu,menuone,noinsert' },
+      -- window = {
+      --   completion = cmp.config.window.bordered(),
+      --   documentation = cmp.config.window.bordered(),
+      -- },
+      -- experimental = {
+      --   -- I like the new menu better! Nice work hrsh7th
+      --   native_menu = false,
+      --   ghost_text = false,
+      -- },
       formatting = {
         -- changing the order of fields so the icon is the first
         fields = { 'menu', 'abbr', 'kind' },
@@ -106,7 +113,7 @@ return {
         -- Accept ([y]es) the completion.
         --  This will auto-import if your LSP supports it.
         --  This will expand snippets if the LSP sent a snippet.
-        ['<C-y>'] = cmp.mapping.confirm { select = false, behavior = cmp.ConfirmBehavior.Insert },
+        ['<C-y>'] = cmp.mapping.confirm { select = true },
         -- Manually trigger a completion from nvim-cmp.
         --  Generally you don't need this, because nvim-cmp will display
         --  completions whenever it has completion options available.
@@ -144,65 +151,59 @@ return {
         { name = 'path' },
         { name = 'buffer' },
       },
-      snippet = {
-        expand = function(args)
-          luasnip.lsp_expand(args.body)
-          -- vim.snippet.expand(args.body)
-        end,
-      },
-      sorting = {
-        comparators = {
-          cmp.config.compare.exact,
-          cmp.config.compare.score,
-          cmp.config.compare.recently_used,
-          cmp.config.compare.locality,
-          cmp.config.compare.offset,
-
-          -- copied from cmp-under, but I don't think I need the plugin for this.
-          -- I might add some more of my own.
-          function(entry1, entry2)
-            local _, entry1_under = entry1.completion_item.label:find '^_+'
-            local _, entry2_under = entry2.completion_item.label:find '^_+'
-            entry1_under = entry1_under or 0
-            entry2_under = entry2_under or 0
-            if entry1_under > entry2_under then
-              return false
-            elseif entry1_under < entry2_under then
-              return true
-            end
-          end,
-
-          cmp.config.compare.kind,
-        },
-      },
+      -- sorting = {
+      --   comparators = {
+      --     cmp.config.compare.exact,
+      --     cmp.config.compare.score,
+      --     cmp.config.compare.recently_used,
+      --     cmp.config.compare.locality,
+      --     cmp.config.compare.offset,
+      --
+      --     -- copied from cmp-under, but I don't think I need the plugin for this.
+      --     -- I might add some more of my own.
+      --     function(entry1, entry2)
+      --       local _, entry1_under = entry1.completion_item.label:find '^_+'
+      --       local _, entry2_under = entry2.completion_item.label:find '^_+'
+      --       entry1_under = entry1_under or 0
+      --       entry2_under = entry2_under or 0
+      --       if entry1_under > entry2_under then
+      --         return false
+      --       elseif entry1_under < entry2_under then
+      --         return true
+      --       end
+      --     end,
+      --
+      --     cmp.config.compare.kind,
+      --   },
+      -- },
     }
 
     require('nvim-cmp-laravel').setup()
 
-    cmp.setup.filetype('gitcommit', {
-      sources = cmp.config.sources({
-        { name = 'git' }, -- You can specify the `git` source if [you were installed it](https://github.com/petertriho/cmp-git).
-      }, {
-        { name = 'buffer' },
-      }),
-    })
-
-    -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
-    cmp.setup.cmdline({ '/', '?' }, {
-      mapping = cmp.mapping.preset.cmdline(),
-      sources = {
-        { name = 'buffer' },
-      },
-    })
-
-    -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
-    cmp.setup.cmdline(':', {
-      mapping = cmp.mapping.preset.cmdline(),
-      sources = cmp.config.sources({
-        { name = 'path' },
-      }, {
-        { name = 'cmdline' },
-      }),
-    })
+    -- cmp.setup.filetype('gitcommit', {
+    --   sources = cmp.config.sources({
+    --     { name = 'git' }, -- You can specify the `git` source if [you were installed it](https://github.com/petertriho/cmp-git).
+    --   }, {
+    --     { name = 'buffer' },
+    --   }),
+    -- })
+    --
+    -- -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
+    -- cmp.setup.cmdline({ '/', '?' }, {
+    --   mapping = cmp.mapping.preset.cmdline(),
+    --   sources = {
+    --     { name = 'buffer' },
+    --   },
+    -- })
+    --
+    -- -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+    -- cmp.setup.cmdline(':', {
+    --   mapping = cmp.mapping.preset.cmdline(),
+    --   sources = cmp.config.sources({
+    --     { name = 'path' },
+    --   }, {
+    --     { name = 'cmdline' },
+    --   }),
+    -- })
   end,
 }

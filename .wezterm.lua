@@ -37,11 +37,46 @@ end
 
 config.color_scheme = scheme_for_appearance(get_appearance())
 
--- config.font = wezterm.font("IosevkaTerm Nerd Font Mono")
-config.font = wezterm.font_with_fallback({
-    "Iosevka Custom",
-    { family = "Symbols Nerd Font Mono" },
-})
+config.colors = {
+    -- Overrides the cell background color when the current cell is occupied by the
+    -- cursor and the cursor style is set to Block
+    cursor_bg = "#14161b",
+    -- Overrides the text color when the current cell is occupied by the cursor
+    cursor_fg = "#eef1f8",
+    -- Specifies the border color of the cursor when the cursor style is set to Block,
+    -- or the color of the vertical or horizontal bar when the cursor style is set to
+    -- Bar or Underline.
+    cursor_border = "#14161b",
+
+    -- Paleta de colores de nvimlight
+    -- palette = 0=#07080d
+    -- palette = 1=#590008
+    -- palette = 2=#005523
+    -- palette = 3=#6b5300
+    -- palette = 4=#004c73
+    -- palette = 5=#470045
+    -- palette = 6=#007373
+    -- palette = 7=#eef1f8
+    -- palette = 8=#4f5258
+    -- palette = 9=#590008
+    -- palette = 10=#005523
+    -- palette = 11=#6b5300
+    -- palette = 12=#004c73
+    -- palette = 13=#470045
+    -- palette = 14=#007373
+    -- palette = 15=#eef1f8
+    -- background = #e0e2ea
+    -- foreground = #14161b
+    -- cursor-color = #9b9ea4
+    -- selection-background = #9b9ea4
+    -- selection-foreground = #14161b
+}
+
+config.font = wezterm.font("IosevkaTerm Nerd Font Mono")
+-- config.font = wezterm.font_with_fallback({
+--     "Iosevka Custom",
+--     { family = "Symbols Nerd Font Mono" },
+-- })
 
 config.font_size = 16
 -- config.line_height = 1.1
