@@ -26,6 +26,14 @@ return {
     }
     vim.notify = require('mini.notify').make_notify()
 
+    local mf = require 'mini.files'
+    vim.keymap.set('n', '-', function()
+      local buf_name = vim.api.nvim_buf_get_name(0)
+      local path = vim.fn.filereadable(buf_name) == 1 and buf_name or vim.fn.getcwd()
+      mf.open(path)
+      mf.reveal_cwd()
+    end, { desc = 'Open Mini Files' })
+
     -- Movement helpers, for example ciq to change inside quotes, cib to change inside brackets, etc.
     require('mini.ai').setup()
 

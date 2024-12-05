@@ -99,8 +99,11 @@ config.send_composed_key_when_left_alt_is_pressed = true
 config.automatically_reload_config = true
 config.window_close_confirmation = "NeverPrompt"
 config.default_cursor_style = "BlinkingBlock"
+config.harfbuzz_features = { "calt=0", "clig=0", "liga=0" }
 
 config.default_prog = { "/opt/homebrew/bin/tmux" }
+
+config.max_fps = 120
 
 -- and finally, return the configuration to wezterm
 return config

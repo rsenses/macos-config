@@ -92,6 +92,7 @@ opt.spelllang = { 'es_es', 'en_us' }
 opt.background = 'light' -- or 'light'
 
 -- Foldings
-opt.foldmethod = 'expr'
-opt.foldexpr = 'nvim_treesitter#foldexpr()'
+opt.foldmethod = 'indent'
+-- opt.foldmethod = 'expr'
+-- opt.foldexpr = 'nvim_treesitter#foldexpr()'
 opt.foldlevelstart = 99
