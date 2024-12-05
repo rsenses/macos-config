@@ -32,12 +32,6 @@ return {
     -- Autopairs
     require('mini.pairs').setup()
 
-    -- Tabline (show buffers on top)
-    -- require('mini.tabline').setup()
-
-    -- Trail Space visualizer
-    require('mini.trailspace').setup()
-
     -- GitSigns
     require('mini.diff').setup {
       view = {
@@ -68,6 +62,13 @@ return {
     local hipatterns = require 'mini.hipatterns'
     hipatterns.setup {
       highlighters = {
+        vim.cmd [[
+            highlight MiniHipatternsFixme guifg=Black guibg=Red gui=bold
+            highlight MiniHipatternsHack guifg=Black guibg=Yellow gui=bold
+            highlight MiniHipatternsTodo guifg=White guibg=Purple3 gui=bold
+            highlight MiniHipatternsNote guifg=Black guibg=LightGreen gui=bold
+        ]],
+
         -- Highlight standalone 'FIXME', 'HACK', 'TODO', 'NOTE'
         fixme = { pattern = '%f[%w]()FIXME()%f[%W]', group = 'MiniHipatternsFixme' },
         hack = { pattern = '%f[%w]()HACK()%f[%W]', group = 'MiniHipatternsHack' },
@@ -83,10 +84,7 @@ return {
     --  You could remove this setup call if you don't like it,
     --  and try some other statusline plugin
     local statusline = require 'mini.statusline'
-    statusline.setup {
-      set_vim_settings = true,
-    }
-
+    statusline.setup {}
     -- You can configure sections in the statusline by overriding their
     -- default behavior. For example, here we set the section for
     -- cursor location to LINE:COLUMN

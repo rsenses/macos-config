@@ -129,6 +129,8 @@ vim.opt.rtp:prepend(lazypath)
 -- { import = 'kickstart.plugins.debug' },
 -- { import = 'kickstart.plugins.indent_line' },
 require('lazy').setup({ { import = 'custom.plugins' } }, {
+  -- colorscheme that will be used when installing plugins.
+  install = { colorscheme = { 'default' } },
   checker = {
     enabled = true,
     notify = false,

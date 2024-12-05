@@ -90,14 +90,6 @@ opt.spelllang = { 'es_es', 'en_us' }
 
 -- THEMES
 opt.background = 'light' -- or 'light'
--- vim.cmd.colorscheme 'github_light_high_contrast'
-vim.cmd.colorscheme 'default'
-vim.cmd [[
-  highlight Normal guibg=none
-  highlight NonText guibg=none
-  highlight Normal ctermbg=none
-  highlight NonText ctermbg=none
-]]
 
 -- Foldings
 opt.foldmethod = 'expr'
