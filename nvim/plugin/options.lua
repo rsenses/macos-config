@@ -10,7 +10,9 @@ opt.termguicolors = true
 vim.g.have_nerd_font = true
 
 -- Global Status bar
-opt.laststatus = 3
+-- opt.laststatus = 3
+-- Disable statusbar
+opt.laststatus = 0
 
 -- Cool floating window popup menu for completion on command line
 opt.pumblend = 17

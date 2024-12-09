@@ -33,7 +33,6 @@ end, { desc = 'Split window vertically' })
 -- Trabajo con buffers
 vim.keymap.set('n', '[b', '<cmd>bprevious<cr>', { desc = 'Prev buffer' })
 vim.keymap.set('n', ']b', '<cmd>bnext<cr>', { desc = 'Next buffer' })
-vim.keymap.set({ 'n' }, '<leader>bd', ':bd<cr>', { desc = 'Delete Buffer' })
 vim.keymap.set({ 'n' }, '<leader>bp', ':bufdo bd<cr>', { desc = 'Delete all Buffers' })
 
 -- Formatting
