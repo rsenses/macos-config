@@ -26,30 +26,16 @@ return {
     vim.api.nvim_create_autocmd('FileType', {
       pattern = {
         'help',
-        'alpha',
         'dashboard',
-        'neo-tree',
-        'Trouble',
-        'trouble',
+        'snacks_dashboard',
         'lazy',
         'mason',
         'notify',
-        'toggleterm',
-        'lazyterm',
       },
       callback = function()
         vim.b.miniindentscope_disable = true
       end,
     })
-
-    -- Notifications
-    -- require('mini.notify').setup {
-    --   lsp_progress = {
-    --     -- Whether to enable showing
-    --     enable = false,
-    --   },
-    -- }
-    -- vim.notify = require('mini.notify').make_notify()
 
     local mf = require 'mini.files'
     vim.keymap.set('n', '-', function()
