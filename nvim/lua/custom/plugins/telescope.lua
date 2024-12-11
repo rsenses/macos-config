@@ -62,7 +62,14 @@ return {
       --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
       --   },
       -- },
-      -- pickers = {}
+      pickers = {
+        buffers = {
+          theme = 'ivy',
+          sort_mru = true,
+          sort_lastused = true,
+          initial_mode = 'normal',
+        },
+      },
       defaults = {
         -- path_display = { 'smart' },
         file_ignore_patterns = {
@@ -86,6 +93,7 @@ return {
           },
           n = {
             ['dd'] = require('telescope.actions').delete_buffer,
+            ['q'] = require('telescope.actions').close,
           },
         },
       },
