@@ -37,12 +37,20 @@ return {
       end,
     })
 
-    local mf = require 'mini.files'
+    require('mini.files').setup {
+      mappings = {
+        go_in = '<CR>',
+        go_out = '-',
+      },
+      windows = {
+        preview = true,
+        width_focus = 40,
+        width_preview = 80,
+      },
+    }
+
     vim.keymap.set('n', '-', function()
-      local buf_name = vim.api.nvim_buf_get_name(0)
-      local path = vim.fn.filereadable(buf_name) == 1 and buf_name or vim.fn.getcwd()
-      mf.open(path)
-      mf.reveal_cwd()
+      require('mini.files').open(vim.api.nvim_buf_get_name(0), true)
     end, { desc = 'Open Mini Files' })
 
     vim.api.nvim_create_autocmd('User', {
@@ -80,7 +88,7 @@ return {
 
         -- ZIP current file or directory and copy to the system clipboard
         vim.keymap.set('n', '<leader>yz', function()
-          local curr_entry = require('mini.files').get_fs_entry()
+          local curr_entry = mini_files.get_fs_entry()
           if curr_entry then
             local path = curr_entry.path
             local name = vim.fn.fnamemodify(path, ':t') -- Extract the file or directory name
@@ -211,10 +219,10 @@ return {
     hipatterns.setup {
       highlighters = {
         vim.cmd [[
-            highlight MiniHipatternsFixme guifg=Black guibg=Red gui=bold
-            highlight MiniHipatternsHack guifg=Black guibg=Yellow gui=bold
-            highlight MiniHipatternsTodo guifg=White guibg=Purple3 gui=bold
-            highlight MiniHipatternsNote guifg=Black guibg=LightGreen gui=bold
+            highlight MiniHipatternsFixme guifg=Black guibg=NvimLightRed gui=bold
+            highlight MiniHipatternsHack guifg=Black guibg=NvimLightYellow gui=bold
+            highlight MiniHipatternsTodo guifg=Black guibg=NvimLightCyan gui=bold
+            highlight MiniHipatternsNote guifg=Black guibg=NvimLightGreen gui=bold
         ]],
 
         -- Highlight standalone 'FIXME', 'HACK', 'TODO', 'NOTE'

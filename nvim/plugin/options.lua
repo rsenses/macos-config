@@ -100,9 +100,8 @@ opt.foldmethod = 'indent'
 opt.foldlevelstart = 99
 
 -- WINBAR
-vim.cmd(string.format [[highlight WinBar guibg=NvimLightGray2]])
-vim.cmd(string.format [[highlight WinBar1 guifg=NvimDarkYellow]])
-vim.cmd(string.format [[highlight WinBar2 guifg=Red]])
+vim.cmd(string.format [[highlight WinBar1 guifg=NvimDarkGreen guibg=NvimLightGray3]])
+vim.cmd(string.format [[highlight WinBar2 guifg=NvimDarkRed guibg=NvimLightGray3]])
 -- Function to get the number of open buffers using the :ls command
 local function get_buffer_count()
   local buffers = vim.fn.execute 'ls'
