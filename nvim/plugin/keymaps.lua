@@ -50,3 +50,6 @@ vim.keymap.set('n', '<leader>wl', '<cmd>Lazy<cr>', { desc = 'Lazy' })
 
 -- mason
 vim.keymap.set('n', '<leader>wm', '<cmd>Mason<cr>', { desc = 'Mason' })
+
+-- source code
+vim.keymap.set('n', '<leader>x', '<cmd>source %<CR>', { desc = 'Source code' })

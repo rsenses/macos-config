@@ -113,7 +113,14 @@ return {
     vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
     vim.keymap.set('n', '<leader>sy', ':Telescope neoclip<cr>', { desc = '[S]earch [Y]ank History' })
     vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-    vim.keymap.set('n', '<leader>,', builtin.buffers, { desc = '[ ] Find existing buffers' })
+    vim.keymap.set('n', '<leader>,', function()
+      require('telescope.builtin').buffers {}
+    end, { desc = '[] Find existing buffers' })
+    vim.keymap.set('n', '<leader>en', function()
+      require('telescope.builtin').find_files {
+        cwd = vim.fn.stdpath 'config',
+      }
+    end, { desc = '[E]dit [N]vim configuration' })
 
     vim.keymap.set('n', '<leader><leader>', function()
       builtin.find_files { hidden = true }

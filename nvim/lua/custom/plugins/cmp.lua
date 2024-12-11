@@ -93,6 +93,7 @@ return {
       --
       -- No, but seriously. Please read `:help ins-completion`, it is really good!
       mapping = cmp.mapping.preset.insert {
+        ['<CR>'] = cmp.config.disable,
         -- Select the [n]ext item
         ['<C-n>'] = cmp.mapping.select_next_item(),
         -- Select the [p]revious item
@@ -108,14 +109,14 @@ return {
         --  Generally you don't need this, because nvim-cmp will display
         --  completions whenever it has completion options available.
         ['<C-Space>'] = cmp.mapping.complete {},
-        -- Think of <c-l> as moving to the right of your snippet expansion.
+        -- Think of <c-j> as moving to the right of your snippet expansion.
         --  So if you have a snippet that's like:
         --  function $name($args)
         --    $body
         --  end
         --
-        -- <c-l> will move you to the right of each of the expansion locations.
-        -- <c-h> is similar, except moving you backwards.
+        -- <c-j> will move you to the right of each of the expansion locations.
+        -- <c-k> is similar, except moving you backwards.
         ['<C-j>'] = cmp.mapping(function()
           if luasnip.expand_or_jumpable() then
             luasnip.expand_or_jump()
@@ -136,37 +137,12 @@ return {
       --        max_item_count
       --        (more?)
       sources = {
-        { name = 'copilot' },
-        { name = 'nvim_lsp' },
-        { name = 'luasnip' },
-        { name = 'path' },
-        { name = 'buffer' },
+        { name = 'nvim_lsp', priority = 1000, group_index = 1 },
+        { name = 'luasnip', priority = 900, group_index = 2 },
+        { name = 'copilot', priority = 800, group_index = 3 },
+        { name = 'buffer', priority = 700, group_index = 4 },
+        { name = 'path', priority = 600, group_index = 5 },
       },
-      -- sorting = {
-      --   comparators = {
-      --     cmp.config.compare.exact,
-      --     cmp.config.compare.score,
-      --     cmp.config.compare.recently_used,
-      --     cmp.config.compare.locality,
-      --     cmp.config.compare.offset,
-      --
-      --     -- copied from cmp-under, but I don't think I need the plugin for this.
-      --     -- I might add some more of my own.
-      --     function(entry1, entry2)
-      --       local _, entry1_under = entry1.completion_item.label:find '^_+'
-      --       local _, entry2_under = entry2.completion_item.label:find '^_+'
-      --       entry1_under = entry1_under or 0
-      --       entry2_under = entry2_under or 0
-      --       if entry1_under > entry2_under then
-      --         return false
-      --       elseif entry1_under < entry2_under then
-      --         return true
-      --       end
-      --     end,
-      --
-      --     cmp.config.compare.kind,
-      --   },
-      -- },
     }
 
     require('nvim-cmp-laravel').setup()
