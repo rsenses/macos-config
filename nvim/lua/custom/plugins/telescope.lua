@@ -24,12 +24,12 @@ return {
         return vim.fn.executable 'make' == 1
       end,
     },
-    { 'nvim-telescope/telescope-ui-select.nvim' },
 
     -- Useful for getting pretty icons, but requires special font.
     --  If you already have a Nerd Font, or terminal set up with fallback fonts
     --  you can enable this
     { 'nvim-tree/nvim-web-devicons' },
+    { 'mollerhoj/telescope-recent-files.nvim' },
   },
   config = function()
     -- Telescope is a fuzzy finder that comes with a lot of different things that
@@ -97,18 +97,12 @@ return {
           },
         },
       },
-      extensions = {
-        ['ui-select'] = {
-          require('telescope.themes').get_dropdown(),
-        },
-      },
     }
 
     -- Enable telescope extensions, if they are installed
     require('telescope').load_extension 'neoclip'
     require('telescope').load_extension 'fzf'
-    require('telescope').load_extension 'ui-select'
-    -- require('telescope').load_extension 'noice'
+    require('telescope').load_extension 'recent-files'
 
     -- See `:help telescope.builtin`
     local builtin = require 'telescope.builtin'
@@ -130,9 +124,12 @@ return {
       }
     end, { desc = '[E]dit [N]vim configuration' })
 
+    -- vim.keymap.set('n', '<leader><leader>', function()
+    --   builtin.find_files { hidden = true }
+    -- end, { desc = '[S]earch files' })
     vim.keymap.set('n', '<leader><leader>', function()
-      builtin.find_files { hidden = true }
-    end, { desc = '[S]earch files' })
+      require('telescope').extensions['recent-files'].recent_files {}
+    end, { noremap = true, silent = true, desc = '[S]earch files' })
 
     -- Slightly advanced example of overriding default behavior and theme
     vim.keymap.set('n', '<leader>/', function()

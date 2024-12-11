@@ -103,11 +103,6 @@ opt.foldlevelstart = 99
 vim.cmd(string.format [[highlight WinBar guibg=NvimLightGray2]])
 vim.cmd(string.format [[highlight WinBar1 guifg=NvimDarkYellow]])
 vim.cmd(string.format [[highlight WinBar2 guifg=Red]])
--- Function to get the full path and replace the home directory with ~
-local function get_winbar_path()
-  local full_path = vim.fn.expand '%:p'
-  return full_path:gsub(vim.fn.expand '$HOME', '~')
-end
 -- Function to get the number of open buffers using the :ls command
 local function get_buffer_count()
   local buffers = vim.fn.execute 'ls'
@@ -122,9 +117,8 @@ local function get_buffer_count()
 end
 -- Function to update the winbar
 local function update_winbar()
-  local home_replaced = get_winbar_path()
   local buffer_count = get_buffer_count()
-  vim.opt.winbar = '%#WinBar1#%m ' .. '%#WinBar2#(' .. buffer_count .. ') ' .. '%#WinBar1#' .. home_replaced .. '%*%=%#WinBar2#'
+  vim.opt.winbar = '%#WinBar1#%m ' .. '%#WinBar2#(' .. buffer_count .. ') ' .. '%#WinBar1# %f'
 end
 -- Autocmd to update the winbar on BufEnter and WinEnter events
 vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter' }, {
