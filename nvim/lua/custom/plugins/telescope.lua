@@ -90,6 +90,7 @@ return {
         mappings = {
           i = {
             ['<c-d>'] = require('telescope.actions').delete_buffer,
+            ['<c-t>'] = require('telescope.actions').send_selected_to_qflist + require('telescope.actions').open_qflist,
           },
           n = {
             ['dd'] = require('telescope.actions').delete_buffer,

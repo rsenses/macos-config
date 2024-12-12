@@ -90,9 +90,6 @@ P.S. You can delete this when you're done too. It's your config now! :)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
--- Turn off builtin plugins I do not use.
-require 'rsenses.disable_builtin'
-
 -- [[ Configure and install plugins ]]
 --
 --  To check the current status of your plugins, run
@@ -137,13 +134,6 @@ require('lazy').setup({ { import = 'custom.plugins' } }, {
   },
   change_detection = {
     notify = false,
-  },
-  performance = {
-    rtp = {
-      disabled_plugins = {
-        'netrwPlugin',
-      },
-    },
   },
   ui = {
     border = 'rounded',
