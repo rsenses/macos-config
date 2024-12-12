@@ -18,29 +18,29 @@ return {
     require('mini.splitjoin').setup()
 
     -- IndentScope
-    require('mini.indentscope').setup {
-      symbol = '│',
-      options = { try_as_border = true },
-    }
-
-    vim.api.nvim_create_autocmd('FileType', {
-      pattern = {
-        'help',
-        'dashboard',
-        'snacks_dashboard',
-        'lazy',
-        'mason',
-        'notify',
-      },
-      callback = function()
-        vim.b.miniindentscope_disable = true
-      end,
-    })
+    -- require('mini.indentscope').setup {
+    --   symbol = '│',
+    --   options = { try_as_border = true },
+    -- }
+    --
+    -- vim.api.nvim_create_autocmd('FileType', {
+    --   pattern = {
+    --     'help',
+    --     'dashboard',
+    --     'snacks_dashboard',
+    --     'lazy',
+    --     'mason',
+    --     'notify',
+    --   },
+    --   callback = function()
+    --     vim.b.miniindentscope_disable = true
+    --   end,
+    -- })
 
     require('mini.files').setup {
       mappings = {
-        go_in = '<CR>',
-        go_out = '-',
+        go_in_plus = '<CR>',
+        go_out_plus = '-',
       },
       windows = {
         preview = true,
