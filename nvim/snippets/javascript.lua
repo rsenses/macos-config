@@ -1,4 +1,14 @@
 ---@diagnostic disable: undefined-global
+
 return {
-  s({ trig = 'log' }, fmt([[console.log({})]], { i(1, '') })),
+  -- strict type
+  s('st', t 'declare(strict_types=1);'),
+
+  -- console log
+  s(
+    'log',
+    fmta([[console.log(<content>)]], {
+      content = i(1),
+    })
+  ),
 }

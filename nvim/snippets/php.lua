@@ -11,6 +11,7 @@ local var_name = function(args)
 end
 
 return {
+  -- strict type
   s('st', t 'declare(strict_types=1);'),
 
   -- argument
@@ -140,7 +141,4 @@ class {}
       }
     )
   ),
-}, {
-  -- Autosnippets
-  s('autotrig', t 'autotriggered, if enabled'),
 }
