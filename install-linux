@@ -12,9 +12,6 @@ ln -s $DOTFILES/zsh $HOME/.config/zsh
 rm -rf $HOME/.config/nvim
 ln -s $DOTFILES/nvim $HOME/.config/nvim
 
-rm -rf $HOME/.config/alacritty
-ln -s $DOTFILES/alacritty $HOME/.config/alacritty
-
 rm -rf $HOME/.config/tmux
 ln -sf $DOTFILES/tmux $HOME/.config/tmux
 
@@ -37,10 +34,6 @@ rm -rf $HOME/.config/awesome
 ln -s $DOTFILES/awesome $HOME/.config/awesome
 
 mkdir -p $HOME/.local/bin
-
-# rm -rf $HOME/.local/bin/t
-# ln -sf $DOTFILES/scripts/t $HOME/.local/bin/t
-# chmod +x $HOME/.local/bin/t
 
 rm -rf $HOME/.local/bin/ide
 ln -sf $DOTFILES/scripts/ide $HOME/.local/bin/ide
