@@ -117,7 +117,7 @@ end
 -- Function to update the winbar
 local function update_winbar()
   local buffer_count = get_buffer_count()
-  vim.opt.winbar = '%#WinBar1#%m ' .. '%#WinBar2#(' .. buffer_count .. ') ' .. '%#WinBar1# %f'
+  vim.opt.winbar = '%#WinBar1#%m ' .. '%#WinBar2#󰓩' .. buffer_count .. ' ' .. '%#WinBar1# %f'
 end
 -- Autocmd to update the winbar on BufEnter and WinEnter events
 vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter' }, {
