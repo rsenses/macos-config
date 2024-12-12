@@ -4,6 +4,10 @@ local class_name = function()
   return vim.fn.expand '%:t:r'
 end
 
+local namespace = function()
+  return vim.fn.expand('%:.:h'):gsub('app/', ''):gsub('%/', '\\')
+end
+
 local var_name = function(args)
   return sn(nil, {
     i(1, args[1][1]:gsub('^%u', string.lower):gsub('Interface', '') or ''),
@@ -113,13 +117,16 @@ declare(strict_types=1);
 
 namespace App\{};
 
+{}
+
 class {}
 {{
     {}
 }}
 ]],
       {
-        i(1, ''),
+        f(namespace),
+        i(1),
         f(class_name),
         i(0),
       }
