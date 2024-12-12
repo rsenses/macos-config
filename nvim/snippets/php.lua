@@ -126,6 +126,23 @@ class {}
     )
   ),
 
+  -- foreach
+  s(
+    'foreach',
+    fmta(
+      [[
+      foreach ($<exp> as $<val>) {
+      <sta>
+      }
+      ]],
+      {
+        exp = i(1),
+        val = i(2),
+        sta = i(0),
+      }
+    )
+  ),
+
   -- test
   s(
     'it',

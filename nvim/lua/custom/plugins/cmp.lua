@@ -15,7 +15,7 @@ return {
         require('luasnip.loaders.from_lua').load {
           paths = { vim.fn.stdpath 'config' .. '/snippets' },
         }
-        require('luasnip').filetype_extend('php', { 'blade', 'phpdoc' })
+        -- require('luasnip').filetype_extend('php', { 'blade', 'phpdoc' })
       end,
       keys = function()
         return {}

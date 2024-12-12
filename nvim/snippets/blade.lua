@@ -50,4 +50,21 @@ return {
       }
     )
   ),
+
+  -- foreach
+  s(
+    'foreach',
+    fmta(
+      [[
+      @foreach ($<exp> as $<val>)
+      <sta>
+      @endforeach
+      ]],
+      {
+        exp = i(1),
+        val = i(2),
+        sta = i(0),
+      }
+    )
+  ),
 }

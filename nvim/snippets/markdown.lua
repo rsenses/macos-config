@@ -6,7 +6,7 @@ return {
     'todo',
     fmta(
       [[
-    -[ ] <text>
+    - [ ] <text>
     ]],
       {
         text = i(0),
