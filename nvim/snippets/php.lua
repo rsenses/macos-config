@@ -16,7 +16,7 @@ end
 
 return {
   -- strict type
-  s('st', t 'declare(strict_types=1);'),
+  s('strict', t 'declare(strict_types=1);'),
 
   -- argument
   s(
@@ -30,42 +30,21 @@ return {
   -- property
   s(
     'pro',
-    fmt([[{} {}{} ${},]], {
+    fmt([[{} {}{} ${}{}]], {
       c(1, {
         t 'public',
         t 'protected',
         t 'private',
+        t '',
       }),
       c(2, {
-        t 'readonly ',
+        t 'readonly',
         t '',
       }),
       i(3, 'Type'),
       d(4, var_name, { 3 }),
+      i(0),
     })
-  ),
-
-  -- var
-  s(
-    'var',
-    fmt(
-      [[
-/**
- * @var {}
- */
-{} {} ${};
-]],
-      {
-        i(1, 'type'),
-        c(2, {
-          t 'public',
-          t 'protected',
-          t 'private',
-        }),
-        i(3, 'Type'),
-        i(4, 'var'),
-      }
-    )
   ),
 
   -- function
@@ -94,7 +73,7 @@ return {
 
   -- constructor
   s(
-    'cons',
+    '__con',
     fmt(
       [[
 public function __construct({})

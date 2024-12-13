@@ -45,7 +45,7 @@ return {
       Unit = ' ',
       Value = ' ',
       Enum = ' ',
-      Keyword = ' ',
+      Keyword = ' ⌘',
       Snippet = ' ',
       Color = ' 󰌁',
       File = ' ',

@@ -1,6 +1,21 @@
 ---@diagnostic disable: undefined-global
 
 return {
+  -- php
+  s(
+    'php',
+    fmta(
+      [[
+      @php
+      <sta>
+      @endphp
+      ]],
+      {
+        sta = i(0),
+      }
+    )
+  ),
+
   -- if
   s(
     'if',
