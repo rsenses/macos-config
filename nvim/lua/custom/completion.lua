@@ -12,7 +12,7 @@ lspkind.init {
   },
 }
 
-vim.api.nvim_set_hl(0, 'CmpItemKindCopilot', { fg = '#6CC644' })
+vim.api.nvim_set_hl(0, 'CmpItemKindCopilot', { fg = '#6600ff' })
 vim.api.nvim_set_hl(0, 'CmpItemKindSnippet', { fg = '#ec5353' })
 vim.api.nvim_set_hl(0, 'CmpItemKindBuffer', { fg = '#000000' })
 vim.api.nvim_set_hl(0, 'CmpItemKindPath', { fg = '#e4e831' })

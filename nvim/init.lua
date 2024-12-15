@@ -114,17 +114,6 @@ if not vim.uv.fs_stat(lazypath) then
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
--- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
--- init.lua. If you want these files, they are in the repository, so you can just download them and
--- put them in the right spots if you want.
-
--- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for kickstart
---
---  Here are some example plugins that I've included in the kickstart repository.
---  Uncomment any of the lines below to enable them (you will need to restart nvim).
-
--- { import = 'kickstart.plugins.debug' },
--- { import = 'kickstart.plugins.indent_line' },
 require('lazy').setup({ { import = 'custom.plugins' } }, {
   -- colorscheme that will be used when installing plugins.
   install = { colorscheme = { 'default' } },

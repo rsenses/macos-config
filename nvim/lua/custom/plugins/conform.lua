@@ -45,8 +45,6 @@ return {
       end
     end,
     formatters_by_ft = {
-      -- Conform can also run multiple formatters sequentially
-      -- python = { "isort", "black" },
       lua = { 'stylua' },
       javascript = { 'prettierd', 'prettier', stop_after_first = true },
       typescript = { 'prettierd', 'prettier', stop_after_first = true },
