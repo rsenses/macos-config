@@ -30,19 +30,15 @@ return {
   -- property
   s(
     'pro',
-    fmt([[{} {}{} ${}{}]], {
+    fmt([[{} {} ${}{}]], {
       c(1, {
         t 'public',
         t 'protected',
         t 'private',
         t '',
       }),
-      c(2, {
-        t 'readonly',
-        t '',
-      }),
-      i(3, 'Type'),
-      d(4, var_name, { 3 }),
+      i(2, 'Type'),
+      d(3, var_name, { 2 }),
       i(0),
     })
   ),

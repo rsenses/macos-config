@@ -12,25 +12,22 @@ return {
             php_only = '// %s',
             php = '// %s',
             -- blade = '{{-- %s --}}',
-            -- blade = {
-            --   __default = '{{-- %s --}}',
-            --   html = '{{-- %s --}}',
-            --   blade = '{{-- %s --}}',
-            --   php = '// %s',
-            --   php_only = '// %s',
-            -- }
+            blade = {
+              __default = '{{-- %s --}}',
+              html = '{{-- %s --}}',
+              blade = '{{-- %s --}}',
+              php = '// %s',
+              php_only = '// %s',
+            },
           },
           custom_calculation = function(_, language_tree)
-            print(vim.bo.filetype)
-            print(language_tree._lang)
-            print '----'
-            if vim.bo.filetype == 'blade' then
-              if language_tree._lang == 'html' then
-                return '{{-- %s --}}'
-              else
-                return '// %s'
-              end
-            end
+            -- if vim.bo.filetype == 'blade' then
+            --   if language_tree._lang == 'html' then
+            --     return '{{-- %s --}}'
+            --   else
+            --     return '// %s'
+            --   end
+            -- end
             -- if vim.bo.filetype == 'blade' and language_tree._lang ~= 'javascript' and language_tree._lang ~= 'php' then
             --   return '{{-- %s --}}'
             -- end
@@ -42,6 +39,7 @@ return {
     },
     opts = {
       ensure_installed = {
+        'c',
         'bash',
         'html',
         'lua',
@@ -80,6 +78,7 @@ return {
       },
     },
     config = function(_, opts)
+      ---@class parser_config
       local parser_config = require('nvim-treesitter.parsers').get_parser_configs()
 
       parser_config.blade = {
