@@ -24,13 +24,6 @@ return {
     },
     keys = {
       {
-        '<leader>n',
-        function()
-          Snacks.notifier.show_history()
-        end,
-        desc = 'Notification History',
-      },
-      {
         '<leader>bd',
         function()
           Snacks.bufdelete()
@@ -73,7 +66,14 @@ return {
         desc = 'Lazygit Log (cwd)',
       },
       {
-        '<leader>un',
+        '<leader>eh',
+        function()
+          Snacks.notifier.show_history()
+        end,
+        desc = 'Notification [H]istory',
+      },
+      {
+        '<leader>eu',
         function()
           Snacks.notifier.hide()
         end,
@@ -84,17 +84,17 @@ return {
         function()
           Snacks.rename.rename_file()
         end,
-        desc = 'Rename File',
+        desc = '[R]ename File',
       },
       {
-        '<c-/>',
+        '<leader>et',
         function()
           Snacks.terminal()
         end,
-        desc = 'Toggle Terminal',
+        desc = 'Toggle [T]erminal',
       },
       {
-        '<c-_>',
+        '<C-_>',
         function()
           Snacks.terminal()
         end,

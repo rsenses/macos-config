@@ -123,7 +123,7 @@ return {
       require('telescope.builtin').find_files {
         cwd = vim.fn.stdpath 'config',
       }
-    end, { desc = '[E]dit [N]vim configuration' })
+    end, { desc = '[N]vim configuration' })
 
     -- vim.keymap.set('n', '<leader><leader>', function()
     --   builtin.find_files { hidden = true }

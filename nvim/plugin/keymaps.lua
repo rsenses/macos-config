@@ -17,9 +17,8 @@ vim.keymap.set('n', 'n', 'nzzzv')
 vim.keymap.set('n', 'N', 'Nzzzv')
 
 -- Copiar, pegar y borrar del clipboard
-vim.keymap.set({ 'n', 'v' }, '<leader>y', [["+y]], { desc = 'Copy from clipboard' })
-vim.keymap.set({ 'n', 'v' }, '<leader>p', [["+p]], { desc = 'Paste from clipboard' })
-vim.keymap.set({ 'n', 'v' }, '<leader>d', [["_d]], { desc = 'Delete without change register' })
+vim.keymap.set({ 'n', 'v' }, '<leader>y', [["+y]], { desc = '[Y]ank from clipboard' })
+vim.keymap.set({ 'n', 'v' }, '<leader>p', [["+p]], { desc = '[P]aste from clipboard' })
 
 -- Splits
 vim.keymap.set('n', '<C-w>-', function()
@@ -52,4 +51,4 @@ vim.keymap.set('n', '<leader>wl', '<cmd>Lazy<cr>', { desc = 'Lazy' })
 vim.keymap.set('n', '<leader>wm', '<cmd>Mason<cr>', { desc = 'Mason' })
 
 -- source code
-vim.keymap.set('n', '<leader>x', '<cmd>source %<CR>', { desc = 'Source code' })
+vim.keymap.set('n', '<leader>x', '<cmd>source %<CR>', { desc = '[X]ecute nvim source' })

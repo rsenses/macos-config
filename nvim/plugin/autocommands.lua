@@ -15,14 +15,14 @@ api.nvim_create_autocmd({ 'TextYankPost' }, {
   end,
 })
 
--- stop automatic newline comment
--- api.nvim_create_autocmd('BufEnter', {
---   pattern = '*',
---   callback = function()
---     vim.cmd 'set formatoptions-=cro'
---     vim.cmd 'setlocal formatoptions-=cro'
---   end,
--- })
+api.nvim_create_autocmd('BufEnter', {
+  desc = 'Stop automatic newline comment',
+  pattern = '*',
+  callback = function()
+    vim.cmd 'set formatoptions-=cro'
+    vim.cmd 'setlocal formatoptions-=cro'
+  end,
+})
 
 api.nvim_create_autocmd({ 'FileType' }, {
   desc = 'Force commentstring to include spaces',
@@ -44,9 +44,10 @@ api.nvim_create_autocmd({ 'FileType' }, {
 })
 
 -- Set spell to tru on markdown
-api.nvim_create_autocmd('FileType', {
-  pattern = { 'markdown', 'text', 'md' },
+api.nvim_create_autocmd('TermOpen', {
+  group = vim.api.nvim_create_augroup('custom_term_open', { clear = true }),
   callback = function()
-    vim.opt_local.spell = true
+    vim.opt.number = false
+    vim.opt.relativenumber = false
   end,
 })

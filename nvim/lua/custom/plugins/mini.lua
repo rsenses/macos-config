@@ -293,12 +293,12 @@ return {
         miniclue.gen_clues.z(),
 
         -- Descriptions
+        { mode = 'n', keys = '<leader>a', desc = '[A]i' },
         { mode = 'n', keys = '<leader>b', desc = '[B]uffers' },
         { mode = 'n', keys = '<leader>c', desc = '[C]ode' },
         { mode = 'n', keys = '<leader>cp', desc = '[C]ode PHP' },
-        { mode = 'n', keys = '<leader>d', desc = '[D]ocument' },
+        { mode = 'n', keys = '<leader>e', desc = '[E]ditor' },
         { mode = 'n', keys = '<leader>g', desc = '[G]it' },
-        { mode = 'n', keys = '<leader>r', desc = '[R]efactor' },
         { mode = 'n', keys = '<leader>s', desc = '[S]earch' },
         { mode = 'n', keys = '<leader>w', desc = '[W]indows' },
       },
