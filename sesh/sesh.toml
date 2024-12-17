@@ -9,11 +9,6 @@ path = "~/Nextcloud/Documents/notes"
 startup_command = "nvim -c ':Telescope find_files'"
 
 [[session]]
-name = "home"
-path = "~/"
-startup_command = "cd notes;tmux split-window -h -l 50%;tmux select-pane -L;nvim -c ':Telescope find_files'"
-
-[[session]]
 name = "downloads"
 path = "~/Downloads"
 disable_startup_command = true
