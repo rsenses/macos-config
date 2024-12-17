@@ -19,4 +19,5 @@ inoreabbrev woudl would
 inoreabbrev lenght length
 inoreabbrev tempalte template
 inoreabbrev resutl result
+inoreabbrev frist first
 ]]

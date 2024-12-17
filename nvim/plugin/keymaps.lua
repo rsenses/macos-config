@@ -52,3 +52,54 @@ vim.keymap.set('n', '<leader>wm', '<cmd>Mason<cr>', { desc = 'Mason' })
 
 -- source code
 vim.keymap.set('n', '<leader>x', '<cmd>source %<CR>', { desc = '[X]ecute nvim source' })
+
+-- Keymap to switch spelling language to English lamw25wmal
+-- To save the language settings configured on each buffer, you need to add
+-- "localoptions" to vim.opt.sessionoptions in the `lua/config/options.lua` file
+vim.keymap.set('n', '<leader>esle', function()
+  vim.opt.spelllang = 'en'
+  vim.cmd "echo 'Spell language set to English'"
+end, { desc = '[S]pelling language English' })
+
+-- Keymap to switch spelling language to Spanish lamw25wmal
+vim.keymap.set('n', '<leader>esls', function()
+  vim.opt.spelllang = 'es'
+  vim.cmd "echo 'Spell language set to Spanish'"
+end, { desc = '[S]pelling language Spanish' })
+
+-- Keymap to switch spelling language to both spanish and english lamw25wmal
+vim.keymap.set('n', '<leader>eslb', function()
+  vim.opt.spelllang = 'en,es'
+  vim.cmd "echo 'Spell language set to Spanish and English'"
+end, { desc = '[S]pelling language Spanish and English' })
+
+-- Show spelling suggestions / spell suggestions
+vim.keymap.set('n', '<leader>ess', function()
+  -- Simulate pressing "z=" with "m" option using feedkeys
+  -- vim.api.nvim_replace_termcodes ensures "z=" is correctly interpreted
+  -- 'm' is the {mode}, which in this case is 'Remap keys'. This is default.
+  -- If {mode} is absent, keys are remapped.
+  --
+  -- I tried this keymap as usually with
+  vim.cmd 'normal! 1z='
+  -- But didn't work, only with nvim_feedkeys
+  -- vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("z=", true, false, true), "m", true)
+end, { desc = '[S]pelling suggestions' })
+
+-- markdown good, accept spell suggestion
+-- Add word under the cursor as a good word
+vim.keymap.set('n', '<leader>esg', function()
+  vim.cmd 'normal! zg'
+end, { desc = '[S]pelling add word to spellfile' })
+
+-- Undo zw, remove the word from the entry in 'spellfile'.
+vim.keymap.set('n', '<leader>esu', function()
+  vim.cmd 'normal! zug'
+end, { desc = '[S]pelling undo, remove word from list' })
+
+-- Repeat the replacement done by |z=| for all matches with the replaced word
+-- in the current window.
+vim.keymap.set('n', '<leader>esr', function()
+  -- vim.cmd(":spellr")
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(':spellr\n', true, false, true), 'm', true)
+end, { desc = '[S]pelling repeat' })

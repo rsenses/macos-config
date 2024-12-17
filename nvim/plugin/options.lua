@@ -69,6 +69,20 @@ opt.background = 'light' -- or 'light'
 opt.foldmethod = 'indent'
 opt.foldlevelstart = 99
 
+-- These sessionoptions come from the lazyvim distro, I just added localoptions
+-- https://www.lazyvim.org/configuration/general
+vim.opt.sessionoptions = {
+  'buffers',
+  'curdir',
+  'tabpages',
+  'winsize',
+  'help',
+  'globals',
+  'skiprtp',
+  'folds',
+  'localoptions',
+}
+
 -- WINBAR
 vim.cmd(string.format [[highlight WinBar1 guifg=NvimDarkGreen guibg=NvimLightGray3]])
 vim.cmd(string.format [[highlight WinBar2 guifg=NvimDarkRed guibg=NvimLightGray3]])

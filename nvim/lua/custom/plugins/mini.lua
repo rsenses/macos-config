@@ -298,6 +298,8 @@ return {
         { mode = 'n', keys = '<leader>c', desc = '[C]ode' },
         { mode = 'n', keys = '<leader>cp', desc = '[C]ode PHP' },
         { mode = 'n', keys = '<leader>e', desc = '[E]ditor' },
+        { mode = 'n', keys = '<leader>es', desc = '[S]pelling' },
+        { mode = 'n', keys = '<leader>esl', desc = '[L]anguage' },
         { mode = 'n', keys = '<leader>g', desc = '[G]it' },
         { mode = 'n', keys = '<leader>s', desc = '[S]earch' },
         { mode = 'n', keys = '<leader>w', desc = '[W]indows' },
