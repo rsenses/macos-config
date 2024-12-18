@@ -71,7 +71,7 @@ opt.foldlevelstart = 99
 
 -- These sessionoptions come from the lazyvim distro, I just added localoptions
 -- https://www.lazyvim.org/configuration/general
-vim.opt.sessionoptions = {
+opt.sessionoptions = {
   'buffers',
   'curdir',
   'tabpages',
@@ -107,3 +107,7 @@ end
 vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter' }, {
   callback = update_winbar,
 })
+
+-- Completions
+opt.completeopt = { 'menu', 'menuone', 'noselect' }
+opt.shortmess:append 'c'

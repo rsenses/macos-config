@@ -3,7 +3,7 @@
 return {
   -- php
   s(
-    'php',
+    '@php',
     fmta(
       [[
       @php
@@ -18,7 +18,7 @@ return {
 
   -- if
   s(
-    'if',
+    '@if',
     fmta(
       [[
       @if (<exp>)
@@ -34,7 +34,7 @@ return {
 
   -- if else
   s(
-    'else',
+    '@ifelse',
     fmta(
       [[
       @if (<exp>)
@@ -51,9 +51,26 @@ return {
     )
   ),
 
+  -- foreach
+  s(
+    '@foreach',
+    fmta(
+      [[
+      @foreach ($<exp> as $<val>)
+      <sta>
+      @endforeach
+      ]],
+      {
+        exp = i(1),
+        val = i(2),
+        sta = i(0),
+      }
+    )
+  ),
+
   -- if ternary
   s(
-    'iif',
+    'if',
     fmta(
       [[
       {{ <exp> ? <sta> : <sta2> }}
@@ -66,18 +83,32 @@ return {
     )
   ),
 
-  -- foreach
+  -- route
   s(
-    'foreach',
+    'route',
     fmta(
       [[
-      @foreach ($<exp> as $<val>)
-      <sta>
-      @endforeach
+      {{ route('<name>'<sta>) }}
       ]],
       {
-        exp = i(1),
-        val = i(2),
+        name = i(1),
+        sta = i(0),
+      }
+    )
+  ),
+
+  -- can
+  s(
+    '@can',
+    fmta(
+      [[
+      @can (<permission>, <model>)
+      <sta>
+      @endcan
+      ]],
+      {
+        permission = i(1),
+        model = i(2),
         sta = i(0),
       }
     )
