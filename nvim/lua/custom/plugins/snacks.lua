@@ -89,16 +89,9 @@ return {
       {
         '<leader>et',
         function()
-          Snacks.terminal()
+          Snacks.terminal.toggle()
         end,
         desc = 'Toggle [T]erminal',
-      },
-      {
-        '<C-_>',
-        function()
-          Snacks.terminal()
-        end,
-        desc = 'which_key_ignore',
       },
     },
   },

@@ -17,26 +17,6 @@ return {
     -- "gS" to toggle splitjoin on objects, arrays, etc.
     require('mini.splitjoin').setup()
 
-    -- IndentScope
-    -- require('mini.indentscope').setup {
-    --   symbol = '│',
-    --   options = { try_as_border = true },
-    -- }
-    --
-    -- vim.api.nvim_create_autocmd('FileType', {
-    --   pattern = {
-    --     'help',
-    --     'dashboard',
-    --     'snacks_dashboard',
-    --     'lazy',
-    --     'mason',
-    --     'notify',
-    --   },
-    --   callback = function()
-    --     vim.b.miniindentscope_disable = true
-    --   end,
-    -- })
-
     require('mini.files').setup {
       mappings = {
         go_in_plus = '<CR>',
@@ -235,13 +215,6 @@ return {
         hex_color = hipatterns.gen_highlighter.hex_color(),
       },
     }
-
-    -- local statusline = require 'mini.statusline'
-    -- statusline.setup {}
-    -- ---@diagnostic disable-next-line: duplicate-set-field
-    -- statusline.section_location = function()
-    --   return '%2l:%-2v'
-    -- end
 
     local miniclue = require 'mini.clue'
     miniclue.setup {
