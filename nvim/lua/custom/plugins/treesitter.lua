@@ -5,35 +5,7 @@ return {
     build = ':TSUpdate',
     event = { 'BufRead', 'BufNewFile' },
     dependencies = {
-      {
-        'JoosepAlviste/nvim-ts-context-commentstring',
-        opts = {
-          languages = {
-            php_only = '// %s',
-            php = '// %s',
-            -- blade = '{{-- %s --}}',
-            blade = {
-              __default = '{{-- %s --}}',
-              html = '{{-- %s --}}',
-              blade = '{{-- %s --}}',
-              php = '// %s',
-              php_only = '// %s',
-            },
-          },
-          custom_calculation = function(_, language_tree)
-            -- if vim.bo.filetype == 'blade' then
-            --   if language_tree._lang == 'html' then
-            --     return '{{-- %s --}}'
-            --   else
-            --     return '// %s'
-            --   end
-            -- end
-            -- if vim.bo.filetype == 'blade' and language_tree._lang ~= 'javascript' and language_tree._lang ~= 'php' then
-            --   return '{{-- %s --}}'
-            -- end
-          end,
-        },
-      },
+      'JoosepAlviste/nvim-ts-context-commentstring',
       'nvim-treesitter/nvim-treesitter-textobjects',
       'windwp/nvim-ts-autotag',
     },
@@ -97,6 +69,23 @@ return {
       }
 
       require('nvim-treesitter.configs').setup(opts)
+
+      require('ts_context_commentstring').setup {
+        enable_autocmd = false,
+        custom_calculation = function(_, language_tree)
+          if vim.bo.filetype == 'blade' then
+            if language_tree._lang == 'html' then
+              return '{{-- %s --}}'
+            else
+              return '// %s'
+            end
+          end
+        end,
+      }
+
+      vim.filetype.get_option = function(filetype, option)
+        return option == 'commentstring' and require('ts_context_commentstring.internal').calculate_commentstring() or vim.filetype.get_option(filetype, option)
+      end
     end,
   },
 }

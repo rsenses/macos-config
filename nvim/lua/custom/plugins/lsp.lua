@@ -1,3 +1,4 @@
+---@diagnostic disable: missing-fields
 -- LSP Configuration & Plugins
 return {
   'neovim/nvim-lspconfig',
@@ -202,36 +203,17 @@ return {
           client.server_capabilities.diagnosticProvider = false
         end,
         filetypes = { 'php' },
-        settings = {
-          phpactor = {
-            language_server_phpstan = { enabled = false },
-            language_server_psalm = { enabled = false },
-            inlayHints = {
-              enable = false,
-              parameterHints = false,
-              typeHints = false,
-            },
-          },
-        },
       },
       intelephense = {
-        filetypes = { 'php' },
+        filetypes = { 'php', 'blade' },
         files = {
           associations = { '*.php', '*.blade.php' }, -- Associating .blade.php files as well
           maxSize = 5000000,
         },
         init_options = {
           licenceKey = os.getenv 'HOME' .. '/.config/intelephense/licence.txt',
-          inlayHints = true,
         },
         cmd = { 'intelephense', '--stdio' },
-        commands = {
-          IntelephenseIndex = {
-            function()
-              vim.lsp.buf.execute_command { command = 'intelephense.index.workspace' }
-            end,
-          },
-        },
         settings = { php = { completion = { callSnippet = 'Replace' } } },
         on_attach = function(client)
           client.server_capabilities.workspaceSymbolProvider = false
@@ -299,7 +281,7 @@ return {
       'eslint_d',
       'html-lsp',
       'phpactor',
-      -- 'intelephense',
+      'intelephense',
       'pint',
       'prettier',
       'stylua',

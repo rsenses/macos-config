@@ -8,15 +8,15 @@ return {
   --   enabled = false,
   -- },
   -- 'tpope/vim-repeat',
-  {
-    'folke/ts-comments.nvim',
-    opts = {
-      lang = {
-        blade = '{{-- %s --}}',
-        html = '{{-- %s --}}',
-      },
-    },
-    event = 'VeryLazy',
-    enabled = vim.fn.has 'nvim-0.10.0' == 1,
-  },
+  -- {
+  --   'folke/ts-comments.nvim',
+  --   opts = {
+  --     lang = {
+  --       blade = '{{-- %s --}}',
+  --       html = '{{-- %s --}}',
+  --     },
+  --   },
+  --   event = 'VeryLazy',
+  --   enabled = vim.fn.has 'nvim-0.10.0' == 1,
+  -- },
 }
