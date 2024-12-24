@@ -19,17 +19,6 @@ return {
     'zbirenbaum/copilot-cmp',
   },
   config = function()
-    require('copilot').setup {
-      suggestion = { enabled = false },
-      panel = { enabled = false },
-      filetypes = {
-        markdown = true,
-        help = false,
-      },
-    }
-
-    require('copilot_cmp').setup()
-
     require 'custom.completion'
   end,
 }

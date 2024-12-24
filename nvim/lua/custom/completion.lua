@@ -1,10 +1,5 @@
 require 'custom.snippets'
 
-local luasnip = require 'luasnip'
-
-vim.opt.completeopt = { 'menu', 'menuone', 'noselect' }
-vim.opt.shortmess:append 'c'
-
 local lspkind = require 'lspkind'
 lspkind.init {
   symbol_map = {
@@ -30,9 +25,21 @@ local kind_formatter = lspkind.cmp_format {
   },
 }
 
+require('copilot').setup {
+  suggestion = { enabled = false },
+  panel = { enabled = false },
+  filetypes = {
+    markdown = true,
+    help = false,
+  },
+}
+
+require('copilot_cmp').setup()
+
 require('nvim-cmp-laravel').setup()
 
 local cmp = require 'cmp'
+local luasnip = require 'luasnip'
 
 cmp.setup {
   sources = {
@@ -94,23 +101,22 @@ cmp.setup {
       return vim_item
     end,
   },
-
-  sorting = {
-    priority_weight = 2,
-    comparators = {
-      require('copilot_cmp.comparators').prioritize,
-
-      -- Below is the default comparitor list and order for nvim-cmp
-      cmp.config.compare.offset,
-      -- cmp.config.compare.scopes, --this is commented in nvim-cmp too
-      cmp.config.compare.exact,
-      cmp.config.compare.score,
-      cmp.config.compare.recently_used,
-      cmp.config.compare.locality,
-      cmp.config.compare.kind,
-      cmp.config.compare.sort_text,
-      cmp.config.compare.length,
-      cmp.config.compare.order,
-    },
-  },
+  -- sorting = {
+  --   priority_weight = 2,
+  --   comparators = {
+  --     require('copilot_cmp.comparators').prioritize,
+  --
+  --     -- Below is the default comparitor list and order for nvim-cmp
+  --     cmp.config.compare.offset,
+  --     -- cmp.config.compare.scopes, --this is commented in nvim-cmp too
+  --     cmp.config.compare.exact,
+  --     cmp.config.compare.score,
+  --     cmp.config.compare.recently_used,
+  --     cmp.config.compare.locality,
+  --     cmp.config.compare.kind,
+  --     cmp.config.compare.sort_text,
+  --     cmp.config.compare.length,
+  --     cmp.config.compare.order,
+  --   },
+  -- },
 }
