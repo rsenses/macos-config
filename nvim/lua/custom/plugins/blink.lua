@@ -79,7 +79,7 @@ return {
           name = 'Copilot',
           module = 'blink-cmp-copilot',
           enabled = true,
-          score_offset = 0,
+          score_offset = -1,
           async = true,
           transform_items = function(_, items)
             local CompletionItemKind = require('blink.cmp.types').CompletionItemKind
@@ -95,4 +95,5 @@ return {
     },
     signature = { enabled = true },
   },
+  opts_extend = { 'sources.default' },
 }
