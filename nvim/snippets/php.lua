@@ -18,9 +18,6 @@ return {
   -- strict type
   s('strict', t 'declare(strict_types=1);'),
 
-  -- dd
-  s('dd', fmt([[dd({});{}]], { i(1), i(0) })),
-
   -- argument
   s(
     'arg',
@@ -143,4 +140,9 @@ class {}
       }
     )
   ),
+}, {
+  -- autosnippets
+
+  -- dd
+  s('dd', fmt([[dd({});{}]], { i(1), i(0) })),
 }

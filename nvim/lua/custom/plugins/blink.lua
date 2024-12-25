@@ -1,6 +1,7 @@
 -- Autocompletion
 return {
   'saghen/blink.cmp',
+  enabled = true,
   lazy = true,
   event = { 'InsertEnter', 'CmdlineEnter' },
   dependencies = {
@@ -16,36 +17,6 @@ return {
       nerd_font_variant = 'mono',
       kind_icons = {
         Copilot = '',
-        Text = '󰉿',
-        Method = '󰊕',
-        Function = '󰊕',
-        Constructor = '󰒓',
-
-        Field = '󰜢',
-        Variable = '󰆦',
-        Property = '󰖷',
-
-        Class = '󱡠',
-        Interface = '󱡠',
-        Struct = '󱡠',
-        Module = '󰅩',
-
-        Unit = '󰪚',
-        Value = '󰦨',
-        Enum = '󰦨',
-        EnumMember = '󰦨',
-
-        Keyword = '󰻾',
-        Constant = '󰏿',
-
-        Snippet = '󱄽',
-        Color = '󰏘',
-        File = '󰈔',
-        Reference = '󰬲',
-        Folder = '󰉋',
-        Event = '󱐋',
-        Operator = '󰪚',
-        TypeParameter = '󰬛',
       },
     },
     completion = {
@@ -75,6 +46,9 @@ return {
     sources = {
       default = { 'luasnip', 'lsp', 'buffer', 'copilot', 'path' },
       providers = {
+        luasnip = {
+          score_offset = 1,
+        },
         copilot = {
           name = 'Copilot',
           module = 'blink-cmp-copilot',

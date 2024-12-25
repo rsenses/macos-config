@@ -1,5 +1,3 @@
-vim.bo.commentstring = '{{-- %s --}}'
-
 vim.keymap.set('i', '=', function()
   -- The cursor location does not give us the correct node in this case, so we
   -- need to get the node to the left of the cursor
