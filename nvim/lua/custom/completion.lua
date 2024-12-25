@@ -1,5 +1,3 @@
-require 'custom.snippets'
-
 local lspkind = require 'lspkind'
 lspkind.init {
   symbol_map = {
@@ -25,15 +23,6 @@ local kind_formatter = lspkind.cmp_format {
   },
 }
 
-require('copilot').setup {
-  suggestion = { enabled = false },
-  panel = { enabled = false },
-  filetypes = {
-    markdown = true,
-    help = false,
-  },
-}
-
 require('copilot_cmp').setup()
 
 require('nvim-cmp-laravel').setup()
@@ -43,8 +32,8 @@ local luasnip = require 'luasnip'
 
 cmp.setup {
   sources = {
-    { name = 'nvim_lsp', priority = 1000, group_index = 1 },
-    { name = 'luasnip', priority = 900, group_index = 2 },
+    { name = 'luasnip', priority = 1000, group_index = 1 },
+    { name = 'nvim_lsp', priority = 900, group_index = 2 },
     { name = 'copilot', priority = 800, group_index = 3 },
     { name = 'buffer', priority = 700, group_index = 4 },
     { name = 'path', priority = 600, group_index = 5 },

@@ -1,9 +1,14 @@
 return {
-  -- Make sure to set this up properly if you have lazy=true
-  'MeanderingProgrammer/render-markdown.nvim',
-  dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' },
-  opts = {
-    file_types = { 'markdown' },
+  {
+    -- Make sure to set this up properly if you have lazy=true
+    'MeanderingProgrammer/render-markdown.nvim',
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' },
+    opts = {
+      file_types = { 'markdown' },
+    },
+    ft = { 'markdown' },
   },
-  ft = { 'markdown' },
+  {
+    'tjdevries/present.nvim',
+  },
 }
