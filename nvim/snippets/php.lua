@@ -108,23 +108,6 @@ class {}
     )
   ),
 
-  -- foreach
-  s(
-    'foreach',
-    fmta(
-      [[
-      foreach ($<exp> as $<val>) {
-      <sta>
-      }
-      ]],
-      {
-        exp = i(1),
-        val = i(2),
-        sta = i(0),
-      }
-    )
-  ),
-
   -- test
   s(
     'it',
@@ -145,4 +128,40 @@ class {}
 
   -- dd
   s('dd', fmt([[dd({});{}]], { i(1), i(0) })),
+
+  -- this
+  s('$this', fmt([[$this->{}]], { i(0) })),
+
+  -- foreach
+  s(
+    'foreach',
+    fmta(
+      [[
+      foreach ($<exp> as $<val>) {
+      <sta>
+      }
+      ]],
+      {
+        exp = i(1),
+        val = i(2),
+        sta = i(0),
+      }
+    )
+  ),
+
+  -- if
+  s(
+    'if',
+    fmta(
+      [[
+      if ($<exp>) {
+      <sta>
+      }
+      ]],
+      {
+        exp = i(1),
+        sta = i(0),
+      }
+    )
+  ),
 }
