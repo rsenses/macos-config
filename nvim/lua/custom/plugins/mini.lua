@@ -145,7 +145,7 @@ return {
         end, { buffer = buf_id, noremap = true, silent = true, desc = 'Paste from clipboard' })
 
         -- Copy the current file or directory path (relative to home) to clipboard
-        vim.keymap.set('n', '<M-c>', function()
+        vim.keymap.set('n', '<leader>yp', function()
           -- Get the current entry (file or directory)
           local curr_entry = mini_files.get_fs_entry()
           if curr_entry then
@@ -166,7 +166,21 @@ return {
     require('mini.ai').setup()
 
     -- Autopairs
-    require('mini.pairs').setup()
+    require('mini.pairs').setup {
+      mappings = {
+        ['('] = { action = 'open', pair = '()', neigh_pattern = '[^\\]%W' },
+        ['['] = { action = 'open', pair = '[]', neigh_pattern = '[^\\]%W' },
+        ['{'] = { action = 'open', pair = '{}', neigh_pattern = '[^\\]%W' },
+
+        [')'] = { action = 'close', pair = '()', neigh_pattern = '[^\\]%W' },
+        [']'] = { action = 'close', pair = '[]', neigh_pattern = '[^\\]%W' },
+        ['}'] = { action = 'close', pair = '{}', neigh_pattern = '[^\\]%W' },
+
+        ['"'] = { action = 'closeopen', pair = '""', neigh_pattern = '[^\\]%W', register = { cr = false } },
+        ["'"] = { action = 'closeopen', pair = "''", neigh_pattern = '[^%a\\]%W', register = { cr = false } },
+        ['`'] = { action = 'closeopen', pair = '``', neigh_pattern = '[^\\]%W', register = { cr = false } },
+      },
+    }
 
     -- GitSigns
     require('mini.diff').setup {

@@ -72,13 +72,27 @@ return {
 
       require('ts_context_commentstring').setup {
         enable_autocmd = false,
-        custom_calculation = function(_, language_tree)
+        languages = {
+          php_only = '// %s',
+          php = '// %s',
+          blade = {
+            __default = '// %s',
+            html = '{{-- %s --}}',
+            blade = '{{-- %s --}}',
+            php = '// %s',
+            php_only = '// %s',
+          },
+        },
+        custom_calculation = function(node, language_tree)
+          vim.print { node:type(), language_tree._lang }
           if vim.bo.filetype == 'blade' then
+            --- @diagnostic disable-next-line
             if language_tree._lang == 'html' then
               return '{{-- %s --}}'
-            else
-              return '// %s'
             end
+
+            return '// %s'
+            --- @diagnostic disable-next-line
           end
         end,
       }

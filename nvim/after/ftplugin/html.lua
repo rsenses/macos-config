@@ -5,6 +5,7 @@ vim.keymap.set('i', '=', function()
   local left_of_cursor_range = { cursor[1] - 1, cursor[2] - 1 }
 
   local node = vim.treesitter.get_node { pos = left_of_cursor_range }
+  vim.print(node:type())
   local nodes_active_in = {
     'attribute_name',
     'directive_argument',
