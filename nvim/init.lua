@@ -116,7 +116,7 @@ vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({ { import = 'custom.plugins' } }, {
   -- colorscheme that will be used when installing plugins.
-  install = { colorscheme = { 'default' } },
+  install = { colorscheme = { 'zenbones' } },
   checker = {
     enabled = true,
     notify = false,
@@ -125,7 +125,7 @@ require('lazy').setup({ { import = 'custom.plugins' } }, {
     notify = false,
   },
   ui = {
-    border = 'rounded',
+    border = false,
     icons = {
       cmd = '⌘',
       config = '',

@@ -15,10 +15,6 @@ g.have_nerd_font = true
 -- Disable statusbar
 opt.laststatus = 0
 
--- Cool floating window popup menu for completion on command line
-opt.pumblend = 17
-opt.wildmode = 'longest:full'
-
 opt.incsearch = true -- Makes search act like search in modern browsers
 opt.showmatch = true -- show matching brackets when text indicator is over them
 opt.inccommand = 'split' -- Make substitution work in realtime
@@ -28,8 +24,6 @@ opt.ignorecase = true -- Ignore case when searching...
 opt.smartcase = true -- ... unless there is a capital letter in the query
 opt.splitright = true -- Prefer windows splitting to the right
 opt.splitbelow = true -- Prefer windows splitting to the bottom
--- opt.updatetime = 1000 -- Make updates happen faster
--- opt.timeoutlen = 300 -- By default timeoutlen is 1000 ms
 opt.hlsearch = true -- I wouldn't use this without my DoNoHL function
 opt.scrolloff = 999 -- Make it so there the cursor is always in the middle
 opt.cursorline = true -- Highlight the current line
@@ -45,12 +39,10 @@ opt.undofile = true -- Save undo history to file
 opt.autoindent = true
 opt.cindent = true
 opt.wrap = true
-
 opt.expandtab = true
 opt.tabstop = 4
 opt.shiftwidth = 4
 opt.softtabstop = 4
-
 opt.breakindent = true
 opt.showbreak = string.rep(' ', 3) -- Make it so that long lines wrap smartly
 opt.linebreak = true

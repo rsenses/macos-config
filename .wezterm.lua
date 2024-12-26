@@ -25,18 +25,11 @@ function scheme_for_appearance(appearance)
     -- return "kanagawabones"
     -- return "zenbones_dark"
     -- return "melange_dark"
-    -- return "Github Dark"
     return "NvimDark"
   else
-    -- return "zenbones"
-    -- return "melange_light"
-    -- return "Github (base16)"
+    return "zenbones"
     -- return "NvimLight"
-    -- return "Gruvbox (Gogh)"
-    -- return "Everforest Light (Gogh)"
-    -- return "Catppuccin Latte (Gogh)"
-    -- return "One Light (Gogh)"
-    return "dayfox"
+    -- return "dayfox"
   end
 end
 
