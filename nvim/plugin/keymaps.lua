@@ -17,8 +17,10 @@ vim.keymap.set('n', 'n', 'nzzzv')
 vim.keymap.set('n', 'N', 'Nzzzv')
 
 -- Copiar, pegar y borrar del clipboard
-vim.keymap.set({ 'n', 'v' }, '<leader>y', [["+y]], { desc = '[Y]ank from clipboard' })
+vim.keymap.set({ 'n', 'v' }, '<leader>y', [["+y]], { desc = '[Y]ank to clipboard' })
+vim.keymap.set({ 'n' }, '<leader>Y', [["+Y]], { desc = '[Y]ank to end of line from clipboard' })
 vim.keymap.set({ 'n', 'v' }, '<leader>p', [["+p]], { desc = '[P]aste from clipboard' })
+vim.keymap.set({ 'n', 'v' }, '<leader>d', [["_d]], { desc = '[D]elete to clipboard' })
 
 -- Splits
 vim.keymap.set('n', '<C-w>-', function()
@@ -33,9 +35,6 @@ end, { desc = 'Split window vertically' })
 vim.keymap.set('n', '[b', '<cmd>bprevious<cr>', { desc = 'Prev buffer' })
 vim.keymap.set('n', ']b', '<cmd>bnext<cr>', { desc = 'Next buffer' })
 vim.keymap.set({ 'n' }, '<leader>bp', ':bufdo bd<cr>', { desc = 'Delete all Buffers' })
-
--- Formatting
-vim.keymap.set({ 'n', 'v' }, '<leader>cF', 'gg=G', { desc = '[C]ode [F]ormat' })
 
 -- Press 'S' for quick find/replace for the word under the cursor
 vim.keymap.set({ 'n' }, 'S', function()
@@ -52,6 +51,8 @@ vim.keymap.set('n', '<leader>wm', '<cmd>Mason<cr>', { desc = 'Mason' })
 
 -- source code
 vim.keymap.set('n', '<leader>x', '<cmd>source %<CR>', { desc = '[X]ecute nvim source' })
+
+-- [[ SPELLING]]
 
 -- Keymap to switch spelling language to English lamw25wmal
 -- To save the language settings configured on each buffer, you need to add

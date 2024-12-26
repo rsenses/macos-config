@@ -1,5 +1,6 @@
 return {
   'ricardoramirezr/blade-nav.nvim',
+  enabled = false,
   dependencies = {
     -- 'hrsh7th/nvim-cmp',
   },
