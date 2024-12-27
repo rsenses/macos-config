@@ -30,27 +30,27 @@ zle -N zle-line-init
 unsetopt BEEP
 
 # Reevaluate the prompt string each time it's displaying a prompt
-setopt prompt_subst
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
-autoload bashcompinit && bashcompinit
-autoload -Uz compinit
-compinit
+# setopt prompt_subst
+# zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+# autoload bashcompinit && bashcompinit
+# autoload -Uz compinit
+# compinit
 
 # Colors
-autoload -Uz colors && colors
+# autoload -Uz colors && colors
 
-# SOURCES ========================================
-# source macos specific stuff
+# EXPORTS ========================================
+export EDITOR=nvim
+export PATH="$HOME/.local/bin":$PATH
+export PATH="$HOME/.composer/vendor/bin":$PATH
+# macos specific stuff
 if [[ $(uname) == "Darwin" ]]; then
     export PATH="/opt/homebrew/bin":$PATH
     export PATH="/opt/homebrew/sbin:$PATH"
     export PATH="/Applications/Visual Studio Code - Insiders.app/Contents/Resources/app/bin":$PATH
+    export PATH="/opt/homebrew/opt/mariadb/bin:$PATH"
+    export PATH="/opt/homebrew/opt/php@8.3/bin:$PATH"
 fi
-# EXPORTS ========================================
-export PATH="$HOME/.local/bin":$PATH
-export PATH="$HOME/.composer/vendor/bin":$PATH
-export PATH="/opt/homebrew/opt/mariadb/bin:$PATH"
-export PATH="/opt/homebrew/opt/php@8.3/bin:$PATH"
 
 # zoxide
 eval "$(zoxide init zsh)"
@@ -59,9 +59,12 @@ eval "$(nodenv init -)"
 # Set up fzf key bindings and fuzzy completion
 eval "$(fzf --zsh)"
 # starship
+if [[ "${widgets[zle-keymap-select]#user:}" == "starship_zle-keymap-select" || \
+      "${widgets[zle-keymap-select]#user:}" == "starship_zle-keymap-select-wrapped" ]]; then
+    zle -N zle-keymap-select "";
+fi
+
 eval "$(starship init zsh)"
-# copilot
-# eval "$(gh copilot alias -- bash)"
 
 # ALIASES ========================================
 source $ZDOTDIR/zsh-aliases
@@ -73,18 +76,14 @@ source $ZDOTDIR/zsh-fzf
 source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source $HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-# Hace que el inicio de zsh sea muy lento
-# if type brew &>/dev/null; then
-#     FPATH=$HOMEBREW_PREFIX/share/zsh-completions:$FPATH
-#
-#     autoload -Uz compinit
-#     compinit
-# fi
-
 autoload -U up-line-or-beginning-search
 autoload -U down-line-or-beginning-search
 zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
+
+# KEYBINDINGS ============================================
 bindkey "^[[A" up-line-or-beginning-search
 bindkey "^[[B" down-line-or-beginning-search
 bindkey '^y' autosuggest-accept
+
+dedupe
