@@ -2,7 +2,7 @@ auto-update-channel = tip
 
 shell-integration = zsh
 shell-integration-features = true
-initial-command = /opt/homebrew/bin/tmux attach
+initial-command = /opt/homebrew/bin/tmux
 
 copy-on-select = clipboard
 
