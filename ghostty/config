@@ -1,5 +1,8 @@
 auto-update-channel = tip
 
+shell-integration = zsh
+window-save-state = always
+
 font-family = IosevkaTerm Nerd Font Mono
 font-style = Regular
 font-size = 16
@@ -12,4 +15,4 @@ macos-titlebar-style = hidden
 
 copy-on-select = clipboard
 
-keybind = global:cmd+\=toggle_quick_terminal
+keybind = global:cmd+enter=toggle_quick_terminal
