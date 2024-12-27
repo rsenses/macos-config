@@ -83,16 +83,13 @@ return {
             php_only = '// %s',
           },
         },
-        custom_calculation = function(node, language_tree)
-          vim.print { node:type(), language_tree._lang }
+        custom_calculation = function(_, language_tree)
           if vim.bo.filetype == 'blade' then
-            --- @diagnostic disable-next-line
             if language_tree._lang == 'html' then
               return '{{-- %s --}}'
             end
 
             return '// %s'
-            --- @diagnostic disable-next-line
           end
         end,
       }
