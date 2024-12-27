@@ -86,13 +86,6 @@ return {
         end,
         desc = '[R]ename File',
       },
-      {
-        '<leader>et',
-        function()
-          Snacks.terminal.toggle()
-        end,
-        desc = 'Toggle [T]erminal',
-      },
     },
   },
 }

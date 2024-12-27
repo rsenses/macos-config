@@ -19,4 +19,3 @@ window-theme = light
 macos-titlebar-style = hidden
 
 macos-option-as-alt = false
-keybind = global:cmd+enter=toggle_quick_terminal

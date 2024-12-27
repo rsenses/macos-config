@@ -1,5 +1,4 @@
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
-
 -- TIP: Disable arrow keys in normal mode
 vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
 vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
@@ -104,3 +103,6 @@ vim.keymap.set('n', '<leader>esr', function()
   -- vim.cmd(":spellr")
   vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(':spellr\n', true, false, true), 'm', true)
 end, { desc = '[S]pelling repeat' })
+
+-- Open terminal in tmux
+vim.keymap.set({ 'i', 'n' }, '<leader>-', '<cmd>silent !tmux split-window -v<CR>', { desc = '[E]ditor [T]erminal' })
