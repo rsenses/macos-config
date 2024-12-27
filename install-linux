@@ -15,6 +15,9 @@ ln -s $DOTFILES/nvim $HOME/.config/nvim
 rm -rf $HOME/.config/tmux
 ln -sf $DOTFILES/tmux $HOME/.config/tmux
 
+rm -rf $HOME/.config/ghostty
+ln -sf $DOTFILES/ghostty $HOME/.config/ghostty
+
 rm -rf $HOME/.config/rofi
 ln -s $DOTFILES/rofi $HOME/.config/rofi
 

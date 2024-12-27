@@ -1,0 +1,15 @@
+auto-update-channel = tip
+
+font-family = IosevkaTerm Nerd Font Mono
+font-style = Regular
+font-size = 16
+
+theme = zenbones
+
+window-decoration = true
+window-theme = light
+macos-titlebar-style = hidden
+
+copy-on-select = clipboard
+
+keybind = global:cmd+\=toggle_quick_terminal

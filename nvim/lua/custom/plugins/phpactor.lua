@@ -50,6 +50,7 @@ return {
   --   },
   --   opts = {
   --     install = {
+  --      path = vim.fn.stdpath("data") .. "/mason/phpactor",
   --       bin = vim.fn.stdpath 'data' .. '/mason/bin/phpactor',
   --     },
   --     lspconfig = {

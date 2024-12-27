@@ -1,12 +1,4 @@
-fg="#dcd7ba"
-bg="#1f1f28"
-bg_highlight="#363646"
-orange="#FFA066"
-blue="#7e9cd8"
-cyan="#6a9589"
-
-export FZF_DEFAULT_OPTS="--color=fg:${fg},bg:${bg},hl:${orange},fg+:${fg},bg+:${bg_highlight},hl+:${orange},info:${blue},prompt:${cyan},pointer:${cyan},marker:${cyan},spinner:${cyan},header:${cyan}"
-
+export FZF_DEFAULT_OPTS=""
 # -- Use fd instead of fzf --
 export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
