@@ -1,6 +1,9 @@
 auto-update-channel = tip
 
 shell-integration = zsh
+shell-integration-features = true
+initial-command = /opt/homebrew/bin/tmux attach
+
 window-save-state = always
 
 font-family = IosevkaTerm Nerd Font Mono

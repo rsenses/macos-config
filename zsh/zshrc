@@ -63,11 +63,6 @@ eval "$(starship init zsh)"
 # copilot
 # eval "$(gh copilot alias -- bash)"
 
-if [[ ! $TERM =~ screen ]]; then
-    tmux attach || tmux
-fi
-
-
 # ALIASES ========================================
 source $ZDOTDIR/zsh-aliases
 
