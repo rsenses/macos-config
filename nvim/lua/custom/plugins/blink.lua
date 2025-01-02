@@ -1,7 +1,7 @@
 -- Autocompletion
 return {
   'saghen/blink.cmp',
-  enabled = true,
+  enabled = false,
   lazy = true,
   event = { 'InsertEnter', 'CmdlineEnter' },
   dependencies = {
@@ -17,6 +17,7 @@ return {
       nerd_font_variant = 'mono',
       kind_icons = {
         Copilot = '',
+        RenderMarkdown = '',
       },
     },
     completion = {
@@ -46,10 +47,15 @@ return {
       end,
     },
     sources = {
-      default = { 'luasnip', 'lsp', 'buffer', 'copilot', 'path' },
+      default = { 'luasnip', 'lsp', 'buffer', 'copilot', 'path', 'markdown' },
       providers = {
         luasnip = {
           score_offset = 1,
+        },
+        markdown = {
+          name = 'RenderMarkdown',
+          module = 'render-markdown.integ.blink',
+          fallbacks = { 'lsp' },
         },
         copilot = {
           name = 'Copilot',

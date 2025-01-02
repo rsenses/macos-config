@@ -105,4 +105,5 @@ vim.keymap.set('n', '<leader>esr', function()
 end, { desc = '[S]pelling repeat' })
 
 -- Open terminal in tmux
-vim.keymap.set({ 'i', 'n' }, '<leader>-', '<cmd>silent !tmux split-window -v<CR>', { desc = '[E]ditor [T]erminal' })
+vim.keymap.set({ 'n' }, '<leader>-', '<cmd>silent !tmux split-window<CR>', { desc = '[E]ditor [T]erminal' })
+vim.keymap.set({ 'n' }, '<leader>|', '<cmd>silent !tmux split-window -hb -l 65<CR>', { desc = '[E]ditor [T]erminal' })

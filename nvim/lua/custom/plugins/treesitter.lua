@@ -27,6 +27,7 @@ return {
         'vue',
         'php',
         'php_only',
+        'phpdoc',
         'scss',
         'yaml',
         'gitignore',

@@ -2,7 +2,6 @@
 return {
   'hrsh7th/nvim-cmp',
   event = 'InsertEnter',
-  enabled = false,
   dependencies = {
     -- Snippet Engine & its associated nvim-cmp source
     'onsails/lspkind.nvim',
@@ -49,19 +48,24 @@ return {
     local luasnip = require 'luasnip'
 
     cmp.setup {
+      completion = { completeopt = 'menu,menuone,noinsert' },
       sources = {
         { name = 'luasnip', priority = 1000, group_index = 1 },
         { name = 'nvim_lsp', priority = 900, group_index = 2 },
-        { name = 'copilot', priority = 800, group_index = 3 },
-        { name = 'buffer', priority = 700, group_index = 4 },
-        { name = 'path', priority = 600, group_index = 5 },
+        { name = 'buffer', priority = 850, group_index = 3 },
+        { name = 'render-markdown', priority = 850, group_index = 3 },
+        { name = 'copilot', priority = 800, group_index = 4 },
+        { name = 'path', priority = 600, group_index = 6 },
+        {
+          name = 'lazydev',
+          group_index = 0,
+        },
       },
       mapping = cmp.mapping.preset.insert {
-        ['<C-n>'] = cmp.mapping.select_next_item { behavior = cmp.SelectBehavior.Insert },
-        ['<C-p>'] = cmp.mapping.select_prev_item { behavior = cmp.SelectBehavior.Insert },
+        ['<C-n>'] = cmp.mapping.select_next_item(),
+        ['<C-p>'] = cmp.mapping.select_prev_item(),
         ['<C-y>'] = cmp.mapping(
           cmp.mapping.confirm {
-            behavior = cmp.ConfirmBehavior.Insert,
             select = true,
           },
           { 'i', 'c' }
@@ -84,7 +88,7 @@ return {
           end
         end, { 'i', 's' }),
         ['<C-s>'] = cmp.mapping.complete {},
-        ['<CR>'] = cmp.mapping.abort(),
+        ['<CR>'] = cmp.config.disable,
       },
 
       -- Enable luasnip to handle snippet expansion for nvim-cmp
