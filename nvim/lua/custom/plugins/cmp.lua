@@ -4,6 +4,7 @@ return {
   event = 'InsertEnter',
   dependencies = {
     -- Snippet Engine & its associated nvim-cmp source
+    'nvim-lua/plenary.nvim',
     'onsails/lspkind.nvim',
     'hrsh7th/cmp-buffer',
     'hrsh7th/cmp-path',

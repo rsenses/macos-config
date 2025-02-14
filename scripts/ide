@@ -1,4 +1,4 @@
 #!/bin/bash
-tmux split-window -h -l 65%
+tmux split-window -h -l 75%
 # tmux select-pane -R
 # nvim

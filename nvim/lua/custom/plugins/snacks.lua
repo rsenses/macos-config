@@ -21,6 +21,8 @@ return {
           wo = { wrap = true }, -- Wrap notifications
         },
       },
+      zen = {},
+      picker = {},
     },
     keys = {
       {
@@ -28,7 +30,14 @@ return {
         function()
           Snacks.bufdelete()
         end,
-        desc = 'Delete Buffer',
+        desc = '[B]uffer [D]elete',
+      },
+      {
+        '<leader>bp',
+        function()
+          Snacks.bufdelete.all()
+        end,
+        desc = '[B]uffer [P]urge',
       },
       {
         '<leader>gB',
@@ -73,6 +82,13 @@ return {
         desc = 'Notification [H]istory',
       },
       {
+        '<leader>ez',
+        function()
+          Snacks.zen()
+        end,
+        desc = '[E]ditor [Z]en',
+      },
+      {
         '<leader>eu',
         function()
           Snacks.notifier.hide()
@@ -85,6 +101,146 @@ return {
           Snacks.rename.rename_file()
         end,
         desc = '[R]ename File',
+      },
+      -- Picker
+      {
+        '<leader>.',
+        function()
+          Snacks.picker.recent()
+        end,
+        desc = 'Recent',
+      },
+      {
+        '<leader><space>',
+        function()
+          Snacks.picker.smart()
+        end,
+        desc = 'Smart Find Files',
+      },
+      {
+        '<leader>,',
+        function()
+          Snacks.picker.buffers {
+            layout = {
+              preset = 'ivy',
+            },
+          }
+        end,
+        desc = 'Buffers',
+      },
+      {
+        '<leader>sg',
+        function()
+          Snacks.picker.grep()
+        end,
+        desc = 'Grep',
+      },
+      {
+        '<leader>sh',
+        function()
+          Snacks.picker.help()
+        end,
+        desc = 'Help Pages',
+      },
+      {
+        '<leader>sk',
+        function()
+          Snacks.picker.keymaps()
+        end,
+        desc = 'Keymaps',
+      },
+      {
+        '<leader>sw',
+        function()
+          Snacks.picker.grep_word()
+        end,
+        desc = 'Visual selection or word',
+        mode = { 'n', 'x' },
+      },
+      {
+        '<leader>sd',
+        function()
+          Snacks.picker.diagnostics()
+        end,
+        desc = 'Diagnostics',
+      },
+      {
+        '<leader>sD',
+        function()
+          Snacks.picker.diagnostics_buffer()
+        end,
+        desc = 'Buffer Diagnostics',
+      },
+      {
+        '<leader>sr',
+        function()
+          Snacks.picker.resume()
+        end,
+        desc = 'Resume',
+      },
+      {
+        '<leader>en',
+        function()
+          Snacks.picker.files { cwd = vim.fn.stdpath 'config' }
+        end,
+        desc = 'Find Config File',
+      },
+      {
+        '<leader>/',
+        function()
+          Snacks.picker.grep_buffers()
+        end,
+        desc = 'Grep Open Buffers',
+      },
+      {
+        '<leader>sp',
+        function()
+          Snacks.picker.registers()
+        end,
+        desc = 'Registers',
+      },
+      {
+        'gd',
+        function()
+          Snacks.picker.lsp_definitions()
+        end,
+        desc = 'Goto Definition',
+      },
+      {
+        'gr',
+        function()
+          Snacks.picker.lsp_references()
+        end,
+        nowait = true,
+        desc = 'References',
+      },
+      {
+        'gI',
+        function()
+          Snacks.picker.lsp_implementations()
+        end,
+        desc = 'Goto Implementation',
+      },
+      {
+        '<leader>sD',
+        function()
+          Snacks.picker.lsp_type_definitions()
+        end,
+        desc = 'Goto T[y]pe Definition',
+      },
+      {
+        '<leader>ss',
+        function()
+          Snacks.picker.lsp_symbols()
+        end,
+        desc = 'LSP Symbols',
+      },
+      {
+        '<leader>sS',
+        function()
+          Snacks.picker.lsp_workspace_symbols()
+        end,
+        desc = 'LSP Workspace Symbols',
       },
     },
   },

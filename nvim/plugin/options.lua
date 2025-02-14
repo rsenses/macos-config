@@ -31,7 +31,7 @@ opt.list = true -- Show some invisible characters (tabs...)
 opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' } -- Set listchars
 opt.undofile = true -- Save undo history to file
 
-opt.wrap = false
+opt.wrap = true
 
 -- Tabs
 opt.autoindent = true
@@ -78,8 +78,6 @@ opt.sessionoptions = {
 }
 
 -- WINBAR
--- vim.cmd(string.format [[highlight WinBar1 guifg=NvimDarkGreen guibg=NvimLightGray3]])
--- vim.cmd(string.format [[highlight WinBar2 guifg=NvimDarkRed guibg=NvimLightGray3]])
 -- Function to get the number of open buffers using the :ls command
 local function get_buffer_count()
   local buffers = vim.fn.execute 'ls'
