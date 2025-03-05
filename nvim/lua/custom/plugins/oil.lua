@@ -1,6 +1,6 @@
 return {
   'stevearc/oil.nvim',
-  enabled = false,
+  enabled = true,
   keys = {
     {
       '-',
@@ -18,7 +18,7 @@ return {
       show_hidden = true,
       natural_order = true,
       -- This function defines what will never be shown, even when `show_hidden` is set
-      is_always_hidden = function(name, bufnr)
+      is_always_hidden = function(name, _)
         local ignored_files = {}
         table.insert(ignored_files, '.git')
         table.insert(ignored_files, 'node_modules')
