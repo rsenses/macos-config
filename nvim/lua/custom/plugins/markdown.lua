@@ -10,5 +10,6 @@ return {
   },
   {
     'tjdevries/present.nvim',
+    enable = false,
   },
 }
