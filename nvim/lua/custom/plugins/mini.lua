@@ -9,7 +9,7 @@ return {
     -- Find surrounding with sf or sF (move cursor right or left).
     -- Highlight surrounding with sh.
     --
-    -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
+    -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Parenthesis
     -- - sd'   - [S]urround [D]elete [']quotes
     -- - sr)'  - [S]urround [R]eplace [)] [']
     require('mini.surround').setup { n_lines = 500 }
@@ -136,21 +136,21 @@ return {
     require('mini.ai').setup()
 
     -- Autopairs
-    require('mini.pairs').setup {
-      mappings = {
-        ['('] = { action = 'open', pair = '()', neigh_pattern = '[^\\]%W' },
-        ['['] = { action = 'open', pair = '[]', neigh_pattern = '[^\\]%W' },
-        ['{'] = { action = 'open', pair = '{}', neigh_pattern = '[^\\]%W' },
-
-        [')'] = { action = 'close', pair = '()', neigh_pattern = '[^\\]%W' },
-        [']'] = { action = 'close', pair = '[]', neigh_pattern = '[^\\]%W' },
-        ['}'] = { action = 'close', pair = '{}', neigh_pattern = '[^\\]%W' },
-
-        ['"'] = { action = 'closeopen', pair = '""', neigh_pattern = '[^\\]%W', register = { cr = false } },
-        ["'"] = { action = 'closeopen', pair = "''", neigh_pattern = '[^%a\\]%W', register = { cr = false } },
-        ['`'] = { action = 'closeopen', pair = '``', neigh_pattern = '[^\\]%W', register = { cr = false } },
-      },
-    }
+    -- require('mini.pairs').setup {
+    --   mappings = {
+    --     ['('] = { action = 'open', pair = '()', neigh_pattern = '[^\\]%W' },
+    --     ['['] = { action = 'open', pair = '[]', neigh_pattern = '[^\\]%W' },
+    --     ['{'] = { action = 'open', pair = '{}', neigh_pattern = '[^\\]%W' },
+    --
+    --     [')'] = { action = 'close', pair = '()', neigh_pattern = '[^\\]%W' },
+    --     [']'] = { action = 'close', pair = '[]', neigh_pattern = '[^\\]%W' },
+    --     ['}'] = { action = 'close', pair = '{}', neigh_pattern = '[^\\]%W' },
+    --
+    --     ['"'] = { action = 'closeopen', pair = '""', neigh_pattern = '[^\\]%W', register = { cr = false } },
+    --     ["'"] = { action = 'closeopen', pair = "''", neigh_pattern = '[^%a\\]%W', register = { cr = false } },
+    --     ['`'] = { action = 'closeopen', pair = '``', neigh_pattern = '[^\\]%W', register = { cr = false } },
+    --   },
+    -- }
 
     -- GitSigns
     require('mini.diff').setup {

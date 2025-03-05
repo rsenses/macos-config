@@ -22,7 +22,7 @@ return {
         },
       },
       zen = {},
-      picker = {},
+      -- picker = {},
     },
     keys = {
       {
@@ -123,6 +123,20 @@ return {
           Snacks.picker.buffers {
             layout = {
               preset = 'ivy',
+            },
+            finder = 'buffers',
+            format = 'buffer',
+            hidden = false,
+            unloaded = true,
+            current = true,
+            sort_lastused = true,
+            win = {
+              input = {
+                keys = {
+                  ['<c-d>'] = { 'bufdelete', mode = { 'n', 'i' } },
+                  ['dd'] = { 'bufdelete', mode = { 'n' } },
+                },
+              },
             },
           }
         end,

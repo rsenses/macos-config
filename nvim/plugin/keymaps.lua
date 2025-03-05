@@ -17,9 +17,24 @@ vim.keymap.set('n', 'N', 'Nzzzv')
 
 -- Copiar, pegar y borrar del clipboard
 vim.keymap.set({ 'n', 'v' }, '<leader>y', [["+y]], { desc = '[Y]ank to clipboard' })
-vim.keymap.set({ 'n' }, '<leader>Y', [["+Y]], { desc = '[Y]ank to end of line from clipboard' })
+vim.keymap.set('n', '<leader>Y', [["+Y]], { desc = '[Y]ank to end of line from clipboard' })
 vim.keymap.set({ 'n', 'v' }, '<leader>p', [["+p]], { desc = '[P]aste from clipboard' })
 vim.keymap.set({ 'n', 'v' }, '<leader>d', [["_d]], { desc = '[D]elete to clipboard' })
+
+-- copy everything between { } including the brackets
+vim.keymap.set('n', 'YY', 'va{Vy', { desc = '[C]opy between { }' })
+
+-- Autopairs
+vim.keymap.set('i', "'", "''<left>")
+vim.keymap.set('i', '"', '""<left>')
+vim.keymap.set('i', '`', '``<left>')
+vim.keymap.set('i', '(', '()<left>')
+vim.keymap.set('i', '[', '[]<left>')
+vim.keymap.set('i', '{', '{}<left>')
+
+-- Easy Escape
+vim.keymap.set('i', 'jk', '<esc>')
+vim.keymap.set('i', 'kj', '<esc>')
 
 -- Splits
 vim.keymap.set('n', '<C-w>-', function()
@@ -29,10 +44,6 @@ end, { desc = 'Split window horizontally' })
 vim.keymap.set('n', '<C-w>|', function()
   vim.cmd.vsplit()
 end, { desc = 'Split window vertically' })
-
--- Trabajo con buffers
-vim.keymap.set('n', '[b', '<cmd>bprevious<cr>', { desc = 'Prev buffer' })
-vim.keymap.set('n', ']b', '<cmd>bnext<cr>', { desc = 'Next buffer' })
 
 -- Press 'S' for quick find/replace for the word under the cursor
 vim.keymap.set({ 'n' }, 'S', function()
@@ -47,8 +58,9 @@ vim.keymap.set('n', '<leader>wl', '<cmd>Lazy<cr>', { desc = 'Lazy' })
 -- mason
 vim.keymap.set('n', '<leader>wm', '<cmd>Mason<cr>', { desc = 'Mason' })
 
--- source code
-vim.keymap.set('n', '<leader>x', '<cmd>source %<CR>', { desc = '[X]ecute nvim source' })
+-- Open terminal in tmux
+vim.keymap.set({ 'n' }, '<leader>-', '<cmd>silent !tmux split-window<CR>', { desc = '[E]ditor [T]erminal' })
+vim.keymap.set({ 'n' }, '<leader>|', '<cmd>silent !tmux split-window -hb -l 65<CR>', { desc = '[E]ditor [T]erminal' })
 
 -- [[ SPELLING]]
 
@@ -102,7 +114,3 @@ vim.keymap.set('n', '<leader>esr', function()
   -- vim.cmd(":spellr")
   vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(':spellr\n', true, false, true), 'm', true)
 end, { desc = '[S]pelling repeat' })
-
--- Open terminal in tmux
-vim.keymap.set({ 'n' }, '<leader>-', '<cmd>silent !tmux split-window<CR>', { desc = '[E]ditor [T]erminal' })
-vim.keymap.set({ 'n' }, '<leader>|', '<cmd>silent !tmux split-window -hb -l 65<CR>', { desc = '[E]ditor [T]erminal' })

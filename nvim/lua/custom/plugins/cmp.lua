@@ -57,6 +57,7 @@ return {
         { name = 'render-markdown', priority = 850, group_index = 3 },
         { name = 'copilot', priority = 800, group_index = 4 },
         { name = 'path', priority = 600, group_index = 6 },
+        { name = 'nvim_lsp_signature_help', priority = 600, group_index = 6 },
         {
           name = 'lazydev',
           group_index = 0,
