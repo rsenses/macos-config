@@ -15,6 +15,9 @@ local var_name = function(args)
 end
 
 return {
+  -- php tag
+  s('php', fmt([[<?php {} ?>]], { i(0) })),
+
   -- strict type
   s('strict', t 'declare(strict_types=1);'),
 

@@ -120,6 +120,7 @@ return {
     vim.keymap.set('n', '<leader>sd', function()
       require('telescope.builtin').diagnostics {
         bufnr = 0,
+        wrap_results = true,
       }
     end, { desc = '[S]earch [D]iagnostics' })
 

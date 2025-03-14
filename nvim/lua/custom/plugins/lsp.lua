@@ -184,21 +184,21 @@ return {
           'sass',
         },
       },
-      phpactor = {
-        cmd = { 'phpactor', 'language-server', '-vvv' },
-        on_attach = function(client)
-          client.server_capabilities.hoverProvider = false
-          client.server_capabilities.documentSymbolProvider = false
-          client.server_capabilities.referencesProvider = false
-          client.server_capabilities.completionProvider = false
-          client.server_capabilities.documentFormattingProvider = false
-          client.server_capabilities.definitionProvider = false
-          client.server_capabilities.implementationProvider = true
-          client.server_capabilities.typeDefinitionProvider = false
-          client.server_capabilities.diagnosticProvider = false
-        end,
-        filetypes = { 'php' },
-      },
+      -- phpactor = {
+      --   cmd = { 'phpactor', 'language-server', '-vvv' },
+      --   on_attach = function(client)
+      --     client.server_capabilities.hoverProvider = false
+      --     client.server_capabilities.documentSymbolProvider = false
+      --     client.server_capabilities.referencesProvider = false
+      --     client.server_capabilities.completionProvider = false
+      --     client.server_capabilities.documentFormattingProvider = false
+      --     client.server_capabilities.definitionProvider = false
+      --     client.server_capabilities.implementationProvider = true
+      --     client.server_capabilities.typeDefinitionProvider = false
+      --     client.server_capabilities.diagnosticProvider = false
+      --   end,
+      --   filetypes = { 'php' },
+      -- },
       intelephense = {
         filetypes = { 'php', 'blade' },
         files = {
@@ -208,11 +208,11 @@ return {
         init_options = {
           licenceKey = os.getenv 'HOME' .. '/.config/intelephense/licence.txt',
         },
-        cmd = { 'intelephense', '--stdio' },
-        settings = { php = { completion = { callSnippet = 'Replace' } } },
-        on_attach = function(client)
-          client.server_capabilities.workspaceSymbolProvider = false
-        end,
+        -- cmd = { 'intelephense', '--stdio' },
+        -- settings = { php = { completion = { callSnippet = 'Replace' } } },
+        -- on_attach = function(client)
+        --   client.server_capabilities.workspaceSymbolProvider = false
+        -- end,
       },
       ts_ls = {
         filetypes = { 'typescript', 'typescriptreact', 'typescript.tsx' },
@@ -269,7 +269,7 @@ return {
       'emmet-ls',
       'eslint_d',
       'html-lsp',
-      'phpactor',
+      -- 'phpactor',
       'intelephense',
       'pint',
       'prettier',
@@ -280,6 +280,8 @@ return {
     require('mason-tool-installer').setup { ensure_installed = ensure_installed, automatic_installation = true }
 
     require('mason-lspconfig').setup {
+      ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
+      automatic_installation = false,
       handlers = {
         function(server_name)
           local server = servers[server_name] or {}

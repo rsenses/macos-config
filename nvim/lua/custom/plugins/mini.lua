@@ -1,14 +1,6 @@
 return {
   'echasnovski/mini.nvim',
   config = function()
-    -- Add/delete/replace surroundings (brackets, quotes, etc.)
-    --
-    -- Add surrounding with sa (in visual mode or on motion).
-    -- Delete surrounding with sd.
-    -- Replace surrounding with sr.
-    -- Find surrounding with sf or sF (move cursor right or left).
-    -- Highlight surrounding with sh.
-    --
     -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Parenthesis
     -- - sd'   - [S]urround [D]elete [']quotes
     -- - sr)'  - [S]urround [R]eplace [)] [']
@@ -19,23 +11,6 @@ return {
 
     -- Movement helpers, for example ciq to change inside quotes, cib to change inside brackets, etc.
     require('mini.ai').setup()
-
-    -- Autopairs
-    -- require('mini.pairs').setup {
-    --   mappings = {
-    --     ['('] = { action = 'open', pair = '()', neigh_pattern = '[^\\]%W' },
-    --     ['['] = { action = 'open', pair = '[]', neigh_pattern = '[^\\]%W' },
-    --     ['{'] = { action = 'open', pair = '{}', neigh_pattern = '[^\\]%W' },
-    --
-    --     [')'] = { action = 'close', pair = '()', neigh_pattern = '[^\\]%W' },
-    --     [']'] = { action = 'close', pair = '[]', neigh_pattern = '[^\\]%W' },
-    --     ['}'] = { action = 'close', pair = '{}', neigh_pattern = '[^\\]%W' },
-    --
-    --     ['"'] = { action = 'closeopen', pair = '""', neigh_pattern = '[^\\]%W', register = { cr = false } },
-    --     ["'"] = { action = 'closeopen', pair = "''", neigh_pattern = '[^%a\\]%W', register = { cr = false } },
-    --     ['`'] = { action = 'closeopen', pair = '``', neigh_pattern = '[^\\]%W', register = { cr = false } },
-    --   },
-    -- }
 
     -- GitSigns
     require('mini.diff').setup {
@@ -85,6 +60,7 @@ return {
       },
     }
 
+    -- WhicihKey replacement
     local miniclue = require 'mini.clue'
     miniclue.setup {
       triggers = {

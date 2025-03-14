@@ -30,6 +30,7 @@ opt.signcolumn = 'yes' -- Always show the signcolumn, otherwise it would shift t
 opt.list = true -- Show some invisible characters (tabs...)
 opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' } -- Set listchars
 opt.undofile = true -- Save undo history to file
+opt.confirm = true
 
 opt.wrap = true
 

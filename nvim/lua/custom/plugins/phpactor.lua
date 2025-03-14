@@ -2,6 +2,7 @@
 return {
   {
     'phpactor/phpactor',
+    enable = false,
     event = 'VeryLazy',
     build = 'composer install --no-dev --optimize-autoloader',
     -- ft = 'php',
