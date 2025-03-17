@@ -185,37 +185,66 @@ return {
         },
       },
       -- phpactor = {
-      --   cmd = { 'phpactor', 'language-server', '-vvv' },
-      --   on_attach = function(client)
-      --     client.server_capabilities.hoverProvider = false
-      --     client.server_capabilities.documentSymbolProvider = false
-      --     client.server_capabilities.referencesProvider = false
-      --     client.server_capabilities.completionProvider = false
-      --     client.server_capabilities.documentFormattingProvider = false
-      --     client.server_capabilities.definitionProvider = false
-      --     client.server_capabilities.implementationProvider = true
-      --     client.server_capabilities.typeDefinitionProvider = false
-      --     client.server_capabilities.diagnosticProvider = false
-      --   end,
-      --   filetypes = { 'php' },
+      --   filetypes = { 'php', 'blade' },
       -- },
       intelephense = {
-        filetypes = { 'php', 'blade' },
-        files = {
-          associations = { '*.php', '*.blade.php' }, -- Associating .blade.php files as well
-          maxSize = 5000000,
-        },
         init_options = {
           licenceKey = os.getenv 'HOME' .. '/.config/intelephense/licence.txt',
         },
-        -- cmd = { 'intelephense', '--stdio' },
-        -- settings = { php = { completion = { callSnippet = 'Replace' } } },
-        -- on_attach = function(client)
-        --   client.server_capabilities.workspaceSymbolProvider = false
-        -- end,
+        filetypes = { 'php', 'blade' },
+        settings = {
+          intelephense = {
+            files = {
+              associations = { '*.php', '*.phtml' },
+              maxSize = 5000000,
+            },
+            environment = {
+              phpVersion = '8.3.19',
+            },
+            telemetry = {
+              enabled = false,
+            },
+            maxMemory = 1024,
+            completion = {
+              fullyQualifyGlobalConstantsAndFunctions = true,
+            },
+            format = {
+              enable = false,
+            },
+            rename = {
+              enabled = true,
+            },
+          },
+        },
       },
       ts_ls = {
         filetypes = { 'typescript', 'typescriptreact', 'typescript.tsx' },
+        settings = {
+          typescript = {
+            format = {
+              enable = true,
+            },
+            suggest = {
+              autoImports = true,
+              completeFunctionCalls = true,
+            },
+            inlayHints = {
+              enable = true,
+            },
+          },
+          javascript = {
+            format = {
+              enable = true,
+            },
+            suggest = {
+              autoImports = true,
+              completeFunctionCalls = true,
+            },
+            inlayHints = {
+              enable = true,
+            },
+          },
+        },
       },
       tailwindcss = {
         filetypes = { 'blade', 'html', 'svelte' },
@@ -275,6 +304,7 @@ return {
       'prettier',
       'stylua',
       'tailwindcss-language-server',
+      'typescript-language-server',
       'marksman',
     })
     require('mason-tool-installer').setup { ensure_installed = ensure_installed, automatic_installation = true }
