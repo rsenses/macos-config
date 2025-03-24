@@ -8,6 +8,7 @@ return {
       'JoosepAlviste/nvim-ts-context-commentstring',
       'nvim-treesitter/nvim-treesitter-textobjects',
       'windwp/nvim-ts-autotag',
+      'nvim-treesitter/nvim-treesitter-context',
     },
     opts = {
       ensure_installed = {
@@ -70,6 +71,8 @@ return {
       }
 
       require('nvim-treesitter.configs').setup(opts)
+
+      require('treesitter-context').setup {}
 
       require('ts_context_commentstring').setup {
         enable_autocmd = false,

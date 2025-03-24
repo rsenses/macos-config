@@ -39,3 +39,10 @@ api.nvim_create_autocmd('FileType', {
     end
   end,
 })
+
+vim.api.nvim_create_autocmd('ColorScheme', {
+  pattern = 'zenbones', -- O el nombre exacto de tu esquema de color
+  callback = function()
+    vim.api.nvim_set_hl(0, 'ColorColumn', { ctermbg = 'LightGrey', bg = 'LightGrey' })
+  end,
+})

@@ -34,6 +34,7 @@ opt.undofile = true -- Save undo history to file
 opt.confirm = true
 
 opt.wrap = true
+opt.colorcolumn = '120'
 
 -- Tabs
 opt.autoindent = true
