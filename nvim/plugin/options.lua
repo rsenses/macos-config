@@ -10,6 +10,7 @@ g.have_nerd_font = true
 
 -- Disable statusbar
 opt.laststatus = 0
+opt.cmdheight = 0 -- hide commmand line until needed
 
 opt.incsearch = true -- Makes search act like search in modern browsers
 opt.showmatch = true -- show matching brackets when text indicator is over them
@@ -91,12 +92,68 @@ local function get_buffer_count()
   end
   return count
 end
+
+-- local function get_full_mode()
+--   local mode = vim.api.nvim_eval 'mode()'
+--   local mode_names = {
+--     n = 'NORMAL',
+--     no = 'N·OPER',
+--     nov = 'N·VIRT',
+--     niI = 'N·INTR',
+--     v = 'VISUAL',
+--     V = 'V·LINE',
+--     [''] = 'V·BLCK',
+--     s = 'SELECT',
+--     S = 'S·LINE',
+--     [''] = 'S·BLCK',
+--     i = 'INSERT',
+--     R = 'REPLACE',
+--     Rv = 'V·REPL',
+--     c = 'COMMAND',
+--     cv = 'VIM EX',
+--     ce = 'EX EDIT',
+--     r = 'PROMPT',
+--     rm = 'MORE',
+--     ['r?'] = 'CONFIRM',
+--     t = 'TERMINAL',
+--     ['!'] = 'SHELL',
+--   }
+--   return mode_names[mode] or mode
+-- end
+
+local function get_full_mode()
+  local modes = {
+    ['n'] = 'NORMAL',
+    ['no'] = 'NORMAL',
+    ['v'] = 'VISUAL',
+    ['V'] = 'VISUAL LINE',
+    [''] = 'VISUAL BLOCK',
+    ['s'] = 'SELECT',
+    ['S'] = 'SELECT LINE',
+    [''] = 'SELECT BLOCK',
+    ['i'] = 'INSERT',
+    ['ic'] = 'INSERT',
+    ['R'] = 'REPLACE',
+    ['Rv'] = 'VISUAL REPLACE',
+    ['c'] = 'COMMAND',
+    ['cv'] = 'VIM EX',
+    ['ce'] = 'EX',
+    ['r'] = 'PROMPT',
+    ['rm'] = 'MOAR',
+    ['r?'] = 'CONFIRM',
+    ['!'] = 'SHELL',
+    ['t'] = 'TERMINAL',
+  }
+  local current_mode = vim.api.nvim_get_mode().mode
+  return string.format('%s ', modes[current_mode]):upper()
+end
+
 -- Function to update the winbar
 local function update_winbar()
   local buffer_count = get_buffer_count()
-  opt.winbar = '%#WinBar1#%m ' .. '%#WinBar2#󰓩' .. buffer_count .. ' ' .. '%#WinBar1# %f'
+  opt.winbar = '%#WinBar1#%m ' .. '%#WinBar2#󰓩' .. buffer_count .. ' ' .. '%#WinBar1# %f' .. '%#WinBar2# %=' .. get_full_mode()
 end
 -- Autocmd to update the winbar on BufEnter and WinEnter events
-vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter' }, {
+vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter', 'ModeChanged' }, {
   callback = update_winbar,
 })

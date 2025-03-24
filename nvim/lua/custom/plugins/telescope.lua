@@ -32,6 +32,7 @@ return {
     { 'nvim-tree/nvim-web-devicons' },
     { 'mollerhoj/telescope-recent-files.nvim' },
     { 'nvim-telescope/telescope-ui-select.nvim' },
+    { 'gbprod/yanky.nvim', opts = {} },
   },
   config = function()
     -- Telescope is a fuzzy finder that comes with a lot of different things that
@@ -114,7 +115,7 @@ return {
     vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
     vim.keymap.set('n', '<leader>st', builtin.builtin, { desc = '[S]earch select [T]elescope' })
     vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
-    vim.keymap.set('n', '<space>sg', require 'custom.plugins.telescope.multi-ripgrep', { desc = '[S]earch by [G]rep' })
+    vim.keymap.set('n', '<leader>sg', require 'custom.plugins.telescope.multi-ripgrep', { desc = '[S]earch by [G]rep' })
     vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
     vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
 
