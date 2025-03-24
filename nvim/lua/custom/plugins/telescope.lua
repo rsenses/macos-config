@@ -31,6 +31,7 @@ return {
     --  you can enable this
     { 'nvim-tree/nvim-web-devicons' },
     { 'mollerhoj/telescope-recent-files.nvim' },
+    { 'nvim-telescope/telescope-ui-select.nvim' },
   },
   config = function()
     -- Telescope is a fuzzy finder that comes with a lot of different things that
@@ -68,7 +69,7 @@ return {
           theme = 'ivy',
           sort_mru = true,
           sort_lastused = true,
-          initial_mode = 'normal',
+          -- initial_mode = 'normal',
         },
       },
       defaults = {
@@ -105,6 +106,7 @@ return {
     require('telescope').load_extension 'fzf'
     require('telescope').load_extension 'recent-files'
     require('telescope').load_extension 'yank_history'
+    require('telescope').load_extension 'ui-select'
 
     -- See `:help telescope.builtin`
     local builtin = require 'telescope.builtin'
@@ -113,13 +115,11 @@ return {
     vim.keymap.set('n', '<leader>st', builtin.builtin, { desc = '[S]earch select [T]elescope' })
     vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
     vim.keymap.set('n', '<space>sg', require 'custom.plugins.telescope.multi-ripgrep', { desc = '[S]earch by [G]rep' })
-    vim.keymap.set('n', '<leader>sD', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
     vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
     vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
 
     vim.keymap.set('n', '<leader>sd', function()
       require('telescope.builtin').diagnostics {
-        bufnr = 0,
         wrap_results = true,
       }
     end, { desc = '[S]earch [D]iagnostics' })

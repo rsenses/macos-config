@@ -209,7 +209,7 @@ return {
               fullyQualifyGlobalConstantsAndFunctions = true,
             },
             format = {
-              enable = false,
+              enable = true,
             },
             rename = {
               enabled = true,

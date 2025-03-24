@@ -52,6 +52,11 @@ vim.keymap.set('n', '<leader>wl', '<cmd>Lazy<cr>', { desc = 'Lazy' })
 -- mason
 vim.keymap.set('n', '<leader>wm', '<cmd>Mason<cr>', { desc = 'Mason' })
 
+-- diagnostics
+vim.keymap.set('n', 'gl', function()
+  vim.diagnostic.open_float()
+end, { desc = 'Open diagnostics' })
+
 -- Open terminal in tmux
 vim.keymap.set({ 'n' }, '<leader>-', '<cmd>silent !tmux split-window<CR>', { desc = '[E]ditor [T]erminal' })
 vim.keymap.set({ 'n' }, '<leader>|', '<cmd>silent !tmux split-window -hb -l 65<CR>', { desc = '[E]ditor [T]erminal' })
