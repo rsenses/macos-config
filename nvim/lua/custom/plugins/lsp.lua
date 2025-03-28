@@ -6,8 +6,8 @@ return {
     'williamboman/mason.nvim',
     'williamboman/mason-lspconfig.nvim',
     'WhoIsSethDaniel/mason-tool-installer.nvim',
-    -- 'saghen/blink.cmp',
-    'hrsh7th/cmp-nvim-lsp',
+    'saghen/blink.cmp',
+    -- 'hrsh7th/cmp-nvim-lsp',
   },
   config = function()
     -- Brief Aside: **What is LSP?**
@@ -143,8 +143,8 @@ return {
     --  When you add nvim-cmp, luasnip, etc. Neovim now has *more* capabilities.
     --  So, we create new capabilities with nvim cmp, and then broadcast that to the servers.
     local capabilities = vim.lsp.protocol.make_client_capabilities()
-    capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
-    -- capabilities = vim.tbl_deep_extend('force', capabilities, require('blink.cmp').get_lsp_capabilities())
+    -- capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
+    capabilities = vim.tbl_deep_extend('force', capabilities, require('blink.cmp').get_lsp_capabilities())
 
     -- Enable the following language servers
     --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
@@ -330,5 +330,19 @@ return {
       diagnostic_signs[vim.diagnostic.severity[type]] = icon
     end
     vim.diagnostic.config { signs = { text = diagnostic_signs } }
+
+    -- Laravel LS
+    vim.api.nvim_create_autocmd('FileType', {
+      pattern = { 'php', 'blade' },
+      callback = function()
+        if vim.fn.filereadable 'artisan' == 1 then
+          vim.lsp.start {
+            name = 'laravel-ls',
+            cmd = { 'laravel-ls' },
+            root_dir = vim.fn.getcwd(),
+          }
+        end
+      end,
+    })
   end,
 }

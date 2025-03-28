@@ -22,9 +22,9 @@ vim.keymap.set('n', 'YY', 'va{Vy', { desc = '[C]opy between { }' })
 vim.keymap.set('i', "'", "''<left>")
 vim.keymap.set('i', '"', '""<left>')
 vim.keymap.set('i', '`', '``<left>')
--- vim.keymap.set('i', '(', '()<left>')
--- vim.keymap.set('i', '[', '[]<left>')
--- vim.keymap.set('i', '{', '{}<left>')
+vim.keymap.set('i', '(', '()<left>')
+vim.keymap.set('i', '[', '[]<left>')
+vim.keymap.set('i', '{', '{}<left>')
 
 -- Easy Escape
 vim.keymap.set('i', 'jk', '<esc>')
@@ -58,7 +58,12 @@ vim.keymap.set('n', 'gl', function()
 end, { desc = 'Open diagnostics' })
 
 -- Generic formater
-vim.keymap.set('n', '<leader>cF', 'gg=G``', { desc = 'Format the entire file' })
+vim.keymap.set('n', '<leader>cF', function()
+  local win = vim.api.nvim_get_current_win()
+  local pos = vim.api.nvim_win_get_cursor(win) -- Obtener la posición del cursor como array
+  vim.api.nvim_feedkeys('gg=G', 'n', false)
+  vim.api.nvim_win_set_cursor(win, pos)
+end, { desc = 'Format the entire file' })
 
 -- Open terminal in tmux
 vim.keymap.set({ 'n' }, '<leader>-', '<cmd>silent !tmux split-window<CR>', { desc = '[E]ditor [T]erminal' })

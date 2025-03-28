@@ -1,6 +1,7 @@
 -- Autocompletion
 return {
   'hrsh7th/nvim-cmp',
+  enable = false,
   event = 'InsertEnter',
   dependencies = {
     -- Snippet Engine & its associated nvim-cmp source
@@ -13,18 +14,16 @@ return {
     'L3MON4D3/LuaSnip',
     'saadparwaiz1/cmp_luasnip',
     'adoolaard/nvim-cmp-laravel',
-    'zbirenbaum/copilot.lua',
-    'zbirenbaum/copilot-cmp',
   },
   config = function()
     local lspkind = require 'lspkind'
     lspkind.init {
       symbol_map = {
-        Copilot = '',
+        Supermaven = '',
       },
     }
 
-    vim.api.nvim_set_hl(0, 'CmpItemKindCopilot', { fg = '#6600ff' })
+    vim.api.nvim_set_hl(0, 'CmpItemKindSupermaven', { fg = '#6600ff' })
     vim.api.nvim_set_hl(0, 'CmpItemKindSnippet', { fg = '#ec5353' })
     vim.api.nvim_set_hl(0, 'CmpItemKindBuffer', { fg = '#000000' })
     vim.api.nvim_set_hl(0, 'CmpItemKindPath', { fg = '#e4e831' })
@@ -38,11 +37,10 @@ return {
         path = '[path]',
         luasnip = '[snip]',
         gh_issues = '[issues]',
-        copilot = '[copilot]',
+        supermaven = '[IAs]',
       },
     }
 
-    require('copilot_cmp').setup()
     require('nvim-cmp-laravel').setup()
 
     local cmp = require 'cmp'
@@ -55,7 +53,7 @@ return {
         { name = 'nvim_lsp', priority = 900, group_index = 2 },
         { name = 'buffer', priority = 850, group_index = 3 },
         { name = 'render-markdown', priority = 850, group_index = 3 },
-        { name = 'copilot', priority = 800, group_index = 4 },
+        { name = 'supermaven', priority = 800, group_index = 4 },
         { name = 'path', priority = 600, group_index = 6 },
         { name = 'nvim_lsp_signature_help', priority = 600, group_index = 6 },
         {

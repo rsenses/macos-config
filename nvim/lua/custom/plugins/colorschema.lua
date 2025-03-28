@@ -13,6 +13,11 @@ return {
       --     vim.g.zenbones_darken_comments = 45
       vim.g.zenbones_compat = 1
       vim.cmd.colorscheme 'zenbones'
+      vim.api.nvim_create_autocmd('ColorScheme', {
+        callback = function()
+          vim.api.nvim_set_hl(0, 'ColorColumn', { ctermbg = 'LightGrey', bg = 'LightGrey' })
+        end,
+      })
     end,
   },
 }

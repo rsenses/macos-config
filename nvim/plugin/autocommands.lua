@@ -1,14 +1,14 @@
 local api = vim.api
 local default = vim.api.nvim_create_augroup('user_default', { clear = true })
 
-api.nvim_create_autocmd('BufEnter', {
-  desc = 'Stop automatic newline comment',
-  pattern = '*',
-  callback = function()
-    vim.cmd 'set formatoptions-=cro'
-    vim.cmd 'setlocal formatoptions-=cro'
-  end,
-})
+-- api.nvim_create_autocmd('BufEnter', {
+--   desc = 'Stop automatic newline comment',
+--   pattern = '*',
+--   callback = function()
+--     vim.cmd 'set formatoptions-=cro'
+--     vim.cmd 'setlocal formatoptions-=cro'
+--   end,
+-- })
 
 api.nvim_create_autocmd({ 'FileType' }, {
   desc = 'Force commentstring to include spaces',
@@ -24,25 +24,5 @@ api.nvim_create_autocmd('TextYankPost', {
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
   callback = function()
     vim.highlight.on_yank()
-  end,
-})
-
-api.nvim_create_autocmd('FileType', {
-  pattern = { 'php', 'blade' },
-  callback = function()
-    if vim.fn.filereadable 'artisan' == 1 then
-      vim.lsp.start {
-        name = 'laravel-ls',
-        cmd = { 'laravel-ls' },
-        root_dir = vim.fn.getcwd(),
-      }
-    end
-  end,
-})
-
-vim.api.nvim_create_autocmd('ColorScheme', {
-  pattern = 'zenbones', -- O el nombre exacto de tu esquema de color
-  callback = function()
-    vim.api.nvim_set_hl(0, 'ColorColumn', { ctermbg = 'LightGrey', bg = 'LightGrey' })
   end,
 })
