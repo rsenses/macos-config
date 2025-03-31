@@ -54,6 +54,7 @@ g.spellfile_URL = 'https://ftp.nluug.nl/vim/runtime/spell/'
 opt.spelllang = { 'es_es', 'en_us' }
 
 -- Completions
+vim.o.completeopt = 'noselect,menu,menuone,noinsert,popup'
 -- opt.completeopt = { 'menu', 'menuone', 'noselect' }
 -- opt.shortmess:append 'c'
 

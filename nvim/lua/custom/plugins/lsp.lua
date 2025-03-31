@@ -1,13 +1,11 @@
 ---@diagnostic disable: missing-fields
 return {
-  'neovim/nvim-lspconfig',
+  'williamboman/mason.nvim',
   event = { 'BufReadPre', 'BufNewFile' },
   dependencies = {
     'williamboman/mason.nvim',
-    'williamboman/mason-lspconfig.nvim',
     'WhoIsSethDaniel/mason-tool-installer.nvim',
     'saghen/blink.cmp',
-    -- 'hrsh7th/cmp-nvim-lsp',
   },
   config = function()
     -- Brief Aside: **What is LSP?**
@@ -142,137 +140,10 @@ return {
     --  By default, Neovim doesn't support everything that is in the LSP Specification.
     --  When you add nvim-cmp, luasnip, etc. Neovim now has *more* capabilities.
     --  So, we create new capabilities with nvim cmp, and then broadcast that to the servers.
-    local capabilities = vim.lsp.protocol.make_client_capabilities()
+    -- local capabilities = vim.lsp.protocol.make_client_capabilities()
     -- capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
-    capabilities = vim.tbl_deep_extend('force', capabilities, require('blink.cmp').get_lsp_capabilities())
-
-    -- Enable the following language servers
-    --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
-    --
-    --  Add any additional override configuration in the following tables. Available keys are:
-    --  - cmd (table): Override the default command used to start the server
-    --  - filetypes (table): Override the default list of associated filetypes for the server
-    --  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
-    --  - settings (table): Override the default settings passed when initializing the server.
-    --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
-    local servers = {
-      html = { filetypes = { 'html', 'twig', 'hbs' } },
-      marksman = {},
-      emmet_ls = {
-        filetypes = {
-          'css',
-          'html',
-          'javascript',
-          'javascriptreact',
-          'less',
-          'sass',
-          'scss',
-          'svelte',
-          'typescriptreact',
-          'vue',
-          'phtml',
-          'twig',
-          'blade',
-          'html.twig',
-        },
-      },
-      stylelint_lsp = {
-        filetypes = {
-          'css',
-          'scss',
-          'less',
-          'sass',
-        },
-      },
-      -- phpactor = {
-      --   filetypes = { 'php', 'blade' },
-      -- },
-      intelephense = {
-        init_options = {
-          licenceKey = os.getenv 'HOME' .. '/.config/intelephense/licence.txt',
-        },
-        filetypes = { 'php', 'blade' },
-        settings = {
-          intelephense = {
-            files = {
-              associations = { '*.php', '*.phtml' },
-              maxSize = 5000000,
-            },
-            environment = {
-              phpVersion = '8.3.19',
-            },
-            telemetry = {
-              enabled = false,
-            },
-            maxMemory = 1024,
-            completion = {
-              fullyQualifyGlobalConstantsAndFunctions = true,
-            },
-            format = {
-              enable = true,
-            },
-            rename = {
-              enabled = true,
-            },
-          },
-        },
-      },
-      ts_ls = {
-        filetypes = { 'typescript', 'typescriptreact', 'typescript.tsx' },
-        settings = {
-          typescript = {
-            format = {
-              enable = true,
-            },
-            suggest = {
-              autoImports = true,
-              completeFunctionCalls = true,
-            },
-            inlayHints = {
-              enable = true,
-            },
-          },
-          javascript = {
-            format = {
-              enable = true,
-            },
-            suggest = {
-              autoImports = true,
-              completeFunctionCalls = true,
-            },
-            inlayHints = {
-              enable = true,
-            },
-          },
-        },
-      },
-      tailwindcss = {
-        filetypes = { 'blade', 'html', 'svelte' },
-        experimental = {
-          classRegex = {
-            '@?class\\(([^]*)\\)',
-            "'([^']*)'",
-          },
-        },
-      },
-      lua_ls = {
-        settings = {
-          Lua = {
-            runtime = { version = 'LuaJIT' },
-            workspace = {
-              checkThirdParty = false,
-              library = {
-                '${3rd}/luv/library',
-                unpack(vim.api.nvim_get_runtime_file('', true)),
-              },
-            },
-            completion = {
-              callSnippet = 'Replace',
-            },
-          },
-        },
-      },
-    }
+    -- capabilities = vim.tbl_deep_extend('force', capabilities, require('blink.cmp').get_lsp_capabilities())
+    local capabilities = require('blink.cmp').get_lsp_capabilities()
 
     -- Ensure the servers and tools above are installed
     --  To check the current status of installed tools and/or manually install
@@ -292,7 +163,7 @@ return {
 
     -- You can add other tools here that you want Mason to install
     -- for you, so that they are available from within Neovim.
-    local ensure_installed = vim.tbl_keys(servers or {})
+    local ensure_installed = vim.tbl_keys {}
     vim.list_extend(ensure_installed, {
       'blade-formatter',
       'emmet-ls',
@@ -309,40 +180,18 @@ return {
     })
     require('mason-tool-installer').setup { ensure_installed = ensure_installed, automatic_installation = true }
 
-    require('mason-lspconfig').setup {
-      ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
-      automatic_installation = false,
-      handlers = {
-        function(server_name)
-          local server = servers[server_name] or {}
-          -- This handles overriding only values explicitly passed
-          -- by the server configuration above. Useful when disabling
-          -- certain features of an LSP (for example, turning off formatting for tsserver)
-          server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-          require('lspconfig')[server_name].setup(server)
-        end,
-      },
-    }
+    vim.lsp.config('*', {
+      capabilities = capabilities,
+      root_markers = { '.git' },
+    })
+
+    vim.lsp.enable { 'intelephense', 'html', 'luals', 'ts_ls', 'emmet', 'markdown', 'stylelint', 'tailwindcss', 'laravel-ls' }
 
     local signs = { ERROR = '󰅚 ', WARN = '󰀪 ', HINT = '󰌶 ', INFO = ' ' }
     local diagnostic_signs = {}
     for type, icon in pairs(signs) do
       diagnostic_signs[vim.diagnostic.severity[type]] = icon
     end
-    vim.diagnostic.config { signs = { text = diagnostic_signs } }
-
-    -- Laravel LS
-    vim.api.nvim_create_autocmd('FileType', {
-      pattern = { 'php', 'blade' },
-      callback = function()
-        if vim.fn.filereadable 'artisan' == 1 then
-          vim.lsp.start {
-            name = 'laravel-ls',
-            cmd = { 'laravel-ls' },
-            root_dir = vim.fn.getcwd(),
-          }
-        end
-      end,
-    })
+    vim.diagnostic.config { virtual_text = true, signs = { text = diagnostic_signs } }
   end,
 }

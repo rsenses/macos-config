@@ -1,5 +1,6 @@
 return {
   'saghen/blink.cmp',
+  event = 'VimEnter',
   -- use a release tag to download pre-built binaries
   version = '1.*',
   dependencies = { 'L3MON4D3/LuaSnip', version = 'v2.*' },
@@ -68,6 +69,9 @@ return {
     --
     -- See the fuzzy documentation for more information
     fuzzy = { implementation = 'prefer_rust_with_warning' },
+
+    -- Shows a signature help window while you type arguments for a function
+    signature = { enabled = true },
   },
   opts_extend = { 'sources.default' },
 }
