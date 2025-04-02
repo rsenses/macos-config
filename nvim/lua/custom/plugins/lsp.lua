@@ -61,6 +61,16 @@ return {
         -- Fuzzy find all the symbols in your current workspace
         --  Similar to document symbols, except searches over your whole project.
         map('<leader>sS', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[S]earch workspace [S]ymbols')
+
+        -- The following code creates a keymap to toggle inlay hints in your
+        -- code, if the language server you are using supports them
+        -- This may be unwanted, since they displace some of your code
+        local client = vim.lsp.get_client_by_id(event.data.client_id)
+        if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf) then
+          map('<leader>eh', function()
+            vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
+          end, 'Toggle Inlay [H]ints')
+        end
       end,
     })
 
@@ -88,7 +98,7 @@ return {
       'emmet-ls',
       'eslint_d',
       'html-lsp',
-      -- 'phpactor',
+      'phpactor',
       'intelephense',
       'pint',
       'prettier',
@@ -99,7 +109,7 @@ return {
     })
     require('mason-tool-installer').setup { ensure_installed = ensure_installed, automatic_installation = true }
 
-    vim.lsp.enable { 'intelephense', 'html', 'luals', 'ts_ls', 'emmet', 'markdown', 'stylelint', 'tailwindcss' }
+    vim.lsp.enable { 'phpactor', 'html', 'luals', 'ts_ls', 'emmet', 'markdown', 'stylelint', 'tailwindcss' }
 
     -- Laravel LS
     if vim.fn.filereadable 'artisan' == 1 then
