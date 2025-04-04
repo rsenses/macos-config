@@ -1,12 +1,10 @@
 [[session]]
 name = "dotfiles"
 path = "~/dev/contrib/dotfiles"
-startup_command = "nvim -c ':Telescope find_files'"
 
 [[session]]
 name = "notes"
 path = "~/Nextcloud/Documents/notes"
-startup_command = "nvim -c ':Telescope find_files'"
 
 [[session]]
 name = "downloads"
