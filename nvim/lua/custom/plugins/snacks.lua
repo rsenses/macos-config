@@ -74,11 +74,18 @@ return {
       },
       picker = {
         enabled = true,
-        -- matcher = {
-        --   sort_empty = true, -- sort results when the search string is empty
-        --   frecency = true, -- frecency bonus
-        -- },
-        layout = { preset = 'telescope' },
+        matcher = {
+          sort_empty = true, -- sort results when the search string is empty
+          frecency = true, -- frecency bonus
+        },
+        layout = {
+          preset = 'telescope',
+        },
+        formatters = {
+          file = {
+            truncate = 80,
+          },
+        },
       },
     },
     keys = {
@@ -149,14 +156,14 @@ return {
       {
         '<leader>.',
         function()
-          Snacks.picker.recent()
+          Snacks.picker.recent { filter = { cwd = true } }
         end,
         desc = 'Recent',
       },
       {
         '<leader><leader>',
         function()
-          Snacks.picker.smart()
+          Snacks.picker.smart { filter = { cwd = true } }
         end,
         desc = 'Smart Find Files',
       },
@@ -164,6 +171,7 @@ return {
         '<leader>,',
         function()
           Snacks.picker.buffers {
+            filter = { cwd = true },
             layout = {
               preset = 'ivy',
             },

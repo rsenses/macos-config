@@ -1,6 +1,8 @@
 return {
   'stevearc/oil.nvim',
   enabled = true,
+  dependencies = { 'echasnovski/mini.icons' },
+  lazy = false,
   keys = {
     {
       '-',
@@ -20,7 +22,7 @@ return {
       timeout_ms = 1000,
       -- Set to true to autosave buffers that are updated with LSP willRenameFiles
       -- Set to "unmodified" to only save unmodified buffers
-      autosave_changes = 'unmodified',
+      autosave_changes = true,
     },
     view_options = {
       -- Show files and directories that start with "."
@@ -45,7 +47,4 @@ return {
       ['q'] = 'actions.close',
     },
   },
-  -- Optional dependencies
-  dependencies = { 'nvim-tree/nvim-web-devicons' },
-  lazy = false,
 }

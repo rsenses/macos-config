@@ -153,6 +153,33 @@ class {}
     )
   ),
 
+  -- trait
+  s(
+    'trait',
+    fmt(
+      [[
+<?php
+
+declare(strict_types=1);
+
+namespace App\{};
+
+{}
+
+trait {}
+{{
+    {}
+}}
+]],
+      {
+        f(namespace),
+        i(1),
+        f(class_name),
+        i(0),
+      }
+    )
+  ),
+
   -- test
   s(
     'it',
