@@ -16,6 +16,7 @@ return {
     'typescriptreact',
     'vue',
     'htmlangular',
+    'blade',
   },
   root_markers = { '.git' },
 }

@@ -4,7 +4,14 @@ return {
   init_options = {
     licenceKey = os.getenv 'HOME' .. '/.config/intelephense/licence.txt',
   },
-  filetypes = { 'php', 'blade' },
+  on_attach = function(client)
+    client.server_capabilities.workspaceSymbolProvider = false
+  end,
+  filetypes = {
+    'php',
+    'blade',
+    'php_only',
+  },
   settings = {
     intelephense = {
       files = {
@@ -22,10 +29,15 @@ return {
         fullyQualifyGlobalConstantsAndFunctions = true,
       },
       format = {
-        enable = true,
+        enable = false,
       },
       rename = {
         enabled = true,
+      },
+    },
+    php = {
+      completion = {
+        callSnippet = 'Replace',
       },
     },
   },

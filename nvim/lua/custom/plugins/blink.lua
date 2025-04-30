@@ -1,17 +1,14 @@
 return {
   'saghen/blink.cmp',
   event = 'VimEnter',
-  -- use a release tag to download pre-built binaries
   version = '1.*',
-  dependencies = { 'L3MON4D3/LuaSnip', version = 'v2.*' },
+  dependencies = {
+    'L3MON4D3/LuaSnip',
+    version = 'v2.*',
+  },
   ---@module 'blink.cmp'
   ---@type blink.cmp.Config
   opts = {
-    -- 'default' (recommended) for mappings similar to built-in completions (C-y to accept)
-    -- 'super-tab' for mappings similar to vscode (tab to accept)
-    -- 'enter' for enter to accept
-    -- 'none' for no mappings
-    --
     -- All presets have the following mappings:
     -- C-space: Open menu or open docs if already open
     -- C-n/C-p or Up/Down: Select next/previous item
@@ -22,21 +19,25 @@ return {
     keymap = { preset = 'default' },
 
     appearance = {
-      -- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
-      -- Adjusts spacing to ensure icons are aligned
       nerd_font_variant = 'mono',
     },
 
-    -- (Default) Only show the documentation popup when manually triggered
     completion = { documentation = { auto_show = true } },
 
     snippets = { preset = 'luasnip' },
 
-    -- Default list of enabled providers defined so that you can extend it
-    -- elsewhere in your config, without redefining it, due to `opts_extend`
     sources = {
-      default = { 'snippets', 'lsp', 'path', 'buffer', 'supermaven' },
+      default = { 'snippets', 'lsp', 'path', 'buffer' },
       providers = {
+        snippets = {
+          score_offset = 1000,
+        },
+        lsp = {
+          score_offset = 100,
+        },
+        path = {
+          score_offset = 10,
+        },
         buffer = {
           opts = {
             -- filter to only "normal" buffers
@@ -46,32 +47,13 @@ return {
               end, vim.api.nvim_list_bufs())
             end,
           },
-        },
-        supermaven = {
-          name = 'supermaven',
-          module = 'blink.compat.source',
-          async = true,
-          score_offset = 3,
-          transform_items = function(_, items)
-            local CompletionItemKind = require('blink.cmp.types').CompletionItemKind
-            local kind_idx = #CompletionItemKind + 1
-            CompletionItemKind[kind_idx] = 'Copilot'
-            for _, item in ipairs(items) do
-              item.kind = kind_idx
-            end
-            return items
-          end,
+          score_offset = 0,
         },
       },
     },
 
-    -- (Default) Rust fuzzy matcher for typo resistance and significantly better performance
-    -- You may use a lua implementation instead by using `implementation = "lua"` or fallback to the lua implementation,
-    -- when the Rust fuzzy matcher is not available, by using `implementation = "prefer_rust"`
-    -- See the fuzzy documentation for more information
     fuzzy = { implementation = 'prefer_rust_with_warning' },
 
-    -- Shows a signature help window while you type arguments for a function
     signature = { enabled = false },
   },
   opts_extend = { 'sources.default' },

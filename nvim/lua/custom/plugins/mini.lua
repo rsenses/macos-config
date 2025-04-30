@@ -6,6 +6,8 @@ return {
     -- - sr)'  - [S]urround [R]eplace [)] [']
     require('mini.surround').setup { n_lines = 500 }
 
+    -- require('mini.comment').setup()
+
     -- "gS" to toggle splitjoin on objects, arrays, etc.
     require('mini.splitjoin').setup()
 

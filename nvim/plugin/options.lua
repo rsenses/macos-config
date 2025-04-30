@@ -65,22 +65,11 @@ opt.background = 'light' -- or 'light'
 -- Nice and simple folding:
 vim.o.foldenable = true
 vim.o.foldlevel = 99
-vim.o.foldmethod = 'expr'
-vim.o.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
--- vim.o.foldtext = ''
+-- vim.o.foldmethod = 'expr'
+-- vim.o.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+vim.o.foldmethod = 'indent'
 opt.foldcolumn = '0'
-opt.fillchars:append { fold = ' ' }
--- opt.foldmethod = 'indent'
--- Prefer LSP folding if client supports it
-vim.api.nvim_create_autocmd('LspAttach', {
-  callback = function(args)
-    local client = vim.lsp.get_client_by_id(args.data.client_id)
-    if client:supports_method 'textDocument/foldingRange' then
-      local win = vim.api.nvim_get_current_win()
-      vim.wo[win][0].foldexpr = 'v:lua.vim.lsp.foldexpr()'
-    end
-  end,
-})
+-- opt.fillchars:append { fold = ' ' }
 
 -- These sessionoptions come from the lazyvim distro, I just added localoptions
 -- https://www.lazyvim.org/configuration/general

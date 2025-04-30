@@ -19,9 +19,9 @@ vim.keymap.set({ 'n', 'v' }, '<leader>d', [["_d]], { desc = '[D]elete to clipboa
 vim.keymap.set('n', 'YY', 'va{Vy', { desc = '[C]opy between { }' })
 
 -- Autopairs
-vim.keymap.set('i', "'", "''<left>")
-vim.keymap.set('i', '"', '""<left>')
-vim.keymap.set('i', '`', '``<left>')
+-- vim.keymap.set('i', "'", "''<left>")
+-- vim.keymap.set('i', '"', '""<left>')
+-- vim.keymap.set('i', '`', '``<left>')
 -- vim.keymap.set('i', '(', '()<left>')
 -- vim.keymap.set('i', '[', '[]<left>')
 -- vim.keymap.set('i', '{', '{}<left>')
@@ -62,7 +62,7 @@ vim.keymap.set('n', '<leader>cF', 'gg=G``', { desc = 'Format the entire file' })
 
 -- Open terminal in tmux
 vim.keymap.set({ 'n' }, '<leader>-', '<cmd>silent !tmux split-window<CR>', { desc = '[E]ditor [T]erminal' })
-vim.keymap.set({ 'n' }, '<leader>|', '<cmd>silent !tmux split-window -hb -l 65<CR>', { desc = '[E]ditor [T]erminal' })
+vim.keymap.set({ 'n' }, '<leader>|', '<cmd>silent !tmux split-window -h -l 25<CR>', { desc = '[E]ditor [T]erminal' })
 
 -- [[ SPELLING]]
 

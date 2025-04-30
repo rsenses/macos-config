@@ -33,7 +33,9 @@ return {
         timeout = 3000,
       },
       scratch = { enabled = false },
-      input = {},
+      toggle = { enabled = false },
+      rename = { enabled = true },
+      input = { enabled = true },
       quickfile = { enabled = true },
       statuscolumn = { enabled = false },
       words = { enabled = false },
@@ -74,10 +76,10 @@ return {
       },
       picker = {
         enabled = true,
-        matcher = {
-          sort_empty = true, -- sort results when the search string is empty
-          frecency = true, -- frecency bonus
-        },
+        -- matcher = {
+        --   sort_empty = true, -- sort results when the search string is empty
+        --   frecency = true, -- frecency bonus
+        -- },
         layout = {
           preset = 'telescope',
         },
@@ -156,14 +158,14 @@ return {
       {
         '<leader>.',
         function()
-          Snacks.picker.recent { filter = { cwd = true } }
+          Snacks.picker.recent { filter = { cwd = true }, exclude = { 'vendor/', 'node_modules/' } }
         end,
         desc = 'Recent',
       },
       {
         '<leader><leader>',
         function()
-          Snacks.picker.smart { filter = { cwd = true } }
+          Snacks.picker.smart { filter = { cwd = true }, exclude = { 'vendor/', 'node_modules/' } }
         end,
         desc = 'Smart Find Files',
       },
@@ -226,7 +228,7 @@ return {
         desc = 'Diagnostics',
       },
       {
-        '<leader>sD',
+        '<leader>sd',
         function()
           Snacks.picker.diagnostics_buffer()
         end,
@@ -268,13 +270,13 @@ return {
         end,
         desc = 'Goto Definition',
       },
-      {
-        '<leader>sD',
-        function()
-          Snacks.picker.lsp_type_definitions()
-        end,
-        desc = 'Goto T[y]pe Definition',
-      },
+      -- {
+      --   '<leader>sD',
+      --   function()
+      --     Snacks.picker.lsp_type_definitions()
+      --   end,
+      --   desc = 'Goto T[y]pe Definition',
+      -- },
       {
         '<leader>ss',
         function()

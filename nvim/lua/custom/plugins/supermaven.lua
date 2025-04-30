@@ -1,6 +1,7 @@
 -- Autocompletion
 return {
   'supermaven-inc/supermaven-nvim',
+  enabled = false,
   dependencies = {
     {
       'saghen/blink.compat',

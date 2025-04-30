@@ -109,12 +109,12 @@ return {
     })
     require('mason-tool-installer').setup { ensure_installed = ensure_installed, automatic_installation = true }
 
-    vim.lsp.enable { 'phpactor', 'html', 'luals', 'ts_ls', 'emmet', 'markdown', 'stylelint', 'tailwindcss' }
+    vim.lsp.enable { 'phpactor', 'intelephense', 'html', 'luals', 'ts_ls', 'emmet', 'markdown', 'stylelint', 'tailwindcss' }
 
     -- Laravel LS
-    if vim.fn.filereadable 'artisan' == 1 then
-      vim.lsp.enable 'laravel-ls'
-    end
+    -- if vim.fn.filereadable 'artisan' == 1 then
+    --   vim.lsp.enable 'laravel-ls'
+    -- end
 
     local signs = { ERROR = '󰅚 ', WARN = '󰀪 ', HINT = '󰌶 ', INFO = ' ' }
     local diagnostic_signs = {}

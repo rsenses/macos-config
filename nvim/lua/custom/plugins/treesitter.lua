@@ -62,13 +62,15 @@ return {
           branch = 'main',
         },
         filetype = 'blade',
+        generate_requires_npm = true,
+        requires_generate_from_grammar = true,
       }
 
-      vim.filetype.add {
-        pattern = {
-          ['.*%.blade%.php'] = 'blade',
-        },
-      }
+      -- vim.filetype.add {
+      --   pattern = {
+      --     ['.*%.blade%.php'] = 'blade',
+      --   },
+      -- }
 
       require('nvim-treesitter.configs').setup(opts)
 
@@ -80,10 +82,11 @@ return {
           php_only = '// %s',
           php = '// %s',
           blade = {
-            __default = '// %s',
+            __default = '{{-- %s',
             html = '{{-- %s --}}',
             blade = '{{-- %s --}}',
             php = '// %s',
+            javascript = '// %s',
             php_only = '// %s',
           },
         },
@@ -93,7 +96,7 @@ return {
               return '{{-- %s --}}'
             end
 
-            return '// %s'
+            return '{{-- %s --}}'
           end
         end,
       }
