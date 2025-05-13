@@ -62,7 +62,7 @@ vim.keymap.set('n', '<leader>cF', 'gg=G``', { desc = 'Format the entire file' })
 
 -- Open terminal in tmux
 vim.keymap.set({ 'n' }, '<leader>-', '<cmd>silent !tmux split-window<CR>', { desc = '[E]ditor [T]erminal' })
-vim.keymap.set({ 'n' }, '<leader>|', '<cmd>silent !tmux split-window -h -l 25<CR>', { desc = '[E]ditor [T]erminal' })
+vim.keymap.set({ 'n' }, '<leader>|', '<cmd>silent !tmux split-window -h -l 60<CR>', { desc = '[E]ditor [T]erminal' })
 
 -- [[ SPELLING]]
 

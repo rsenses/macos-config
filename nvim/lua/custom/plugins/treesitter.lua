@@ -7,7 +7,6 @@ return {
     dependencies = {
       'JoosepAlviste/nvim-ts-context-commentstring',
       'nvim-treesitter/nvim-treesitter-textobjects',
-      'windwp/nvim-ts-autotag',
       'nvim-treesitter/nvim-treesitter-context',
     },
     opts = {
@@ -105,5 +104,11 @@ return {
         return option == 'commentstring' and require('ts_context_commentstring.internal').calculate_commentstring() or vim.filetype.get_option(filetype, option)
       end
     end,
+  },
+  {
+    'tronikelis/ts-autotag.nvim',
+    opts = {},
+    ft = { 'html', 'jsx', 'blade' },
+    event = 'VeryLazy',
   },
 }

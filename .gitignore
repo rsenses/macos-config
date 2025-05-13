@@ -9,3 +9,4 @@ zsh/.zshrc
 zsh/.zprofile
 lazy-lock.json
 tmux/plugins
+.aider*

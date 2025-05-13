@@ -163,3 +163,28 @@ end
 vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter', 'ModeChanged' }, {
   callback = update_winbar,
 })
+
+--Diagnostics
+local signs = { ERROR = '󰅚 ', WARN = '󰀪 ', HINT = '󰌶 ', INFO = ' ' }
+local diagnostic_signs = {}
+for type, icon in pairs(signs) do
+  diagnostic_signs[vim.diagnostic.severity[type]] = icon
+end
+vim.diagnostic.config {
+  virtual_text = false,
+  virtual_lines = {
+    format = function(diagnostic)
+      return diagnostic.message
+    end,
+  },
+  signs = { text = diagnostic_signs },
+}
+
+-- Colorscheme
+vim.cmd 'colorscheme zenbones'
+vim.g.zenbones_compat = 1
+vim.api.nvim_create_autocmd('ColorScheme', {
+  callback = function()
+    vim.api.nvim_set_hl(0, 'ColorColumn', { ctermbg = 'LightGrey', bg = 'LightGrey' })
+  end,
+})

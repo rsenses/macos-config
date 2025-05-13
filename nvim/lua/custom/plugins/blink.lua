@@ -27,7 +27,7 @@ return {
     snippets = { preset = 'luasnip' },
 
     sources = {
-      default = { 'snippets', 'lsp', 'path', 'buffer' },
+      default = { 'snippets', 'lsp', 'path', 'buffer', 'lazydev' },
       providers = {
         snippets = {
           score_offset = 1000,
@@ -48,6 +48,12 @@ return {
             end,
           },
           score_offset = 0,
+        },
+        lazydev = {
+          name = 'LazyDev',
+          module = 'lazydev.integrations.blink',
+          -- make lazydev completions top priority (see `:h blink.cmp`)
+          score_offset = 100,
         },
       },
     },

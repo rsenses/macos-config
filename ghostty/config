@@ -20,3 +20,5 @@ theme = zenbones
 window-decoration = true
 window-theme = light
 macos-titlebar-style = hidden
+
+macos-option-as-alt = false

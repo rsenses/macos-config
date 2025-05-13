@@ -77,6 +77,11 @@ source $ZDOTDIR/zsh-fzf
 source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source $HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
+ # Cargar variables de entorno personalizadas (incluyendo API Keys)
+if [ -f ~/.zsh_vars ]; then
+    source ~/.zsh_vars
+fi
+
 autoload -U up-line-or-beginning-search
 autoload -U down-line-or-beginning-search
 zle -N up-line-or-beginning-search
