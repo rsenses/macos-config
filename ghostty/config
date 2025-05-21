@@ -1,5 +1,3 @@
-auto-update-channel = tip
-
 shell-integration = zsh
 shell-integration-features = true
 initial-command = /opt/homebrew/bin/tmux

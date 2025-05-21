@@ -3,8 +3,11 @@ return {
   event = 'VimEnter',
   version = '1.*',
   dependencies = {
-    'L3MON4D3/LuaSnip',
-    version = 'v2.*',
+    {
+      'L3MON4D3/LuaSnip',
+      version = 'v2.*',
+    },
+    'Kaiser-Yang/blink-cmp-avante',
   },
   ---@module 'blink.cmp'
   ---@type blink.cmp.Config
@@ -27,8 +30,12 @@ return {
     snippets = { preset = 'luasnip' },
 
     sources = {
-      default = { 'snippets', 'lsp', 'path', 'buffer', 'lazydev' },
+      default = { 'avante', 'snippets', 'lsp', 'path', 'buffer', 'lazydev' },
       providers = {
+        avante = {
+          module = 'blink-cmp-avante',
+          name = 'Avante',
+        },
         snippets = {
           score_offset = 1000,
         },

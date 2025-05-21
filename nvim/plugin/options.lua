@@ -55,7 +55,6 @@ opt.spelllang = { 'es_es', 'en_us' }
 
 -- Completions
 vim.o.completeopt = 'noselect,menu,menuone,noinsert,popup'
--- opt.completeopt = { 'menu', 'menuone', 'noselect' }
 -- opt.shortmess:append 'c'
 
 -- THEMES

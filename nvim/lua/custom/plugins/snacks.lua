@@ -37,7 +37,7 @@ return {
       rename = { enabled = true },
       input = { enabled = true },
       quickfile = { enabled = true },
-      statuscolumn = { enabled = false },
+      statuscolumn = { enabled = true },
       words = { enabled = false },
       styles = {
         notification = {
@@ -211,6 +211,13 @@ return {
           Snacks.picker.keymaps()
         end,
         desc = 'Keymaps',
+      },
+      {
+        '<leader>sm',
+        function()
+          Snacks.picker.marks()
+        end,
+        desc = 'Marks',
       },
       {
         '<leader>sw',

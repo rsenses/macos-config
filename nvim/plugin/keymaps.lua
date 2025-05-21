@@ -116,3 +116,17 @@ vim.keymap.set('n', '<leader>esr', function()
   -- vim.cmd(":spellr")
   vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(':spellr\n', true, false, true), 'm', true)
 end, { desc = '[S]pelling repeat' })
+
+-- Tests
+vim.keymap.set('n', '<leader>ta', function()
+  local file_path = vim.fn.expand '%:p'
+  local escaped_file_path = vim.fn.shellescape(file_path)
+  local command = string.format('tmux new-window "./vendor/bin/pest --bail; exec zsh"', escaped_file_path)
+  vim.fn.system(command)
+end, { desc = '[T]est [A]ll' })
+vim.keymap.set('n', '<leader>tc', function()
+  local file_path = vim.fn.expand '%:p'
+  local escaped_file_path = vim.fn.shellescape(file_path)
+  local command = string.format('tmux new-window "./vendor/bin/pest %s; exec zsh"', escaped_file_path)
+  vim.fn.system(command)
+end, { desc = '[T]est [C]urrent file' })
