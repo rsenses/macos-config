@@ -49,7 +49,7 @@ if [[ $(uname) == "Darwin" ]]; then
     export PATH="/opt/homebrew/sbin:$PATH"
     export PATH="/Applications/Visual Studio Code - Insiders.app/Contents/Resources/app/bin":$PATH
     export PATH="/opt/homebrew/opt/mariadb/bin:$PATH"
-    export PATH="/opt/homebrew/opt/php@8.3/bin:$PATH"
+    export PATH="/opt/homebrew/opt/php@8.4/bin:$PATH"
     export PATH="/Users/rubensilvarodriguez/go/bin:$PATH"
 fi
 

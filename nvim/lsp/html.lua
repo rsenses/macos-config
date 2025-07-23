@@ -1,7 +1,17 @@
 ---@type vim.lsp.Config
 return {
-  filetypes = { 'html', 'htmldjango', 'tmpl', 'gotmpl', 'template' },
   cmd = { 'vscode-html-language-server', '--stdio' },
+  filetypes = {
+    'html',
+    'blade',
+    'htmldjango',
+    'tmpl',
+    'gotmpl',
+    'template',
+    'javascriptreact',
+    'typescriptreact',
+    'svelte',
+  },
   single_file_support = true,
   init_options = {
     provideFormatter = true,

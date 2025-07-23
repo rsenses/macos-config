@@ -1,6 +1,6 @@
 shell-integration = zsh
 shell-integration-features = true
-initial-command = /opt/homebrew/bin/tmux
+initial-command = /opt/homebrew/bin/tmux a -t downloads
 
 copy-on-select = clipboard
 
@@ -13,7 +13,9 @@ font-feature = -calt
 font-feature = -liga
 font-feature = -dlig
 
+# theme = base16-grayscale-light
 theme = zenbones
+# theme = Builtin Tango Light
 
 window-decoration = true
 window-theme = light

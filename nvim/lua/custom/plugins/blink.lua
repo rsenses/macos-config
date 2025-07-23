@@ -30,11 +30,11 @@ return {
     snippets = { preset = 'luasnip' },
 
     sources = {
-      default = { 'avante', 'snippets', 'lsp', 'path', 'buffer', 'lazydev' },
+      default = { 'laravel', 'snippets', 'lsp', 'path', 'buffer', 'lazydev' },
       providers = {
-        avante = {
-          module = 'blink-cmp-avante',
-          name = 'Avante',
+        laravel = {
+          name = 'laravel',
+          module = 'laravel.blink_source',
         },
         snippets = {
           score_offset = 1000,

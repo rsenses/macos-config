@@ -34,7 +34,7 @@ opt.undofile = true -- Save undo history to file
 opt.confirm = true
 
 opt.wrap = true
-opt.colorcolumn = '120'
+-- opt.colorcolumn = '120'
 
 -- Tabs
 opt.autoindent = true
@@ -98,34 +98,6 @@ local function get_buffer_count()
   return count
 end
 
--- local function get_full_mode()
---   local mode = vim.api.nvim_eval 'mode()'
---   local mode_names = {
---     n = 'NORMAL',
---     no = 'N·OPER',
---     nov = 'N·VIRT',
---     niI = 'N·INTR',
---     v = 'VISUAL',
---     V = 'V·LINE',
---     [''] = 'V·BLCK',
---     s = 'SELECT',
---     S = 'S·LINE',
---     [''] = 'S·BLCK',
---     i = 'INSERT',
---     R = 'REPLACE',
---     Rv = 'V·REPL',
---     c = 'COMMAND',
---     cv = 'VIM EX',
---     ce = 'EX EDIT',
---     r = 'PROMPT',
---     rm = 'MORE',
---     ['r?'] = 'CONFIRM',
---     t = 'TERMINAL',
---     ['!'] = 'SHELL',
---   }
---   return mode_names[mode] or mode
--- end
-
 local function get_full_mode()
   local modes = {
     ['n'] = 'NORMAL',
@@ -163,27 +135,18 @@ vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter', 'ModeChanged' }, {
   callback = update_winbar,
 })
 
---Diagnostics
-local signs = { ERROR = '󰅚 ', WARN = '󰀪 ', HINT = '󰌶 ', INFO = ' ' }
-local diagnostic_signs = {}
-for type, icon in pairs(signs) do
-  diagnostic_signs[vim.diagnostic.severity[type]] = icon
-end
-vim.diagnostic.config {
-  virtual_text = false,
-  virtual_lines = {
-    format = function(diagnostic)
-      return diagnostic.message
-    end,
-  },
-  signs = { text = diagnostic_signs },
-}
-
 -- Colorscheme
-vim.cmd 'colorscheme zenbones'
-vim.g.zenbones_compat = 1
-vim.api.nvim_create_autocmd('ColorScheme', {
-  callback = function()
-    vim.api.nvim_set_hl(0, 'ColorColumn', { ctermbg = 'LightGrey', bg = 'LightGrey' })
-  end,
-})
+-- vim.cmd.colorscheme 'zenbones'
+-- vim.g.zenbones_compat = 1
+-- vim.api.nvim_create_autocmd('ColorScheme', {
+--   callback = function()
+--     vim.api.nvim_set_hl(0, 'ColorColumn', { ctermbg = 'LightGrey', bg = 'LightGrey' })
+--   end,
+-- })
+
+-- Kulala
+vim.filetype.add {
+  extension = {
+    ['http'] = 'http',
+  },
+}

@@ -61,7 +61,7 @@ alias ll='ls -lAF'
 alias cat='bat --plain --wrap character'
 
 # spotify ncurses
-alias spotify='spotify_player'
+alias spotify='ncspot'
 #weather
 alias weather='curl wttr.in/Madrid'
 

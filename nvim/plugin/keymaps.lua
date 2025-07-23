@@ -50,7 +50,7 @@ end, { desc = 'Find and replace word under cursor' })
 vim.keymap.set('n', '<leader>wl', '<cmd>Lazy<cr>', { desc = 'Lazy' })
 
 -- mason
-vim.keymap.set('n', '<leader>wm', '<cmd>Mason<cr>', { desc = 'Mason' })
+-- vim.keymap.set('n', '<leader>wm', '<cmd>Mason<cr>', { desc = 'Mason' })
 
 -- diagnostics
 vim.keymap.set('n', 'gl', function()
@@ -121,12 +121,22 @@ end, { desc = '[S]pelling repeat' })
 vim.keymap.set('n', '<leader>ta', function()
   local file_path = vim.fn.expand '%:p'
   local escaped_file_path = vim.fn.shellescape(file_path)
-  local command = string.format('tmux new-window "./vendor/bin/pest --bail; exec zsh"', escaped_file_path)
+  local command = string.format('tmux new-window "./vendor/bin/pest; exec zsh"', escaped_file_path)
   vim.fn.system(command)
 end, { desc = '[T]est [A]ll' })
+vim.keymap.set('n', '<leader>ta', function()
+  local file_path = vim.fn.expand '%:p'
+  local escaped_file_path = vim.fn.shellescape(file_path)
+  local command = string.format('tmux new-window "./vendor/bin/pest --bail; exec zsh"', escaped_file_path)
+  vim.fn.system(command)
+end, { desc = '[T]est [B]ail' })
 vim.keymap.set('n', '<leader>tc', function()
   local file_path = vim.fn.expand '%:p'
   local escaped_file_path = vim.fn.shellescape(file_path)
   local command = string.format('tmux new-window "./vendor/bin/pest %s; exec zsh"', escaped_file_path)
   vim.fn.system(command)
 end, { desc = '[T]est [C]urrent file' })
+
+vim.keymap.set({ 'n', 'x' }, '<leader>ca', function()
+  require('tiny-code-action').code_action()
+end, { noremap = true, silent = true })

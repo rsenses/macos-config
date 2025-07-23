@@ -6,6 +6,7 @@ vim.api.nvim_set_hl(0, 'MyAvanteCurrentGroup', {
 
 return {
   'yetone/avante.nvim',
+  enabled = false,
   event = 'VeryLazy',
   version = false, -- Never set this value to "*"! Never!
   -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
@@ -29,7 +30,7 @@ return {
     require('avante').setup {
       provider = 'gemini',
       gemini = {
-        model = 'gemini-2.5-flash-preview-04-17',
+        model = 'gemini-2.5-flash-preview-05-20',
         generationConfig = {
           thinkingConfig = {
             thinkingBudget = 1024,
