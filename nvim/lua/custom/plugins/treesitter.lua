@@ -32,6 +32,7 @@ return {
         'yaml',
         'gitignore',
         'blade',
+        'regex',
       },
       modules = {},
       sync_install = true,
@@ -54,17 +55,17 @@ return {
       ---@class parser_config
       local parser_config = require('nvim-treesitter.parsers').get_parser_configs()
 
-      parser_config.blade = {
-        install_info = {
-          url = 'https://github.com/EmranMR/tree-sitter-blade',
-          files = { 'src/parser.c' },
-          branch = 'main',
-        },
-        filetype = 'blade',
-        generate_requires_npm = true,
-        requires_generate_from_grammar = true,
-      }
-
+      -- parser_config.blade = {
+      --   install_info = {
+      --     url = 'https://github.com/EmranMR/tree-sitter-blade',
+      --     files = { 'src/parser.c' },
+      --     branch = 'main',
+      --   },
+      --   filetype = 'blade',
+      --   generate_requires_npm = true,
+      --   requires_generate_from_grammar = true,
+      -- }
+      --
       -- vim.filetype.add {
       --   pattern = {
       --     ['.*%.blade%.php'] = 'blade',
@@ -77,38 +78,23 @@ return {
 
       require('ts_context_commentstring').setup {
         enable_autocmd = false,
-        languages = {
-          php_only = '// %s',
-          php = '// %s',
-          blade = {
-            __default = '{{-- %s',
-            html = '{{-- %s --}}',
-            blade = '{{-- %s --}}',
-            php = '// %s',
-            javascript = '// %s',
-            php_only = '// %s',
-          },
-        },
         custom_calculation = function(_, language_tree)
-          if vim.bo.filetype == 'blade' then
-            if language_tree._lang == 'html' then
-              return '{{-- %s --}}'
-            end
-
+          if vim.bo.filetype == 'blade' and language_tree._lang ~= 'javascript' and language_tree._lang ~= 'php' then
             return '{{-- %s --}}'
           end
         end,
       }
 
+      local get_option = vim.filetype.get_option
       vim.filetype.get_option = function(filetype, option)
-        return option == 'commentstring' and require('ts_context_commentstring.internal').calculate_commentstring() or vim.filetype.get_option(filetype, option)
+        return option == 'commentstring' and require('ts_context_commentstring.internal').calculate_commentstring() or get_option(filetype, option)
       end
     end,
   },
-  {
-    'tronikelis/ts-autotag.nvim',
-    opts = {},
-    ft = { 'html', 'jsx', 'blade' },
-    event = 'VeryLazy',
-  },
+  -- {
+  --   'tronikelis/ts-autotag.nvim',
+  --   opts = {},
+  --   ft = { 'html', 'jsx', 'blade' },
+  --   event = 'VeryLazy',
+  -- },
 }

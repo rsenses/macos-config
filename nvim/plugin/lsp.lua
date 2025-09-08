@@ -1,5 +1,5 @@
 vim.lsp.enable {
-  'phpactor',
+  -- 'phpactor',
   'intelephense',
   'html',
   'luals',

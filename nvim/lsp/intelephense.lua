@@ -10,37 +10,37 @@ return {
   filetypes = {
     'php',
     'blade',
-    'php_only',
+    -- 'php_only',
   },
-  settings = {
-    intelephense = {
-      files = {
-        associations = { '*.php', '*.phtml' },
-        maxSize = 5000000,
-      },
-      environment = {
-        phpVersion = '8.3.19',
-      },
-      telemetry = {
-        enabled = false,
-      },
-      maxMemory = 1024,
-      completion = {
-        fullyQualifyGlobalConstantsAndFunctions = true,
-      },
-      format = {
-        enable = false,
-      },
-      rename = {
-        enabled = true,
-      },
-    },
-    php = {
-      completion = {
-        callSnippet = 'Replace',
-      },
-    },
-  },
+  -- settings = {
+  --   intelephense = {
+  --     files = {
+  --       associations = { '*.php', '*.phtml' },
+  --       maxSize = 5000000,
+  --     },
+  --     environment = {
+  --       phpVersion = '8.3.19',
+  --     },
+  --     telemetry = {
+  --       enabled = false,
+  --     },
+  --     maxMemory = 1024,
+  --     completion = {
+  --       fullyQualifyGlobalConstantsAndFunctions = true,
+  --     },
+  --     format = {
+  --       enable = false,
+  --     },
+  --     rename = {
+  --       enabled = true,
+  --     },
+  --   },
+  --   php = {
+  --     completion = {
+  --       callSnippet = 'Replace',
+  --     },
+  --   },
+  -- },
   root_markers = {
     'composer.json',
     '.phpactor.json',

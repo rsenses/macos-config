@@ -136,7 +136,3 @@ vim.keymap.set('n', '<leader>tc', function()
   local command = string.format('tmux new-window "./vendor/bin/pest %s; exec zsh"', escaped_file_path)
   vim.fn.system(command)
 end, { desc = '[T]est [C]urrent file' })
-
-vim.keymap.set({ 'n', 'x' }, '<leader>ca', function()
-  require('tiny-code-action').code_action()
-end, { noremap = true, silent = true })

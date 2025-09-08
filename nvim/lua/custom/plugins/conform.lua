@@ -1,7 +1,6 @@
 -- Autoformat
 return {
   'stevearc/conform.nvim',
-  dependencies = { 'williamboman/mason.nvim' },
   event = { 'BufWritePre' },
   cmd = { 'ConformInfo' },
   keys = {
@@ -61,7 +60,6 @@ return {
       markdown = { 'prettier', stop_after_first = true },
       php = { 'pint', 'php_cs_fixer', stop_after_first = true },
       blade = { 'prettier', stop_after_first = true },
-      ['*'] = { 'injected' },
     },
     notify_on_error = true,
     init = function()

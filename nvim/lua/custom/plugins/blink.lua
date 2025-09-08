@@ -7,7 +7,6 @@ return {
       'L3MON4D3/LuaSnip',
       version = 'v2.*',
     },
-    'Kaiser-Yang/blink-cmp-avante',
   },
   ---@module 'blink.cmp'
   ---@type blink.cmp.Config

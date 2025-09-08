@@ -13,6 +13,8 @@ return {
   },
   event = { 'VeryLazy' },
   config = function()
-    require('laravel').setup()
+    require('laravel').setup {
+      notifications = false, -- No notifications when Laravel project is detected
+    }
   end,
 }

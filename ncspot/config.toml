@@ -22,3 +22,4 @@ cmdline_bg = "#444444"
 [keybindings]
 "Shift+q" = "focus queue"
 "Shift+l" = "focus library"
+"/" = "focus search"

@@ -6,7 +6,6 @@ return {
   },
   opts = {
     -- you're options goes here
-    -- install = { bin = vim.fn.stdpath 'data' .. '/mason/bin/phpactor' },
     lspconfig = {
       enabled = false,
     },

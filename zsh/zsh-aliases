@@ -35,6 +35,7 @@ alias composer-update='composer global update'
 alias npm-update='npm -g update; npm -g upgrade; npm cache clean --force'
 # zeoxide, zsh y tmux
 alias zsh-update="find "$ZDOTDIR/plugins" -type d -exec test -e '{}/.git' ';' -print0 | xargs -I {} -0 git -C {} pull -q"
+alias update="brew-update; composer-update; npm-update; zsh-update"
 
 # ImageOptim, se puede usar . o nombre de archivo
 alias imageoptim="open -a ImageOptim"

@@ -9,8 +9,8 @@ return {
     },
     ft = { 'markdown' },
   },
-  {
-    'tjdevries/present.nvim',
-    enable = false,
-  },
+  -- {
+  --   'tjdevries/present.nvim',
+  --   enabled = false,
+  -- },
 }
