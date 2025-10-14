@@ -19,7 +19,7 @@ local function get_typescript_sdk()
 end
 
 return {
-  cmd = { 'vue-language-server', '--stdio' },
+  cmd = { 'vls', '--stdio' },
   filetypes = { 'vue' },
   root_markers = { 'package.json', 'tsconfig.json', 'jsconfig.json', '.git' },
   init_options = {
