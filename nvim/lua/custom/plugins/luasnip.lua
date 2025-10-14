@@ -46,9 +46,8 @@ return {
     }
 
     require('luasnip.loaders.from_lua').load {
-      paths = { vim.fn.stdpath 'config' .. '/snippets' },
+      paths = { vim.fn.stdpath 'config' .. '/after/snippets' },
     }
-    -- require('luasnip').filetype_extend('php', { 'blade', 'phpdoc' })
 
     vim.keymap.set({ 'i', 's' }, '<c-e>', function()
       ls.change_choice(1)
