@@ -6,7 +6,7 @@ return {
     event = { 'BufRead', 'BufNewFile' },
     dependencies = {
       'JoosepAlviste/nvim-ts-context-commentstring',
-      'nvim-treesitter/nvim-treesitter-textobjects',
+      -- 'nvim-treesitter/nvim-treesitter-textobjects',
       'nvim-treesitter/nvim-treesitter-context',
     },
     opts = {
@@ -52,25 +52,8 @@ return {
       },
     },
     config = function(_, opts)
-      ---@class parser_config
-      local parser_config = require('nvim-treesitter.parsers').get_parser_configs()
-
-      -- parser_config.blade = {
-      --   install_info = {
-      --     url = 'https://github.com/EmranMR/tree-sitter-blade',
-      --     files = { 'src/parser.c' },
-      --     branch = 'main',
-      --   },
-      --   filetype = 'blade',
-      --   generate_requires_npm = true,
-      --   requires_generate_from_grammar = true,
-      -- }
-      --
-      -- vim.filetype.add {
-      --   pattern = {
-      --     ['.*%.blade%.php'] = 'blade',
-      --   },
-      -- }
+      -- ---@class parser_config
+      -- local parser_config = require('nvim-treesitter.parsers').get_parser_configs()
 
       require('nvim-treesitter.configs').setup(opts)
 
@@ -85,16 +68,13 @@ return {
         end,
       }
 
-      local get_option = vim.filetype.get_option
-      vim.filetype.get_option = function(filetype, option)
-        return option == 'commentstring' and require('ts_context_commentstring.internal').calculate_commentstring() or get_option(filetype, option)
-      end
+      require('mini.comment').setup {
+        options = {
+          custom_commentstring = function()
+            return require('ts_context_commentstring').calculate_commentstring() or vim.bo.commentstring
+          end,
+        },
+      }
     end,
   },
-  -- {
-  --   'tronikelis/ts-autotag.nvim',
-  --   opts = {},
-  --   ft = { 'html', 'jsx', 'blade' },
-  --   event = 'VeryLazy',
-  -- },
 }

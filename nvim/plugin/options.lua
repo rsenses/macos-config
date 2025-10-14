@@ -2,7 +2,7 @@
 -- See `:help vim.opt`
 -- All files in /plugin folder automatically load
 
-local opt = vim.opt
+local opt = vim.o
 local g = vim.g
 
 opt.termguicolors = true
@@ -26,12 +26,13 @@ opt.scrolloff = 999 -- Make it so there the cursor is always in the middle
 opt.cursorline = true -- Highlight the current line
 opt.virtualedit = 'block' -- Allow the cursor to move where there is no text in visual block mode
 opt.mouse = 'a' -- Enable your mouse
-opt.diffopt = { 'internal', 'filler', 'closeoff', 'hiddenoff', 'algorithm:minimal' } -- Better diff options
+vim.opt.diffopt = { 'internal', 'filler', 'closeoff', 'hiddenoff', 'algorithm:minimal' } -- Better diff options
 opt.signcolumn = 'yes' -- Always show the signcolumn, otherwise it would shift the text each time
 opt.list = true -- Show some invisible characters (tabs...)
-opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' } -- Set listchars
+vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' } -- Set listchars
 opt.undofile = true -- Save undo history to file
 opt.confirm = true
+opt.winborder = 'rounded'
 
 opt.wrap = true
 -- opt.colorcolumn = '120'
@@ -44,17 +45,17 @@ opt.tabstop = 4
 opt.shiftwidth = 4
 opt.softtabstop = 4
 opt.breakindent = true
-opt.showbreak = string.rep(' ', 3) -- Make it so that long lines wrap smartly
+vim.opt.showbreak = string.rep(' ', 3) -- Make it so that long lines wrap smartly
 opt.linebreak = true
 opt.smartindent = true
 
 -- Spell check
 g.loaded_spellfile_plugin = 0
 g.spellfile_URL = 'https://ftp.nluug.nl/vim/runtime/spell/'
-opt.spelllang = { 'es_es', 'en_us' }
+vim.opt.spelllang = { 'es_es', 'en_us' }
 
 -- Completions
-vim.o.completeopt = 'noselect,menu,menuone,noinsert,popup'
+opt.completeopt = 'noselect,menu,menuone,noinsert,popup'
 -- opt.shortmess:append 'c'
 
 -- THEMES
@@ -62,17 +63,17 @@ opt.background = 'light' -- or 'light'
 
 -- Foldings
 -- Nice and simple folding:
-vim.o.foldenable = true
-vim.o.foldlevel = 99
+opt.foldenable = true
+opt.foldlevel = 99
 -- vim.o.foldmethod = 'expr'
 -- vim.o.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
-vim.o.foldmethod = 'indent'
+opt.foldmethod = 'indent'
 opt.foldcolumn = '0'
 -- opt.fillchars:append { fold = ' ' }
 
 -- These sessionoptions come from the lazyvim distro, I just added localoptions
 -- https://www.lazyvim.org/configuration/general
-opt.sessionoptions = {
+vim.opt.sessionoptions = {
   'buffers',
   'curdir',
   'tabpages',

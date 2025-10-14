@@ -6,8 +6,6 @@ return {
     -- - sr)'  - [S]urround [R]eplace [)] [']
     require('mini.surround').setup { n_lines = 500 }
 
-    require('mini.comment').setup()
-
     -- "gS" to toggle splitjoin on objects, arrays, etc.
     require('mini.splitjoin').setup()
 
@@ -17,10 +15,8 @@ return {
     -- GitSigns
     require('mini.diff').setup {
       view = {
-        -- Signs used for hunks with 'sign' view
         signs = { add = ' ', change = '󰏫 ', delete = '󰆴 ' },
       },
-      -- Module mappings. Use `''` (empty string) to disable one.
       mappings = {
         -- Apply hunks inside a visual/operator region
         apply = 'gh',
