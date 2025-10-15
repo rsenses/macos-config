@@ -12,6 +12,16 @@ return {
     'blade',
     -- 'php_only',
   },
+  settings = {
+    intelephense = {
+      environment = {
+        include_paths = {
+          './vendor/pestphp',
+          './vendor/phpunit/phpunit',
+        },
+      },
+    },
+  },
   -- settings = {
   --   intelephense = {
   --     files = {

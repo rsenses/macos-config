@@ -59,19 +59,25 @@ return {
 
       require('treesitter-context').setup {}
 
-      require('ts_context_commentstring').setup {
-        enable_autocmd = false,
-        custom_calculation = function(_, _)
-          if vim.bo.filetype == 'blade' then
-            return '{{-- %s --}}'
-          end
-        end,
-      }
-
       require('mini.comment').setup {
         options = {
           custom_commentstring = function()
-            return require('ts_context_commentstring').calculate_commentstring() or vim.bo.commentstring
+            local curline = vim.fn.line '.'
+            local ft = vim.bo.filetype
+            local lang = vim.treesitter.get_parser():language_for_range({ curline, 0, curline, 0 }):lang()
+            -- vim.print(lang)
+            if ft == 'blade' then
+              if lang == 'php' or lang == 'php_only' or lang == 'javascript' then
+                return '// %s'
+              elseif lang == 'css' then
+                return '/* %s */'
+              end
+              return '{{-- %s --}}'
+            elseif ft == 'php' then
+              return '// %s'
+            else
+              return nil
+            end
           end,
         },
       }
