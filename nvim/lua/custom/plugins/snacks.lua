@@ -8,6 +8,7 @@ return {
       animate = { enabled = false },
       bigfile = { enabled = false },
       dashboard = {
+        enabled = false,
         sections = {
           { section = 'header' },
           { icon = ' ', title = 'Keymaps', section = 'keys', indent = 2, padding = 1 },
@@ -32,6 +33,7 @@ return {
         enabled = true,
         timeout = 3000,
       },
+      lazygit = { enabled = false },
       scratch = { enabled = false },
       toggle = { enabled = false },
       rename = { enabled = true },

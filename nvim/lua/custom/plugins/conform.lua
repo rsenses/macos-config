@@ -7,13 +7,14 @@ return {
     {
       '<leader>cf',
       function()
-        require('conform').format { async = true, lsp_format = 'fallback', timeout_ms = 5000 }
+        require('conform').format { async = true, lsp_format = 'fallback', timeout_ms = 2500 }
       end,
       mode = '',
       desc = '[C]ode [F]ormat LSP',
     },
   },
   opts = {
+    async = true,
     log_level = vim.log.levels.WARN,
     formatters = {
       prettier = {

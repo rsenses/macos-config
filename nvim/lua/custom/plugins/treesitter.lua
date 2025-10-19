@@ -5,20 +5,18 @@ return {
     build = ':TSUpdate',
     event = { 'BufRead', 'BufNewFile' },
     dependencies = {
-      'JoosepAlviste/nvim-ts-context-commentstring',
-      -- 'nvim-treesitter/nvim-treesitter-textobjects',
       'nvim-treesitter/nvim-treesitter-context',
     },
     opts = {
       ensure_installed = {
-        'c',
-        'bash',
+        -- 'c',
+        -- 'bash',
         'html',
         'lua',
         'diff',
         'markdown',
         'markdown_inline',
-        'query',
+        -- 'query',
         'vim',
         'vimdoc',
         'css',
@@ -26,13 +24,13 @@ return {
         'json',
         'vue',
         'php',
-        'php_only',
+        -- 'php_only',
         'phpdoc',
         'scss',
         'yaml',
         'gitignore',
         'blade',
-        'regex',
+        -- 'regex',
       },
       modules = {},
       sync_install = true,
@@ -52,9 +50,6 @@ return {
       },
     },
     config = function(_, opts)
-      -- ---@class parser_config
-      -- local parser_config = require('nvim-treesitter.parsers').get_parser_configs()
-
       require('nvim-treesitter.configs').setup(opts)
 
       require('treesitter-context').setup {}

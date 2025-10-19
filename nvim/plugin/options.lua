@@ -5,39 +5,18 @@
 local opt = vim.o
 local g = vim.g
 
-opt.termguicolors = true
-g.have_nerd_font = true
-
 -- Disable statusbar
 opt.laststatus = 0
 opt.cmdheight = 0 -- hide commmand line until needed
 
-opt.incsearch = true -- Makes search act like search in modern browsers
-opt.showmatch = true -- show matching brackets when text indicator is over them
-opt.hlsearch = true -- I wouldn't use this without my DoNoHL function
-opt.inccommand = 'split' -- Make substitution work in realtime
+-- Basic Settings
 opt.number = true -- But show the actual number for the line we're on
 opt.relativenumber = true -- Show line numbers
-opt.ignorecase = true -- Ignore case when searching...
-opt.smartcase = true -- ... unless there is a capital letter in the query
-opt.splitright = true -- Prefer windows splitting to the right
-opt.splitbelow = true -- Prefer windows splitting to the bottom
-opt.scrolloff = 999 -- Make it so there the cursor is always in the middle
 opt.cursorline = true -- Highlight the current line
-opt.virtualedit = 'block' -- Allow the cursor to move where there is no text in visual block mode
-opt.mouse = 'a' -- Enable your mouse
-vim.opt.diffopt = { 'internal', 'filler', 'closeoff', 'hiddenoff', 'algorithm:minimal' } -- Better diff options
-opt.signcolumn = 'yes' -- Always show the signcolumn, otherwise it would shift the text each time
-opt.list = true -- Show some invisible characters (tabs...)
-vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' } -- Set listchars
-opt.undofile = true -- Save undo history to file
-opt.confirm = true
-opt.winborder = 'rounded'
-
+opt.scrolloff = 999 -- Make it so there the cursor is always in the middle
 opt.wrap = true
--- opt.colorcolumn = '120'
 
--- Tabs
+-- Tabbing / Indentation
 opt.autoindent = true
 opt.cindent = true
 opt.expandtab = true
@@ -48,6 +27,76 @@ opt.breakindent = true
 vim.opt.showbreak = string.rep(' ', 3) -- Make it so that long lines wrap smartly
 opt.linebreak = true
 opt.smartindent = true
+opt.grepprg = 'rg --vimgrep' -- Use ripgrep if available
+opt.grepformat = '%f:%l:%c:%m' -- filename, line number, column, content
+
+-- Search Settings
+opt.incsearch = true -- Makes search act like search in modern browsers
+opt.showmatch = true -- show matching brackets when text indicator is over them
+opt.hlsearch = true -- I wouldn't use this without my DoNoHL function
+opt.ignorecase = true -- Ignore case when searching...
+opt.smartcase = true -- ... unless there is a capital letter in the query
+
+-- Visual Settings
+opt.termguicolors = true
+g.have_nerd_font = true
+opt.colorcolumn = '120'
+opt.signcolumn = 'yes' -- Always show the signcolumn, otherwise it would shift the text each time
+opt.lazyredraw = false -- redraw while executing macros (butter UX)
+opt.redrawtime = 10000 -- Timeout for syntax highlighting redraw
+opt.maxmempattern = 20000 -- Max memory for pattern matching
+opt.synmaxcol = 300 -- Syntax highlighting column limit
+opt.virtualedit = 'block' -- Allow the cursor to move where there is no text in visual block mode
+vim.opt.diffopt = { 'internal', 'filler', 'closeoff', 'hiddenoff', 'algorithm:minimal' } -- Better diff options
+opt.list = true -- Show some invisible characters (tabs...)
+vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' } -- Set listchars
+opt.winborder = 'rounded'
+
+-- Split Behavior
+opt.inccommand = 'split' -- Make substitution work in realtime
+opt.splitright = true -- Prefer windows splitting to the right
+opt.splitbelow = true -- Prefer windows splitting to the bottom
+
+-- File Handling
+opt.undofile = true -- Save undo history to file
+opt.confirm = true
+opt.updatetime = 300 -- Time in ms to trigger CursorHold
+opt.timeoutlen = 500 -- Time in ms to wait for mapped sequence
+opt.ttimeoutlen = 0 -- No wait for key code sequences
+opt.autoread = true -- Auto-reload file if changed outside
+opt.autowrite = false -- Don't auto-save on some events
+vim.opt.diffopt:append 'vertical' -- Vertical diff splits
+vim.opt.diffopt:append 'algorithm:patience' -- Better diff algorithm
+vim.opt.diffopt:append 'linematch:60' -- Better diff highlighting (smart line matching)
+
+-- Set undo directory and ensure it exists
+local undodir = '~/.local/share/nvim/undodir' -- Undo directory path
+vim.opt.undodir = vim.fn.expand(undodir) -- Expand to full path
+local undodir_path = vim.fn.expand(undodir)
+if vim.fn.isdirectory(undodir_path) == 0 then
+  vim.fn.mkdir(undodir_path, 'p') -- Create if not exists
+end
+
+-- Behavior Settings
+opt.mouse = 'a' -- Enable your mouse
+opt.backspace = 'indent,eol,start' -- Make backspace behave naturally
+opt.modifiable = true -- Allow editing buffers
+opt.encoding = 'UTF-8' -- Use UTF-8 encoding
+opt.wildmenu = true -- Enable command-line completion menu
+opt.wildmode = 'longest:full,full' -- Completion mode for command-line
+opt.wildignorecase = true -- Case-insensitive tab completion in commands
+-- https://www.lazyvim.org/configuration/general
+vim.opt.sessionoptions = {
+  'buffers',
+  'curdir',
+  'tabpages',
+  'winsize',
+  'help',
+  'globals',
+  'skiprtp',
+  'folds',
+  'localoptions',
+}
 
 -- Spell check
 g.loaded_spellfile_plugin = 0
@@ -62,7 +111,6 @@ opt.completeopt = 'noselect,menu,menuone,noinsert,popup'
 opt.background = 'light' -- or 'light'
 
 -- Foldings
--- Nice and simple folding:
 opt.foldenable = true
 opt.foldlevel = 99
 -- vim.o.foldmethod = 'expr'
@@ -70,80 +118,6 @@ opt.foldlevel = 99
 opt.foldmethod = 'indent'
 opt.foldcolumn = '0'
 -- opt.fillchars:append { fold = ' ' }
-
--- These sessionoptions come from the lazyvim distro, I just added localoptions
--- https://www.lazyvim.org/configuration/general
-vim.opt.sessionoptions = {
-  'buffers',
-  'curdir',
-  'tabpages',
-  'winsize',
-  'help',
-  'globals',
-  'skiprtp',
-  'folds',
-  'localoptions',
-}
-
--- WINBAR
--- Function to get the number of open buffers using the :ls command
-local function get_buffer_count()
-  local buffers = vim.fn.execute 'ls'
-  local count = 0
-  -- Match only lines that represent buffers, typically starting with a number followed by a space
-  for line in string.gmatch(buffers, '[^\r\n]+') do
-    if string.match(line, '^%s*%d+') then
-      count = count + 1
-    end
-  end
-  return count
-end
-
-local function get_full_mode()
-  local modes = {
-    ['n'] = 'NORMAL',
-    ['no'] = 'NORMAL',
-    ['v'] = 'VISUAL',
-    ['V'] = 'VISUAL LINE',
-    [''] = 'VISUAL BLOCK',
-    ['s'] = 'SELECT',
-    ['S'] = 'SELECT LINE',
-    [''] = 'SELECT BLOCK',
-    ['i'] = 'INSERT',
-    ['ic'] = 'INSERT',
-    ['R'] = 'REPLACE',
-    ['Rv'] = 'VISUAL REPLACE',
-    ['c'] = 'COMMAND',
-    ['cv'] = 'VIM EX',
-    ['ce'] = 'EX',
-    ['r'] = 'PROMPT',
-    ['rm'] = 'MOAR',
-    ['r?'] = 'CONFIRM',
-    ['!'] = 'SHELL',
-    ['t'] = 'TERMINAL',
-  }
-  local current_mode = vim.api.nvim_get_mode().mode
-  return string.format('%s ', modes[current_mode]):upper()
-end
-
--- Function to update the winbar
-local function update_winbar()
-  local buffer_count = get_buffer_count()
-  opt.winbar = '%#WinBar1#%m ' .. '%#WinBar2#󰓩' .. buffer_count .. ' ' .. '%#WinBar1# %f' .. '%#WinBar2# %=' .. get_full_mode()
-end
--- Autocmd to update the winbar on BufEnter and WinEnter events
-vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter', 'ModeChanged' }, {
-  callback = update_winbar,
-})
-
--- Colorscheme
--- vim.cmd.colorscheme 'zenbones'
--- vim.g.zenbones_compat = 1
--- vim.api.nvim_create_autocmd('ColorScheme', {
---   callback = function()
---     vim.api.nvim_set_hl(0, 'ColorColumn', { ctermbg = 'LightGrey', bg = 'LightGrey' })
---   end,
--- })
 
 -- Kulala
 vim.filetype.add {
