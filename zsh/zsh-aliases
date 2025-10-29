@@ -24,7 +24,7 @@ alias mv='mv -i'
 alias rm='rm -iv'
 
 # i can't remove vim in mac
-alias vim='nvim'
+alias vim='nvim .'
 
 # Recursively delete `.DS_Store` files
 alias dsstore="find . -name '*.DS_Store' -type f -ls -delete"

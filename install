@@ -52,6 +52,10 @@ rm -rf $HOME/.local/bin/tmux-cht.sh
 ln -sf $DOTFILES/scripts/tmux-cht.sh $HOME/.local/bin/tmux-cht.sh
 chmod +x $HOME/.local/bin/tmux-cht.sh
 
+rm -rf $HOME/.local/bin/open-github.sh
+ln -sf $DOTFILES/scripts/open-github.sh $HOME/.local/bin/open-github.sh
+chmod +x $HOME/.local/bin/open-github.sh
+
 # Phpactor
 rm -rf $HOME/.config/phpactor
 ln -s $DOTFILES/phpactor $HOME/.config/phpactor
