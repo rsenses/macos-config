@@ -149,20 +149,13 @@ return {
         end,
         desc = '[E]ditor [Z]en',
       },
-      -- {
-      --   '<leader>cR',
-      --   function()
-      --     Snacks.rename.rename_file()
-      --   end,
-      --   desc = '[R]ename File',
-      -- },
       -- Picker
       {
         '<leader>.',
         function()
           Snacks.picker.recent { filter = { cwd = true }, exclude = { 'vendor/', 'node_modules/' } }
         end,
-        desc = 'Recent',
+        desc = 'Find Recent Files',
       },
       {
         '<leader><leader>',
@@ -191,7 +184,7 @@ return {
             },
           }
         end,
-        desc = 'Buffers',
+        desc = 'Find Opened Buffers',
       },
       {
         '<leader>sg',
@@ -214,13 +207,6 @@ return {
         end,
         desc = 'Keymaps',
       },
-      -- {
-      --   '<leader>sm',
-      --   function()
-      --     Snacks.picker.marks()
-      --   end,
-      --   desc = 'Marks',
-      -- },
       {
         '<leader>sw',
         function()
@@ -243,20 +229,6 @@ return {
         end,
         desc = 'Buffer Diagnostics',
       },
-      -- {
-      --   '<leader>sR',
-      --   function()
-      --     Snacks.picker.resume()
-      --   end,
-      --   desc = 'Resume',
-      -- },
-      -- {
-      --   '<leader>en',
-      --   function()
-      --     Snacks.picker.files { cwd = vim.fn.stdpath 'config' }
-      --   end,
-      --   desc = 'Find Config File',
-      -- },
       {
         '<leader>sr',
         function()
@@ -279,26 +251,12 @@ return {
         end,
         desc = 'Goto Definition',
       },
-      -- {
-      --   '<leader>sD',
-      --   function()
-      --     Snacks.picker.lsp_type_definitions()
-      --   end,
-      --   desc = 'Goto T[y]pe Definition',
-      -- },
       {
         '<leader>ss',
         function()
           Snacks.picker.lsp_symbols()
         end,
         desc = 'LSP Symbols',
-      },
-      {
-        '<leader>sS',
-        function()
-          Snacks.picker.lsp_workspace_symbols()
-        end,
-        desc = 'LSP Workspace Symbols',
       },
     },
   },

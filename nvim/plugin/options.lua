@@ -51,6 +51,7 @@ vim.opt.diffopt = { 'internal', 'filler', 'closeoff', 'hiddenoff', 'algorithm:mi
 opt.list = true -- Show some invisible characters (tabs...)
 vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' } -- Set listchars
 opt.winborder = 'rounded'
+opt.background = 'light' -- or 'light'
 
 -- Split Behavior
 opt.inccommand = 'split' -- Make substitution work in realtime
@@ -82,21 +83,6 @@ opt.mouse = 'a' -- Enable your mouse
 opt.backspace = 'indent,eol,start' -- Make backspace behave naturally
 opt.modifiable = true -- Allow editing buffers
 opt.encoding = 'UTF-8' -- Use UTF-8 encoding
-opt.wildmenu = true -- Enable command-line completion menu
-opt.wildmode = 'longest:full,full' -- Completion mode for command-line
-opt.wildignorecase = true -- Case-insensitive tab completion in commands
--- https://www.lazyvim.org/configuration/general
-vim.opt.sessionoptions = {
-  'buffers',
-  'curdir',
-  'tabpages',
-  'winsize',
-  'help',
-  'globals',
-  'skiprtp',
-  'folds',
-  'localoptions',
-}
 
 -- Spell check
 g.loaded_spellfile_plugin = 0
@@ -106,9 +92,9 @@ vim.opt.spelllang = { 'es_es', 'en_us' }
 -- Completions
 opt.completeopt = 'noselect,menu,menuone,noinsert,popup'
 -- opt.shortmess:append 'c'
-
--- THEMES
-opt.background = 'light' -- or 'light'
+opt.wildmenu = true -- Enable command-line completion menu
+opt.wildmode = 'longest:full,full' -- Completion mode for command-line
+opt.wildignorecase = true -- Case-insensitive tab completion in commands
 
 -- Foldings
 opt.foldenable = true

@@ -46,6 +46,7 @@ api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- Oil snacks rename
 vim.api.nvim_create_autocmd('User', {
   pattern = 'OilActionsPost',
   callback = function(event)
@@ -122,4 +123,23 @@ end
 -- Autocmd to update the winbar on BufEnter and WinEnter events
 vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter', 'ModeChanged' }, {
   callback = update_winbar,
+})
+
+-- Auto-resize splits when window is resized
+vim.api.nvim_create_autocmd('VimResized', {
+  group = default,
+  callback = function()
+    vim.cmd 'tabdo wincmd ='
+  end,
+})
+
+-- Create directories when saving files
+vim.api.nvim_create_autocmd('BufWritePre', {
+  group = default,
+  callback = function()
+    local dir = vim.fn.expand '<afile>:p:h'
+    if vim.fn.isdirectory(dir) == 0 then
+      vim.fn.mkdir(dir, 'p')
+    end
+  end,
 })

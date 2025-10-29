@@ -13,10 +13,7 @@ vim.keymap.set('n', 'N', 'Nzzzv')
 -- Copiar, pegar y borrar del clipboard
 vim.keymap.set({ 'n', 'v' }, '<leader>y', [["+y]], { desc = '[Y]ank to clipboard' })
 vim.keymap.set('n', '<leader>Y', [["+Y]], { desc = '[Y]ank to end of line from clipboard' })
-vim.keymap.set({ 'n', 'v' }, '<leader>p', [["+p]], { desc = '[P]aste from clipboard' })
 vim.keymap.set({ 'n', 'v' }, '<leader>d', [["_d]], { desc = '[D]elete to clipboard' })
--- copy everything between { } including the brackets
-vim.keymap.set('n', 'YY', 'va{Vy', { desc = '[C]opy between { }' })
 
 -- Autopairs
 -- vim.keymap.set('i', "'", "''<left>")
@@ -49,9 +46,6 @@ end, { desc = 'Find and replace word under cursor' })
 -- lazy
 vim.keymap.set('n', '<leader>wl', '<cmd>Lazy<cr>', { desc = 'Lazy' })
 
--- mason
--- vim.keymap.set('n', '<leader>wm', '<cmd>Mason<cr>', { desc = 'Mason' })
-
 -- diagnostics
 vim.keymap.set('n', 'gl', function()
   vim.diagnostic.open_float()
@@ -60,9 +54,25 @@ end, { desc = 'Open diagnostics' })
 -- Generic formater
 vim.keymap.set('n', '<leader>cF', 'gg=G``', { desc = 'Format the entire file' })
 
--- Open terminal in tmux
-vim.keymap.set({ 'n' }, '<leader>-', '<cmd>silent !tmux split-window<CR>', { desc = '[E]ditor [T]erminal' })
-vim.keymap.set({ 'n' }, '<leader>|', '<cmd>silent !tmux split-window -h -l 60<CR>', { desc = '[E]ditor [T]erminal' })
+-- Tests
+vim.keymap.set('n', '<leader>ta', function()
+  local file_path = vim.fn.expand '%:p'
+  local escaped_file_path = vim.fn.shellescape(file_path)
+  local command = string.format('tmux new-window "./vendor/bin/pest; exec zsh"', escaped_file_path)
+  vim.fn.system(command)
+end, { desc = '[T]est [A]ll' })
+vim.keymap.set('n', '<leader>ta', function()
+  local file_path = vim.fn.expand '%:p'
+  local escaped_file_path = vim.fn.shellescape(file_path)
+  local command = string.format('tmux new-window "./vendor/bin/pest --bail; exec zsh"', escaped_file_path)
+  vim.fn.system(command)
+end, { desc = '[T]est [B]ail' })
+vim.keymap.set('n', '<leader>tc', function()
+  local file_path = vim.fn.expand '%:p'
+  local escaped_file_path = vim.fn.shellescape(file_path)
+  local command = string.format('tmux new-window "./vendor/bin/pest %s; exec zsh"', escaped_file_path)
+  vim.fn.system(command)
+end, { desc = '[T]est [C]urrent file' })
 
 -- [[ SPELLING]]
 
@@ -116,23 +126,3 @@ vim.keymap.set('n', '<leader>esr', function()
   -- vim.cmd(":spellr")
   vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(':spellr\n', true, false, true), 'm', true)
 end, { desc = '[S]pelling repeat' })
-
--- Tests
-vim.keymap.set('n', '<leader>ta', function()
-  local file_path = vim.fn.expand '%:p'
-  local escaped_file_path = vim.fn.shellescape(file_path)
-  local command = string.format('tmux new-window "./vendor/bin/pest; exec zsh"', escaped_file_path)
-  vim.fn.system(command)
-end, { desc = '[T]est [A]ll' })
-vim.keymap.set('n', '<leader>ta', function()
-  local file_path = vim.fn.expand '%:p'
-  local escaped_file_path = vim.fn.shellescape(file_path)
-  local command = string.format('tmux new-window "./vendor/bin/pest --bail; exec zsh"', escaped_file_path)
-  vim.fn.system(command)
-end, { desc = '[T]est [B]ail' })
-vim.keymap.set('n', '<leader>tc', function()
-  local file_path = vim.fn.expand '%:p'
-  local escaped_file_path = vim.fn.shellescape(file_path)
-  local command = string.format('tmux new-window "./vendor/bin/pest %s; exec zsh"', escaped_file_path)
-  vim.fn.system(command)
-end, { desc = '[T]est [C]urrent file' })

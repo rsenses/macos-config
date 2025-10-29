@@ -56,7 +56,7 @@ require('lazy').setup({ { import = 'custom.plugins' } }, {
   -- colorscheme that will be used when installing plugins.
   install = {
     missing = true,
-    colorscheme = { 'zenbones' },
+    colorscheme = { 'kanso' },
   },
   checker = {
     enabled = true,
