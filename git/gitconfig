@@ -34,6 +34,7 @@
 [user]
 	name = Rubén Silva
 	email = me@rsenses.com
+	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAl5qSkeA+cx8OuhoTPYgPx8EGLzvtUe2CR9/drkibIl
 
 [color]
 	# Use colors in Git commands that are capable of colored output when
@@ -94,3 +95,7 @@
 	sslVerify = true
 [credential]
 	helper = osxkeychain
+[gpg]
+	format = ssh
+[commit]
+	gpgsign = true
