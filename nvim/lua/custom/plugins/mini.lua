@@ -116,6 +116,7 @@ return {
         { mode = 'n', keys = '<leader>es', desc = '[S]pelling' },
         { mode = 'n', keys = '<leader>esl', desc = '[L]anguage' },
         { mode = 'n', keys = '<leader>g', desc = '[G]it' },
+        { mode = 'n', keys = '<leader>h', desc = '[H]arpoon' },
         { mode = 'n', keys = '<leader>l', desc = '[L]aravel' },
         { mode = 'n', keys = '<leader>r', desc = '[R]equests' },
         { mode = 'n', keys = '<leader>s', desc = '[S]earch' },

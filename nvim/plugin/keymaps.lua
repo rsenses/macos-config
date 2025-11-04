@@ -126,3 +126,20 @@ vim.keymap.set('n', '<leader>esr', function()
   -- vim.cmd(":spellr")
   vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(':spellr\n', true, false, true), 'm', true)
 end, { desc = '[S]pelling repeat' })
+
+-- Search buffers
+vim.keymap.set('n', '<leader>,', ':b ', { desc = '[S]earch buffers' })
+
+-- Arglist
+
+local keymap = vim.keymap.set
+
+-- append
+keymap('n', '<leader>hH', '<CMD>$arga<CR>', { silent = true, desc = 'Add current file to arg list' })
+
+-- assign arg to each number
+for i = 1, 6 do
+  keymap('n', '<leader>' .. i, '<CMD>argu ' .. i .. '<CR>', { silent = true, desc = 'Go to arg ' .. i })
+  keymap('n', '<leader>h' .. i, '<CMD>' .. i - 1 .. 'arga<CR>', { silent = true, desc = 'Add current to arg ' .. i })
+  keymap('n', '<leader>hd' .. i, '<CMD>' .. i .. 'argd<CR>', { silent = true, desc = 'Delete current arg' })
+end

@@ -8,7 +8,7 @@ return {
       animate = { enabled = false },
       bigfile = { enabled = false },
       dashboard = {
-        enabled = false,
+        enabled = true,
         sections = {
           { section = 'header' },
           { icon = ' ', title = 'Keymaps', section = 'keys', indent = 2, padding = 1 },
@@ -150,13 +150,13 @@ return {
         desc = '[E]ditor [Z]en',
       },
       -- Picker
-      {
-        '<leader>.',
-        function()
-          Snacks.picker.recent { filter = { cwd = true }, exclude = { 'vendor/', 'node_modules/' } }
-        end,
-        desc = 'Find Recent Files',
-      },
+      -- {
+      --   '<leader>.',
+      --   function()
+      --     Snacks.picker.recent { filter = { cwd = true }, exclude = { 'vendor/', 'node_modules/' } }
+      --   end,
+      --   desc = 'Find Recent Files',
+      -- },
       {
         '<leader><leader>',
         function()
@@ -164,28 +164,28 @@ return {
         end,
         desc = 'Smart Find Files',
       },
-      {
-        '<leader>,',
-        function()
-          Snacks.picker.buffers {
-            filter = { cwd = true },
-            layout = {
-              preset = 'ivy',
-            },
-            current = false,
-            sort_lastused = true,
-            win = {
-              input = {
-                keys = {
-                  ['<c-d>'] = { 'bufdelete', mode = { 'n', 'i' } },
-                  ['dd'] = { 'bufdelete', mode = { 'n' } },
-                },
-              },
-            },
-          }
-        end,
-        desc = 'Find Opened Buffers',
-      },
+      -- {
+      --   '<leader>,',
+      --   function()
+      --     Snacks.picker.buffers {
+      --       filter = { cwd = true },
+      --       layout = {
+      --         preset = 'ivy',
+      --       },
+      --       current = false,
+      --       sort_lastused = true,
+      --       win = {
+      --         input = {
+      --           keys = {
+      --             ['<c-d>'] = { 'bufdelete', mode = { 'n', 'i' } },
+      --             ['dd'] = { 'bufdelete', mode = { 'n' } },
+      --           },
+      --         },
+      --       },
+      --     }
+      --   end,
+      --   desc = 'Find Opened Buffers',
+      -- },
       {
         '<leader>sg',
         function()
@@ -216,7 +216,7 @@ return {
         mode = { 'n', 'x' },
       },
       {
-        '<leader>sd',
+        '<leader>sD',
         function()
           Snacks.picker.diagnostics()
         end,
