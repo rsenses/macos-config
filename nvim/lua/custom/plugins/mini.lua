@@ -1,9 +1,19 @@
 return {
   'nvim-mini/mini.nvim',
+  version = false,
+  event = 'VeryLazy',
   config = function()
     require('mini.extra').setup()
 
-    require('mini.icons').setup()
+    local mini_icons = require 'mini.icons'
+    mini_icons.setup()
+    vim.api.nvim_create_autocmd('LspAttach', {
+      once = true,
+      desc = 'MiniIcons: tweak LSP kinds lazily to avoid loading vim.lsp on startup',
+      callback = function()
+        mini_icons.tweak_lsp_kind()
+      end,
+    })
 
     -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Parenthesis
     -- - sd'   - [S]urround [D]elete [']quotes
@@ -16,15 +26,20 @@ return {
     -- Movement helpers, for example ciq to change inside quotes, cib to change inside brackets, etc.
     require('mini.ai').setup()
 
-    require('mini.pick').setup()
-    -- Smart Find Files (usa fd o rg internamente)
+    local mini_pick = require 'mini.pick'
+    mini_pick.setup()
+    -- Smart Find Files (usa fd si está disponible)
     vim.keymap.set('n', '<leader><leader>', function()
-      require('mini.pick').builtin.files {
-        source = {
-          cwd = vim.loop.cwd(),
-          exec = { 'fd', '--type', 'f', '--hidden', '--exclude', '.git', '--exclude', 'vendor', '--exclude', 'node_modules' },
-        },
-      }
+      local opts
+      if vim.fn.executable 'fd' == 1 then
+        opts = {
+          source = {
+            cwd = vim.loop.cwd(),
+            exec = { 'fd', '--type', 'f', '--hidden', '--exclude', '.git', '--exclude', 'vendor', '--exclude', 'node_modules' },
+          },
+        }
+      end
+      mini_pick.builtin.files(opts)
     end, { desc = 'Smart Find Files' })
     -- Grep (contenido)
     vim.keymap.set('n', '<leader>sg', '<Cmd>Pick grep_live<CR>', { desc = 'Grep' })
