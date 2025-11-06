@@ -126,15 +126,14 @@ return {
 
     -- Highlight colors and TODOs
     local hipatterns = require 'mini.hipatterns'
+    vim.cmd [[
+      highlight MiniHipatternsFixme guifg=Black guibg=NvimLightRed gui=bold
+      highlight MiniHipatternsHack guifg=Black guibg=NvimLightYellow gui=bold
+      highlight MiniHipatternsTodo guifg=Black guibg=NvimLightCyan gui=bold
+      highlight MiniHipatternsNote guifg=Black guibg=NvimLightGreen gui=bold
+    ]]
     hipatterns.setup {
       highlighters = {
-        vim.cmd [[
-            highlight MiniHipatternsFixme guifg=Black guibg=NvimLightRed gui=bold
-            highlight MiniHipatternsHack guifg=Black guibg=NvimLightYellow gui=bold
-            highlight MiniHipatternsTodo guifg=Black guibg=NvimLightCyan gui=bold
-            highlight MiniHipatternsNote guifg=Black guibg=NvimLightGreen gui=bold
-        ]],
-
         -- Highlight standalone 'FIXME', 'HACK', 'TODO', 'NOTE'
         fixme = { pattern = '%f[%w]()FIXME()%f[%W]', group = 'MiniHipatternsFixme' },
         hack = { pattern = '%f[%w]()HACK()%f[%W]', group = 'MiniHipatternsHack' },

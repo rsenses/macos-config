@@ -5,7 +5,7 @@ return {
     dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' },
     opts = {
       file_types = { 'markdown' },
-      completions = { lsp = { enabled = true }, blink = { enabled = true } },
+      completions = { lsp = { enabled = true } },
     },
     ft = { 'markdown' },
   },

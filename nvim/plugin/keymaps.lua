@@ -61,7 +61,7 @@ vim.keymap.set('n', '<leader>ta', function()
   local command = string.format('tmux new-window "./vendor/bin/pest; exec zsh"', escaped_file_path)
   vim.fn.system(command)
 end, { desc = '[T]est [A]ll' })
-vim.keymap.set('n', '<leader>ta', function()
+vim.keymap.set('n', '<leader>tb', function()
   local file_path = vim.fn.expand '%:p'
   local escaped_file_path = vim.fn.shellescape(file_path)
   local command = string.format('tmux new-window "./vendor/bin/pest --bail; exec zsh"', escaped_file_path)

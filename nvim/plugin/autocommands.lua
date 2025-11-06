@@ -46,16 +46,6 @@ api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
--- Oil snacks rename
-vim.api.nvim_create_autocmd('User', {
-  pattern = 'OilActionsPost',
-  callback = function(event)
-    if event.data.actions.type == 'move' then
-      Snacks.rename.on_rename_file(event.data.actions.src_url, event.data.actions.dest_url)
-    end
-  end,
-})
-
 -- LSP
 vim.api.nvim_create_autocmd('LspAttach', {
   group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
@@ -77,11 +67,9 @@ vim.api.nvim_create_autocmd('LspAttach', {
 -- WINBAR
 -- Function to get the number of open buffers using the :ls command
 local function get_buffer_count()
-  local buffers = vim.fn.execute 'ls'
   local count = 0
-  -- Match only lines that represent buffers, typically starting with a number followed by a space
-  for line in string.gmatch(buffers, '[^\r\n]+') do
-    if string.match(line, '^%s*%d+') then
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].buflisted then
       count = count + 1
     end
   end
@@ -195,10 +183,25 @@ local function draw_indent_guides(bufnr)
   end
 end
 
+local indent_pending = {}
+local function schedule_indent_guides(bufnr)
+  bufnr = bufnr or vim.api.nvim_get_current_buf()
+  if indent_pending[bufnr] then
+    return
+  end
+  indent_pending[bufnr] = true
+  vim.schedule(function()
+    indent_pending[bufnr] = nil
+    if vim.api.nvim_buf_is_valid(bufnr) then
+      draw_indent_guides(bufnr)
+    end
+  end)
+end
+
 vim.api.nvim_create_autocmd({ 'BufEnter', 'WinScrolled', 'CursorMoved', 'TextChanged', 'TextChangedI', 'InsertLeave' }, {
   callback = function(args)
-    draw_indent_guides(args.buf)
+    schedule_indent_guides(args.buf)
   end,
 })
 
-draw_indent_guides(0)
+schedule_indent_guides(0)
