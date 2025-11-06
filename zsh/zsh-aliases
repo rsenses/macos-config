@@ -34,7 +34,7 @@ alias brew-update="brew -v update; brew upgrade --force-bottle; brew cleanup; br
 alias composer-update='composer global update'
 alias npm-update='npm -g update; npm -g upgrade; npm cache clean --force'
 # zeoxide, zsh y tmux
-alias zsh-update="find "$ZDOTDIR/plugins" -type d -exec test -e '{}/.git' ';' -print0 | xargs -I {} -0 git -C {} pull -q"
+alias zsh-update="find \"$ZDOTDIR/plugins\" -type d -exec test -e '{}/.git' ';' -print0 | xargs -I {} -0 git -C {} pull -q"
 alias update="brew-update; composer-update; npm-update; zsh-update"
 
 # ImageOptim, se puede usar . o nombre de archivo
@@ -44,14 +44,11 @@ alias imageoptim="open -a ImageOptim"
 alias python='/opt/homebrew/bin/python3'
 
 # PHP
-alias php83='/opt/homebrew/opt/php@8.2/bin/php'
+alias php83='/opt/homebrew/opt/php@8.3/bin/php'
 alias php82='/opt/homebrew/opt/php@8.2/bin/php'
 alias php81='/opt/homebrew/opt/php@8.1/bin/php'
 # alias php80='/opt/homebrew/opt/php@8.0/bin/php'
 alias php7='/opt/homebrew/opt/php@7.4/bin/php'
-
-# Symfony
-alias sc='symfony console'
 
 # less con color
 alias less='less -r'
@@ -61,23 +58,11 @@ alias ls='ls --color=auto'
 alias ll='ls -lAF'
 alias cat='bat --plain --wrap character'
 
-# spotify ncurses
-alias spotify='ncspot'
 #weather
 alias weather='curl wttr.in/Madrid'
 
 # start nodenv
 alias nodenv-start='eval "$(nodenv init -)"'
-
-# Logout para xfce
-if [ "$DESKTOP_SESSION" = "xfce" ]; then
-    alias shutdown='xfce4-session-logout --halt'
-    alias reboot='xfce4-session-logout --reboot'
-    alias suspend='xfce4-session-logout --suspend'
-    alias hibernate='xfce4-session-logout --hibernate'
-    alias lock='xfce4-session-logout --lock-screen'
-    alias logout='xfce4-session-logout --logout'
-fi
 
 # Zoxide
 alias cd="z"

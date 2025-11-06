@@ -143,3 +143,6 @@ for i = 1, 6 do
   keymap('n', '<leader>h' .. i, '<CMD>' .. i - 1 .. 'arga<CR>', { silent = true, desc = 'Add current to arg ' .. i })
   keymap('n', '<leader>hd' .. i, '<CMD>' .. i .. 'argd<CR>', { silent = true, desc = 'Delete current arg' })
 end
+
+-- Mini surround
+vim.keymap.set('x', 'S', [[:<C-u>lua MiniSurround.add('visual')<CR>]], { silent = true })

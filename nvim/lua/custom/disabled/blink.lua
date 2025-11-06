@@ -1,13 +1,8 @@
 return {
   'saghen/blink.cmp',
   event = 'VimEnter',
+  enabled = false,
   version = '1.*',
-  dependencies = {
-    {
-      'L3MON4D3/LuaSnip',
-      version = 'v2.*',
-    },
-  },
   ---@module 'blink.cmp'
   ---@type blink.cmp.Config
   opts = {
@@ -26,18 +21,9 @@ return {
 
     completion = { documentation = { auto_show = true } },
 
-    snippets = { preset = 'luasnip' },
-
     sources = {
-      default = { 'laravel', 'snippets', 'lsp', 'path', 'buffer', 'lazydev' },
+      default = { 'lsp', 'path', 'buffer' },
       providers = {
-        laravel = {
-          name = 'laravel',
-          module = 'laravel.blink_source',
-        },
-        snippets = {
-          score_offset = 1000,
-        },
         lsp = {
           score_offset = 100,
         },
@@ -54,12 +40,6 @@ return {
             end,
           },
           score_offset = 0,
-        },
-        lazydev = {
-          name = 'LazyDev',
-          module = 'lazydev.integrations.blink',
-          -- make lazydev completions top priority (see `:h blink.cmp`)
-          score_offset = 100,
         },
       },
     },

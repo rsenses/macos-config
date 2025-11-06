@@ -50,6 +50,7 @@ opt.virtualedit = 'block' -- Allow the cursor to move where there is no text in 
 vim.opt.diffopt = { 'internal', 'filler', 'closeoff', 'hiddenoff', 'algorithm:minimal' } -- Better diff options
 opt.list = true -- Show some invisible characters (tabs...)
 vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' } -- Set listchars
+-- vim.opt.listchars:append 'lead:│'
 opt.winborder = 'rounded'
 opt.background = 'light' -- or 'light'
 
@@ -111,3 +112,14 @@ vim.filetype.add {
     ['http'] = 'http',
   },
 }
+
+-- Faster find
+function _G.RgFindFiles(cmdarg, _cmdcomplete)
+  local fnames = vim.fn.systemlist 'rg --files --hidden --color=never --glob="!.git" --glob="!node_modules/" --glob="!vendor/"'
+  if #cmdarg == 0 then
+    return fnames
+  else
+    return vim.fn.matchfuzzy(fnames, cmdarg)
+  end
+end
+vim.o.findfunc = 'v:lua.RgFindFiles'

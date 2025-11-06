@@ -14,11 +14,11 @@ fi
 
 # PATHS ========================================
 if [[ $(uname) == "Darwin" ]]; then
-    export PATH="/opt/homebrew/opt/php@8.4/bin:/opt/homebrew/opt/php@8.4/sbin:$PATH"
-    export PATH="/opt/homebrew/bin:$PATH"
-    export PATH="/opt/homebrew/sbin:$PATH"
+    # export PATH="/opt/homebrew/opt/php@8.4/bin:/opt/homebrew/opt/php@8.4/sbin:$PATH"
+    # export PATH="/opt/homebrew/bin:$PATH"
+    # export PATH="/opt/homebrew/sbin:$PATH"
     export PATH="/Applications/Visual Studio Code - Insiders.app/Contents/Resources/app/bin:$PATH"
-    export PATH="/opt/homebrew/opt/mariadb/bin:$PATH"
+    # export PATH="/opt/homebrew/opt/mariadb/bin:$PATH"
     export PATH="$HOME/go/bin:$PATH"
 fi
 

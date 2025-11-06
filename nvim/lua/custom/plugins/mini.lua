@@ -1,6 +1,10 @@
 return {
   'nvim-mini/mini.nvim',
   config = function()
+    require('mini.extra').setup()
+
+    require('mini.icons').setup()
+
     -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Parenthesis
     -- - sd'   - [S]urround [D]elete [']quotes
     -- - sr)'  - [S]urround [R]eplace [)] [']
@@ -11,6 +15,75 @@ return {
 
     -- Movement helpers, for example ciq to change inside quotes, cib to change inside brackets, etc.
     require('mini.ai').setup()
+
+    require('mini.pick').setup()
+    -- Smart Find Files (usa fd o rg internamente)
+    vim.keymap.set('n', '<leader><leader>', function()
+      require('mini.pick').builtin.files {
+        source = {
+          cwd = vim.loop.cwd(),
+          exec = { 'fd', '--type', 'f', '--hidden', '--exclude', '.git', '--exclude', 'vendor', '--exclude', 'node_modules' },
+        },
+      }
+    end, { desc = 'Smart Find Files' })
+    -- Grep (contenido)
+    vim.keymap.set('n', '<leader>sg', '<Cmd>Pick grep_live<CR>', { desc = 'Grep' })
+    -- Grep palabra o selección visual
+    vim.keymap.set({ 'n', 'x' }, '<leader>sw', '<Cmd>Pick grep pattern="<cword>"<CR>', { desc = 'Visual selection or word' })
+    -- Diagnostics (workspace y buffer)
+    vim.keymap.set('n', '<leader>sD', '<Cmd>Pick diagnostic scope="all"<CR>', { desc = 'Diagnostics' })
+    vim.keymap.set('n', '<leader>sd', '<Cmd>Pick diagnostic scope="current"<CR>', { desc = 'Buffer Diagnostics' })
+    -- Registers
+    vim.keymap.set('n', '<leader>sr', '<Cmd>Pick registers<CR>', { desc = 'Registers' })
+    -- LSP: referencias / definiciones / símbolos
+    vim.keymap.set('n', 'grr', '<Cmd>Pick lsp scope="references"<CR>', { nowait = true, desc = 'References' })
+    -- vim.keymap.set('n', 'gd', extra.pickers.lsp_definitions, { desc = 'Goto Definition' })
+    vim.keymap.set('n', '<leader>ss', '<Cmd>Pick lsp scope="document_symbol"<CR>', { desc = 'LSP Symbols' })
+
+    -- Buff remove without destroying the window
+    local bufremove = require 'mini.bufremove'
+    vim.keymap.set('n', '<leader>bd', bufremove.delete, { desc = '[B]uffer [D]elete' })
+    vim.keymap.set('n', '<leader>bp', function()
+      for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+        if vim.api.nvim_buf_is_loaded(buf) then
+          bufremove.delete(buf)
+        end
+      end
+    end, { desc = '[B]uffer [P]urge (all)' })
+    vim.keymap.set('n', '<leader>bo', function()
+      local current = vim.api.nvim_get_current_buf()
+      for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+        if vim.api.nvim_buf_is_loaded(buf) and buf ~= current then
+          bufremove.delete(buf)
+        end
+      end
+    end, { desc = '[B]uffer delete [O]thers' })
+
+    -- Dashboard
+    local starter = require 'mini.starter'
+    starter.setup {
+      header = table.concat({
+        '   _       _        _           ',
+        ' _| |_____| |_  ___| |__  _   _ ',
+        "|_   _|_  / __|/ __| '_ \\| | | |",
+        '  |_|  /__\\__ \\ (__| | | | |_| |',
+        '           |___/\\___|_| |_|\\__, |',
+        '                            |___/ ',
+      }, '\n'),
+      items = {
+        starter.sections.recent_files(10, true),
+        { name = 'Edit config', action = 'e $MYVIMRC', section = 'Actions' },
+        { name = 'Find files', action = 'Pick files', section = 'Actions' },
+      },
+      footer = function()
+        -- Si quieres un mini "git status" en el footer (ligero):
+        local root = vim.fn.systemlist('git rev-parse --show-toplevel')[1] or ''
+        return (root ~= '' and ('Git: ' .. vim.fn.fnamemodify(root, ':t'))) or ''
+      end,
+    }
+
+    -- Mini notify
+    require('mini.notify').setup()
 
     -- GitSigns
     require('mini.diff').setup {
@@ -57,6 +130,43 @@ return {
         hex_color = hipatterns.gen_highlighter.hex_color(),
       },
     }
+
+    -- Mini completions
+    require('mini.completion').setup {
+      mappings = {
+        -- Force two-step/fallback completions
+        force_twostep = '<C-Space>',
+        force_fallback = '<A-Space>',
+
+        -- Scroll info/signature window down/up. When overriding, check for
+        -- conflicts with built-in keys for popup menu (like `<C-u>`/`<C-o>`
+        -- for 'completefunc'/'omnifunc' source function; or `<C-n>`/`<C-p>`).
+        scroll_down = '<C-n>',
+        scroll_up = '<C-p>',
+      },
+    }
+
+    -- Snippets
+    local gen_loader = require('mini.snippets').gen_loader
+    require('mini.snippets').setup {
+      snippets = {
+        -- Load custom file with global snippets first (adjust for Windows)
+        gen_loader.from_file '~/.config/nvim/snippets/global.json',
+
+        -- Load snippets based on current language by reading files from
+        -- "snippets/" subdirectories from 'runtimepath' directories.
+        gen_loader.from_lang {
+          extend = { blade = { 'php', 'html' } }, -- 🔹 blade hereda de php y html
+        },
+      },
+      mappings = {
+        expand = '<C-j>', -- expande snippet (y primer salto)
+        jump_next = '<Tab>', -- siguiente placeholder
+        jump_prev = '<S-Tab>', -- placeholder anterior
+        stop = '<C-e>',
+      },
+    }
+    require('mini.snippets').start_lsp_server()
 
     -- WhicihKey replacement
     local miniclue = require 'mini.clue'

@@ -1,5 +1,6 @@
 return {
   'gbprod/phpactor.nvim',
+  enabled = false,
   ft = 'php',
   dependencies = {
     'nvim-lua/plenary.nvim',

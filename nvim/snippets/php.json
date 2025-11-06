@@ -1,0 +1,126 @@
+{
+  "PHP tag": { "prefix": "php", "body": ["<?php", "$0", "?>"] },
+  "strict types": { "prefix": "strict", "body": "declare(strict_types=1);" },
+  "dd": { "prefix": "dd", "body": ["dd(${1});", "$0"] },
+  "dump": { "prefix": "dump", "body": ["dump(${1});", "$0"] },
+  "this arrow": { "prefix": "$this", "body": "$this->${0}" },
+  "echo": { "prefix": "echo", "body": "echo ${1};$0" },
+  "print_r": { "prefix": "pr", "body": "print_r(${1});$0" },
+  "var_dump": { "prefix": "vd", "body": "var_dump(${1});$0" },
+  "return": { "prefix": "ret", "body": "return ${1};$0" },
+  "try-catch": {
+    "prefix": "try",
+    "body": [
+      "try {",
+      "\t${1}",
+      "} catch (${2:\\Exception} $${3:e}) {",
+      "\t${0}",
+      "}"
+    ]
+  },
+  "fn": {
+    "prefix": "fn",
+    "body": "fn (${1:args}) => ${0};"
+  },
+
+  "foreach": {
+    "prefix": "foreach",
+    "body": ["foreach ($${1:items} as $${2:item}) {", "\t$0", "}"]
+  },
+
+  "if": {
+    "prefix": "if",
+    "body": ["if ($${1:cond}) {", "\t$0", "}"]
+  },
+
+  "arg": { "prefix": "arg", "body": "${1:Type} $${2:name}" },
+
+  "property": {
+    "prefix": "pro",
+    "body": "${1|public,protected,private,|} ${2:Type} $${3:name};$0"
+  },
+
+  "function": {
+    "prefix": "func",
+    "body": [
+      "${1|public,protected,private|} function ${2:name}(${3}): ${4:void}",
+      "{",
+      "\t$0",
+      "}"
+    ]
+  },
+
+  "constructor": {
+    "prefix": "__con",
+    "body": ["public function __construct(${1})", "{", "\t$0", "}"]
+  },
+
+  "class": {
+    "prefix": "class",
+    "body": [
+      "<?php",
+      "",
+      "declare(strict_types=1);",
+      "",
+      "namespace ${1:App};",
+      "",
+      "${2}",
+      "",
+      "class ${3:ClassName}",
+      "{",
+      "\t$0",
+      "}"
+    ]
+  },
+
+  "trait": {
+    "prefix": "trait",
+    "body": [
+      "<?php",
+      "",
+      "declare(strict_types=1);",
+      "",
+      "namespace ${1:App};",
+      "",
+      "${2}",
+      "",
+      "trait ${3:TraitName}",
+      "{",
+      "\t$0",
+      "}"
+    ]
+  },
+
+  "interface": {
+    "prefix": "interface",
+    "body": [
+      "<?php",
+      "",
+      "declare(strict_types=1);",
+      "",
+      "namespace ${1:App};",
+      "",
+      "${2}",
+      "",
+      "interface ${3:InterfaceName}",
+      "{",
+      "\t$0",
+      "}"
+    ]
+  },
+
+  "pest it": {
+    "prefix": "it",
+    "body": ["it('${1}', function (): void {", "\t$0", "});"]
+  },
+
+  "doc block": {
+    "prefix": "doc",
+    "body": ["/**", " * ${0}", " */"]
+  },
+
+  "phpstan var": {
+    "prefix": "var",
+    "body": "/** @var ${1:mixed} ${2:$var} ${0} */"
+  }
+}

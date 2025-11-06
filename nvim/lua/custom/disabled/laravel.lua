@@ -1,10 +1,12 @@
 return {
   'adibhanna/laravel.nvim',
+  enabled = false,
   dependencies = {
-    'MunifTanjim/nui.nvim',
-    'nvim-lua/plenary.nvim',
+    { 'MunifTanjim/nui.nvim', enabled = false },
+    { 'nvim-lua/plenary.nvim', enabled = false },
   },
   cmd = { 'Artisan', 'Composer', 'Laravel' },
+  ft = { 'blade', 'php' },
   keys = {
     { '<leader>la', ':Artisan<cr>', desc = 'Laravel Artisan' },
     { '<leader>lc', ':Composer<cr>', desc = 'Composer' },

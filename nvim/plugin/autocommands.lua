@@ -143,3 +143,62 @@ vim.api.nvim_create_autocmd('BufWritePre', {
     end
   end,
 })
+
+-- Enable native undotree
+-- vim.api.nvim_create_autocmd('FileType', {
+--   pattern = 'nvim-undotree',
+--   callback = function()
+--     vim.cmd.wincmd 'H'
+--     vim.api.nvim_win_set_width(0, 40)
+--   end,
+-- })
+
+-- === Simple indent guides con exclusión de buffers especiales ===
+local NS = vim.api.nvim_create_namespace 'simple_indent_guides'
+
+local function draw_indent_guides(bufnr)
+  bufnr = bufnr or 0
+
+  -- Evitar buffers especiales (como mini.starter, ayuda, etc.)
+  local bt = vim.bo[bufnr].buftype
+  local ft = vim.bo[bufnr].filetype
+  if bt ~= '' or ft == 'starter' or ft == 'help' or ft == 'TelescopePrompt' or ft == 'lazy' then
+    vim.api.nvim_buf_clear_namespace(bufnr, NS, 0, -1)
+    return
+  end
+
+  vim.api.nvim_buf_clear_namespace(bufnr, NS, 0, -1)
+
+  local first = vim.fn.line 'w0'
+  local last = vim.fn.line 'w$'
+  local sw = vim.bo[bufnr].shiftwidth
+  if sw == 0 then
+    sw = vim.bo[bufnr].tabstop
+  end
+  if sw == 0 then
+    sw = 4
+  end
+
+  for lnum = first, last do
+    local indent_cols = vim.fn.indent(lnum)
+    if indent_cols > 0 then
+      local levels = math.floor(indent_cols / sw)
+      for i = 1, levels do
+        local col = (i - 1) * sw
+        pcall(vim.api.nvim_buf_set_extmark, bufnr, NS, lnum - 1, col, {
+          virt_text = { { '│', 'NonText' } },
+          virt_text_pos = 'overlay',
+          hl_mode = 'combine',
+        })
+      end
+    end
+  end
+end
+
+vim.api.nvim_create_autocmd({ 'BufEnter', 'WinScrolled', 'CursorMoved', 'TextChanged', 'TextChangedI', 'InsertLeave' }, {
+  callback = function(args)
+    draw_indent_guides(args.buf)
+  end,
+})
+
+draw_indent_guides(0)
