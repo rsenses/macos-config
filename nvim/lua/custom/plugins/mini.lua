@@ -28,6 +28,8 @@ return {
 
     -- Picker
     -- Seleccionas con C-x o C-a para todos y Alt-Enter para mandar a quickfix
+    -- Refinamos con C-space dos veces (tmux) para volver a buscar sobre lo que ya hemos buscado
+    -- Refinamos los elementos marcados (C-x) con Alt-space
     local pick = require 'mini.pick'
     pick.setup()
 
