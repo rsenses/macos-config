@@ -26,8 +26,40 @@ return {
     -- Movement helpers, for example ciq to change inside quotes, cib to change inside brackets, etc.
     require('mini.ai').setup()
 
-    local mini_pick = require 'mini.pick'
-    mini_pick.setup()
+    local pick = require 'mini.pick'
+
+    local function send_to_quickfix()
+      local picker = pick.get_picker_state()
+      if not picker then
+        return
+      end
+
+      local items = picker.items or {}
+      if #items == 0 then
+        vim.notify('No hay items en el picker', vim.log.levels.WARN)
+        return
+      end
+
+      local qf_items = {}
+      for _, item in ipairs(items) do
+        table.insert(qf_items, {
+          text = item.text or tostring(item),
+          filename = item.path or item.file or nil,
+          lnum = item.lnum or 1,
+          col = item.col or 1,
+        })
+      end
+
+      vim.fn.setqflist(qf_items)
+      vim.cmd 'copen'
+      vim.notify('Items enviados a la Quickfix list (' .. #qf_items .. ' elementos)')
+    end
+
+    pick.setup {
+      mappings = {
+        ['<C-q>'] = send_to_quickfix,
+      },
+    }
     -- Smart Find Files (usa fd si está disponible)
     vim.keymap.set('n', '<leader><leader>', function()
       local opts
@@ -39,7 +71,7 @@ return {
           },
         }
       end
-      mini_pick.builtin.files(opts)
+      pick.builtin.files(opts)
     end, { desc = 'Smart Find Files' })
     -- Grep (contenido)
     vim.keymap.set('n', '<leader>sg', '<Cmd>Pick grep_live<CR>', { desc = 'Grep' })
