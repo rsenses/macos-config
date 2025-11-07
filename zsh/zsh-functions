@@ -1,0 +1,52 @@
+# ssh
+ss () {
+  local ssh_config="$HOME/.ssh/config"
+  if [[ ! -f $ssh_config ]]; then
+    printf 'ss: no encuentro %s\n' "$ssh_config" >&2
+    return 1
+  fi
+
+  if ! command -v fzf >/dev/null 2>&1; then
+    printf 'ss: fzf no está instalado\n' >&2
+    return 1
+  fi
+
+  local server
+  server=$(grep -E '^Host ' "$ssh_config" | awk '{print $2}' | grep -vE '(^\*|!|[*?])' | fzf)
+  if [[ -n $server ]]; then
+    ssh "$server"
+  fi
+}
+
+# resize images
+resize() {
+  if [[ $# -lt 3 ]]; then
+      echo "Uso: resize <imagen> <ancho_resize_px> <tamaño_final (ej. 250x250 o 250x300)> [color_fondo] (en hexadecimal o none para transparente, por defecto blanco)"
+    echo "Ejemplo: resize logo.png 200 250x250 white"
+    return 1
+  fi
+
+  local input="$1"
+  local resize_width="$2"
+  local final_size="$3"
+  local bg="${4:-white}"  # fondo blanco por defecto
+
+  # Obtener nombre base y extensión
+  local base="${input%.*}"
+  local ext="${input##*.}"
+
+  # Generar nombre de salida: nombre-<resize>-<final>.ext
+  local output="${base}-${resize_width}.${ext}"
+
+  magick "$input" \
+    -strip -colorspace sRGB \
+    -resize "${resize_width}x" \
+    -filter Lanczos \
+    -unsharp 0x1 \
+    -background "$bg" \
+    -gravity center \
+    -extent "$final_size" \
+    "$output"
+
+  echo "✅ Imagen generada: $output"
+}

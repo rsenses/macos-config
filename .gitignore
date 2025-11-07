@@ -5,9 +5,8 @@
 .DS_Store
 vifminfo.json
 zsh/plugins
-zsh/.zshrc
-zsh/.zprofile
 lazy-lock.json
 tmux/plugins
 .aider*
 .secrets
+.zshvars
