@@ -1,0 +1,81 @@
+if command -v bat >/dev/null 2>&1; then
+  export FZF_DEFAULT_OPTS='--multi --ansi --preview="bat --color=always {}"'
+else
+  export FZF_DEFAULT_OPTS='--multi --ansi --preview="cat {}"'
+fi
+
+if command -v fd >/dev/null 2>&1; then
+  export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
+  export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
+else
+  export FZF_ALT_C_COMMAND="command find . -type d -not -path '*/.git/*'"
+  if command -v rg >/dev/null 2>&1; then
+    export FZF_DEFAULT_COMMAND="rg --files --hidden -g '!.git/*'"
+  else
+    export FZF_DEFAULT_COMMAND="command find . -type f -not -path '*/.git/*'"
+  fi
+fi
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+
+# Use fd (https://github.com/sharkdp/fd) for listing path candidates.
+# - The first argument to the function ($1) is the base path to start traversal
+# - See the source code (completion.{bash,zsh}) for the details.
+_fzf_compgen_path() {
+  if command -v fd >/dev/null 2>&1; then
+    fd --hidden --exclude .git . "$1"
+  else
+    command find "$1" -name .git -prune -o -type f -print 2>/dev/null
+  fi
+}
+
+# Use fd to generate the list for directory completion
+_fzf_compgen_dir() {
+  if command -v fd >/dev/null 2>&1; then
+    fd --type=d --hidden --exclude .git . "$1"
+  else
+    command find "$1" -name .git -prune -o -type d -print 2>/dev/null
+  fi
+}
+
+if command -v bat >/dev/null 2>&1; then
+  export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always --line-range :500 {}'"
+else
+  export FZF_CTRL_T_OPTS="--preview 'cat {}'"
+fi
+
+if command -v eza >/dev/null 2>&1; then
+  export FZF_ALT_C_OPTS="--preview 'eza --tree --color=always {} | head -200'"
+else
+  export FZF_ALT_C_OPTS="--preview 'ls -R {} | head -200'"
+fi
+
+# Advanced customization of fzf options via _fzf_comprun function
+# - The first argument to the function is the name of the command.
+# - You should make sure to pass the rest of the arguments to fzf.
+_fzf_comprun() {
+  local command=$1
+  shift
+
+  local default_preview
+  if command -v bat >/dev/null 2>&1; then
+    default_preview="bat -n --color=always --line-range :500 {}"
+  else
+    default_preview="cat {}"
+  fi
+
+  case "$command" in
+    export|unset)
+      fzf --preview "eval 'echo \$'{}" "$@"
+      ;;
+    ssh)
+      if command -v dig >/dev/null 2>&1; then
+        fzf --preview 'dig {}' "$@"
+      else
+        fzf --preview 'printf "Host: %s\n" {}' "$@"
+      fi
+      ;;
+    *)
+      fzf --preview "$default_preview" "$@"
+      ;;
+  esac
+}

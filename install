@@ -1,64 +1,111 @@
-#!/usr/bin/env sh
+#!/bin/bash
 
-DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Script para instalar Xcode, Homebrew, Zsh, Tmux y Neovim
 
-rm -rf $HOME/.config/zsh
-rm -rf $HOME/.zshenv
-ln -sf $DOTFILES/zsh/zshrc $DOTFILES/zsh/.zshrc
-ln -sf $DOTFILES/zsh/zshenv $HOME/.zshenv
-ln -s $DOTFILES/zsh $HOME/.config/zsh
+# Función para verificar si un paquete está instalado
+check_package() {
+  local package="$1"
+  if ! command -v "$package" &> /dev/null; then
+    echo "No se encuentra el paquete '$package'. Instalando..."
+    if command -v xcode &> /dev/null; then
+      echo "Xcode ya está instalado."
+    else
+      # Instalar Xcode
+      echo "Instalando Xcode..."
+      sudo xcode-select --install
+      if [ $? -eq 0 ]; then
+        echo "Xcode instalado correctamente."
+      else
+        echo "Error al instalar Xcode."
+        exit 1
+      fi
+    fi
+  fi
+}
 
-rm -rf $HOME/.config/nvim
-ln -s $DOTFILES/nvim $HOME/.config/nvim
+# Función para instalar un paquete usando Homebrew
+install_package() {
+  local package="$1"
+  echo "Instalando '$package'..."
+  brew install "$package"
+  if [ $? -eq 0 ]; then
+    echo "'$package' instalado correctamente."
+  else
+    echo "Error al instalar '$package'."
+    exit 1
+  fi
+}
 
-rm -rf $HOME/.config/tmux
-ln -sf $DOTFILES/tmux $HOME/.config/tmux
+# --- Comprobación e instalación de Xcode ---
+check_package "xcode"
+if [ $? -eq 0 ]; then
+  echo "Xcode ya está instalado. Pasando a la siguiente etapa."
+else
+  echo "Xcode no está instalado.  Instalando..."
+  sudo xcode-select --install
+  if [ $? -eq 0 ]; then
+    echo "Xcode instalado correctamente."
+  else
+    echo "Error al instalar Xcode."
+    exit 1
+  fi
+fi
 
-rm -rf $HOME/.config/ghostty
-ln -sf $DOTFILES/ghostty $HOME/.config/ghostty
+# --- Comprobación e instalación de Homebrew ---
+check_package "homebrew"
+if [ $? -eq 0 ]; then
+  echo "Homebrew ya está instalado. Pasando a la siguiente etapa."
+else
+  echo "Homebrew no está instalado.  Instalando..."
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  if [ $? -eq 0 ]; then
+    echo "Homebrew instalado correctamente."
+  else
+    echo "Error al instalar Homebrew."
+    exit 1
+  fi
+fi
 
-rm -rf $HOME/.config/borders
-ln -sf $DOTFILES/borders $HOME/.config/borders
+# --- Instalación de Zsh, Tmux y Neovim usando Homebrew Stow ---
+echo "Instalando Zsh, Tmux y Neovim usando Homebrew Stow..."
 
-rm -rf $HOME/.config/spotify_player
-ln -sf $DOTFILES/spotify_player $HOME/.config/spotify_player
+# Instalar Zsh
+install_package "zsh"
+if [ $? -eq 0 ]; then
+  echo "Zsh instalado correctamente."
+else
+  echo "Error al instalar Zsh."
+  exit 1
+fi
 
-rm -rf $HOME/.config/sesh
-ln -sf $DOTFILES/sesh $HOME/.config/sesh
+# Instalar Tmux
+install_package "tmux"
+if [ $? -eq 0 ]; then
+  echo "Tmux instalado correctamente."
+else
+  echo "Error al instalar Tmux."
+  exit 1
+fi
 
-rm -rf $HOME/.gitconfig
-ln -sf $DOTFILES/git/gitconfig $HOME/.gitconfig
+# Instalar Neovim
+install_package "neovim"
+if [ $? -eq 0 ]; then
+  echo "Neovim instalado correctamente."
+else
+  echo "Error al instalar Neovim."
+  exit 1
+fi
 
-rm -rf $HOME/.gitignore
-ln -sf $DOTFILES/git/gitignore $HOME/.gitignore
+echo "Instalación completada."
 
-mkdir -p $HOME/.local/bin
-
-rm -rf $HOME/.local/bin/ide
-ln -sf $DOTFILES/scripts/ide $HOME/.local/bin/ide
-chmod +x $HOME/.local/bin/ide
-
-rm -rf $HOME/.local/bin/home
-ln -sf $DOTFILES/scripts/home $HOME/.local/bin/home
-chmod +x $HOME/.local/bin/home
-
-rm -rf $HOME/.tmux-cht-languages
-ln -sf $DOTFILES/tmux/.tmux-cht-languages $HOME/.tmux-cht-languages
-
-rm -rf $HOME/.tmux-cht-command
-ln -sf $DOTFILES/tmux/.tmux-cht-command $HOME/.tmux-cht-command
-
-rm -rf $HOME/.local/bin/tmux-cht.sh
-ln -sf $DOTFILES/scripts/tmux-cht.sh $HOME/.local/bin/tmux-cht.sh
-chmod +x $HOME/.local/bin/tmux-cht.sh
-
-rm -rf $HOME/.local/bin/open-github.sh
-ln -sf $DOTFILES/scripts/open-github.sh $HOME/.local/bin/open-github.sh
-chmod +x $HOME/.local/bin/open-github.sh
-
-# Phpactor
-rm -rf $HOME/.config/phpactor
-ln -s $DOTFILES/phpactor $HOME/.config/phpactor
-
-rm -rf $HOME/.editorconfig
-ln -sf $DOTFILES/.editorconfig $HOME/.editorconfig
+stow -R nvim
+stow -R wezterm
+stow -R zsh
+stow -R tmux
+stow -R ghostty
+stow -R spotify_player
+stow -R sesh
+stow -R git
+stow -R editorconfig
+stow -R bin
+stow -R phpactor

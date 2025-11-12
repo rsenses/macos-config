@@ -1,0 +1,11 @@
+{
+  "Todo": { "prefix": "todo", "body": "- [ ] ${0}" },
+  "Heading 1": { "prefix": "h1", "body": "# ${0}" },
+  "Heading 2": { "prefix": "h2", "body": "## ${0}" },
+  "Code block": {
+    "prefix": "code",
+    "body": ["``` ${1:lang}", "${0}", "```"]
+  },
+  "Link": { "prefix": "link", "body": "[${1:text}](${2:url})" },
+  "Image": { "prefix": "img", "body": "![${1:alt}](${2:path})" }
+}

@@ -1,0 +1,51 @@
+# Bookmarks
+alias help='tldr --list | fzf --preview "tldr {1}" --preview-window=right,70% | xargs tldr'
+
+# Colorize grep output (good for log files)
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+
+# Colorize diff output
+alias diff='diff --color=auto'
+
+# confirm before overwriting something
+alias cp="cp -i"
+alias mv='mv -i'
+alias rm='rm -iv'
+
+# i can't remove vim in mac
+alias vim='nvim'
+
+# Recursively delete `.DS_Store` files
+alias dsstore="find . -name '*.DS_Store' -type f -ls -delete"
+
+# Update installed Homebrew, npm, composer and zsh
+alias brew-update="brew -v update; brew upgrade --force-bottle; brew cleanup; brew doctor"
+alias composer-update='composer global update'
+alias npm-update='npm update -g; npm cache clean --force'
+alias update="brew-update; composer-update; npm-update"
+
+# ImageOptim, se puede usar . o nombre de archivo
+alias imageoptim="open -a ImageOptim"
+
+# Python
+alias python='/opt/homebrew/bin/python3'
+
+# PHP
+alias php83='/opt/homebrew/opt/php@8.3/bin/php'
+alias php82='/opt/homebrew/opt/php@8.2/bin/php'
+alias php81='/opt/homebrew/opt/php@8.1/bin/php'
+# alias php80='/opt/homebrew/opt/php@8.0/bin/php'
+alias php7='/opt/homebrew/opt/php@7.4/bin/php'
+
+# less con color
+alias less='less -r'
+
+# executables
+alias ls='ls --color=auto'
+alias ll='ls -lAF'
+alias cat='bat --plain --wrap character'
+
+#weather
+alias weather='curl wttr.in/Madrid'

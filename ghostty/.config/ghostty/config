@@ -1,0 +1,33 @@
+# shell-integration = none
+# shell-integration = zsh
+# shell-integration-features = true
+initial-command = /opt/homebrew/bin/zsh -c '/opt/homebrew/bin/tmux a -t downloads'
+
+copy-on-select = clipboard
+
+window-save-state = always
+
+# Only for Iosevka
+font-family = IosevkaTerm Nerd Font Mono
+font-size = 17
+font-feature = -calt
+font-feature = -liga
+font-feature = -dlig
+# end Iosevka
+# Only for 0xProto
+# font-family = 0xProto
+# font-size = 15
+# adjust-cell-width = "-10%"
+# end 0xProto
+font-style = Regular
+
+# theme = base16-grayscale-light
+# theme = zenbones
+theme = kanso-pearl
+
+window-decoration = true
+window-theme = light
+macos-titlebar-style = hidden
+
+# macos-option-as-alt = false
+macos-option-as-alt = "right"

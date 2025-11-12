@@ -1,0 +1,14 @@
+completion.dedupe: true
+completion.dedupe_match_fqn: true
+code_transform.class_new.variants:
+    laravel-test: laravel-test
+    shift-task-test: shift-task-test
+    shift-task: shift-task
+language_server_php_cs_fixer.enabled: false
+language_server_psalm.enabled: false
+phpunit.enabled: true
+composer.autoloader_path: ["%project_root%/vendor/autoload.php"]
+language_server_worse_reflection.inlay_hints.enable: false
+language_server_worse_reflection.inlay_hints.params: false
+language_server_worse_reflection.inlay_hints.types: false
+symfony.enabled: true

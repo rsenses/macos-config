@@ -1,0 +1,48 @@
+{
+  "@php": {
+    "prefix": "@php",
+    "body": ["@php", "${0}", "@endphp"]
+  },
+
+  "@if": {
+    "prefix": "@if",
+    "body": ["@if (${1:cond})", "${0}", "@endif"]
+  },
+
+  "@ifelse": {
+    "prefix": "@ifelse",
+    "body": ["@if (${1:cond})", "${2}", "@else", "${0}", "@endif"]
+  },
+
+  "@foreach": {
+    "prefix": "@foreach",
+    "body": ["@foreach ($${1:items} as $${2:item})", "${0}", "@endforeach"]
+  },
+
+  "Ternary inline": {
+    "prefix": "if",
+    "body": "{{ ${1:cond} ? ${2} : ${0} }}"
+  },
+
+  "route": {
+    "prefix": "route",
+    "body": "{{ route('${1:name}'${0}) }}"
+  },
+
+  "@can": {
+    "prefix": "@can",
+    "body": ["@can (${1:permission}, ${2:model})", "${0}", "@endcan"]
+  },
+
+  "@script": {
+    "prefix": "@script",
+    "body": [
+      "@script",
+      "\t<script type=\"module\">",
+      "\t\t// ${0}",
+      "\t</script>",
+      "@endscript"
+    ],
+    "description": "Bloque @script para livewire con <script type=\"module\">"
+  }
+}

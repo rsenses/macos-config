@@ -1,0 +1,12 @@
+[[session]]
+name = "dotfiles"
+path = "~/dev/contrib/dotfiles"
+
+[[session]]
+name = "notes"
+path = "~/Nextcloud/Documents/notes"
+
+[[session]]
+name = "downloads"
+path = "~/Downloads"
+disable_startup_command = true
