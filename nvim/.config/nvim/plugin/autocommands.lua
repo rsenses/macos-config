@@ -1,5 +1,10 @@
-local api = vim.api
 local default = vim.api.nvim_create_augroup('user_default', { clear = true })
+
+-- open help in vertical split
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'help',
+  command = 'wincmd L',
+})
 
 -- Restore last cursor position when reopening a file
 local last_cursor_group = vim.api.nvim_create_augroup('LastCursorGroup', {})
@@ -14,7 +19,7 @@ vim.api.nvim_create_autocmd('BufReadPost', {
   end,
 })
 
-api.nvim_create_autocmd({ 'FileType' }, {
+vim.api.nvim_create_autocmd({ 'FileType' }, {
   desc = 'Force commentstring to include spaces',
   group = default,
   callback = function(event)
@@ -23,11 +28,46 @@ api.nvim_create_autocmd({ 'FileType' }, {
   end,
 })
 
-api.nvim_create_autocmd('TextYankPost', {
-  desc = 'Highlight when yanking (copying) text',
-  group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
+-- no auto continue comments on new line
+vim.api.nvim_create_autocmd('FileType', {
+  group = vim.api.nvim_create_augroup('no_auto_comment', {}),
   callback = function()
-    vim.hl.on_yank()
+    vim.opt_local.formatoptions:remove { 'c', 'r', 'o' }
+  end,
+})
+
+-- highlight yank
+vim.api.nvim_create_autocmd('TextYankPost', {
+  group = vim.api.nvim_create_augroup('highlight_yank', { clear = true }),
+  pattern = '*',
+  desc = 'highlight selection on yank',
+  callback = function()
+    vim.highlight.on_yank { timeout = 200, visual = true }
+  end,
+})
+
+-- syntax highlighting for dotenv files
+vim.api.nvim_create_autocmd('BufRead', {
+  group = vim.api.nvim_create_augroup('dotenv_ft', { clear = true }),
+  pattern = { '.env', '.env.*' },
+  callback = function()
+    vim.bo.filetype = 'dosini'
+  end,
+})
+
+-- show cursorline only in active window enable
+vim.api.nvim_create_autocmd({ 'WinEnter', 'BufEnter' }, {
+  group = vim.api.nvim_create_augroup('active_cursorline', { clear = true }),
+  callback = function()
+    vim.opt_local.cursorline = true
+  end,
+})
+
+-- show cursorline only in active window disable
+vim.api.nvim_create_autocmd({ 'WinLeave', 'BufLeave' }, {
+  group = 'active_cursorline',
+  callback = function()
+    vim.opt_local.cursorline = false
   end,
 })
 
@@ -37,7 +77,7 @@ local function yank_shift()
     vim.fn.setreg(tostring(i), vim.fn.getreg(tostring(i - 1)))
   end
 end
-api.nvim_create_autocmd('TextYankPost', {
+vim.api.nvim_create_autocmd('TextYankPost', {
   callback = function()
     local event = vim.v.event
     if event.operator == 'y' then
@@ -121,17 +161,6 @@ vim.api.nvim_create_autocmd('VimResized', {
   end,
 })
 
--- Create directories when saving files
-vim.api.nvim_create_autocmd('BufWritePre', {
-  group = default,
-  callback = function()
-    local dir = vim.fn.expand '<afile>:p:h'
-    if vim.fn.isdirectory(dir) == 0 then
-      vim.fn.mkdir(dir, 'p')
-    end
-  end,
-})
-
 -- Enable native undotree
 -- vim.api.nvim_create_autocmd('FileType', {
 --   pattern = 'nvim-undotree',
@@ -142,66 +171,27 @@ vim.api.nvim_create_autocmd('BufWritePre', {
 -- })
 
 -- === Simple indent guides con exclusión de buffers especiales ===
-local NS = vim.api.nvim_create_namespace 'simple_indent_guides'
+local augroup = vim.api.nvim_create_augroup('indentlines', {})
 
-local function draw_indent_guides(bufnr)
-  bufnr = bufnr or 0
-
-  -- Evitar buffers especiales (como mini.starter, ayuda, etc.)
-  local bt = vim.bo[bufnr].buftype
-  local ft = vim.bo[bufnr].filetype
-  if bt ~= '' or ft == 'starter' or ft == 'help' or ft == 'TelescopePrompt' or ft == 'lazy' then
-    vim.api.nvim_buf_clear_namespace(bufnr, NS, 0, -1)
-    return
-  end
-
-  vim.api.nvim_buf_clear_namespace(bufnr, NS, 0, -1)
-
-  local first = vim.fn.line 'w0'
-  local last = vim.fn.line 'w$'
-  local sw = vim.bo[bufnr].shiftwidth
+local function guides(sw)
   if sw == 0 then
-    sw = vim.bo[bufnr].tabstop
+    sw = vim.bo.tabstop
   end
-  if sw == 0 then
-    sw = 4
-  end
-
-  for lnum = first, last do
-    local indent_cols = vim.fn.indent(lnum)
-    if indent_cols > 0 then
-      local levels = math.floor(indent_cols / sw)
-      for i = 1, levels do
-        local col = (i - 1) * sw
-        pcall(vim.api.nvim_buf_set_extmark, bufnr, NS, lnum - 1, col, {
-          virt_text = { { '│', 'NonText' } },
-          virt_text_pos = 'overlay',
-          hl_mode = 'combine',
-        })
-      end
-    end
-  end
+  local char = '┆' .. (' '):rep(sw - 1)
+  vim.opt_local.listchars:append { leadmultispace = char }
 end
 
-local indent_pending = {}
-local function schedule_indent_guides(bufnr)
-  bufnr = bufnr or vim.api.nvim_get_current_buf()
-  if indent_pending[bufnr] then
-    return
-  end
-  indent_pending[bufnr] = true
-  vim.schedule(function()
-    indent_pending[bufnr] = nil
-    if vim.api.nvim_buf_is_valid(bufnr) then
-      draw_indent_guides(bufnr)
-    end
-  end)
-end
-
-vim.api.nvim_create_autocmd({ 'BufEnter', 'WinScrolled', 'CursorMoved', 'TextChanged', 'TextChangedI', 'InsertLeave' }, {
-  callback = function(args)
-    schedule_indent_guides(args.buf)
+vim.api.nvim_create_autocmd('OptionSet', {
+  pattern = 'shiftwidth',
+  group = augroup,
+  callback = function()
+    guides(vim.v.option_new)
   end,
 })
 
-schedule_indent_guides(0)
+vim.api.nvim_create_autocmd('BufWinEnter', {
+  group = augroup,
+  callback = function(args)
+    guides(vim.bo[args.buf].shiftwidth)
+  end,
+})

@@ -12,7 +12,6 @@ opt.cmdheight = 0 -- hide commmand line until needed
 -- Basic Settings
 opt.number = true -- But show the actual number for the line we're on
 opt.relativenumber = true -- Show line numbers
-opt.cursorline = true -- Highlight the current line
 opt.scrolloff = 999 -- Make it so there the cursor is always in the middle
 opt.wrap = true
 
