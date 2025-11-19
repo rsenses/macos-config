@@ -61,12 +61,6 @@ return {
   },
   settings = {
     tailwindCSS = {
-      experimental = {
-        classRegex = {
-          '@?class\\(([^]*)\\)',
-          "'([^']*)'",
-        },
-      },
       validate = true,
       lint = {
         cssConflict = 'warning',
@@ -86,12 +80,26 @@ return {
       },
       includeLanguages = {
         eelixir = 'html-eex',
+        elixir = 'phoenix-heex',
         eruby = 'erb',
-        templ = 'html',
+        heex = 'phoenix-heex',
         htmlangular = 'html',
+        templ = 'html',
       },
     },
   },
+  before_init = function(_, config)
+    if not config.settings then
+      config.settings = {}
+    end
+    if not config.settings.editor then
+      config.settings.editor = {}
+    end
+    if not config.settings.editor.tabSize then
+      config.settings.editor.tabSize = vim.lsp.util.get_effective_tabstop()
+    end
+  end,
+  workspace_required = true,
   root_markers = {
     '.git',
     'tailwind.config.js',

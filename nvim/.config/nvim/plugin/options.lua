@@ -91,8 +91,7 @@ g.spellfile_URL = 'https://ftp.nluug.nl/vim/runtime/spell/'
 vim.opt.spelllang = { 'es_es', 'en_us' }
 
 -- Completions
-vim.opt.completeopt = { 'menu', 'menuone', 'noinsert', 'popup' }
--- opt.shortmess:append 'c'
+vim.opt.completeopt = { 'menu', 'menuone', 'noinsert', 'popup', 'fuzzy', 'nosort' }
 opt.wildmenu = true -- Enable command-line completion menu
 opt.wildmode = 'longest:full,full' -- Completion mode for command-line
 opt.wildignorecase = true -- Case-insensitive tab completion in commands

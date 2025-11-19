@@ -3,17 +3,8 @@ return {
   cmd = { 'lua-language-server' },
   settings = {
     Lua = {
-      runtime = {
-        version = 'LuaJIT',
-      },
-      diagnostics = {
-        globals = {
-          'vim',
-          'require',
-        },
-      },
       workspace = {
-        library = vim.tbl_extend('keep', { vim.env.VIMRUNTIME, '${3rd}/luv/library' }, vim.api.nvim_get_runtime_file('', true)),
+        library = vim.api.nvim_get_runtime_file('', true),
       },
       telemetry = {
         enable = false,
@@ -24,5 +15,15 @@ return {
     },
   },
   filetypes = { 'lua' },
-  root_markers = { '.luarc.json', 'luarc.lua', '.git' },
+  root_markers = {
+    '.emmyrc.json',
+    '.luarc.json',
+    '.luarc.jsonc',
+    '.luacheckrc',
+    '.stylua.toml',
+    'stylua.toml',
+    'selene.toml',
+    'selene.yml',
+    '.git',
+  },
 }

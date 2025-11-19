@@ -33,19 +33,25 @@ return {
     local pick = require 'mini.pick'
     pick.setup()
 
-    -- Smart Find Files (usa fd si está disponible)
     vim.keymap.set('n', '<leader><leader>', function()
-      local opts
-      if vim.fn.executable 'fd' == 1 then
-        opts = {
-          source = {
-            cwd = vim.loop.cwd(),
-            exec = { 'fd', '--type', 'f', '--hidden', '--exclude', '.git', '--exclude', 'vendor', '--exclude', 'node_modules' },
-          },
-        }
-      end
-      pick.builtin.files(opts)
-    end, { desc = 'Smart Find Files' })
+      local cwd = vim.fn.getcwd()
+      pick.builtin.cli({
+        command = {
+          'fd',
+          '--type',
+          'f',
+          '--hidden',
+          '--no-ignore',
+          '--exclude',
+          '.git',
+          '--exclude',
+          'node_modules',
+          '--exclude',
+          'vendor',
+        },
+      }, { source = { cwd = cwd } })
+    end, { desc = 'Find files' })
+
     -- Grep (contenido)
     vim.keymap.set('n', '<leader>sg', '<Cmd>Pick grep_live<CR>', { desc = 'Grep' })
     -- Grep palabra o selección visual
@@ -152,11 +158,11 @@ return {
 
     -- Mini completions
     require('mini.completion').setup {
+      fallback_action = '<C-f>',
       mappings = {
         -- Force two-step/fallback completions
         force_twostep = '<C-Space>',
         force_fallback = '<A-Space>',
-
         -- Scroll info/signature window down/up. When overriding, check for
         -- conflicts with built-in keys for popup menu (like `<C-u>`/`<C-o>`
         -- for 'completefunc'/'omnifunc' source function; or `<C-n>`/`<C-p>`).
