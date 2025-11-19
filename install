@@ -103,7 +103,6 @@ stow -R wezterm
 stow -R zsh
 stow -R tmux
 stow -R ghostty
-stow -R spotify_player
 stow -R sesh
 stow -R git
 stow -R editorconfig
