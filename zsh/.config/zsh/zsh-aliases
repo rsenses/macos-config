@@ -48,4 +48,4 @@ alias ll='ls -lAF'
 alias cat='bat --plain --wrap character'
 
 #weather
-alias weather='curl wttr.in/Madrid'
+alias weather='curl "wttr.in/Leganes?T&lang=es"'
