@@ -1,6 +1,7 @@
 -- Autoformat
 return {
   'stevearc/conform.nvim',
+  enabled = true,
   event = { 'BufWritePre' },
   cmd = { 'ConformInfo' },
   keys = {
@@ -13,11 +14,14 @@ return {
       desc = '[C]ode [F]ormat LSP',
     },
   },
+  init = function()
+    vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
+  end,
   opts = {
     async = true,
     log_level = vim.log.levels.WARN,
     formatters = {
-      prettier = {
+      prettierd = {
         prepend_args = { '--ignore-unknown' },
       },
     },
@@ -35,7 +39,7 @@ return {
 
       local bufname = vim.api.nvim_buf_get_name(bufnr)
 
-      if bufname:match '/notifications/email.blade.php' then
+      if bufname:match '/notifications/email%.blade%.php$' then
         return
       else
         return {
@@ -47,25 +51,22 @@ return {
 
     formatters_by_ft = {
       lua = { 'stylua' },
-      javascript = { 'prettier', stop_after_first = true },
-      typescript = { 'prettier', stop_after_first = true },
-      typescriptreact = { 'prettier', stop_after_first = true },
-      vue = { 'prettier', stop_after_first = true },
-      css = { 'prettier', stop_after_first = true },
-      scss = { 'prettier', stop_after_first = true },
-      less = { 'prettier', stop_after_first = true },
-      html = { 'prettier', stop_after_first = true },
-      twig = { 'prettier', stop_after_first = true },
-      json = { 'prettier', stop_after_first = true },
-      jsonc = { 'prettier', stop_after_first = true },
-      yaml = { 'prettier', stop_after_first = true },
-      markdown = { 'prettier', stop_after_first = true },
+      javascript = { 'prettierd' },
+      typescript = { 'prettierd' },
+      typescriptreact = { 'prettierd' },
+      vue = { 'prettierd' },
+      css = { 'prettierd' },
+      scss = { 'prettierd' },
+      less = { 'prettierd' },
+      html = { 'prettierd' },
+      twig = { 'prettierd' },
+      json = { 'prettierd' },
+      jsonc = { 'prettierd' },
+      yaml = { 'prettierd' },
+      markdown = { 'prettierd' },
       php = { 'pint', 'php_cs_fixer', stop_after_first = true },
-      blade = { 'prettier', stop_after_first = true },
+      blade = { 'prettierd' },
     },
     notify_on_error = true,
-    init = function()
-      vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
-    end,
   },
 }
