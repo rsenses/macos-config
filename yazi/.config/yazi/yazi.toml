@@ -1,0 +1,25 @@
+[mgr]
+show_hidden = true
+show_symlinks = true
+
+[opener]
+
+# Imágenes: Vista Previa (por defecto)
+[[opener.image-preview]]
+run  = 'open -a "Preview.app" "$@"'
+desc = "Vista Previa"
+for  = "macos"
+
+# Imágenes: ImageOptim (alternativa)
+[[opener.image-optim]]
+run  = 'open -a "ImageOptim.app" "$@"'
+desc = "ImageOptim"
+for  = "macos"
+
+[open]
+
+# Si ya tienes reglas, añade solo este bloque extra.
+# Esta regla aplica para cualquier archivo con mime image/*
+[[open.prepend_rules]]
+mime = "image/*"
+use  = [ "image-preview", "image-optim" ]
