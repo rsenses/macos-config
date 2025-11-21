@@ -108,3 +108,5 @@ stow -R git
 stow -R editorconfig
 stow -R bin
 stow -R phpactor
+stow -R yazi
+stow -R ripgrep

@@ -53,7 +53,7 @@ return {
     end, { desc = 'Find files' })
 
     -- Grep (contenido)
-    vim.keymap.set('n', '<leader>sg', '<Cmd>Pick grep_live<CR>', { desc = 'Grep' })
+    vim.keymap.set('n', '<leader>sg', '<Cmd>Pick grep_live tool="rg"<CR>', { desc = 'Grep' })
     -- Grep palabra o selección visual
     vim.keymap.set({ 'n', 'x' }, '<leader>sw', '<Cmd>Pick grep pattern="<cword>"<CR>', { desc = 'Visual selection or word' })
     -- Diagnostics (workspace y buffer)

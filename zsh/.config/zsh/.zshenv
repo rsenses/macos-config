@@ -6,6 +6,7 @@ export EDITOR=/opt/homebrew/bin/nvim
 export HOMEBREW_PREFIX=/opt/homebrew
 export OLLAMA_API_BASE=http://127.0.0.1:11434
 export SSH_AUTH_SOCK=/Users/rubensilvarodriguez/.bitwarden-ssh-agent.sock
+export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
 
 typeset -gU path PATH
 
