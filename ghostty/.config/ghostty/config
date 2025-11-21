@@ -1,7 +1,7 @@
 # shell-integration = none
 # shell-integration = zsh
 # shell-integration-features = true
-initial-command = /opt/homebrew/bin/zsh -c '/opt/homebrew/bin/tmux a -t downloads'
+initial-command = /opt/homebrew/bin/zsh -c '/opt/homebrew/bin/tmux a -t dotfiles'
 
 copy-on-select = clipboard
 
