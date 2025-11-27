@@ -18,7 +18,7 @@ return {
     -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Parenthesis
     -- - sd'   - [S]urround [D]elete [']quotes
     -- - sr)'  - [S]urround [R]eplace [)] [']
-    require('mini.surround').setup { n_lines = 500 }
+    -- require('mini.surround').setup { n_lines = 500 }
 
     -- "gS" to toggle splitjoin on objects, arrays, etc.
     require('mini.splitjoin').setup()

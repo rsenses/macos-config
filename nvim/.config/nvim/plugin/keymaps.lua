@@ -22,6 +22,12 @@ vim.keymap.set({ 'n', 'v' }, '<leader>d', [["_d]], { desc = '[D]elete to clipboa
 -- vim.keymap.set('i', '(', '()<left>')
 -- vim.keymap.set('i', '[', '[]<left>')
 -- vim.keymap.set('i', '{', '{}<left>')
+-- surround
+vim.keymap.set('x', '(', 'c(<ESC>pa)')
+vim.keymap.set('x', "'", "c'<ESC>pa'")
+vim.keymap.set('x', '"', 'c"<ESC>pa"')
+vim.keymap.set('x', '[', 'c[<ESC>pa]')
+vim.keymap.set('x', '{', 'c{<ESC>pa}')
 
 -- Easy Escape
 vim.keymap.set('i', 'jk', '<esc>')
@@ -143,6 +149,3 @@ for i = 1, 6 do
   keymap('n', '<leader>h' .. i, '<CMD>' .. i - 1 .. 'arga<CR>', { silent = true, desc = 'Add current to arg ' .. i })
   keymap('n', '<leader>hd' .. i, '<CMD>' .. i .. 'argd<CR>', { silent = true, desc = 'Delete current arg' })
 end
-
--- Mini surround
-vim.keymap.set('x', 'S', [[:<C-u>lua MiniSurround.add('visual')<CR>]], { silent = true })
