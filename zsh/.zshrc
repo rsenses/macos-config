@@ -1,5 +1,3 @@
-[ -r "$ZDOTDIR/.secrets" ] && . "$ZDOTDIR/.secrets"
-
 # OPTIONS ========================================
 setopt AUTOCD EXTENDEDGLOB MENUCOMPLETE NOMATCH
 setopt BANG_HIST              # Treat the '!' character specially during expansion.
@@ -48,24 +46,30 @@ if command -v starship >/dev/null 2>&1; then
 fi
 
 # ALIASES ========================================
-source $ZDOTDIR/zsh-aliases
+if [ -f ~/.config/zsh/.zshaliases ]; then
+source ~/.config/zsh/.zshaliases
+fi
 
 # FZF ========================================
-source $ZDOTDIR/zsh-fzf
+if [ -f ~/.config/zsh/.zshfzf ]; then
+source ~/.config/zsh/.zshfzf
+fi
 
 # Functions ========================================
-source $ZDOTDIR/zsh-functions
+if [ -f ~/.config/zsh/.zshfunctions ]; then
+    source ~/.config/zsh/.zshfunctions
+fi
+
+# Cargar variables de entorno personalizadas (incluyendo API Keys)
+if [ -f ~/.config/zsh/.zshvars ]; then
+    source ~/.config/zsh/.zshvars
+fi
 
 # ZSH PLUGINS ========================================
 #[[ -r "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && \
 #  source "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 [[ -r "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && \
   source "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-
- # Cargar variables de entorno personalizadas (incluyendo API Keys)
-if [ -f ~/.config/zsh/.zshvars ]; then
-    source ~/.config/zsh/.zshvars
-fi
 
 autoload -U up-line-or-beginning-search
 autoload -U down-line-or-beginning-search
@@ -79,3 +83,23 @@ bindkey "^?" backward-delete-char
 bindkey "^[[A" up-line-or-beginning-search
 bindkey "^[[B" down-line-or-beginning-search
 bindkey '^y' autosuggest-accept
+
+# Herd injected PHP 8.4 configuration.
+export HERD_PHP_84_INI_SCAN_DIR="/Users/rubensilvarodriguez/Library/Application Support/Herd/config/php/84/"
+
+# Herd injected PHP 8.3 configuration.
+export HERD_PHP_83_INI_SCAN_DIR="/Users/rubensilvarodriguez/Library/Application Support/Herd/config/php/83/"
+
+# Herd injected PHP 8.2 configuration.
+export HERD_PHP_82_INI_SCAN_DIR="/Users/rubensilvarodriguez/Library/Application Support/Herd/config/php/82/"
+
+# Herd injected PHP 8.0 configuration.
+export HERD_PHP_80_INI_SCAN_DIR="/Users/rubensilvarodriguez/Library/Application Support/Herd/config/php/80/"
+
+export HERD_PHP_74_INI_SCAN_DIR="/Users/rubensilvarodriguez/Library/Application Support/Herd/config/php/74/"
+
+# Herd injected PHP 8.1 configuration.
+export HERD_PHP_81_INI_SCAN_DIR="/Users/rubensilvarodriguez/Library/Application Support/Herd/config/php/81/"
+
+# Herd injected PHP binary.
+export PATH="/Users/rubensilvarodriguez/Library/Application Support/Herd/bin/":$PATH
