@@ -94,6 +94,7 @@ vim.opt.completeopt = { 'menu', 'menuone', 'noinsert', 'popup', 'fuzzy', 'nosort
 opt.wildmenu = true -- Enable command-line completion menu
 opt.wildmode = 'longest:full,full' -- Completion mode for command-line
 opt.wildignorecase = true -- Case-insensitive tab completion in commands
+vim.opt.shortmess:prepend 'c' -- avoid having to press enter on snippet completion
 
 -- Foldings
 opt.foldenable = true
