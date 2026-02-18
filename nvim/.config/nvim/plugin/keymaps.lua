@@ -32,6 +32,7 @@ vim.keymap.set('x', '{', 'c{<ESC>pa}')
 -- Easy Escape
 vim.keymap.set('i', 'jk', '<esc>')
 vim.keymap.set('i', 'kj', '<esc>')
+vim.keymap.set('i', 'jj', '<esc>')
 
 -- Splits
 vim.keymap.set('n', '<C-w>-', function()

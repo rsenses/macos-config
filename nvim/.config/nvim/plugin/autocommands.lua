@@ -143,13 +143,28 @@ local function get_full_mode()
   return string.format('%s ', modes[current_mode]):upper()
 end
 
+local function get_buffer_diagnostics_count(bufnr)
+  return #vim.diagnostic.get(bufnr)
+end
+
 -- Function to update the winbar
 local function update_winbar()
   local buffer_count = get_buffer_count()
-  vim.o.winbar = '%#WinBar1#%m ' .. '%#WinBar2#󰓩' .. buffer_count .. ' ' .. '%#WinBar1# %f' .. '%#WinBar2# %=' .. get_full_mode()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local diagnostics_count = get_buffer_diagnostics_count(bufnr)
+  local diagnostics = diagnostics_count > 0 and (' %#WinBar2#' .. diagnostics_count) or ''
+
+  vim.o.winbar = '%#WinBar1#%m '
+    .. '%#WinBar2#󰓩'
+    .. buffer_count
+    .. ' '
+    .. '%#WinBar1# %f'
+    .. diagnostics
+    .. '%#WinBar2# %='
+    .. get_full_mode()
 end
 -- Autocmd to update the winbar on BufEnter and WinEnter events
-vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter', 'ModeChanged' }, {
+vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter', 'ModeChanged', 'DiagnosticChanged' }, {
   callback = update_winbar,
 })
 
@@ -193,5 +208,20 @@ vim.api.nvim_create_autocmd('BufWinEnter', {
   group = augroup,
   callback = function(args)
     guides(vim.bo[args.buf].shiftwidth)
+  end,
+})
+
+-- Remove whitespace end of line
+vim.api.nvim_create_autocmd('BufWritePre', {
+  pattern = '*',
+  callback = function()
+    -- Skip for markdown or other files where trailing spaces matter
+    if vim.bo.filetype == 'markdown' then
+      return
+    end
+
+    local save = vim.fn.winsaveview()
+    vim.cmd [[keeppatterns %s/\s\+$//e]]
+    vim.fn.winrestview(save)
   end,
 })

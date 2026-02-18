@@ -5,6 +5,8 @@ return {
   config = function()
     require('mini.extra').setup()
 
+    -- require('mini.cmdline').setup()
+
     local mini_icons = require 'mini.icons'
     mini_icons.setup()
     vim.api.nvim_create_autocmd('LspAttach', {
@@ -191,7 +193,7 @@ return {
         stop = '<C-e>',
       },
     }
-    require('mini.snippets').start_lsp_server()
+    -- require('mini.snippets').start_lsp_server()
 
     -- WhicihKey replacement
     local miniclue = require 'mini.clue'

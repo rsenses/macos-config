@@ -1,6 +1,3 @@
-# shell-integration = none
-# shell-integration = zsh
-# shell-integration-features = true
 initial-command = /opt/homebrew/bin/zsh -c '/opt/homebrew/bin/tmux a -t dotfiles'
 
 copy-on-select = clipboard
@@ -22,12 +19,16 @@ font-feature = -dlig
 font-style = Regular
 
 # theme = base16-grayscale-light
-# theme = zenbones
-theme = kanso-pearl
+#theme = zenbones
+# theme = kanso-pearl
+theme = Rose Pine Dawn
 
-window-decoration = true
+# window-decoration = true
 window-theme = light
-macos-titlebar-style = hidden
+# title = " "
+macos-titlebar-style = transparent
+# background-opacity = 0.9
+# background-blur = 15
 
-# macos-option-as-alt = false
-macos-option-as-alt = "right"
+macos-option-as-alt = false
+# macos-option-as-alt = "right"

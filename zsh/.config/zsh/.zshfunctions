@@ -38,15 +38,23 @@ resize() {
     # Generar nombre de salida: nombre-<resize>-<final>.ext
     local output="${base}-${resize_width}.${ext}"
 
+    # magick "$input" \
+    #   -colorspace RGB \
+    #   -filter Lanczos \
+    #   -define filter:lobes=3 \
+    #   -define filter:blur=0.99 \
+    #   -resize "${resize_width}x" \
+    #   -background "$bg" \
+    #   -gravity center \
+    #   -extent "$final_size" \
+    #   "$output"
     magick "$input" \
-        -strip -colorspace sRGB \
-        -resize "${resize_width}x" \
-        -filter Lanczos \
-        -unsharp 0x1 \
-        -background "$bg" \
-        -gravity center \
-        -extent "$final_size" \
-        "$output"
+      -filter Lanczos \
+      -resize "${resize_width}x" \
+      -background "$bg" \
+      -gravity center \
+      -extent "$final_size" \
+      "$output"
 
     echo "✅ Imagen generada: $output"
 }

@@ -24,3 +24,6 @@ vim.diagnostic.config {
   severity_sort = true,
   signs = { text = diagnostic_signs },
 }
+-- vim.lsp.set_log_level 'debug'
+
+vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { desc = 'LSP: go to definition' })

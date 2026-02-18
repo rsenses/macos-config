@@ -7,21 +7,16 @@ export HOMEBREW_PREFIX=/opt/homebrew
 export OLLAMA_API_BASE=http://127.0.0.1:11434
 export SSH_AUTH_SOCK=/Users/rubensilvarodriguez/.bitwarden-ssh-agent.sock
 export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
+export XDG_CONFIG_HOME="$HOME/.config"
 
 typeset -gU path PATH
 
 # PATHS ========================================
+eval "$(mise activate zsh)"
 # Asegurar entorno de Homebrew (por si /etc/zprofile tocó PATH)
 if [ -x /opt/homebrew/bin/brew ]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
-
-# Priorizar explícitamente PHP 8.4 **después** de /etc/zprofile
-#path=(
-#  /opt/homebrew/opt/php@8.4/bin
-#  /opt/homebrew/opt/php@8.4/sbin
-#  $path
-#)
 
 # Preferir binarios GNU instalados con Homebrew (color y flags largos)
 for gnubin in \

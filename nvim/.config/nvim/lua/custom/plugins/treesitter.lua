@@ -2,17 +2,17 @@
 return {
   {
     'nvim-treesitter/nvim-treesitter',
-    branch = 'main',
     build = ':TSUpdate',
-    event = { 'BufRead', 'BufNewFile' },
+    branch = 'main',
+    event = { 'BufReadPost', 'BufNewFile' },
     dependencies = {
       'nvim-treesitter/nvim-treesitter-context',
+      'windwp/nvim-ts-autotag',
     },
     config = function()
       local ts = require 'nvim-treesitter'
 
-      -- Install core parsers at startup
-      ts.install {
+      local ensure_installed = {
         'blade',
         'css',
         'diff',
@@ -20,7 +20,6 @@ return {
         'html',
         'javascript',
         'json',
-        'jsx',
         'lua',
         'markdown',
         'markdown_inline',
@@ -33,46 +32,50 @@ return {
         'yaml',
       }
 
-      local group = vim.api.nvim_create_augroup('TreesitterSetup', { clear = true })
+      ts.install(ensure_installed)
 
-      local ignore_filetypes = {
-        'checkhealth',
-        'lazy',
-        'ministarter',
-        'mininotify-history',
+      ts.setup {
+        highlight = {
+          enable = true,
+          additional_vim_regex_highlighting = false,
+        },
       }
 
-      -- Auto-install parsers and enable highlighting on FileType
+      -- 3) Workaround mínimo: arranque del highlighter por FileType
+      local group = vim.api.nvim_create_augroup('TreesitterStart', { clear = true })
       vim.api.nvim_create_autocmd('FileType', {
         group = group,
-        desc = 'Enable treesitter highlighting and indentation',
-        callback = function(event)
-          if vim.tbl_contains(ignore_filetypes, event.match) then
+        callback = function(ev)
+          -- evita buffers especiales
+          local bt = vim.bo[ev.buf].buftype
+          if bt ~= '' then
             return
           end
 
-          local lang = vim.treesitter.language.get_lang(event.match) or event.match
-          local buf = event.buf
-
-          -- Start highlighting immediately (works if parser exists)
-          pcall(vim.treesitter.start, buf, lang)
-
-          -- Enable treesitter indentation
-          vim.bo[buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
-
-          -- Install missing parsers (async, no-op if already installed)
-          ts.install { lang }
+          -- arranca TS (si ya estaba arrancado, no pasa nada)
+          pcall(vim.treesitter.start, ev.buf)
         end,
       })
 
-      require('treesitter-context').setup {}
+      require('treesitter-context').setup {
+        enable = true,
+      }
 
       require('mini.comment').setup {
         options = {
           custom_commentstring = function()
-            local curline = vim.fn.line '.'
+            local ok, parser = pcall(vim.treesitter.get_parser, 0)
+            if not ok or not parser then
+              return nil
+            end
+
             local ft = vim.bo.filetype
-            local lang = vim.treesitter.get_parser():language_for_range({ curline, 0, curline, 0 }):lang()
+            local curline = vim.fn.line '.' - 1
+            local ok2, langobj = pcall(parser.language_for_range, parser, { curline, 0, curline, 0 })
+            if not ok2 or not langobj then
+              return nil
+            end
+            local lang = langobj:lang()
             -- vim.print(lang)
             if ft == 'blade' then
               if lang == 'php' or lang == 'php_only' or lang == 'javascript' then
@@ -87,6 +90,25 @@ return {
               return nil
             end
           end,
+        },
+      }
+
+      require('nvim-ts-autotag').setup {
+        opts = {
+          -- Defaults
+          enable_close = false, -- Auto close tags
+          enable_rename = true, -- Auto rename pairs of tags
+          enable_close_on_slash = false, -- Auto close on trailing </
+        },
+        aliases = {
+          ['blade'] = 'html',
+        },
+        per_filetype = {
+          ['html'] = {
+            enable_close = true, -- Auto close tags
+            enable_rename = true, -- Auto rename pairs of tags
+            enable_close_on_slash = true,
+          },
         },
       }
     end,
