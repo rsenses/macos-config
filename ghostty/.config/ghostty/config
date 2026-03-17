@@ -4,18 +4,11 @@ copy-on-select = clipboard
 
 window-save-state = always
 
-# Only for Iosevka
 font-family = IosevkaTerm Nerd Font Mono
 font-size = 17
 font-feature = -calt
 font-feature = -liga
 font-feature = -dlig
-# end Iosevka
-# Only for 0xProto
-# font-family = 0xProto
-# font-size = 15
-# adjust-cell-width = "-10%"
-# end 0xProto
 font-style = Regular
 
 # theme = base16-grayscale-light
@@ -23,12 +16,9 @@ font-style = Regular
 # theme = kanso-pearl
 theme = Rose Pine Dawn
 
-# window-decoration = true
 window-theme = light
-# title = " "
 macos-titlebar-style = transparent
-# background-opacity = 0.9
-# background-blur = 15
 
 macos-option-as-alt = false
-# macos-option-as-alt = "right"
+
+scrollbar = "system"

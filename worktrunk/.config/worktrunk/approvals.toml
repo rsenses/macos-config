@@ -1,0 +1,17 @@
+[projects."github.com/MetechDevelopment/interal"]
+approved-commands = [
+    """
+opencode run "/preflight"
+""",
+    """
+composer install
+""",
+    "composer fix",
+    "composer test",
+    """
+opencode --prompt "/ship"
+""",
+    """
+opencode run "/ship"
+""",
+]

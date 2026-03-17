@@ -7,7 +7,7 @@
     "laravel-boost": {
       "type": "local",
       "command": ["php", "artisan", "boost:mcp"],
-      "enabled": true,
+      "enabled": true
     }
   },
   "permission": {
@@ -23,7 +23,7 @@
       "grep": "allow",
       "find": "allow",
       "sed": "allow"
-    }
+    },
     "webfetch": "ask"
   }
 }

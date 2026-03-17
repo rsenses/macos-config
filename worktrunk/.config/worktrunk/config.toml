@@ -1,0 +1,27 @@
+worktree-path = ".worktrees/{{ branch | sanitize }}"
+
+[post-create]
+copy = "wt step copy-ignored"
+mise = """
+if command -v mise >/dev/null 2>&1; then
+  mise trust -y .
+  mise install
+fi
+"""
+opencode = """
+opencode run "/preflight"
+"""
+
+[post-switch]
+rename_tmux = """
+if [ -n "${TMUX:-}" ] && [ -n "${TMUX_PANE:-}" ]; then
+  BRANCH="{{ branch | sanitize }}"
+  WINDOW_ID="$(tmux display-message -p -t "$TMUX_PANE" '#{window_id}')"
+  tmux rename-window -t "$WINDOW_ID" "$BRANCH" >/dev/null 2>&1 || true
+fi
+"""
+
+[commit.generation]
+command = '''f=$(mktemp); printf '\n\n' > "$f"; sed 's/^/# /' >> "$f"; ${EDITOR:-vi} "$f" < /dev/tty > /dev/tty; grep -v '^#' "$f"'''
+
+[projects]

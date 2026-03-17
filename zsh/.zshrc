@@ -40,6 +40,10 @@ if command -v starship >/dev/null 2>&1; then
   eval "$(starship init zsh)"
 fi
 
+if command -v mise >/dev/null 2>&1; then
+  eval "$(mise activate zsh)"
+fi
+
 # ALIASES ========================================
 if [ -f ~/.config/zsh/.zshaliases ]; then
 source ~/.config/zsh/.zshaliases
@@ -78,3 +82,5 @@ bindkey "^?" backward-delete-char
 # bindkey "^[[A" up-line-or-beginning-search
 # bindkey "^[[B" down-line-or-beginning-search
 bindkey '^y' autosuggest-accept
+
+if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi

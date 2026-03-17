@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+dir="$(
+  zoxide query -l \
+    | awk '!seen[$0]++' \
+    | fzf \
+        --height=100% \
+        --layout=reverse \
+        --border=none \
+        --prompt='project > ' \
+        --preview='' \
+        --preview-window=hidden
+)" || exit 0
+
+[ -n "${dir:-}" ] || exit 0
+
+session_name="$(
+  printf '%s' "$dir" \
+    | sed "s|^$HOME|~|" \
+    | tr '/ .:' '_' \
+    | tr -s '_'
+)"
+
+if [ -n "${TMUX:-}" ]; then
+  if tmux has-session -t="$session_name" 2>/dev/null; then
+    tmux switch-client -t "$session_name"
+  else
+    tmux new-session -d -s "$session_name" -c "$dir"
+    tmux switch-client -t "$session_name"
+  fi
+else
+  exec tmux new-session -A -s "$session_name" -c "$dir"
+fi

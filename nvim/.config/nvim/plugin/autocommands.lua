@@ -154,14 +154,7 @@ local function update_winbar()
   local diagnostics_count = get_buffer_diagnostics_count(bufnr)
   local diagnostics = diagnostics_count > 0 and (' %#WinBar2#' .. diagnostics_count) or ''
 
-  vim.o.winbar = '%#WinBar1#%m '
-    .. '%#WinBar2#󰓩'
-    .. buffer_count
-    .. ' '
-    .. '%#WinBar1# %f'
-    .. diagnostics
-    .. '%#WinBar2# %='
-    .. get_full_mode()
+  vim.o.winbar = '%#WinBar1#%m ' .. '%#WinBar2#󰓩' .. buffer_count .. ' ' .. '%#WinBar1# %f' .. diagnostics .. '%#WinBar2# %=' .. get_full_mode()
 end
 -- Autocmd to update the winbar on BufEnter and WinEnter events
 vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter', 'ModeChanged', 'DiagnosticChanged' }, {

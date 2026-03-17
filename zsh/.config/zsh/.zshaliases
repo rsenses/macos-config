@@ -21,7 +21,7 @@ alias vim='nvim'
 alias dsstore="find . -name '*.DS_Store' -type f -ls -delete"
 
 # Update installed Homebrew, npm, composer and zsh
-alias brew-update="brew -v update; brew upgrade --force-bottle; brew cleanup; brew doctor"
+alias brew-update="brew -v update; brew upgrade; brew cleanup; brew doctor"
 alias composer-update='composer self-update && composer global update'
 alias npm-update='npm update -g; npm cache clean --force'
 alias update="brew-update; composer-update; npm-update"

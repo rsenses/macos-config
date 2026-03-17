@@ -12,7 +12,6 @@ export XDG_CONFIG_HOME="$HOME/.config"
 typeset -gU path PATH
 
 # PATHS ========================================
-eval "$(mise activate zsh)"
 # Asegurar entorno de Homebrew (por si /etc/zprofile tocó PATH)
 if [ -x /opt/homebrew/bin/brew ]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
@@ -38,5 +37,6 @@ fi
 path=(
     "$HOME/.local/bin"
     "$HOME/.composer/vendor/bin"
+    "$HOME/go"
     $path
 )

@@ -2,7 +2,6 @@
 .zcompdump.*
 .zsh_history
 .zsh_sessions
-.DS_Store
 vifminfo.json
 zsh/plugins
 lazy-lock.json
@@ -10,3 +9,7 @@ tmux/plugins
 .aider*
 .secrets
 .zshvars
+.DS_Store
+**/.DS_Store
+node_modules
+**/node_modules
