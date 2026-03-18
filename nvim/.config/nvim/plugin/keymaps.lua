@@ -15,13 +15,6 @@ vim.keymap.set({ 'n', 'v' }, '<leader>y', [["+y]], { desc = '[Y]ank to clipboard
 vim.keymap.set('n', '<leader>Y', [["+Y]], { desc = '[Y]ank to end of line from clipboard' })
 vim.keymap.set({ 'n', 'v' }, '<leader>d', [["_d]], { desc = '[D]elete to clipboard' })
 
--- Autopairs
--- vim.keymap.set('i', "'", "''<left>")
--- vim.keymap.set('i', '"', '""<left>')
--- vim.keymap.set('i', '`', '``<left>')
--- vim.keymap.set('i', '(', '()<left>')
--- vim.keymap.set('i', '[', '[]<left>')
--- vim.keymap.set('i', '{', '{}<left>')
 -- surround
 vim.keymap.set('x', '(', 'c(<ESC>pa)')
 vim.keymap.set('x', "'", "c'<ESC>pa'")
@@ -50,8 +43,10 @@ vim.keymap.set({ 'n' }, 'S', function()
   vim.api.nvim_feedkeys(keys, 'n', false)
 end, { desc = 'Find and replace word under cursor' })
 
--- lazy
-vim.keymap.set('n', '<leader>wl', '<cmd>Lazy<cr>', { desc = 'Lazy' })
+-- pack
+vim.keymap.set('n', '<leader>wl', function()
+  vim.pack.update()
+end, { desc = 'Update plugins' })
 
 -- diagnostics
 vim.keymap.set('n', 'gl', function()
@@ -81,25 +76,28 @@ vim.keymap.set('n', '<leader>tc', function()
   vim.fn.system(command)
 end, { desc = '[T]est [C]urrent file' })
 
+-- Search buffers
+vim.keymap.set('n', '<leader>,', ':b ', { desc = '[S]earch buffers' })
+
 -- [[ SPELLING]]
 
 -- Keymap to switch spelling language to English lamw25wmal
 -- To save the language settings configured on each buffer, you need to add
 -- "localoptions" to vim.opt.sessionoptions in the `lua/config/options.lua` file
 vim.keymap.set('n', '<leader>esle', function()
-  vim.opt.spelllang = 'en'
+  vim.opt.spelllang = 'en_us'
   vim.cmd "echo 'Spell language set to English'"
 end, { desc = '[S]pelling language English' })
 
 -- Keymap to switch spelling language to Spanish lamw25wmal
 vim.keymap.set('n', '<leader>esls', function()
-  vim.opt.spelllang = 'es'
+  vim.opt.spelllang = 'es_es'
   vim.cmd "echo 'Spell language set to Spanish'"
 end, { desc = '[S]pelling language Spanish' })
 
 -- Keymap to switch spelling language to both spanish and english lamw25wmal
 vim.keymap.set('n', '<leader>eslb', function()
-  vim.opt.spelllang = 'en,es'
+  vim.opt.spelllang = 'en_us,es_es'
   vim.cmd "echo 'Spell language set to Spanish and English'"
 end, { desc = '[S]pelling language Spanish and English' })
 
@@ -126,27 +124,3 @@ end, { desc = '[S]pelling add word to spellfile' })
 vim.keymap.set('n', '<leader>esu', function()
   vim.cmd 'normal! zug'
 end, { desc = '[S]pelling undo, remove word from list' })
-
--- Repeat the replacement done by |z=| for all matches with the replaced word
--- in the current window.
-vim.keymap.set('n', '<leader>esr', function()
-  -- vim.cmd(":spellr")
-  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(':spellr\n', true, false, true), 'm', true)
-end, { desc = '[S]pelling repeat' })
-
--- Search buffers
-vim.keymap.set('n', '<leader>,', ':b ', { desc = '[S]earch buffers' })
-
--- Arglist
-
-local keymap = vim.keymap.set
-
--- append
-keymap('n', '<leader>hH', '<CMD>$arga<CR>', { silent = true, desc = 'Add current file to arg list' })
-
--- assign arg to each number
-for i = 1, 6 do
-  keymap('n', '<leader>' .. i, '<CMD>argu ' .. i .. '<CR>', { silent = true, desc = 'Go to arg ' .. i })
-  keymap('n', '<leader>h' .. i, '<CMD>' .. i - 1 .. 'arga<CR>', { silent = true, desc = 'Add current to arg ' .. i })
-  keymap('n', '<leader>hd' .. i, '<CMD>' .. i .. 'argd<CR>', { silent = true, desc = 'Delete current arg' })
-end

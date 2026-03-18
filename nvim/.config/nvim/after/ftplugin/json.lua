@@ -1,6 +1,5 @@
 vim.opt_local.spell = true
-vim.opt.conceallevel = 0
-vim.wo.conceallevel = 0
+vim.opt_local.conceallevel = 0
 
 vim.keymap.set('n', 'o', function()
   local line = vim.api.nvim_get_current_line()

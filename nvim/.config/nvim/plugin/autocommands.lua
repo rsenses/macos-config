@@ -46,15 +46,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
--- syntax highlighting for dotenv files
-vim.api.nvim_create_autocmd('BufRead', {
-  group = vim.api.nvim_create_augroup('dotenv_ft', { clear = true }),
-  pattern = { '.env', '.env.*' },
-  callback = function()
-    vim.bo.filetype = 'dosini'
-  end,
-})
-
 -- show cursorline only in active window enable
 vim.api.nvim_create_autocmd({ 'WinEnter', 'BufEnter' }, {
   group = vim.api.nvim_create_augroup('active_cursorline', { clear = true }),
