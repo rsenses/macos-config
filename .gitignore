@@ -13,3 +13,5 @@ tmux/plugins
 **/.DS_Store
 node_modules
 **/node_modules
+.worktrees
+nvim-pack-lock.json

@@ -1,10 +1,10 @@
 ---
-description: Ejecuta fix y test y deja la tarea lista para commit
+description: Ejecuta fix y test y deja la tarea lista para revisión final
 agent: build
 model: opencode/mimo-v2-flash-free
 ---
 
-Voy a cerrar esta tarea. Ejecuta el flujo final del proyecto y deja todo listo para revisión de commit.
+Voy a cerrar esta tarea. Ejecuta el flujo final del proyecto y deja todo listo para revisión.
 
 Rama actual:
 !`git branch --show-current`
@@ -18,25 +18,46 @@ Resultado de composer fix:
 Estado tras composer fix:
 !`git status --short`
 
+Archivos modificados tras composer fix:
+!`git diff --name-only`
+
 Resultado de composer test:
 !`bash -lc 'composer test || true'`
 
 Estado final:
 !`git status --short`
 
-Archivos changelog actuales:
-!`bash -lc 'ls -1 changelogs 2>/dev/null | tail -20 || true'`
+Estado de CHANGELOG.md:
+!`bash -lc 'test -f CHANGELOG.md && echo "CHANGELOG.md presente" || echo "CHANGELOG.md ausente"'`
+
+Diff actual de CHANGELOG.md:
+!`git diff -- CHANGELOG.md`
 
 Actúa así:
 
-1. analiza si `composer fix` ha modificado archivos,
-2. revisa si `composer test` ha pasado,
-3. comprueba si existe una entrada de changelog adecuada en `changelogs/`,
-4. si no existe, créala siguiendo las convenciones del proyecto,
-5. no hagas commit automáticamente,
-6. al final entrega:
-   - resumen de cambios,
-   - changelog creado o actualizado,
-   - problemas pendientes,
-   - riesgos,
-   - y un mensaje de commit en formato Conventional Commit.
+1. ejecuta `composer fix` y revisa si ha modificado archivos,
+2. ejecuta `composer test` y resume errores o fallos si los hay,
+3. da prioridad absoluta a cualquier problema que pueda romper CI/CD o impedir el deploy,
+4. comprueba después si `CHANGELOG.md` necesita actualización en función de los cambios realizados,
+5. si falta una entrada visible para usuario y la convención del proyecto indica que debe existir, propón el contenido adecuado en formato Keep a Changelog y alineado con SemVer,
+6. no hagas commit automáticamente.
+
+Prioriza:
+
+1. errores de `composer fix` y cambios automáticos que requieren revisión,
+2. fallos de `composer test`,
+3. estado final del árbol de trabajo,
+4. necesidad de actualizar `CHANGELOG.md`,
+5. riesgos antes de pasar a revisión final.
+
+Salida final:
+
+- checks ejecutados
+- archivos modificados por fix
+- estado de tests
+- estado final del árbol
+- estado de changelog
+- problemas bloqueantes
+- problemas no bloqueantes
+- veredicto final: `listo para ship` o `no listo para ship`
+- riesgos antes de revisión final
