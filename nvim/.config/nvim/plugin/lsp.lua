@@ -1,14 +1,10 @@
 -- LSPCONFIG
-vim.lsp.config('html', {
-  filetypes = {
-    'html',
-    'blade',
-    'htmldjango',
-    'tmpl',
-    'gotmpl',
-    'template',
-  },
-})
+-- vim.lsp.config('html', {
+--   filetypes = {
+--     'html',
+--     'blade',
+--   },
+-- })
 
 vim.lsp.config('intelephense', {
   init_options = {

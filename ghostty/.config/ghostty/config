@@ -12,7 +12,7 @@ font-feature = -dlig
 font-style = Regular
 
 # theme = base16-grayscale-light
-#theme = zenbones
+# theme = zenbones
 # theme = kanso-pearl
 theme = Rose Pine Dawn
 

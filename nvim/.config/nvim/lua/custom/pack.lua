@@ -1,6 +1,6 @@
 vim.pack.add({
   'https://github.com/christoomey/vim-tmux-navigator',
-  'https://github.com/kristijanhusak/vim-dadbod-completion',
+  -- 'https://github.com/kristijanhusak/vim-dadbod-completion',
   'https://github.com/kristijanhusak/vim-dadbod-ui',
   'https://github.com/mistweaverco/kulala.nvim',
   'https://github.com/MeanderingProgrammer/render-markdown.nvim',
@@ -11,7 +11,11 @@ vim.pack.add({
     version = 'main',
   },
   'https://github.com/nvim-treesitter/nvim-treesitter-context',
-  'https://github.com/oskarnurm/koda.nvim',
+  -- 'https://github.com/oskarnurm/koda.nvim',
+  {
+    src = 'https://github.com/rose-pine/neovim',
+    name = 'rose-pine',
+  },
   'https://github.com/stevearc/conform.nvim',
   'https://github.com/stevearc/oil.nvim',
   'https://github.com/stevearc/quicker.nvim',
@@ -26,40 +30,67 @@ vim.pack.add({
 -- COLORSCHEMA
 vim.o.background = 'light'
 
-require('koda').setup {
-  transparent = true,
+-- KODA
+-- require('koda').setup {
+--   transparent = true,
+--   styles = {
+--     functions = { bold = true },
+--     keywords = {},
+--     comments = { italic = true },
+--     strings = { italic = true },
+--     constants = { bold = true },
+--   },
+--   colors = {
+--     bg = '#FAF4ED',
+--     fg = '#2d3035',
+--     dim = '#ffffff',
+--     line = '#F8EFE5',
+--     comment = '#8E877F',
+--     border = '#2d3035',
+--     keyword = '#5A2E2A',
+--     emphasis = '#B4637A',
+--     func = '#33363c',
+--     const = '#356B6A',
+--     string = '#5F6B2D',
+--     highlight = '#6B4E2E',
+--     info = '#066E89',
+--     success = '#2F6B3F',
+--     warning = '#ff9f19',
+--     danger = '#e14e30',
+--   },
+-- }
+--
+--
+-- vim.api.nvim_set_hl(0, 'Visual', { bg = '#EEDFCF' })
+-- vim.api.nvim_set_hl(0, 'Pmenu', { bg = '#F4E7D9' })
+-- vim.api.nvim_set_hl(0, 'PmenuSel', { bg = '#D6D8C4', bold = true })
+
+-- ZENBONES
+-- vim.g.zenbones_compat = 1
+-- vim.cmd.colorscheme 'zenbones'
+--
+-- vim.api.nvim_create_autocmd('ColorScheme', {
+--   callback = function()
+--     vim.api.nvim_set_hl(0, 'ColorColumn', { ctermbg = 'LightGrey', bg = 'LightGrey' })
+--   end,
+-- })
+
+-- ROSEPINE
+require('rose-pine').setup {
+  variant = 'dawn', -- auto, main, moon, or dawn
+  dark_variant = 'main',
+  bold_vert_split = false,
+  dim_nc_background = false,
+  disable_background = false,
+  disable_float_background = false,
   styles = {
-    functions = { bold = true },
-    keywords = {},
-    comments = { italic = true },
-    strings = { italic = true },
-    constants = { bold = true },
-  },
-  colors = {
-    bg = '#FAF4ED',
-    fg = '#2d3035',
-    dim = '#ffffff',
-    line = '#F8EFE5',
-    comment = '#8E877F',
-    border = '#2d3035',
-    keyword = '#5A2E2A',
-    emphasis = '#B4637A',
-    func = '#33363c',
-    const = '#356B6A',
-    string = '#5F6B2D',
-    highlight = '#6B4E2E',
-    info = '#066E89',
-    success = '#2F6B3F',
-    warning = '#ff9f19',
-    danger = '#e14e30',
+    bold = true,
+    italic = true,
+    transparency = false,
   },
 }
 
-vim.cmd 'colorscheme koda'
-
-vim.api.nvim_set_hl(0, 'Visual', { bg = '#EEDFCF' })
-vim.api.nvim_set_hl(0, 'Pmenu', { bg = '#F4E7D9' })
-vim.api.nvim_set_hl(0, 'PmenuSel', { bg = '#D6D8C4', bold = true })
+vim.cmd 'colorscheme rose-pine'
 -- END COLORSCHEMA
 
 -- CONFORM
