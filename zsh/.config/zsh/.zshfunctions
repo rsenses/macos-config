@@ -64,3 +64,48 @@ cdr() {
 
   cd "$repo"
 }
+
+_fzf_home_dirs() {
+  fd -H -t d . "$HOME" \
+    -d 3 \
+    -E .git \
+    -E node_modules \
+    -E vendor \
+    -E .cache \
+    -E .Trash \
+    -E Library \
+    -E .next \
+    -E dist \
+    -E build \
+    -E target \
+    -E coverage \
+    -E .turbo \
+    -E .vscode
+-E .idea \
+}
+
+mvv() {
+  local src="$1"
+  local dst
+
+  [[ -z "$src" ]] && { echo "uso: mvv <archivo>"; return 1; }
+
+  dst=$(
+    _fzf_home_dirs | fzf --prompt='destino > ' --delimiter="$HOME/" --with-nth=2
+  ) || return
+
+  mv -- "$src" "$dst/"
+}
+
+cpp() {
+  local src="$1"
+  local dst
+
+  [[ -z "$src" ]] && { echo "uso: cpp <archivo>"; return 1; }
+
+  dst=$(
+    _fzf_home_dirs | fzf --prompt='destino > ' --delimiter="$HOME/" --with-nth=2
+  ) || return
+
+  cp -- "$src" "$dst/"
+}

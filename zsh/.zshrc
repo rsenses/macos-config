@@ -73,7 +73,6 @@ export CLICOLOR=1  # macOS ls colors
 # autoload -U down-line-or-beginning-search
 
 # KEYBINDINGS ============================================
-bindkey -v
 bindkey "^H" backward-delete-char
 bindkey "^?" backward-delete-char
 # bindkey "^[[A" up-line-or-beginning-search
