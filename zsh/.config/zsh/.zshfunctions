@@ -34,10 +34,31 @@ gbr() {
   git switch "$branch"
 }
 
+# git add con fzf
 gaf() {
   local files
   files=("${(@f)$(git status --short | sed 's/^...//' | fzf -m)}") || return
   [[ ${#files[@]} -gt 0 ]] && git add -- "${files[@]}"
+}
+
+# git conflicts con fzf y abre en nvim
+gcf() {
+  local file
+
+  file=$(
+    git diff --name-only --diff-filter=U \
+      | fzf --prompt='conflict > '
+  ) || return
+
+  nvim "$file"
+}
+
+# git resuelve conflictos todos con ours
+gours() {
+  git diff --name-only --diff-filter=U | while read -r f; do
+    git checkout --ours -- "$f"
+  done
+  git add .
 }
 
 # resize images
