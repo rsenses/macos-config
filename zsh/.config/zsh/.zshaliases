@@ -7,7 +7,23 @@ alias grep='grep --color=auto'
 # confirm before overwriting something
 alias cp="cp -i"
 alias mv='mv -i'
-alias rm='rm -iv'
+unalias rm 2>/dev/null
+rm() {
+  # bloquear uso peligroso
+  if [[ "$*" == *"-rf"* ]] || [[ "$*" == *"-fr"* ]]; then
+    echo "⚠️  Bloqueado: usa 'command rm -rf ...' si estás seguro"
+    return 1
+  fi
+
+  # si el usuario quiere confirmación explícita
+  if [[ "$*" == *"-i"* ]]; then
+    command rm "$@"
+    return
+  fi
+
+  # comportamiento por defecto → papelera
+  trash "$@"
+}
 
 # i can't remove vim in mac
 alias vim='nvim'

@@ -75,3 +75,25 @@ bw-env() {
 }
 
 mkcd() { mkdir -p "$1" && cd "$1"; }
+
+cdr() {
+  local repo
+
+  repo=$(
+    fd -H -t d -a '^\.git$' "$HOME/dev" \
+      | xargs -I {} dirname "{}" \
+      | fzf --delimiter="$HOME/dev/" --with-nth=2 \
+      --preview '
+            cd {} || exit
+            echo "path: $PWD"
+            echo
+            echo "branch:"
+            git branch --show-current 2>/dev/null
+            echo
+            echo "status:"
+            git status -sb 2>/dev/null
+          '
+  ) || return
+
+  cd "$repo"
+}
