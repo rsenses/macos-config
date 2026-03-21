@@ -34,6 +34,12 @@ gbr() {
   git switch "$branch"
 }
 
+gaf() {
+  local files
+  files=("${(@f)$(git status --short | sed 's/^...//' | fzf -m)}") || return
+  [[ ${#files[@]} -gt 0 ]] && git add -- "${files[@]}"
+}
+
 # resize images
 resize() {
     if [[ $# -lt 3 ]]; then
