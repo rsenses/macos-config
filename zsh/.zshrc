@@ -61,6 +61,9 @@ if [ -f ~/.config/zsh/.zshvars ]; then
     source ~/.config/zsh/.zshvars
 fi
 
+# Worktrunk
+if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
+
 # ZSH PLUGINS ========================================
 [[ -r "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && \
   source "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
@@ -75,8 +78,4 @@ export CLICOLOR=1  # macOS ls colors
 # KEYBINDINGS ============================================
 bindkey "^H" backward-delete-char
 bindkey "^?" backward-delete-char
-# bindkey "^[[A" up-line-or-beginning-search
-# bindkey "^[[B" down-line-or-beginning-search
-bindkey '^y' autosuggest-accept
-
-if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
+# bindkey '^y' autosuggest-accept

@@ -7,6 +7,7 @@ alias grep='grep --color=auto'
 # confirm before overwriting something
 alias cp="cp -i"
 alias mv='mv -i'
+alias o='open .'
 unalias rm 2>/dev/null
 rm() {
   # bloquear uso peligroso
@@ -60,71 +61,61 @@ unalias git 2>/dev/null
 
 git() {
   case "$1" in
-    s)
-      echo "usa: gs    → git status -sb"
-      return 1
-      ;;
-    status)
-      echo "usa: gs    → git status -sb"
-      return 1
+    s|status)
+      echo "[hint] usa: gs  → git status -sb" >&2
       ;;
     diff)
-      echo "usa: gd    → git diff"
-      return 1
+      echo "[hint] usa: gd  → git diff" >&2
+      ;;
+    log)
+      echo "[hint] usa: glg  → git log" >&2
       ;;
     add)
       if [[ "$2" == "." ]]; then
-        echo "usa: gaa   → git add ."
+        echo "[hint] usa: gaa → git add ." >&2
       else
-        echo "usa: ga ... → git add ..."
+        echo "[hint] usa: ga ... → git add ..." >&2
       fi
-      return 1
       ;;
     commit)
       if [[ "$*" == *"--amend"* ]]; then
-        echo 'usa: gca → git commit --amend'
+        echo "[hint] usa: gca → git commit --amend" >&2
       elif [[ "$*" == *"-m"* ]]; then
-        echo 'usa: gcm "mensaje" → git commit -m "mensaje"'
+        echo '[hint] usa: gcm "mensaje" → git commit -m "mensaje"' >&2
       else
-        echo "usa: gc → git commit"
+        echo "[hint] usa: gc → git commit" >&2
       fi
-      return 1
       ;;
     push)
-      echo "usa: gp    → git push"
-      return 1
+      echo "[hint] usa: gp  → git push" >&2
       ;;
     pull)
-      echo "usa: gl    → git pull"
-      return 1
+      echo "[hint] usa: gl  → git pull" >&2
       ;;
     branch)
-      echo "usa: gb    → git branch"
-      return 1
+      echo "[hint] usa: gb  → git branch" >&2
       ;;
     checkout)
-      echo "usa: gco ... → git checkout ..."
-      return 1
+      echo "[hint] usa: gco ... → git checkout ..." >&2
       ;;
     "")
-      echo "usa g + comando, por ejemplo: gs, gd, ga, gaa, gc, gcm, gp, gl, gb, gco"
-      return 1
-      ;;
-    *)
-      command git "$@"
+      echo "[hint] aliases: gs gd ga gaa gc gcm gca gp gl gb gco" >&2
       ;;
   esac
+
+  command git "$@"
 }
 
 alias g='command git'
 alias gs='command git status -sb'
 alias gd='command git diff'
+alias glg='command git lg'
 alias ga='command git add'
 alias gaa='command git add .'
-alias gac='command git add .; command git commit'
 alias gc='command git commit'
-alias gca='command git commit --amend'
+alias gca='command git commit --amend --reuse-message=HEAD'
 alias gp='command git push'
 alias gl='command git pull'
 alias gb='command git branch'
 alias gco='command git checkout'
+alias gsw='command git switch'

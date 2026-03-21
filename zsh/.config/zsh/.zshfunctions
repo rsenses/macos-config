@@ -1,21 +1,37 @@
 # ssh
-ss () {
-    local ssh_config="$HOME/.ssh/config"
-    if [[ ! -f $ssh_config ]]; then
-        printf 'ss: no encuentro %s\n' "$ssh_config" >&2
-        return 1
-    fi
+ss() {
+  local ssh_config="$HOME/.ssh/config"
+  [[ -f "$ssh_config" ]] || { printf 'ss: no encuentro %s\n' "$ssh_config" >&2; return 1; }
+  command -v fzf >/dev/null 2>&1 || { printf 'ss: fzf no está instalado\n' >&2; return 1; }
 
-    if ! command -v fzf >/dev/null 2>&1; then
-        printf 'ss: fzf no está instalado\n' >&2
-        return 1
-    fi
+  local server
+  server=$(
+    awk '
+      /^Host[[:space:]]+/ {
+        for (i = 2; i <= NF; i++) print $i
+      }
+    ' "$ssh_config" \
+      | grep -vE '(^\*|!|[*?])' \
+      | sort -u \
+      | fzf --prompt="ssh > "
+  ) || return
 
-    local server
-    server=$(grep -E '^Host ' "$ssh_config" | awk '{print $2}' | grep -vE '(^\*|!|[*?])' | fzf)
-    if [[ -n $server ]]; then
-        ssh "$server"
-    fi
+  [[ -n "$server" ]] && ssh "$server"
+}
+
+# cambiar de rama con preview
+gbr() {
+  local branch
+  branch=$(
+    git branch --all --sort=-committerdate \
+      | sed 's/^[* ]*//' \
+      | sed 's#remotes/origin/##' \
+      | sort -u \
+      | fzf --prompt='branch > ' \
+          --preview 'git log --oneline --decorate --graph -20 {}'
+  ) || return
+
+  git switch "$branch"
 }
 
 # resize images
@@ -37,6 +53,14 @@ resize() {
 
     # Generar nombre de salida: nombre-<resize>-<final>.ext
     local output="${base}-${resize_width}.${ext}"
+
+    magick "$input" \
+      -filter Lanczos \
+      -resize "${resize_width}x" \
+      -background "$bg" \
+      -gravity center \
+      -extent "$final_size" \
+      "$output"
 
     echo "✅ Imagen generada: $output"
 }
@@ -65,6 +89,7 @@ cdr() {
   cd "$repo"
 }
 
+
 _fzf_home_dirs() {
   fd -H -t d . "$HOME" \
     -d 3 \
@@ -80,8 +105,12 @@ _fzf_home_dirs() {
     -E target \
     -E coverage \
     -E .turbo \
-    -E .vscode
--E .idea \
+    -E .vscode \
+    -E .idea
+}
+
+pickdir() {
+  _fzf_home_dirs | fzf --prompt='destino > ' --delimiter="$HOME/" --with-nth=2
 }
 
 mvv() {
@@ -90,10 +119,7 @@ mvv() {
 
   [[ -z "$src" ]] && { echo "uso: mvv <archivo>"; return 1; }
 
-  dst=$(
-    _fzf_home_dirs | fzf --prompt='destino > ' --delimiter="$HOME/" --with-nth=2
-  ) || return
-
+  dst=$(pickdir) || return
   mv -- "$src" "$dst/"
 }
 
@@ -103,9 +129,6 @@ cpp() {
 
   [[ -z "$src" ]] && { echo "uso: cpp <archivo>"; return 1; }
 
-  dst=$(
-    _fzf_home_dirs | fzf --prompt='destino > ' --delimiter="$HOME/" --with-nth=2
-  ) || return
-
+  dst=$(pickdir) || return
   cp -- "$src" "$dst/"
 }
