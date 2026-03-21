@@ -40,10 +40,6 @@ if command -v starship >/dev/null 2>&1; then
   eval "$(starship init zsh)"
 fi
 
-if command -v mise >/dev/null 2>&1; then
-  eval "$(mise activate zsh)"
-fi
-
 # ALIASES ========================================
 if [ -f ~/.config/zsh/.zshaliases ]; then
 source ~/.config/zsh/.zshaliases

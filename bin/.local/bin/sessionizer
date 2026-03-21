@@ -17,9 +17,8 @@ dir="$(
 [ -n "${dir:-}" ] || exit 0
 
 session_name="$(
-  printf '%s' "$dir" \
-    | sed "s|^$HOME|~|" \
-    | tr '/ .:' '_' \
+  basename "$dir" \
+    | tr ' .:' '_' \
     | tr -s '_'
 )"
 

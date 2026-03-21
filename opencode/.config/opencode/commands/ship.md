@@ -1,7 +1,6 @@
 ---
 description: Revisión final antes de commit o PR
 agent: plan
-model: opencode/mimo-v2-flash-free
 ---
 
 Estoy a punto de commitear estos cambios. Haz una revisión final del diff staged y dime si está listo para enviar.

@@ -19,6 +19,6 @@ theme = Rose Pine Dawn
 window-theme = light
 macos-titlebar-style = transparent
 
-macos-option-as-alt = false
+#macos-option-as-alt = false
 
 scrollbar = "system"

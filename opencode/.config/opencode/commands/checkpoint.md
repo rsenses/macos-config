@@ -1,7 +1,6 @@
 ---
 description: Revisa si los cambios actuales están bien agrupados para commit
 agent: plan
-model: opencode/mimo-v2-flash-free
 ---
 
 Quiero revisar si mis cambios están bien agrupados antes de commitear.

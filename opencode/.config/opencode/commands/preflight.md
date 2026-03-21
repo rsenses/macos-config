@@ -1,7 +1,6 @@
 ---
 description: Revisa rama y estado antes de empezar una tarea
 agent: plan
-model: opencode/mimo-v2-flash-free
 ---
 
 Estoy empezando esta tarea.

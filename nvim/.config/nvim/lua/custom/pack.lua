@@ -211,9 +211,9 @@ vim.api.nvim_create_autocmd('LspAttach', {
   end,
 })
 
-require('mini.extra').setup()
-require('mini.splitjoin').setup()
-require('mini.ai').setup()
+-- require('mini.extra').setup()
+-- require('mini.splitjoin').setup()
+-- require('mini.ai').setup()
 
 local pick = require 'mini.pick'
 pick.setup()
@@ -400,6 +400,38 @@ miniclue.setup {
     scroll_up = '<C-p>',
   },
 }
+
+-- require('mini.comment').setup {
+--   options = {
+--     custom_commentstring = function()
+--       local ok, parser = pcall(vim.treesitter.get_parser, 0)
+--       if not ok or not parser then
+--         return nil
+--       end
+--
+--       local ft = vim.bo.filetype
+--       local curline = vim.fn.line '.' - 1
+--       local ok_lang, langobj = pcall(parser.language_for_range, parser, { curline, 0, curline, 0 })
+--       if not ok_lang or not langobj then
+--         return nil
+--       end
+--
+--       local lang = langobj:lang()
+--       if ft == 'blade' then
+--         if lang == 'php' or lang == 'php_only' or lang == 'javascript' then
+--           return '// %s'
+--         elseif lang == 'css' then
+--           return '/* %s */'
+--         end
+--         return '{{-- %s --}}'
+--       elseif ft == 'php' then
+--         return '// %s'
+--       end
+--
+--       return nil
+--     end,
+--   },
+-- }
 -- END MINI
 
 -- OIL
@@ -497,14 +529,15 @@ local ensure_installed = {
   'json',
   'lua',
   'markdown',
-  'markdown_inline',
+  -- 'markdown_inline',
   'php',
-  'phpdoc',
+  -- 'phpdoc',
   'scss',
-  'vim',
-  'vimdoc',
+  -- 'vim',
+  -- 'vimdoc',
   'vue',
   'yaml',
+  'sql',
 }
 
 ts.install(ensure_installed)
@@ -515,7 +548,6 @@ ts.setup {
     additional_vim_regex_highlighting = false,
   },
 }
--- END TREESITTER
 
 local treesitter_group = vim.api.nvim_create_augroup('TreesitterStart', { clear = true })
 vim.api.nvim_create_autocmd('FileType', {
@@ -533,38 +565,6 @@ require('treesitter-context').setup {
   enable = true,
 }
 
-require('mini.comment').setup {
-  options = {
-    custom_commentstring = function()
-      local ok, parser = pcall(vim.treesitter.get_parser, 0)
-      if not ok or not parser then
-        return nil
-      end
-
-      local ft = vim.bo.filetype
-      local curline = vim.fn.line '.' - 1
-      local ok_lang, langobj = pcall(parser.language_for_range, parser, { curline, 0, curline, 0 })
-      if not ok_lang or not langobj then
-        return nil
-      end
-
-      local lang = langobj:lang()
-      if ft == 'blade' then
-        if lang == 'php' or lang == 'php_only' or lang == 'javascript' then
-          return '// %s'
-        elseif lang == 'css' then
-          return '/* %s */'
-        end
-        return '{{-- %s --}}'
-      elseif ft == 'php' then
-        return '// %s'
-      end
-
-      return nil
-    end,
-  },
-}
-
 require('nvim-ts-autotag').setup {
   opts = {
     enable_close = false,
@@ -573,12 +573,17 @@ require('nvim-ts-autotag').setup {
   },
   aliases = {
     blade = 'html',
+    vue = 'html',
   },
   per_filetype = {
-    html = {
-      enable_close = true,
-      enable_rename = true,
-      enable_close_on_slash = true,
-    },
+    html = { enable_rename = true },
+    blade = { enable_rename = true },
+    vue = { enable_rename = true },
+    javascriptreact = { enable_rename = true },
+    typescriptreact = { enable_rename = true },
+    jsx = { enable_rename = true },
+    tsx = { enable_rename = true },
   },
 }
+
+-- END TREESITTER

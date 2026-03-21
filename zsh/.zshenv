@@ -17,6 +17,10 @@ if [ -x /opt/homebrew/bin/brew ]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
+if command -v mise >/dev/null 2>&1; then
+  eval "$(mise activate zsh)"
+fi
+
 # Preferir binarios GNU instalados con Homebrew (color y flags largos)
 for gnubin in \
   /opt/homebrew/opt/coreutils/libexec/gnubin \

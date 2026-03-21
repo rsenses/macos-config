@@ -3,11 +3,6 @@ alias help='tldr --list | fzf --preview "tldr {1}" --preview-window=right,70% | 
 
 # Colorize grep output (good for log files)
 alias grep='grep --color=auto'
-alias egrep='egrep --color=auto'
-alias fgrep='fgrep --color=auto'
-
-# Colorize diff output
-alias diff='diff --color=auto'
 
 # confirm before overwriting something
 alias cp="cp -i"
@@ -29,16 +24,91 @@ alias update="brew-update; composer-update; npm-update"
 # ImageOptim, se puede usar . o nombre de archivo
 alias imageoptim="open -a ImageOptim"
 
-# Python
-alias python='/opt/homebrew/bin/python3'
-
 # less con color
-alias less='less -r'
+alias less='less -R'
 
 # executables
 alias ls='ls --color=auto'
-alias ll='ls -lAF'
-alias cat='bat --plain --wrap character'
+alias lt='ls -lAFtr'
+alias ll='ls -lAFr'
+alias lsize='ls -lhSF'
 
 #weather
 alias weather='curl "wttr.in/Leganes?T&lang=es"'
+
+# tmux
+alias ta='tmux attach -t'
+
+# git
+unalias git 2>/dev/null
+
+git() {
+  case "$1" in
+    s)
+      echo "usa: gs    → git status -sb"
+      return 1
+      ;;
+    status)
+      echo "usa: gs    → git status -sb"
+      return 1
+      ;;
+    diff)
+      echo "usa: gd    → git diff"
+      return 1
+      ;;
+    add)
+      if [[ "$2" == "." ]]; then
+        echo "usa: gaa   → git add ."
+      else
+        echo "usa: ga ... → git add ..."
+      fi
+      return 1
+      ;;
+    commit)
+      if [[ "$*" == *"--amend"* ]]; then
+        echo 'usa: gca → git commit --amend'
+      elif [[ "$*" == *"-m"* ]]; then
+        echo 'usa: gcm "mensaje" → git commit -m "mensaje"'
+      else
+        echo "usa: gc → git commit"
+      fi
+      return 1
+      ;;
+    push)
+      echo "usa: gp    → git push"
+      return 1
+      ;;
+    pull)
+      echo "usa: gl    → git pull"
+      return 1
+      ;;
+    branch)
+      echo "usa: gb    → git branch"
+      return 1
+      ;;
+    checkout)
+      echo "usa: gco ... → git checkout ..."
+      return 1
+      ;;
+    "")
+      echo "usa g + comando, por ejemplo: gs, gd, ga, gaa, gc, gcm, gp, gl, gb, gco"
+      return 1
+      ;;
+    *)
+      command git "$@"
+      ;;
+  esac
+}
+
+alias g='command git'
+alias gs='command git status -sb'
+alias gd='command git diff'
+alias ga='command git add'
+alias gaa='command git add .'
+alias gc='command git commit'
+alias gcm='command git commit -m'
+alias gca='command git commit --amend'
+alias gp='command git push'
+alias gl='command git pull'
+alias gb='command git branch'
+alias gco='command git checkout'

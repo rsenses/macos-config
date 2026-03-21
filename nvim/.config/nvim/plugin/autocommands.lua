@@ -19,14 +19,14 @@ vim.api.nvim_create_autocmd('BufReadPost', {
   end,
 })
 
-vim.api.nvim_create_autocmd({ 'FileType' }, {
-  desc = 'Force commentstring to include spaces',
-  group = default,
-  callback = function(event)
-    local cs = vim.bo[event.buf].commentstring
-    vim.bo[event.buf].commentstring = cs:gsub('(%S)%%s', '%1 %%s'):gsub('%%s(%S)', '%%s %1')
-  end,
-})
+-- vim.api.nvim_create_autocmd({ 'FileType' }, {
+--   desc = 'Force commentstring to include spaces',
+--   group = default,
+--   callback = function(event)
+--     local cs = vim.bo[event.buf].commentstring
+--     vim.bo[event.buf].commentstring = cs:gsub('(%S)%%s', '%1 %%s'):gsub('%%s(%S)', '%%s %1')
+--   end,
+-- })
 
 -- no auto continue comments on new line
 vim.api.nvim_create_autocmd('FileType', {
@@ -47,42 +47,55 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 -- show cursorline only in active window enable
-vim.api.nvim_create_autocmd({ 'WinEnter', 'BufEnter' }, {
-  group = vim.api.nvim_create_augroup('active_cursorline', { clear = true }),
+local cursorline_group = vim.api.nvim_create_augroup('active_cursorline', { clear = true })
+
+vim.api.nvim_create_autocmd('WinEnter', {
+  group = cursorline_group,
   callback = function()
-    vim.opt_local.cursorline = true
+    vim.wo.cursorline = true
   end,
 })
+
+vim.api.nvim_create_autocmd('WinLeave', {
+  group = cursorline_group,
+  callback = function()
+    vim.wo.cursorline = false
+  end,
+})
+-- vim.api.nvim_create_autocmd({ 'WinEnter', 'BufEnter' }, {
+--   group = vim.api.nvim_create_augroup('active_cursorline', { clear = true }),
+--   callback = function()
+--     vim.opt_local.cursorline = true
+--   end,
+-- })
 
 -- show cursorline only in active window disable
-vim.api.nvim_create_autocmd({ 'WinLeave', 'BufLeave' }, {
-  group = 'active_cursorline',
-  callback = function()
-    vim.opt_local.cursorline = false
-  end,
-})
+-- vim.api.nvim_create_autocmd({ 'WinLeave', 'BufLeave' }, {
+--   group = 'active_cursorline',
+--   callback = function()
+--     vim.opt_local.cursorline = false
+--   end,
+-- })
 
 -- Shift numbered registers up (1 becomes 2, etc.)
-local function yank_shift()
-  for i = 9, 1, -1 do
-    vim.fn.setreg(tostring(i), vim.fn.getreg(tostring(i - 1)))
-  end
-end
-vim.api.nvim_create_autocmd('TextYankPost', {
-  callback = function()
-    local event = vim.v.event
-    if event.operator == 'y' then
-      yank_shift()
-    end
-  end,
-})
+-- local function yank_shift()
+--   for i = 9, 1, -1 do
+--     vim.fn.setreg(tostring(i), vim.fn.getreg(tostring(i - 1)))
+--   end
+-- end
+-- vim.api.nvim_create_autocmd('TextYankPost', {
+--   callback = function()
+--     local event = vim.v.event
+--     if event.operator == 'y' then
+--       yank_shift()
+--     end
+--   end,
+-- })
 
 -- LSP
 vim.api.nvim_create_autocmd('LspAttach', {
   group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
   callback = function(event)
-    vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, { buffer = event.buf, desc = 'LSP: [G]oto [D]eclaration' })
-
     -- The following code creates a keymap to toggle inlay hints in your
     -- code, if the language server you are using supports them
     -- This may be unwanted, since they displace some of your code
@@ -109,29 +122,28 @@ end
 
 local function get_full_mode()
   local modes = {
-    ['n'] = 'NORMAL',
-    ['no'] = 'NORMAL',
-    ['v'] = 'VISUAL',
-    ['V'] = 'VISUAL LINE',
-    [''] = 'VISUAL BLOCK',
-    ['s'] = 'SELECT',
-    ['S'] = 'SELECT LINE',
-    [''] = 'SELECT BLOCK',
-    ['i'] = 'INSERT',
-    ['ic'] = 'INSERT',
-    ['R'] = 'REPLACE',
-    ['Rv'] = 'VISUAL REPLACE',
-    ['c'] = 'COMMAND',
-    ['cv'] = 'VIM EX',
-    ['ce'] = 'EX',
-    ['r'] = 'PROMPT',
-    ['rm'] = 'MOAR',
+    n = 'NORMAL',
+    no = 'NORMAL',
+    v = 'VISUAL',
+    V = 'VISUAL LINE',
+    ['\22'] = 'VISUAL BLOCK',
+    s = 'SELECT',
+    S = 'SELECT LINE',
+    ['\19'] = 'SELECT BLOCK',
+    i = 'INSERT',
+    ic = 'INSERT',
+    R = 'REPLACE',
+    Rv = 'VISUAL REPLACE',
+    c = 'COMMAND',
+    cv = 'VIM EX',
+    ce = 'EX',
+    r = 'PROMPT',
+    rm = 'MORE',
     ['r?'] = 'CONFIRM',
     ['!'] = 'SHELL',
-    ['t'] = 'TERMINAL',
+    t = 'TERMINAL',
   }
-  local current_mode = vim.api.nvim_get_mode().mode
-  return string.format('%s ', modes[current_mode]):upper()
+  return (modes[vim.api.nvim_get_mode().mode] or 'UNKNOWN')
 end
 
 local function get_buffer_diagnostics_count(bufnr)
@@ -145,7 +157,7 @@ local function update_winbar()
   local diagnostics_count = get_buffer_diagnostics_count(bufnr)
   local diagnostics = diagnostics_count > 0 and (' %#WinBar2#' .. diagnostics_count) or ''
 
-  vim.o.winbar = '%#WinBar1#%m ' .. '%#WinBar2#󰓩' .. buffer_count .. ' ' .. '%#WinBar1# %f' .. diagnostics .. '%#WinBar2# %=' .. get_full_mode()
+  vim.wo.winbar = '%#WinBar1#%m ' .. '%#WinBar2#󰓩' .. buffer_count .. ' ' .. '%#WinBar1# %f' .. diagnostics .. '%#WinBar2# %=' .. get_full_mode()
 end
 -- Autocmd to update the winbar on BufEnter and WinEnter events
 vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter', 'ModeChanged', 'DiagnosticChanged' }, {
@@ -161,13 +173,17 @@ vim.api.nvim_create_autocmd('VimResized', {
 })
 
 -- Enable native undotree
--- vim.api.nvim_create_autocmd('FileType', {
---   pattern = 'nvim-undotree',
---   callback = function()
---     vim.cmd.wincmd 'H'
---     vim.api.nvim_win_set_width(0, 40)
---   end,
--- })
+local undotree_group = vim.api.nvim_create_augroup('user_undotree', { clear = true })
+
+vim.api.nvim_create_autocmd('FileType', {
+  group = undotree_group,
+  pattern = 'nvim-undotree',
+  desc = 'Move undotree window to the left and set fixed width',
+  callback = function()
+    vim.cmd.wincmd 'H'
+    vim.api.nvim_win_set_width(0, 40)
+  end,
+})
 
 -- === Simple indent guides con exclusión de buffers especiales ===
 local augroup = vim.api.nvim_create_augroup('indentlines', {})
@@ -199,8 +215,22 @@ vim.api.nvim_create_autocmd('BufWinEnter', {
 vim.api.nvim_create_autocmd('BufWritePre', {
   pattern = '*',
   callback = function()
-    -- Skip for markdown or other files where trailing spaces matter
-    if vim.bo.filetype == 'markdown' then
+    local ft = vim.bo.filetype
+    local bt = vim.bo.buftype
+
+    -- Excluir buffers no normales
+    if bt ~= '' then
+      return
+    end
+
+    -- Excluir filetypes concretos
+    local excluded_filetypes = {
+      markdown = true,
+      diff = true,
+      gitcommit = true,
+    }
+
+    if excluded_filetypes[ft] then
       return
     end
 

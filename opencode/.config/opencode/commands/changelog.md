@@ -1,7 +1,6 @@
 ---
 description: Crea o actualiza una entrada de changelog para la tarea actual
 agent: build
-model: opencode/mimo-v2-flash-free
 ---
 
 Necesito crear o actualizar la entrada de changelog de esta tarea.

@@ -56,26 +56,6 @@ end, { desc = 'Open diagnostics' })
 -- Generic formater
 vim.keymap.set('n', '<leader>cF', 'gg=G``', { desc = 'Format the entire file' })
 
--- Tests
-vim.keymap.set('n', '<leader>ta', function()
-  local file_path = vim.fn.expand '%:p'
-  local escaped_file_path = vim.fn.shellescape(file_path)
-  local command = string.format('tmux new-window "./vendor/bin/pest; exec zsh"', escaped_file_path)
-  vim.fn.system(command)
-end, { desc = '[T]est [A]ll' })
-vim.keymap.set('n', '<leader>tb', function()
-  local file_path = vim.fn.expand '%:p'
-  local escaped_file_path = vim.fn.shellescape(file_path)
-  local command = string.format('tmux new-window "./vendor/bin/pest --bail; exec zsh"', escaped_file_path)
-  vim.fn.system(command)
-end, { desc = '[T]est [B]ail' })
-vim.keymap.set('n', '<leader>tc', function()
-  local file_path = vim.fn.expand '%:p'
-  local escaped_file_path = vim.fn.shellescape(file_path)
-  local command = string.format('tmux new-window "./vendor/bin/pest %s; exec zsh"', escaped_file_path)
-  vim.fn.system(command)
-end, { desc = '[T]est [C]urrent file' })
-
 -- Search buffers
 vim.keymap.set('n', '<leader>,', ':b ', { desc = '[S]earch buffers' })
 
@@ -124,3 +104,9 @@ end, { desc = '[S]pelling add word to spellfile' })
 vim.keymap.set('n', '<leader>esu', function()
   vim.cmd 'normal! zug'
 end, { desc = '[S]pelling undo, remove word from list' })
+
+-- undotree
+vim.keymap.set('n', '<leader>u', function()
+  vim.cmd.packadd 'nvim.undotree'
+  vim.cmd.Undotree()
+end, { desc = 'Open builtin undotree' })

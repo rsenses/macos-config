@@ -38,34 +38,7 @@ resize() {
     # Generar nombre de salida: nombre-<resize>-<final>.ext
     local output="${base}-${resize_width}.${ext}"
 
-    # magick "$input" \
-    #   -colorspace RGB \
-    #   -filter Lanczos \
-    #   -define filter:lobes=3 \
-    #   -define filter:blur=0.99 \
-    #   -resize "${resize_width}x" \
-    #   -background "$bg" \
-    #   -gravity center \
-    #   -extent "$final_size" \
-    #   "$output"
-    magick "$input" \
-      -filter Lanczos \
-      -resize "${resize_width}x" \
-      -background "$bg" \
-      -gravity center \
-      -extent "$final_size" \
-      "$output"
-
     echo "✅ Imagen generada: $output"
-}
-
-# Yazi
-y() {
-    local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
-    yazi "$@" --cwd-file="$tmp"
-    IFS= read -r -d '' cwd < "$tmp"
-    [ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
-    rm -f -- "$tmp"
 }
 
 unlock_bw_if_locked() {
@@ -100,3 +73,5 @@ bw-env() {
         >&2 echo "Loaded $keys[$i]"
     done
 }
+
+mkcd() { mkdir -p "$1" && cd "$1"; }

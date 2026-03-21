@@ -15,3 +15,18 @@ opencode --prompt "/ship"
 opencode run "/ship"
 """,
 ]
+
+[projects."github.com/rsenses/Direccion-Deportiva"]
+approved-commands = [
+    """
+opencode run "/preflight"
+""",
+    """
+composer install
+""",
+    "composer fix",
+    "composer test",
+    """
+opencode --prompt "/ship"
+""",
+]
