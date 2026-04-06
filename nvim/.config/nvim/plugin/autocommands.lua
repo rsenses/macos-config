@@ -120,44 +120,14 @@ local function get_buffer_count()
   return count
 end
 
-local function get_full_mode()
-  local modes = {
-    n = 'NORMAL',
-    no = 'NORMAL',
-    v = 'VISUAL',
-    V = 'VISUAL LINE',
-    ['\22'] = 'VISUAL BLOCK',
-    s = 'SELECT',
-    S = 'SELECT LINE',
-    ['\19'] = 'SELECT BLOCK',
-    i = 'INSERT',
-    ic = 'INSERT',
-    R = 'REPLACE',
-    Rv = 'VISUAL REPLACE',
-    c = 'COMMAND',
-    cv = 'VIM EX',
-    ce = 'EX',
-    r = 'PROMPT',
-    rm = 'MORE',
-    ['r?'] = 'CONFIRM',
-    ['!'] = 'SHELL',
-    t = 'TERMINAL',
-  }
-  return (modes[vim.api.nvim_get_mode().mode] or 'UNKNOWN')
-end
-
-local function get_buffer_diagnostics_count(bufnr)
-  return #vim.diagnostic.get(bufnr)
-end
-
 -- Function to update the winbar
 local function update_winbar()
   local buffer_count = get_buffer_count()
   local bufnr = vim.api.nvim_get_current_buf()
-  local diagnostics_count = get_buffer_diagnostics_count(bufnr)
-  local diagnostics = diagnostics_count > 0 and (' %#WinBar2#' .. diagnostics_count) or ''
+  local diagnostics_status = vim.diagnostic.status(bufnr)
+  local diagnostics = diagnostics_status ~= '' and (' %#WinBar2#' .. diagnostics_status) or ''
 
-  vim.wo.winbar = '%#WinBar1#%m ' .. '%#WinBar2#󰓩' .. buffer_count .. ' ' .. '%#WinBar1# %f' .. diagnostics .. '%#WinBar2# %=' .. get_full_mode()
+  vim.wo.winbar = '%#WinBar1#%m ' .. '%#WinBar2#󰓩' .. buffer_count .. ' ' .. '%#WinBar1# %f' .. diagnostics
 end
 -- Autocmd to update the winbar on BufEnter and WinEnter events
 vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter', 'ModeChanged', 'DiagnosticChanged' }, {

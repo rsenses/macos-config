@@ -1,6 +1,7 @@
 ---
 description: Ejecuta fix y test y deja la tarea lista para revisión final
 agent: build
+model: "opencode/minimax-m2.5-free"
 ---
 
 Voy a cerrar esta tarea. Ejecuta el flujo final del proyecto y deja todo listo para revisión.

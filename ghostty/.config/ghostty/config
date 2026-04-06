@@ -1,4 +1,4 @@
-initial-command = /opt/homebrew/bin/zsh -c '/opt/homebrew/bin/tmux a -t dotfiles'
+initial-command = /opt/homebrew/bin/zsh -c '/opt/homebrew/bin/tmux'
 
 copy-on-select = clipboard
 

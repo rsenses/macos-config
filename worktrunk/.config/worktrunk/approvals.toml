@@ -30,3 +30,13 @@ composer install
 opencode --prompt "/ship"
 """,
 ]
+
+[projects."gitlab.com/expomark/eventark"]
+approved-commands = [
+    """
+opencode run "/preflight"
+""",
+    """
+composer install
+""",
+]

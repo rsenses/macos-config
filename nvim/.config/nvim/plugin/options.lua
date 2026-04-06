@@ -1,3 +1,5 @@
+require('vim._core.ui2').enable {}
+
 -- [[ Setting options ]]
 -- See `:help vim.opt`
 -- All files in /plugin folder automatically load
@@ -7,13 +9,12 @@ local g = vim.g
 
 -- Disable statusbar
 opt.laststatus = 0
-opt.cmdheight = 0 -- hide commmand line until needed
 
 -- Basic Settings
 opt.number = true -- But show the actual number for the line we're on
 opt.relativenumber = true -- Show line numbers
 opt.scrolloff = 999 -- Make it so there the cursor is always in the middle
-opt.wrap = true
+opt.wrap = false
 
 -- Tabbing / Indentation
 opt.cindent = true
@@ -43,7 +44,7 @@ opt.synmaxcol = 300 -- Syntax highlighting column limit
 opt.virtualedit = 'block' -- Allow the cursor to move where there is no text in visual block mode
 vim.opt.diffopt:append { 'algorithm:patience', 'vertical', 'linematch:60' }
 opt.list = true -- Show some invisible characters (tabs...)
-vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' } -- Set listchars
+vim.opt.listchars = { tab = '- ', trail = '·', nbsp = '␣' } -- Set listchars
 -- vim.opt.listchars:append 'lead:│'
 opt.winborder = 'rounded'
 
@@ -90,7 +91,7 @@ opt.foldcolumn = '0'
 -- opt.fillchars:append { fold = ' ' }
 
 -- Faster find
-function _G.RgFindFiles(cmdarg, _cmdcomplete)
+function _G.RgFindFiles(cmdarg, _)
   local fnames = vim.fn.systemlist 'rg --files --hidden --color=never --glob="!.git" --glob="!node_modules/" --glob="!vendor/"'
   if #cmdarg == 0 then
     return fnames

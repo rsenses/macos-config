@@ -9,6 +9,7 @@ vim.pack.add({
   {
     src = 'https://github.com/nvim-treesitter/nvim-treesitter',
     version = 'main',
+    build = ':TSUpdate',
   },
   'https://github.com/nvim-treesitter/nvim-treesitter-context',
   -- 'https://github.com/oskarnurm/koda.nvim',
@@ -30,51 +31,6 @@ vim.pack.add({
 -- COLORSCHEMA
 vim.o.background = 'light'
 
--- KODA
--- require('koda').setup {
---   transparent = true,
---   styles = {
---     functions = { bold = true },
---     keywords = {},
---     comments = { italic = true },
---     strings = { italic = true },
---     constants = { bold = true },
---   },
---   colors = {
---     bg = '#FAF4ED',
---     fg = '#2d3035',
---     dim = '#ffffff',
---     line = '#F8EFE5',
---     comment = '#8E877F',
---     border = '#2d3035',
---     keyword = '#5A2E2A',
---     emphasis = '#B4637A',
---     func = '#33363c',
---     const = '#356B6A',
---     string = '#5F6B2D',
---     highlight = '#6B4E2E',
---     info = '#066E89',
---     success = '#2F6B3F',
---     warning = '#ff9f19',
---     danger = '#e14e30',
---   },
--- }
---
---
--- vim.api.nvim_set_hl(0, 'Visual', { bg = '#EEDFCF' })
--- vim.api.nvim_set_hl(0, 'Pmenu', { bg = '#F4E7D9' })
--- vim.api.nvim_set_hl(0, 'PmenuSel', { bg = '#D6D8C4', bold = true })
-
--- ZENBONES
--- vim.g.zenbones_compat = 1
--- vim.cmd.colorscheme 'zenbones'
---
--- vim.api.nvim_create_autocmd('ColorScheme', {
---   callback = function()
---     vim.api.nvim_set_hl(0, 'ColorColumn', { ctermbg = 'LightGrey', bg = 'LightGrey' })
---   end,
--- })
-
 -- ROSEPINE
 require('rose-pine').setup {
   variant = 'dawn', -- auto, main, moon, or dawn
@@ -91,6 +47,10 @@ require('rose-pine').setup {
 }
 
 vim.cmd 'colorscheme rose-pine'
+
+-- Command line y Winbar del mismo color que CursorLine
+vim.api.nvim_set_hl(0, 'MsgArea', { link = 'CursorLine' })
+vim.api.nvim_set_hl(0, 'WinBar', { link = 'CursorLine' })
 -- END COLORSCHEMA
 
 -- CONFORM
@@ -211,12 +171,37 @@ vim.api.nvim_create_autocmd('LspAttach', {
   end,
 })
 
--- require('mini.extra').setup()
--- require('mini.splitjoin').setup()
--- require('mini.ai').setup()
+require('mini.extra').setup()
+require('mini.splitjoin').setup()
+require('mini.ai').setup()
 
 local pick = require 'mini.pick'
 pick.setup()
+-- Borramos el buffer actual con <C-d>
+pick.registry.buffers = function(local_opts, opts)
+  local_opts = local_opts or {}
+
+  local wipeout_cur = function()
+    vim.api.nvim_buf_delete(MiniPick.get_picker_matches().current.bufnr, {})
+    MiniPick.builtin.buffers(local_opts, opts)
+  end
+
+  local buffer_mappings = { wipeout = { char = '<C-d>', func = wipeout_cur } }
+
+  local show = function(buf_id, items, query)
+    vim.tbl_map(function(i)
+      i.text = vim.fn.fnamemodify(i.text, ':t')
+    end, items)
+    MiniPick.default_show(buf_id, items, query, { show_icons = true })
+  end
+
+  opts = vim.tbl_deep_extend('force', {
+    source = { show = show },
+    mappings = buffer_mappings,
+  }, opts or {})
+
+  return MiniPick.builtin.buffers(local_opts, opts)
+end
 
 vim.keymap.set('n', '<leader><leader>', function()
   pick.builtin.cli({
@@ -237,12 +222,10 @@ vim.keymap.set('n', '<leader><leader>', function()
 end, { desc = 'Find files' })
 
 vim.keymap.set('n', '<leader>sg', '<Cmd>Pick grep_live tool="rg"<CR>', { desc = 'Grep' })
-vim.keymap.set({ 'n', 'x' }, '<leader>sw', '<Cmd>Pick grep pattern="<cword>"<CR>', { desc = 'Visual selection or word' })
-vim.keymap.set('n', '<leader>sD', '<Cmd>Pick diagnostic scope="all"<CR>', { desc = 'Diagnostics' })
-vim.keymap.set('n', '<leader>sd', '<Cmd>Pick diagnostic scope="current"<CR>', { desc = 'Buffer Diagnostics' })
-vim.keymap.set('n', '<leader>sr', '<Cmd>Pick registers<CR>', { desc = 'Registers' })
+vim.keymap.set({ 'n', 'x' }, '<leader>sw', '<Cmd>Pick grep pattern="<cword>"<CR>', { desc = 'Grep word under cursor' })
 vim.keymap.set('n', 'grr', '<Cmd>Pick lsp scope="references"<CR>', { nowait = true, desc = 'References' })
-vim.keymap.set('n', '<leader>ss', '<Cmd>Pick lsp scope="document_symbol"<CR>', { desc = 'LSP Symbols' })
+vim.keymap.set('n', 'gO', '<Cmd>Pick lsp scope="document_symbol"<CR>', { desc = 'LSP Symbols' })
+vim.keymap.set('n', '<leader>,', '<Cmd>Pick buffers<CR>', { desc = '[S]earch buffers' })
 
 local bufremove = require 'mini.bufremove'
 vim.keymap.set('n', '<leader>bd', bufremove.delete, { desc = '[B]uffer [D]elete' })
@@ -263,26 +246,26 @@ vim.keymap.set('n', '<leader>bo', function()
   end
 end, { desc = '[B]uffer delete [O]thers' })
 
-local starter = require 'mini.starter'
-starter.setup {
-  header = table.concat({
-    '   _       _        _           ',
-    ' _| |_____| |_  ___| |__  _   _ ',
-    "|_   _|_  / __|/ __| '_ \\| | | |",
-    '  |_|  /__\\__ \\ (__| | | | |_| |',
-    '           |___/\\___|_| |_|\\__, |',
-    '                            |___/ ',
-  }, '\n'),
-  items = {
-    starter.sections.recent_files(10, true),
-    { name = 'Edit config', action = 'e $MYVIMRC', section = 'Actions' },
-    { name = 'Find files', action = 'Pick files', section = 'Actions' },
-  },
-  footer = function()
-    local root = vim.fn.systemlist('git rev-parse --show-toplevel')[1] or ''
-    return root ~= '' and ('Git: ' .. vim.fn.fnamemodify(root, ':t')) or ''
-  end,
-}
+-- local starter = require 'mini.starter'
+-- starter.setup {
+--   header = table.concat({
+--     '   _       _        _           ',
+--     ' _| |_____| |_  ___| |__  _   _ ',
+--     "|_   _|_  / __|/ __| '_ \\| | | |",
+--     '  |_|  /__\\__ \\ (__| | | | |_| |',
+--     '           |___/\\___|_| |_|\\__, |',
+--     '                            |___/ ',
+--   }, '\n'),
+--   items = {
+--     starter.sections.recent_files(10, true),
+--     { name = 'Edit config', action = 'e $MYVIMRC', section = 'Actions' },
+--     { name = 'Find files', action = 'Pick files', section = 'Actions' },
+--   },
+--   footer = function()
+--     local root = vim.fn.systemlist('git rev-parse --show-toplevel')[1] or ''
+--     return root ~= '' and ('Git: ' .. vim.fn.fnamemodify(root, ':t')) or ''
+--   end,
+-- }
 
 require('mini.notify').setup()
 
@@ -345,6 +328,8 @@ require('mini.snippets').setup {
   },
 }
 
+require('mini.snippets').start_lsp_server()
+
 local miniclue = require 'mini.clue'
 miniclue.setup {
   triggers = {
@@ -382,10 +367,9 @@ miniclue.setup {
     { mode = 'n', keys = '<leader>e', desc = '[E]ditor' },
     { mode = 'n', keys = '<leader>es', desc = '[S]pelling' },
     { mode = 'n', keys = '<leader>esl', desc = '[L]anguage' },
-    { mode = 'n', keys = '<leader>g', desc = '[G]it' },
+    { mode = 'n', keys = '<leader>p', desc = '[P]ack' },
     { mode = 'n', keys = '<leader>r', desc = '[R]equests' },
     { mode = 'n', keys = '<leader>s', desc = '[S]earch' },
-    { mode = 'n', keys = '<leader>t', desc = '[T]est' },
     { mode = 'n', keys = '<leader>w', desc = '[W]indows' },
   },
   window = {
@@ -497,7 +481,7 @@ require('render-markdown').setup {
 require('supermaven-nvim').setup {
   keymaps = {
     clear_suggestion = '<C-e>',
-    accept_word = '<C-j>',
+    accept_word = '<C-l>',
   },
   ignore_filetypes = { cpp = true },
   color = {
@@ -587,3 +571,36 @@ require('nvim-ts-autotag').setup {
 }
 
 -- END TREESITTER
+
+-- CLEAN Pack UNUSED PLUGINS
+local function pack_clean()
+  local active_plugins = {}
+  local unused_plugins = {}
+
+  for _, plugin in ipairs(vim.pack.get()) do
+    active_plugins[plugin.spec.name] = plugin.active
+  end
+
+  for _, plugin in ipairs(vim.pack.get()) do
+    if not active_plugins[plugin.spec.name] then
+      table.insert(unused_plugins, plugin.spec.name)
+    end
+  end
+
+  if #unused_plugins == 0 then
+    print 'No unused plugins.'
+    return
+  end
+
+  local choice = vim.fn.confirm('Remove unused plugins?', '&Yes\n&No', 2)
+  if choice == 1 then
+    vim.pack.del(unused_plugins)
+  end
+end
+
+vim.keymap.set('n', '<leader>pc', pack_clean, { desc = 'Clean plugins' })
+
+-- update packs
+vim.keymap.set('n', '<leader>pu', function()
+  vim.pack.update()
+end, { desc = 'Update plugins' })

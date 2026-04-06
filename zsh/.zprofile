@@ -14,15 +14,6 @@ path=(
   $path
 )
 
-# Preferir binarios GNU instalados con Homebrew (color y flags largos)
-for gnubin in \
-  /opt/homebrew/opt/coreutils/libexec/gnubin \
-  /opt/homebrew/opt/grep/libexec/gnubin \
-  /opt/homebrew/opt/diffutils/libexec/gnubin
-do
-  [[ -d $gnubin ]] && path=($gnubin $path)
-done
-
 if [[ $(uname) == "Darwin" ]]; then
     path=(
         "/Applications/Visual Studio Code - Insiders.app/Contents/Resources/app/bin"

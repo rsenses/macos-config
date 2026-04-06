@@ -1,6 +1,6 @@
 worktree-path = ".worktrees/{{ branch | sanitize }}"
 
-[post-create]
+[pre-start]
 copy = "wt step copy-ignored"
 mise = """
 if command -v mise >/dev/null 2>&1; then

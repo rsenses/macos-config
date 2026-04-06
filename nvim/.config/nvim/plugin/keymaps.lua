@@ -43,21 +43,22 @@ vim.keymap.set({ 'n' }, 'S', function()
   vim.api.nvim_feedkeys(keys, 'n', false)
 end, { desc = 'Find and replace word under cursor' })
 
--- pack
-vim.keymap.set('n', '<leader>wl', function()
-  vim.pack.update()
-end, { desc = 'Update plugins' })
-
 -- diagnostics
 vim.keymap.set('n', 'gl', function()
   vim.diagnostic.open_float()
 end, { desc = 'Open diagnostics' })
+vim.keymap.set('n', '<leader>sd', function()
+  vim.diagnostic.setqflist {
+    bufnr = 0,
+    open = true,
+  }
+end, { desc = 'Diagnostics buffer → quickfix' })
+vim.keymap.set('n', '<leader>sD', function()
+  vim.diagnostic.setqflist { open = true }
+end, { desc = 'Diagnostics proyecto → quickfix' })
 
 -- Generic formater
 vim.keymap.set('n', '<leader>cF', 'gg=G``', { desc = 'Format the entire file' })
-
--- Search buffers
-vim.keymap.set('n', '<leader>,', ':b ', { desc = '[S]earch buffers' })
 
 -- [[ SPELLING]]
 

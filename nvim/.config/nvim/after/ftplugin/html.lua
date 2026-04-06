@@ -17,3 +17,4 @@ vim.keymap.set('i', '=', function()
 
   return '=""<left>'
 end, { expr = true, buffer = true })
+vim.opt_local.wrap = true
