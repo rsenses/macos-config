@@ -9,6 +9,8 @@ local g = vim.g
 
 -- Disable statusbar
 opt.laststatus = 0
+-- Experimental UI2: floating cmdline and messages
+require('vim._core.ui2').enable {}
 
 -- Basic Settings
 opt.number = true -- But show the actual number for the line we're on
@@ -78,6 +80,7 @@ vim.opt.spelllang = { 'es_es', 'en_us' }
 
 -- Completions
 vim.opt.completeopt = { 'menu', 'menuone', 'noinsert', 'popup', 'fuzzy', 'nosort' }
+opt.autocomplete = false
 opt.wildmode = 'longest:full,full' -- Completion mode for command-line
 opt.wildignorecase = true -- Case-insensitive tab completion in commands
 vim.opt.shortmess:prepend 'c' -- avoid having to press enter on snippet completion

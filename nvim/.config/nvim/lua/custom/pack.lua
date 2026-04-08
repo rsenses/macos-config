@@ -1,3 +1,4 @@
+vim.cmd 'packadd nvim.undotree'
 vim.pack.add({
   'https://github.com/christoomey/vim-tmux-navigator',
   -- 'https://github.com/kristijanhusak/vim-dadbod-completion',
@@ -246,29 +247,6 @@ vim.keymap.set('n', '<leader>bo', function()
   end
 end, { desc = '[B]uffer delete [O]thers' })
 
--- local starter = require 'mini.starter'
--- starter.setup {
---   header = table.concat({
---     '   _       _        _           ',
---     ' _| |_____| |_  ___| |__  _   _ ',
---     "|_   _|_  / __|/ __| '_ \\| | | |",
---     '  |_|  /__\\__ \\ (__| | | | |_| |',
---     '           |___/\\___|_| |_|\\__, |',
---     '                            |___/ ',
---   }, '\n'),
---   items = {
---     starter.sections.recent_files(10, true),
---     { name = 'Edit config', action = 'e $MYVIMRC', section = 'Actions' },
---     { name = 'Find files', action = 'Pick files', section = 'Actions' },
---   },
---   footer = function()
---     local root = vim.fn.systemlist('git rev-parse --show-toplevel')[1] or ''
---     return root ~= '' and ('Git: ' .. vim.fn.fnamemodify(root, ':t')) or ''
---   end,
--- }
-
-require('mini.notify').setup()
-
 require('mini.diff').setup {
   view = {
     signs = { add = '+ ', change = '~ ', delete = '- ' },
@@ -327,8 +305,7 @@ require('mini.snippets').setup {
     stop = '<C-e>',
   },
 }
-
-require('mini.snippets').start_lsp_server()
+require('mini.snippets').start_lsp_server { match = false }
 
 local miniclue = require 'mini.clue'
 miniclue.setup {
@@ -416,6 +393,30 @@ miniclue.setup {
 --     end,
 --   },
 -- }
+
+-- local starter = require 'mini.starter'
+-- starter.setup {
+--   header = table.concat({
+--     '   _       _        _           ',
+--     ' _| |_____| |_  ___| |__  _   _ ',
+--     "|_   _|_  / __|/ __| '_ \\| | | |",
+--     '  |_|  /__\\__ \\ (__| | | | |_| |',
+--     '           |___/\\___|_| |_|\\__, |',
+--     '                            |___/ ',
+--   }, '\n'),
+--   items = {
+--     starter.sections.recent_files(10, true),
+--     { name = 'Edit config', action = 'e $MYVIMRC', section = 'Actions' },
+--     { name = 'Find files', action = 'Pick files', section = 'Actions' },
+--   },
+--   footer = function()
+--     local root = vim.fn.systemlist('git rev-parse --show-toplevel')[1] or ''
+--     return root ~= '' and ('Git: ' .. vim.fn.fnamemodify(root, ':t')) or ''
+--   end,
+-- }
+
+-- require('mini.notify').setup()
+
 -- END MINI
 
 -- OIL

@@ -5,7 +5,7 @@
 vifminfo.json
 zsh/plugins
 lazy-lock.json
-tmux/plugins
+tmux/.config/tmux/plugins/
 .aider*
 .secrets
 .zshvars
