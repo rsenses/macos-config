@@ -13,7 +13,6 @@ vim.keymap.set('n', 'N', 'Nzzzv')
 -- Copiar, pegar y borrar del clipboard
 vim.keymap.set({ 'n', 'v' }, '<leader>y', [["+y]], { desc = '[Y]ank to clipboard' })
 vim.keymap.set('n', '<leader>Y', [["+Y]], { desc = '[Y]ank to end of line from clipboard' })
-vim.keymap.set({ 'n', 'v' }, '<leader>d', [["_d]], { desc = '[D]elete to clipboard' })
 
 -- surround
 vim.keymap.set('x', '(', 'c(<ESC>pa)')
@@ -60,54 +59,18 @@ end, { desc = 'Diagnostics proyecto → quickfix' })
 -- Generic formater
 vim.keymap.set('n', '<leader>cF', 'gg=G``', { desc = 'Format the entire file' })
 
--- [[ SPELLING]]
-
--- Keymap to switch spelling language to English lamw25wmal
--- To save the language settings configured on each buffer, you need to add
--- "localoptions" to vim.opt.sessionoptions in the `lua/config/options.lua` file
-vim.keymap.set('n', '<leader>esle', function()
-  vim.opt.spelllang = 'en_us'
-  vim.cmd "echo 'Spell language set to English'"
-end, { desc = '[S]pelling language English' })
-
--- Keymap to switch spelling language to Spanish lamw25wmal
-vim.keymap.set('n', '<leader>esls', function()
-  vim.opt.spelllang = 'es_es'
-  vim.cmd "echo 'Spell language set to Spanish'"
-end, { desc = '[S]pelling language Spanish' })
-
--- Keymap to switch spelling language to both spanish and english lamw25wmal
-vim.keymap.set('n', '<leader>eslb', function()
-  vim.opt.spelllang = 'en_us,es_es'
-  vim.cmd "echo 'Spell language set to Spanish and English'"
-end, { desc = '[S]pelling language Spanish and English' })
-
--- Show spelling suggestions / spell suggestions
-vim.keymap.set('n', '<leader>ess', function()
-  -- Simulate pressing "z=" with "m" option using feedkeys
-  -- vim.api.nvim_replace_termcodes ensures "z=" is correctly interpreted
-  -- 'm' is the {mode}, which in this case is 'Remap keys'. This is default.
-  -- If {mode} is absent, keys are remapped.
-  --
-  -- I tried this keymap as usually with
-  vim.cmd 'normal! 1z='
-  -- But didn't work, only with nvim_feedkeys
-  -- vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("z=", true, false, true), "m", true)
-end, { desc = '[S]pelling suggestions' })
-
--- markdown good, accept spell suggestion
--- Add word under the cursor as a good word
-vim.keymap.set('n', '<leader>esg', function()
-  vim.cmd 'normal! zg'
-end, { desc = '[S]pelling add word to spellfile' })
-
--- Undo zw, remove the word from the entry in 'spellfile'.
-vim.keymap.set('n', '<leader>esu', function()
-  vim.cmd 'normal! zug'
-end, { desc = '[S]pelling undo, remove word from list' })
-
 -- undotree
 vim.keymap.set('n', '<leader>u', function()
   vim.cmd.packadd 'nvim.undotree'
-  vim.cmd.Undotree()
-end, { desc = 'Open builtin undotree' })
+  require('undotree').open {}
+end, { desc = '[U]ndotree' })
+
+-- Buscar texto libremente (escribe el patrón después del comando)
+vim.keymap.set('n', '<leader>sg', ':grep! ', { desc = 'Grep (manual)' })
+-- Buscar la palabra bajo el cursor en el directorio actual
+vim.keymap.set({ 'n', 'x' }, '<leader>sw', '<Cmd>grep! <cword> .<CR>', { desc = 'Grep word under cursor' })
+-- Buscar archivos
+vim.keymap.set('n', '<leader><leader>', ':find ', { desc = 'Find files' })
+-- switch between recent buffers
+vim.keymap.set('n', '<leader>,', ':b ', { desc = 'List buffers' })
+vim.keymap.set('n', '<leader><Tab>', '<C-^>', { desc = 'Last buffer' })

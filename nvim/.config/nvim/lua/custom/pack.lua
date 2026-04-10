@@ -1,4 +1,4 @@
-vim.cmd 'packadd nvim.undotree'
+vim.cmd 'packadd cfilter'
 vim.pack.add({
   'https://github.com/christoomey/vim-tmux-navigator',
   -- 'https://github.com/kristijanhusak/vim-dadbod-completion',
@@ -176,68 +176,60 @@ require('mini.extra').setup()
 require('mini.splitjoin').setup()
 require('mini.ai').setup()
 
-local pick = require 'mini.pick'
-pick.setup()
--- Borramos el buffer actual con <C-d>
-pick.registry.buffers = function(local_opts, opts)
-  local_opts = local_opts or {}
+-- local pick = require 'mini.pick'
+-- pick.setup()
+-- -- Borramos el buffer actual con <C-d>
+-- pick.registry.buffers = function(local_opts, opts)
+--   local_opts = local_opts or {}
+--
+--   local wipeout_cur = function()
+--     vim.api.nvim_buf_delete(MiniPick.get_picker_matches().current.bufnr, {})
+--     MiniPick.builtin.buffers(local_opts, opts)
+--   end
+--
+--   local buffer_mappings = { wipeout = { char = '<C-d>', func = wipeout_cur } }
+--
+--   local show = function(buf_id, items, query)
+--     vim.tbl_map(function(i)
+--       i.text = vim.fn.fnamemodify(i.text, ':t')
+--     end, items)
+--     MiniPick.default_show(buf_id, items, query, { show_icons = true })
+--   end
+--
+--   opts = vim.tbl_deep_extend('force', {
+--     source = { show = show },
+--     mappings = buffer_mappings,
+--   }, opts or {})
+--
+--   return MiniPick.builtin.buffers(local_opts, opts)
+-- end
 
-  local wipeout_cur = function()
-    vim.api.nvim_buf_delete(MiniPick.get_picker_matches().current.bufnr, {})
-    MiniPick.builtin.buffers(local_opts, opts)
-  end
-
-  local buffer_mappings = { wipeout = { char = '<C-d>', func = wipeout_cur } }
-
-  local show = function(buf_id, items, query)
-    vim.tbl_map(function(i)
-      i.text = vim.fn.fnamemodify(i.text, ':t')
-    end, items)
-    MiniPick.default_show(buf_id, items, query, { show_icons = true })
-  end
-
-  opts = vim.tbl_deep_extend('force', {
-    source = { show = show },
-    mappings = buffer_mappings,
-  }, opts or {})
-
-  return MiniPick.builtin.buffers(local_opts, opts)
-end
-
-vim.keymap.set('n', '<leader><leader>', function()
-  pick.builtin.cli({
-    command = {
-      'fd',
-      '--type',
-      'f',
-      '--hidden',
-      '--no-ignore',
-      '--exclude',
-      '.git',
-      '--exclude',
-      'node_modules',
-      '--exclude',
-      'vendor',
-    },
-  }, { source = { cwd = vim.fn.getcwd() } })
-end, { desc = 'Find files' })
-
-vim.keymap.set('n', '<leader>sg', '<Cmd>Pick grep_live tool="rg"<CR>', { desc = 'Grep' })
-vim.keymap.set({ 'n', 'x' }, '<leader>sw', '<Cmd>Pick grep pattern="<cword>"<CR>', { desc = 'Grep word under cursor' })
-vim.keymap.set('n', 'grr', '<Cmd>Pick lsp scope="references"<CR>', { nowait = true, desc = 'References' })
-vim.keymap.set('n', 'gO', '<Cmd>Pick lsp scope="document_symbol"<CR>', { desc = 'LSP Symbols' })
-vim.keymap.set('n', '<leader>,', '<Cmd>Pick buffers<CR>', { desc = '[S]earch buffers' })
+-- vim.keymap.set('n', '<leader><leader>', function()
+--   pick.builtin.cli({
+--     command = {
+--       'rg',
+--       '--files',
+--       '--hidden',
+--       '--no-ignore',
+--       '--glob',
+--       '!.git',
+--       '--glob',
+--       '!node_modules',
+--       '--glob',
+--       '!vendor',
+--     },
+--   }, {
+--     source = { cwd = vim.fn.getcwd() },
+--   })
+-- end, { desc = 'Find files' })
+-- vim.keymap.set('n', '<leader>sg', '<Cmd>Pick grep_live tool="rg"<CR>', { desc = 'Grep' })
+-- vim.keymap.set({ 'n', 'x' }, '<leader>sw', '<Cmd>Pick grep pattern="<cword>"<CR>', { desc = 'Grep word under cursor' })
+-- vim.keymap.set('n', 'grr', '<Cmd>Pick lsp scope="references"<CR>', { nowait = true, desc = 'References' })
+-- vim.keymap.set('n', 'gO', '<Cmd>Pick lsp scope="document_symbol"<CR>', { desc = 'LSP Symbols' })
+-- vim.keymap.set('n', '<leader>,', '<Cmd>Pick buffers<CR>', { desc = '[S]earch buffers' })
 
 local bufremove = require 'mini.bufremove'
 vim.keymap.set('n', '<leader>bd', bufremove.delete, { desc = '[B]uffer [D]elete' })
-vim.keymap.set('n', '<leader>bp', function()
-  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-    if vim.api.nvim_buf_is_loaded(buf) then
-      bufremove.delete(buf)
-    end
-  end
-end, { desc = '[B]uffer [P]urge (all)' })
-
 vim.keymap.set('n', '<leader>bo', function()
   local current = vim.api.nvim_get_current_buf()
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
@@ -280,15 +272,15 @@ hipatterns.setup {
   },
 }
 
-require('mini.completion').setup {
-  fallback_action = '<C-f>',
-  mappings = {
-    force_twostep = '<C-Space>',
-    force_fallback = '<A-Space>',
-    scroll_down = '<C-n>',
-    scroll_up = '<C-p>',
-  },
-}
+-- require('mini.completion').setup {
+--   fallback_action = '<C-f>',
+--   mappings = {
+--     force_twostep = '<C-Space>',
+--     force_fallback = '<A-Space>',
+--     scroll_down = '<C-n>',
+--     scroll_up = '<C-p>',
+--   },
+-- }
 
 local gen_loader = require('mini.snippets').gen_loader
 require('mini.snippets').setup {
@@ -305,7 +297,6 @@ require('mini.snippets').setup {
     stop = '<C-e>',
   },
 }
-require('mini.snippets').start_lsp_server { match = false }
 
 local miniclue = require 'mini.clue'
 miniclue.setup {
@@ -341,6 +332,7 @@ miniclue.setup {
     { mode = 'n', keys = '<leader>b', desc = '[B]uffers' },
     { mode = 'n', keys = '<leader>c', desc = '[C]ode' },
     { mode = 'n', keys = '<leader>cp', desc = '[C]ode PHP' },
+    { mode = 'n', keys = '<leader>d', desc = '[D]atabase' },
     { mode = 'n', keys = '<leader>e', desc = '[E]ditor' },
     { mode = 'n', keys = '<leader>es', desc = '[S]pelling' },
     { mode = 'n', keys = '<leader>esl', desc = '[L]anguage' },
@@ -361,59 +353,6 @@ miniclue.setup {
     scroll_up = '<C-p>',
   },
 }
-
--- require('mini.comment').setup {
---   options = {
---     custom_commentstring = function()
---       local ok, parser = pcall(vim.treesitter.get_parser, 0)
---       if not ok or not parser then
---         return nil
---       end
---
---       local ft = vim.bo.filetype
---       local curline = vim.fn.line '.' - 1
---       local ok_lang, langobj = pcall(parser.language_for_range, parser, { curline, 0, curline, 0 })
---       if not ok_lang or not langobj then
---         return nil
---       end
---
---       local lang = langobj:lang()
---       if ft == 'blade' then
---         if lang == 'php' or lang == 'php_only' or lang == 'javascript' then
---           return '// %s'
---         elseif lang == 'css' then
---           return '/* %s */'
---         end
---         return '{{-- %s --}}'
---       elseif ft == 'php' then
---         return '// %s'
---       end
---
---       return nil
---     end,
---   },
--- }
-
--- local starter = require 'mini.starter'
--- starter.setup {
---   header = table.concat({
---     '   _       _        _           ',
---     ' _| |_____| |_  ___| |__  _   _ ',
---     "|_   _|_  / __|/ __| '_ \\| | | |",
---     '  |_|  /__\\__ \\ (__| | | | |_| |',
---     '           |___/\\___|_| |_|\\__, |',
---     '                            |___/ ',
---   }, '\n'),
---   items = {
---     starter.sections.recent_files(10, true),
---     { name = 'Edit config', action = 'e $MYVIMRC', section = 'Actions' },
---     { name = 'Find files', action = 'Pick files', section = 'Actions' },
---   },
---   footer = function()
---     local root = vim.fn.systemlist('git rev-parse --show-toplevel')[1] or ''
---     return root ~= '' and ('Git: ' .. vim.fn.fnamemodify(root, ':t')) or ''
---   end,
--- }
 
 -- require('mini.notify').setup()
 

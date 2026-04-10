@@ -121,3 +121,7 @@ alias gl='command git pull'
 alias gb='command git branch'
 alias gco='command git checkout'
 alias gsw='command git switch'
+
+
+# tools
+alias art='php artisan'

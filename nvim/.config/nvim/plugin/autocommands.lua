@@ -1,5 +1,3 @@
-local default = vim.api.nvim_create_augroup('user_default', { clear = true })
-
 -- open help in vertical split
 vim.api.nvim_create_autocmd('FileType', {
   pattern = 'help',
@@ -19,15 +17,6 @@ vim.api.nvim_create_autocmd('BufReadPost', {
   end,
 })
 
--- vim.api.nvim_create_autocmd({ 'FileType' }, {
---   desc = 'Force commentstring to include spaces',
---   group = default,
---   callback = function(event)
---     local cs = vim.bo[event.buf].commentstring
---     vim.bo[event.buf].commentstring = cs:gsub('(%S)%%s', '%1 %%s'):gsub('%%s(%S)', '%%s %1')
---   end,
--- })
-
 -- no auto continue comments on new line
 vim.api.nvim_create_autocmd('FileType', {
   group = vim.api.nvim_create_augroup('no_auto_comment', {}),
@@ -38,59 +27,28 @@ vim.api.nvim_create_autocmd('FileType', {
 
 -- highlight yank
 vim.api.nvim_create_autocmd('TextYankPost', {
-  group = vim.api.nvim_create_augroup('highlight_yank', { clear = true }),
-  pattern = '*',
-  desc = 'highlight selection on yank',
   callback = function()
-    vim.highlight.on_yank { timeout = 200, visual = true }
+    vim.highlight.on_yank()
   end,
 })
 
--- show cursorline only in active window enable
-local cursorline_group = vim.api.nvim_create_augroup('active_cursorline', { clear = true })
+-- After grep open quickfix
+local ggroup = vim.api.nvim_create_augroup('AutoOpenQuickfix', { clear = true })
 
-vim.api.nvim_create_autocmd('WinEnter', {
-  group = cursorline_group,
+vim.api.nvim_create_autocmd('QuickFixCmdPost', {
+  group = ggroup,
+  pattern = { 'lgrep', 'lgrepadd', 'lvimgrep', 'lvimgrepadd' },
   callback = function()
-    vim.wo.cursorline = true
+    vim.cmd 'lwindow'
   end,
 })
-
-vim.api.nvim_create_autocmd('WinLeave', {
-  group = cursorline_group,
+vim.api.nvim_create_autocmd('QuickFixCmdPost', {
+  group = ggroup,
+  pattern = { 'grep', 'grepadd', 'vimgrep', 'vimgrepadd', 'make' },
   callback = function()
-    vim.wo.cursorline = false
+    vim.cmd 'cwindow'
   end,
 })
--- vim.api.nvim_create_autocmd({ 'WinEnter', 'BufEnter' }, {
---   group = vim.api.nvim_create_augroup('active_cursorline', { clear = true }),
---   callback = function()
---     vim.opt_local.cursorline = true
---   end,
--- })
-
--- show cursorline only in active window disable
--- vim.api.nvim_create_autocmd({ 'WinLeave', 'BufLeave' }, {
---   group = 'active_cursorline',
---   callback = function()
---     vim.opt_local.cursorline = false
---   end,
--- })
-
--- Shift numbered registers up (1 becomes 2, etc.)
--- local function yank_shift()
---   for i = 9, 1, -1 do
---     vim.fn.setreg(tostring(i), vim.fn.getreg(tostring(i - 1)))
---   end
--- end
--- vim.api.nvim_create_autocmd('TextYankPost', {
---   callback = function()
---     local event = vim.v.event
---     if event.operator == 'y' then
---       yank_shift()
---     end
---   end,
--- })
 
 -- LSP
 vim.api.nvim_create_autocmd('LspAttach', {
@@ -127,7 +85,7 @@ local function update_winbar()
   local diagnostics_status = vim.diagnostic.status(bufnr)
   local diagnostics = diagnostics_status ~= '' and (' %#WinBar2#' .. diagnostics_status) or ''
 
-  vim.wo.winbar = '%#WinBar1#%m ' .. '%#WinBar2#󰓩' .. buffer_count .. ' ' .. '%#WinBar1# %f' .. diagnostics
+  vim.wo.winbar = '%#WinBar1#%m ' .. '%#WinBar2#󰓩' .. buffer_count .. ' ' .. '%#WinBar1# [' .. '%n' .. '] %f' .. diagnostics
 end
 -- Autocmd to update the winbar on BufEnter and WinEnter events
 vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter', 'ModeChanged', 'DiagnosticChanged' }, {
@@ -135,23 +93,12 @@ vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter', 'ModeChanged', 'Diagnostic
 })
 
 -- Auto-resize splits when window is resized
+local default = vim.api.nvim_create_augroup('user_default', { clear = true })
+
 vim.api.nvim_create_autocmd('VimResized', {
   group = default,
   callback = function()
     vim.cmd 'tabdo wincmd ='
-  end,
-})
-
--- Enable native undotree
-local undotree_group = vim.api.nvim_create_augroup('user_undotree', { clear = true })
-
-vim.api.nvim_create_autocmd('FileType', {
-  group = undotree_group,
-  pattern = 'nvim-undotree',
-  desc = 'Move undotree window to the left and set fixed width',
-  callback = function()
-    vim.cmd.wincmd 'H'
-    vim.api.nvim_win_set_width(0, 40)
   end,
 })
 
@@ -181,51 +128,16 @@ vim.api.nvim_create_autocmd('BufWinEnter', {
   end,
 })
 
--- Remove whitespace end of line
-vim.api.nvim_create_autocmd('BufWritePre', {
-  pattern = '*',
-  callback = function()
-    local ft = vim.bo.filetype
-    local bt = vim.bo.buftype
-
-    -- Excluir buffers no normales
-    if bt ~= '' then
-      return
-    end
-
-    -- Excluir filetypes concretos
-    local excluded_filetypes = {
-      markdown = true,
-      diff = true,
-      gitcommit = true,
-    }
-
-    if excluded_filetypes[ft] then
-      return
-    end
-
-    local save = vim.fn.winsaveview()
-    vim.cmd [[keeppatterns %s/\s\+$//e]]
-    vim.fn.winrestview(save)
-  end,
-})
-
 -- Native autocomplete
 vim.api.nvim_create_autocmd('LspAttach', {
-  group = vim.api.nvim_create_augroup('lsp_completion', { clear = true }),
   callback = function(args)
-    local client_id = args.data.client_id
-    if not client_id then
-      return
-    end
-
-    local client = vim.lsp.get_client_by_id(client_id)
-    if client and client:supports_method 'textDocument/completion' then
-      -- Enable native LSP completion for this client + buffer
-      vim.lsp.completion.enable(true, client_id, args.buf, {
-        autotrigger = true, -- auto-show menu as you type (recommended)
-        -- You can also set { autotrigger = false } and trigger manually with <C-x><C-o>
-      })
+    vim.o.signcolumn = 'yes:1'
+    local client = assert(vim.lsp.get_client_by_id(args.data.client_id))
+    if client:supports_method 'textDocument/completion' then
+      -- vim.o.complete = 'o,.,w,b,u'
+      vim.o.complete = 'o,.,w,b'
+      vim.o.completeopt = 'menu,menuone,popup,noinsert'
+      vim.lsp.completion.enable(true, client.id, args.buf)
     end
   end,
 })

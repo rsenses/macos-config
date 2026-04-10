@@ -1,5 +1,3 @@
-require('vim._core.ui2').enable {}
-
 -- [[ Setting options ]]
 -- See `:help vim.opt`
 -- All files in /plugin folder automatically load
@@ -28,18 +26,19 @@ opt.breakindent = true
 vim.opt.showbreak = string.rep(' ', 3) -- Make it so that long lines wrap smartly
 opt.linebreak = true
 opt.smartindent = true
-opt.grepprg = 'rg --vimgrep' -- Use ripgrep if available
 
 -- Search Settings
 opt.showmatch = true -- show matching brackets when text indicator is over them
 opt.ignorecase = true -- Ignore case when searching...
 opt.smartcase = true -- ... unless there is a capital letter in the query
+opt.grepprg = 'rg --vimgrep --no-messages --smart-case'
 
 -- Visual Settings
+opt.cursorline = true
 opt.termguicolors = true
 g.have_nerd_font = true
-opt.colorcolumn = '120'
-opt.signcolumn = 'yes' -- Always show the signcolumn, otherwise it would shift the text each time
+vim.opt.colorcolumn = '120'
+opt.signcolumn = 'yes:1' -- Always show the signcolumn, otherwise it would shift the text each time
 opt.redrawtime = 10000 -- Timeout for syntax highlighting redraw
 opt.maxmempattern = 20000 -- Max memory for pattern matching
 opt.synmaxcol = 300 -- Syntax highlighting column limit
@@ -47,8 +46,14 @@ opt.virtualedit = 'block' -- Allow the cursor to move where there is no text in 
 vim.opt.diffopt:append { 'algorithm:patience', 'vertical', 'linematch:60' }
 opt.list = true -- Show some invisible characters (tabs...)
 vim.opt.listchars = { tab = '- ', trail = '·', nbsp = '␣' } -- Set listchars
+vim.opt.smoothscroll = true
 -- vim.opt.listchars:append 'lead:│'
 opt.winborder = 'rounded'
+-- disable mouse popup yet keep mouse enabled
+vim.cmd [[
+  aunmenu PopUp
+  autocmd! nvim.popupmenu
+]]
 
 -- Split Behavior
 opt.inccommand = 'split' -- Make substitution work in realtime
@@ -79,11 +84,23 @@ g.spellfile_URL = 'https://ftp.nluug.nl/vim/runtime/spell/'
 vim.opt.spelllang = { 'es_es', 'en_us' }
 
 -- Completions
-vim.opt.completeopt = { 'menu', 'menuone', 'noinsert', 'popup', 'fuzzy', 'nosort' }
-opt.autocomplete = false
+vim.opt.completeopt = { 'menu', 'menuone', 'fuzzy', 'popup', 'noinsert' }
+opt.autocomplete = true
 opt.wildmode = 'longest:full,full' -- Completion mode for command-line
+-- opt.wildmode = 'full' -- Completion mode for command-line
 opt.wildignorecase = true -- Case-insensitive tab completion in commands
 vim.opt.shortmess:prepend 'c' -- avoid having to press enter on snippet completion
+vim.opt.path = {
+  '.', -- cwd
+  '**', -- recursivo
+}
+vim.opt.wildignore = {
+  '*/node_modules/*',
+  '*/.git/*',
+  '*/dist/*',
+  '*/build/*',
+  '*.lock',
+}
 
 -- Foldings
 opt.foldlevel = 99
@@ -94,12 +111,30 @@ opt.foldcolumn = '0'
 -- opt.fillchars:append { fold = ' ' }
 
 -- Faster find
-function _G.RgFindFiles(cmdarg, _)
-  local fnames = vim.fn.systemlist 'rg --files --hidden --color=never --glob="!.git" --glob="!node_modules/" --glob="!vendor/"'
-  if #cmdarg == 0 then
-    return fnames
-  else
-    return vim.fn.matchfuzzy(fnames, cmdarg)
+local cache = {}
+
+_G.MyFind = {}
+
+function _G.MyFind.rg_find_files(cmdarg, _)
+  local cwd = vim.loop.cwd()
+
+  if not cache[cwd] then
+    cache[cwd] = vim.fn.systemlist('rg --files --hidden --color=never ' .. '--glob="!.git" --glob="!node_modules/" --glob="!vendor/"')
   end
+
+  local fnames = cache[cwd]
+
+  if cmdarg == '' then
+    return fnames
+  end
+
+  return vim.fn.matchfuzzy(fnames, cmdarg)
 end
-vim.o.findfunc = 'v:lua.RgFindFiles'
+
+vim.o.findfunc = 'v:lua.MyFind.rg_find_files'
+
+vim.api.nvim_create_autocmd('DirChanged', {
+  callback = function()
+    cache = {}
+  end,
+})
