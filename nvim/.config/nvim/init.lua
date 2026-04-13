@@ -34,3 +34,5 @@ vim.g.maplocalleader = ' '
 --
 --  Plugin revisions are tracked in `nvim-pack-lock.json`.
 require 'custom.pack'
+-- Faster find files
+require('custom.find').setup()

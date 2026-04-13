@@ -80,6 +80,10 @@ end
 
 -- Function to update the winbar
 local function update_winbar()
+  if vim.bo.filetype == 'qf' then
+    vim.wo.winbar = ''
+    return
+  end
   local buffer_count = get_buffer_count()
   local bufnr = vim.api.nvim_get_current_buf()
   local diagnostics_status = vim.diagnostic.status(bufnr)
@@ -134,9 +138,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
     vim.o.signcolumn = 'yes:1'
     local client = assert(vim.lsp.get_client_by_id(args.data.client_id))
     if client:supports_method 'textDocument/completion' then
-      -- vim.o.complete = 'o,.,w,b,u'
-      vim.o.complete = 'o,.,w,b'
-      vim.o.completeopt = 'menu,menuone,popup,noinsert'
       vim.lsp.completion.enable(true, client.id, args.buf)
     end
   end,

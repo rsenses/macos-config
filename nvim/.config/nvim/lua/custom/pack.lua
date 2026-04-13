@@ -1,8 +1,9 @@
 vim.cmd 'packadd cfilter'
+vim.cmd.packadd 'nvim.difftool'
 vim.pack.add({
   'https://github.com/christoomey/vim-tmux-navigator',
-  -- 'https://github.com/kristijanhusak/vim-dadbod-completion',
-  'https://github.com/kristijanhusak/vim-dadbod-ui',
+  -- 'https://github.com/tpope/vim-dadbod',
+  -- 'https://github.com/kristijanhusak/vim-dadbod-ui',
   'https://github.com/mistweaverco/kulala.nvim',
   'https://github.com/MeanderingProgrammer/render-markdown.nvim',
   'https://github.com/neovim/nvim-lspconfig',
@@ -13,17 +14,15 @@ vim.pack.add({
     build = ':TSUpdate',
   },
   'https://github.com/nvim-treesitter/nvim-treesitter-context',
-  -- 'https://github.com/oskarnurm/koda.nvim',
+  'https://github.com/windwp/nvim-ts-autotag',
   {
     src = 'https://github.com/rose-pine/neovim',
     name = 'rose-pine',
   },
   'https://github.com/stevearc/conform.nvim',
   'https://github.com/stevearc/oil.nvim',
-  'https://github.com/stevearc/quicker.nvim',
+  -- 'https://github.com/stevearc/quicker.nvim',
   'https://github.com/supermaven-inc/supermaven-nvim',
-  'https://github.com/tpope/vim-dadbod',
-  'https://github.com/windwp/nvim-ts-autotag',
 }, {
   confirm = false,
   load = true,
@@ -105,52 +104,52 @@ end, { desc = '[C]ode [F]ormat LSP' })
 -- END CONFORM
 
 -- DADBOD
-vim.g.db_ui_use_nerd_fonts = 1
-vim.g.db_ui_auto_execute_table_helpers = 1
-vim.g.db_ui_save_location = vim.fn.stdpath 'data' .. '/dadbod_queries'
-vim.g.db_ui_winwidth = 35
-vim.o.previewheight = 30
-vim.g.db_ui_show_help = 0
-vim.g.db_ui_show_database_icon = 1
-vim.g.db_ui_force_echo_notifications = 1
-
-local dbfile = vim.fn.getcwd() .. '/.db.lua'
-if vim.fn.filereadable(dbfile) == 1 then
-  local ok, project_dbs = pcall(dofile, dbfile)
-  if ok and type(project_dbs) == 'table' then
-    vim.g.dbs = vim.tbl_extend('force', vim.g.dbs or {}, project_dbs)
-  end
-end
-
-vim.g.db_ui_table_helpers = {
-  mysql = {
-    List = 'SELECT * FROM `{dbname}`.`{table}` ORDER BY id DESC LIMIT 200',
-    Count = 'SELECT COUNT(*) AS total FROM `{dbname}`.`{table}`',
-    ['Last 50'] = 'SELECT * FROM `{dbname}`.`{table}` ORDER BY id DESC LIMIT 50',
-    ['Filter template'] = [[
-SELECT *
-FROM `{dbname}`.`{table}`
-WHERE 1 = 1
-LIMIT 200
-]],
-  },
-  sqlite = {
-    List = 'SELECT * FROM `{table}` ORDER BY id DESC LIMIT 200',
-    Count = 'SELECT COUNT(*) AS total FROM `{table}`',
-    ['Last 50'] = 'SELECT * FROM `{table}` ORDER BY id DESC LIMIT 50',
-    ['Filter template'] = [[
-SELECT *
-FROM `{table}`
-WHERE 1 = 1
-LIMIT 200
-]],
-  },
-}
-
-vim.keymap.set('n', '<leader>du', '<cmd>DBUIToggle<cr>', { desc = 'Dadbod UI' })
-vim.keymap.set('n', '<leader>df', '<cmd>DBUIFindBuffer<cr>', { desc = 'Dadbod find buffer' })
-vim.keymap.set('n', '<leader>dr', '<cmd>DBUIRenameBuffer<cr>', { desc = 'Dadbod rename buffer' })
-vim.keymap.set('n', '<leader>dl', '<cmd>DBUILastQueryInfo<cr>', { desc = 'Dadbod last query info' })
+-- vim.g.db_ui_use_nerd_fonts = 1
+-- vim.g.db_ui_auto_execute_table_helpers = 1
+-- vim.g.db_ui_save_location = vim.fn.stdpath 'data' .. '/dadbod_queries'
+-- vim.g.db_ui_winwidth = 35
+-- vim.o.previewheight = 30
+-- vim.g.db_ui_show_help = 0
+-- vim.g.db_ui_show_database_icon = 1
+-- vim.g.db_ui_force_echo_notifications = 1
+--
+-- local dbfile = vim.fn.getcwd() .. '/.db.lua'
+-- if vim.fn.filereadable(dbfile) == 1 then
+--   local ok, project_dbs = pcall(dofile, dbfile)
+--   if ok and type(project_dbs) == 'table' then
+--     vim.g.dbs = vim.tbl_extend('force', vim.g.dbs or {}, project_dbs)
+--   end
+-- end
+--
+-- vim.g.db_ui_table_helpers = {
+--   mysql = {
+--     List = 'SELECT * FROM `{dbname}`.`{table}` ORDER BY id DESC LIMIT 200',
+--     Count = 'SELECT COUNT(*) AS total FROM `{dbname}`.`{table}`',
+--     ['Last 50'] = 'SELECT * FROM `{dbname}`.`{table}` ORDER BY id DESC LIMIT 50',
+--     ['Filter template'] = [[
+-- SELECT *
+-- FROM `{dbname}`.`{table}`
+-- WHERE 1 = 1
+-- LIMIT 200
+-- ]],
+--   },
+--   sqlite = {
+--     List = 'SELECT * FROM `{table}` ORDER BY id DESC LIMIT 200',
+--     Count = 'SELECT COUNT(*) AS total FROM `{table}`',
+--     ['Last 50'] = 'SELECT * FROM `{table}` ORDER BY id DESC LIMIT 50',
+--     ['Filter template'] = [[
+-- SELECT *
+-- FROM `{table}`
+-- WHERE 1 = 1
+-- LIMIT 200
+-- ]],
+--   },
+-- }
+--
+-- vim.keymap.set('n', '<leader>du', '<cmd>DBUIToggle<cr>', { desc = 'Dadbod UI' })
+-- vim.keymap.set('n', '<leader>df', '<cmd>DBUIFindBuffer<cr>', { desc = 'Dadbod find buffer' })
+-- vim.keymap.set('n', '<leader>dr', '<cmd>DBUIRenameBuffer<cr>', { desc = 'Dadbod rename buffer' })
+-- vim.keymap.set('n', '<leader>dl', '<cmd>DBUILastQueryInfo<cr>', { desc = 'Dadbod last query info' })
 -- END DADBOD
 
 -- KULALA
@@ -172,9 +171,125 @@ vim.api.nvim_create_autocmd('LspAttach', {
   end,
 })
 
-require('mini.extra').setup()
 require('mini.splitjoin').setup()
 require('mini.ai').setup()
+
+local bufremove = require 'mini.bufremove'
+vim.keymap.set('n', '<leader>bd', bufremove.delete, { desc = '[B]uffer [D]elete' })
+vim.keymap.set('n', '<leader>bo', function()
+  local current = vim.api.nvim_get_current_buf()
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_loaded(buf) and buf ~= current then
+      bufremove.delete(buf)
+    end
+  end
+end, { desc = '[B]uffer delete [O]thers' })
+
+require('mini.diff').setup {
+  view = {
+    signs = { add = '+ ', change = '~ ', delete = '- ' },
+  },
+  mappings = {
+    apply = 'gh',
+    reset = 'gH',
+    textobject = 'gh',
+    goto_first = '[H',
+    goto_prev = '[h',
+    goto_next = ']h',
+    goto_last = ']H',
+  },
+}
+
+vim.cmd [[
+  highlight MiniHipatternsFixme guifg=Black guibg=NvimLightRed gui=bold
+  highlight MiniHipatternsHack guifg=Black guibg=NvimLightYellow gui=bold
+  highlight MiniHipatternsTodo guifg=Black guibg=NvimLightCyan gui=bold
+  highlight MiniHipatternsNote guifg=Black guibg=NvimLightGreen gui=bold
+]]
+
+local hipatterns = require 'mini.hipatterns'
+hipatterns.setup {
+  highlighters = {
+    fixme = { pattern = '%f[%w]()FIXME()%f[%W]', group = 'MiniHipatternsFixme' },
+    hack = { pattern = '%f[%w]()HACK()%f[%W]', group = 'MiniHipatternsHack' },
+    todo = { pattern = '%f[%w]()TODO()%f[%W]', group = 'MiniHipatternsTodo' },
+    note = { pattern = '%f[%w]()NOTE()%f[%W]', group = 'MiniHipatternsNote' },
+    hex_color = hipatterns.gen_highlighter.hex_color(),
+  },
+}
+
+local gen_loader = require('mini.snippets').gen_loader
+require('mini.snippets').setup {
+  snippets = {
+    gen_loader.from_file '~/.config/nvim/snippets/global.json',
+    gen_loader.from_lang {
+      extend = { blade = { 'php', 'html' } },
+    },
+  },
+  mappings = {
+    expand = '<C-j>',
+    jump_next = '<Tab>',
+    jump_prev = '<S-Tab>',
+    stop = '<C-e>',
+  },
+}
+
+local miniclue = require 'mini.clue'
+miniclue.setup {
+  triggers = {
+    { mode = 'n', keys = '<Leader>' },
+    { mode = 'x', keys = '<Leader>' },
+    { mode = 'i', keys = '<C-x>' },
+    { mode = 'n', keys = 'g' },
+    { mode = 'x', keys = 'g' },
+    { mode = 'n', keys = "'" },
+    { mode = 'n', keys = '`' },
+    { mode = 'x', keys = "'" },
+    { mode = 'x', keys = '`' },
+    { mode = 'n', keys = '"' },
+    { mode = 'x', keys = '"' },
+    { mode = 'i', keys = '<C-r>' },
+    { mode = 'c', keys = '<C-r>' },
+    { mode = 'n', keys = '<C-w>' },
+    { mode = 'n', keys = 'z' },
+    { mode = 'x', keys = 'z' },
+    { mode = 'n', keys = '[' },
+    { mode = 'n', keys = ']' },
+    { mode = 'x', keys = '[' },
+    { mode = 'x', keys = ']' },
+  },
+  clues = {
+    miniclue.gen_clues.builtin_completion(),
+    miniclue.gen_clues.g(),
+    miniclue.gen_clues.marks(),
+    miniclue.gen_clues.registers(),
+    miniclue.gen_clues.windows(),
+    miniclue.gen_clues.z(),
+    { mode = 'n', keys = '<leader>a', desc = '[A]rglist' },
+    { mode = 'n', keys = '<leader>b', desc = '[B]uffers' },
+    { mode = 'n', keys = '<leader>c', desc = '[C]ode' },
+    { mode = 'n', keys = '<leader>cp', desc = '[C]ode PHP' },
+    { mode = 'n', keys = '<leader>d', desc = '[D]atabase' },
+    { mode = 'n', keys = '<leader>e', desc = '[E]ditor' },
+    { mode = 'n', keys = '<leader>p', desc = '[P]ack' },
+    { mode = 'n', keys = '<leader>r', desc = '[R]equests' },
+    { mode = 'n', keys = '<leader>s', desc = '[S]earch' },
+    { mode = 'n', keys = '<leader>w', desc = '[W]indows' },
+  },
+  window = {
+    config = {
+      anchor = 'SE',
+      row = 'auto',
+      col = 'auto',
+      width = 'auto',
+    },
+    delay = 500,
+    scroll_down = '<C-n>',
+    scroll_up = '<C-p>',
+  },
+}
+
+-- require('mini.extra').setup()
 
 -- local pick = require 'mini.pick'
 -- pick.setup()
@@ -228,50 +343,6 @@ require('mini.ai').setup()
 -- vim.keymap.set('n', 'gO', '<Cmd>Pick lsp scope="document_symbol"<CR>', { desc = 'LSP Symbols' })
 -- vim.keymap.set('n', '<leader>,', '<Cmd>Pick buffers<CR>', { desc = '[S]earch buffers' })
 
-local bufremove = require 'mini.bufremove'
-vim.keymap.set('n', '<leader>bd', bufremove.delete, { desc = '[B]uffer [D]elete' })
-vim.keymap.set('n', '<leader>bo', function()
-  local current = vim.api.nvim_get_current_buf()
-  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-    if vim.api.nvim_buf_is_loaded(buf) and buf ~= current then
-      bufremove.delete(buf)
-    end
-  end
-end, { desc = '[B]uffer delete [O]thers' })
-
-require('mini.diff').setup {
-  view = {
-    signs = { add = '+ ', change = '~ ', delete = '- ' },
-  },
-  mappings = {
-    apply = 'gh',
-    reset = 'gH',
-    textobject = 'gh',
-    goto_first = '[H',
-    goto_prev = '[h',
-    goto_next = ']h',
-    goto_last = ']H',
-  },
-}
-
-vim.cmd [[
-  highlight MiniHipatternsFixme guifg=Black guibg=NvimLightRed gui=bold
-  highlight MiniHipatternsHack guifg=Black guibg=NvimLightYellow gui=bold
-  highlight MiniHipatternsTodo guifg=Black guibg=NvimLightCyan gui=bold
-  highlight MiniHipatternsNote guifg=Black guibg=NvimLightGreen gui=bold
-]]
-
-local hipatterns = require 'mini.hipatterns'
-hipatterns.setup {
-  highlighters = {
-    fixme = { pattern = '%f[%w]()FIXME()%f[%W]', group = 'MiniHipatternsFixme' },
-    hack = { pattern = '%f[%w]()HACK()%f[%W]', group = 'MiniHipatternsHack' },
-    todo = { pattern = '%f[%w]()TODO()%f[%W]', group = 'MiniHipatternsTodo' },
-    note = { pattern = '%f[%w]()NOTE()%f[%W]', group = 'MiniHipatternsNote' },
-    hex_color = hipatterns.gen_highlighter.hex_color(),
-  },
-}
-
 -- require('mini.completion').setup {
 --   fallback_action = '<C-f>',
 --   mappings = {
@@ -281,78 +352,6 @@ hipatterns.setup {
 --     scroll_up = '<C-p>',
 --   },
 -- }
-
-local gen_loader = require('mini.snippets').gen_loader
-require('mini.snippets').setup {
-  snippets = {
-    gen_loader.from_file '~/.config/nvim/snippets/global.json',
-    gen_loader.from_lang {
-      extend = { blade = { 'php', 'html' } },
-    },
-  },
-  mappings = {
-    expand = '<C-j>',
-    jump_next = '<Tab>',
-    jump_prev = '<S-Tab>',
-    stop = '<C-e>',
-  },
-}
-
-local miniclue = require 'mini.clue'
-miniclue.setup {
-  triggers = {
-    { mode = 'n', keys = '<Leader>' },
-    { mode = 'x', keys = '<Leader>' },
-    { mode = 'i', keys = '<C-x>' },
-    { mode = 'n', keys = 'g' },
-    { mode = 'x', keys = 'g' },
-    { mode = 'n', keys = "'" },
-    { mode = 'n', keys = '`' },
-    { mode = 'x', keys = "'" },
-    { mode = 'x', keys = '`' },
-    { mode = 'n', keys = '"' },
-    { mode = 'x', keys = '"' },
-    { mode = 'i', keys = '<C-r>' },
-    { mode = 'c', keys = '<C-r>' },
-    { mode = 'n', keys = '<C-w>' },
-    { mode = 'n', keys = 'z' },
-    { mode = 'x', keys = 'z' },
-    { mode = 'n', keys = '[' },
-    { mode = 'n', keys = ']' },
-    { mode = 'x', keys = '[' },
-    { mode = 'x', keys = ']' },
-  },
-  clues = {
-    miniclue.gen_clues.builtin_completion(),
-    miniclue.gen_clues.g(),
-    miniclue.gen_clues.marks(),
-    miniclue.gen_clues.registers(),
-    miniclue.gen_clues.windows(),
-    miniclue.gen_clues.z(),
-    { mode = 'n', keys = '<leader>b', desc = '[B]uffers' },
-    { mode = 'n', keys = '<leader>c', desc = '[C]ode' },
-    { mode = 'n', keys = '<leader>cp', desc = '[C]ode PHP' },
-    { mode = 'n', keys = '<leader>d', desc = '[D]atabase' },
-    { mode = 'n', keys = '<leader>e', desc = '[E]ditor' },
-    { mode = 'n', keys = '<leader>es', desc = '[S]pelling' },
-    { mode = 'n', keys = '<leader>esl', desc = '[L]anguage' },
-    { mode = 'n', keys = '<leader>p', desc = '[P]ack' },
-    { mode = 'n', keys = '<leader>r', desc = '[R]equests' },
-    { mode = 'n', keys = '<leader>s', desc = '[S]earch' },
-    { mode = 'n', keys = '<leader>w', desc = '[W]indows' },
-  },
-  window = {
-    config = {
-      anchor = 'SE',
-      row = 'auto',
-      col = 'auto',
-      width = 'auto',
-    },
-    delay = 500,
-    scroll_down = '<C-n>',
-    scroll_up = '<C-p>',
-  },
-}
 
 -- require('mini.notify').setup()
 
@@ -390,24 +389,24 @@ vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
 -- END OIL
 
 -- QUICKER
-require('quicker').setup {
-  keys = {
-    {
-      '>',
-      function()
-        require('quicker').expand { before = 2, after = 2, add_to_existing = true }
-      end,
-      desc = 'Expand quickfix context',
-    },
-    {
-      '<',
-      function()
-        require('quicker').collapse()
-      end,
-      desc = 'Collapse quickfix context',
-    },
-  },
-}
+-- require('quicker').setup {
+--   keys = {
+--     {
+--       '>',
+--       function()
+--         require('quicker').expand { before = 2, after = 2, add_to_existing = true }
+--       end,
+--       desc = 'Expand quickfix context',
+--     },
+--     {
+--       '<',
+--       function()
+--         require('quicker').collapse()
+--       end,
+--       desc = 'Collapse quickfix context',
+--     },
+--   },
+-- }
 -- END QUICKER
 
 -- MARKDOWN

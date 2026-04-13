@@ -46,13 +46,13 @@ end, { desc = 'Find and replace word under cursor' })
 vim.keymap.set('n', 'gl', function()
   vim.diagnostic.open_float()
 end, { desc = 'Open diagnostics' })
-vim.keymap.set('n', '<leader>sd', function()
-  vim.diagnostic.setqflist {
+vim.keymap.set('n', 'grd', function()
+  vim.diagnostic.setloclist {
     bufnr = 0,
     open = true,
   }
 end, { desc = 'Diagnostics buffer → quickfix' })
-vim.keymap.set('n', '<leader>sD', function()
+vim.keymap.set('n', 'grD', function()
   vim.diagnostic.setqflist { open = true }
 end, { desc = 'Diagnostics proyecto → quickfix' })
 
@@ -66,11 +66,44 @@ vim.keymap.set('n', '<leader>u', function()
 end, { desc = '[U]ndotree' })
 
 -- Buscar texto libremente (escribe el patrón después del comando)
-vim.keymap.set('n', '<leader>sg', ':grep! ', { desc = 'Grep (manual)' })
+vim.keymap.set('n', '<leader>sg', ':silent grep! ', { desc = 'Grep' })
 -- Buscar la palabra bajo el cursor en el directorio actual
-vim.keymap.set({ 'n', 'x' }, '<leader>sw', '<Cmd>grep! <cword> .<CR>', { desc = 'Grep word under cursor' })
+vim.keymap.set('n', '<leader>sw', function()
+  vim.cmd('silent grep! ' .. vim.fn.expand '<cword>')
+end, { desc = 'Grep word' })
+
 -- Buscar archivos
 vim.keymap.set('n', '<leader><leader>', ':find ', { desc = 'Find files' })
+
 -- switch between recent buffers
 vim.keymap.set('n', '<leader>,', ':b ', { desc = 'List buffers' })
 vim.keymap.set('n', '<leader><Tab>', '<C-^>', { desc = 'Last buffer' })
+
+-- Arglist as working set
+vim.keymap.set('n', '<leader>aa', function()
+  vim.cmd 'argadd %'
+  vim.cmd 'argdedupe'
+  vim.notify 'Añadido al arglist'
+end, { desc = 'Arglist add current file' })
+
+vim.keymap.set('n', '<leader>ad', function()
+  vim.cmd 'argdelete %'
+  vim.notify 'Eliminado del arglist'
+end, { desc = 'Arglist delete current file' })
+
+vim.keymap.set('n', '<leader>al', '<cmd>args<CR>', { desc = 'Arglist list' })
+
+for i = 1, 6 do
+  vim.keymap.set('n', '<leader>' .. i, function()
+    local count = vim.fn.argc()
+
+    if count < i then
+      vim.notify('Arg ' .. i .. ' no existe', vim.log.levels.WARN)
+      return
+    end
+
+    vim.cmd('argument ' .. i)
+
+    vim.notify(string.format('[%d/%d]', i, count))
+  end, { desc = 'Go to arg ' .. i })
+end
