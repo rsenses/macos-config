@@ -1,7 +1,7 @@
 ---
 description: Crea o actualiza una entrada de changelog para la tarea actual
 agent: build
-model: "opencode/minimax-m2.5-free"
+model: "openrouter/moonshotai/kimi-k2:free"
 ---
 
 Necesito crear o actualizar la entrada de changelog de esta tarea.

@@ -1,7 +1,7 @@
 ---
 description: Revisión final antes de commit o PR
 agent: plan
-model: "opencode/minimax-m2.5-free"
+model: "openrouter/moonshotai/kimi-k2:free"
 ---
 
 Estoy a punto de commitear estos cambios. Haz una revisión final del diff staged y dime si está listo para enviar.

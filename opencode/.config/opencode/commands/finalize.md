@@ -1,7 +1,7 @@
 ---
 description: Ejecuta fix y test y deja la tarea lista para revisión final
 agent: build
-model: "opencode/minimax-m2.5-free"
+model: "openrouter/moonshotai/kimi-k2:free"
 ---
 
 Voy a cerrar esta tarea. Ejecuta el flujo final del proyecto y deja todo listo para revisión.
@@ -39,7 +39,7 @@ Actúa así:
 2. ejecuta `composer test` y resume errores o fallos si los hay,
 3. da prioridad absoluta a cualquier problema que pueda romper CI/CD o impedir el deploy,
 4. comprueba después si `CHANGELOG.md` necesita actualización en función de los cambios realizados,
-5. si falta una entrada visible para usuario y la convención del proyecto indica que debe existir, propón el contenido adecuado en formato Keep a Changelog y alineado con SemVer,
+5. si falta una entrada visible para usuario y la convención del proyecto indica que debe existir, añade el contenido adecuado en formato Keep a Changelog y alineado con SemVer,
 6. no hagas commit automáticamente.
 
 Prioriza:
