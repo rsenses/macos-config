@@ -106,6 +106,7 @@ git() {
   command git "$@"
 }
 
+-- alias de git
 alias g='command git'
 alias gs='command git status -sb'
 alias gd='command git diff'
