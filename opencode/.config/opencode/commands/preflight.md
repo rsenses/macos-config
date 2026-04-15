@@ -1,7 +1,7 @@
 ---
 description: Revisa rama y estado antes de empezar una tarea
 agent: plan
-model: "openrouter/moonshotai/kimi-k2:free"
+model: "opencode/minimax-m2.5-free"
 ---
 
 Estoy empezando esta tarea.

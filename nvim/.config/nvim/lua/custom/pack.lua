@@ -23,6 +23,7 @@ vim.pack.add({
   'https://github.com/stevearc/oil.nvim',
   -- 'https://github.com/stevearc/quicker.nvim',
   'https://github.com/supermaven-inc/supermaven-nvim',
+  'https://github.com/rachartier/tiny-cmdline.nvim', -- centered cmdline
 }, {
   confirm = false,
   load = true,
@@ -469,6 +470,9 @@ ts.setup {
   highlight = {
     enable = true,
     additional_vim_regex_highlighting = false,
+  },
+  indent = {
+    enable = true,
   },
 }
 

@@ -21,6 +21,10 @@ if command -v mise >/dev/null 2>&1; then
   eval "$(mise activate zsh)"
 fi
 
+if command -v zoxide >/dev/null 2>&1; then
+  eval "$(zoxide init --cmd cd zsh)"
+fi
+
 if [[ $(uname) == "Darwin" ]]; then
     path=(
         "/Applications/Visual Studio Code - Insiders.app/Contents/Resources/app/bin"

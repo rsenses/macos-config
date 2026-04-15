@@ -1,7 +1,7 @@
 ---
 description: Revisa si los cambios actuales están bien agrupados para commit
 agent: plan
-model: "openrouter/moonshotai/kimi-k2:free"
+model: "opencode/minimax-m2.5-free"
 ---
 
 Quiero revisar si mis cambios están bien agrupados antes de commitear.

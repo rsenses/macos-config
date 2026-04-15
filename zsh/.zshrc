@@ -29,10 +29,6 @@ bindkey "^X^E" edit-command-line
 # set -o vi
 
 # EVALS =========================================
-if command -v zoxide >/dev/null 2>&1; then
-  eval "$(zoxide init --cmd cd zsh)"
-fi
-
 # if command -v nodenv >/dev/null 2>&1; then
 #   eval "$(nodenv init -)"
 # fi

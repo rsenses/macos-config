@@ -7,6 +7,7 @@ local g = vim.g
 
 -- Disable statusbar
 opt.laststatus = 0
+opt.cmdheight = 0
 -- Experimental UI2: floating cmdline and messages
 require('vim._core.ui2').enable {}
 -- recuerda g< para abrir los mensajes
@@ -18,7 +19,6 @@ opt.scrolloff = 999 -- Make it so there the cursor is always in the middle
 
 -- Tabbing / Indentation
 opt.wrap = false
-opt.cindent = true
 opt.expandtab = true
 opt.tabstop = 4
 opt.shiftwidth = 4
@@ -26,7 +26,6 @@ opt.softtabstop = 4
 opt.breakindent = true
 vim.opt.showbreak = string.rep(' ', 3) -- Make it so that long lines wrap smartly
 opt.linebreak = true
-opt.smartindent = true
 
 -- Search Settings
 opt.showmatch = true -- show matching brackets when text indicator is over them

@@ -121,6 +121,8 @@ alias gl='command git pull'
 alias gb='command git branch'
 alias gco='command git checkout'
 alias gsw='command git switch'
+alias gm='command git merge'
+alias gmt='command git mergetool'
 
 
 # tools

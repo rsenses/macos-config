@@ -71,6 +71,7 @@
     syntax-theme = GitHub
 [merge]
     conflictstyle = zdiff3
+	tool = vimdiff
 [http]
 	sslVerify = true
 [credential]

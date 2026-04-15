@@ -80,6 +80,11 @@ end
 
 -- Function to update the winbar
 local function update_winbar()
+  local win_config = vim.api.nvim_win_get_config(0)
+  if win_config.relative ~= '' or vim.bo.buftype ~= '' then
+    return
+  end
+
   if vim.bo.filetype == 'qf' then
     vim.wo.winbar = ''
     return
@@ -128,6 +133,10 @@ vim.api.nvim_create_autocmd('OptionSet', {
 vim.api.nvim_create_autocmd('BufWinEnter', {
   group = augroup,
   callback = function(args)
+    if vim.bo[args.buf].buftype ~= '' then
+      return
+    end
+
     guides(vim.bo[args.buf].shiftwidth)
   end,
 })

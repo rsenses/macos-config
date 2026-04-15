@@ -4,7 +4,7 @@
   "share": "manual",
   "agent": {
     "build": {
-      "model": "openai/gpt-5.4-fast",
+      "model": "openai/gpt-5.4-mini",
       "tools": {
         "write": true,
         "edit": true,
@@ -12,7 +12,10 @@
       }
     },
     "plan": {
-      "model": "openrouter/moonshotai/kimi-k2:free",
+      "model": "opencode/minimax-m2.5-free",
+      // "model": "openrouter/google/gemma-4-31b-it:free",
+      // "model": "openai/gpt-5.4-mini",
+      // "model": "opencode/nemotron-3-super-free",
       "tools": {
         "write": false,
         "edit": false,
