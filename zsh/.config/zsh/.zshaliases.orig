@@ -106,7 +106,12 @@ git() {
   command git "$@"
 }
 
+<<<<<<< HEAD
+-- alias de git
+||||||| 89d5f82
+=======
 -- git aliases
+>>>>>>> test
 alias g='command git'
 alias gs='command git status -sb'
 alias gd='command git diff'
