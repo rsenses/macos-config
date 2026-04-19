@@ -29,9 +29,9 @@ bindkey "^X^E" edit-command-line
 # set -o vi
 
 # EVALS =========================================
-# if command -v nodenv >/dev/null 2>&1; then
-#   eval "$(nodenv init -)"
-# fi
+if command -v mise >/dev/null 2>&1; then
+  eval "$(mise activate zsh)"
+fi
 
 if command -v fzf >/dev/null 2>&1; then
   eval "$(fzf --zsh)"
@@ -44,6 +44,9 @@ if command -v starship >/dev/null 2>&1; then
     starship_zle-keymap-select() { :; }
   fi
 fi
+
+# Worktrunk
+if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
 
 # ALIASES ========================================
 if [ -f ~/.config/zsh/.zshaliases ]; then
@@ -64,9 +67,6 @@ fi
 if [ -f ~/.config/zsh/.zshvars ]; then
     source ~/.config/zsh/.zshvars
 fi
-
-# Worktrunk
-if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
 
 # ZSH PLUGINS ========================================
 [[ -r "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && \

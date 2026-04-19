@@ -49,6 +49,8 @@ Prioriza:
 3. estado final del árbol de trabajo,
 4. necesidad de actualizar `CHANGELOG.md`,
 5. riesgos antes de pasar a revisión final.
+6. propone el tipo y scope de Conventional Commit más adecuados,
+7. recomienda un mensaje final en formato `type(scope): summary`,
 
 Salida final:
 
@@ -61,3 +63,4 @@ Salida final:
 - problemas no bloqueantes
 - veredicto final: `listo para ship` o `no listo para ship`
 - riesgos antes de revisión final
+- sugerencia de Conventional Commit

@@ -1,13 +1,11 @@
 worktree-path = ".worktrees/{{ branch | sanitize }}"
-
-[pre-start]
-copy = "wt step copy-ignored"
-mise = """
+pre-start= [{ copy = "wt step copy-ignored" }, { mise = """
 if command -v mise >/dev/null 2>&1; then
   mise trust -y .
   mise install
 fi
-"""
+""" }]
+skip-commit-generation-prompt = true
 
 [post-switch]
 rename_tmux = """

@@ -17,7 +17,7 @@ font-style = Regular
 theme = Rose Pine Dawn
 
 window-theme = light
-macos-titlebar-style = transparent
+macos-titlebar-style = hidden
 
 #macos-option-as-alt = false
 

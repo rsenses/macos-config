@@ -14,6 +14,22 @@ opencode --prompt "/ship"
     """
 opencode run "/ship"
 """,
+    """
+opencode run --agent reviewer "/ship"
+""",
+    """
+opencode run --agent reviewer "/preflight"
+""",
+    """
+npm install
+npm run build
+""",
+    """
+npm install && npm run build
+""",
+    """
+npm run build
+""",
 ]
 
 [projects."github.com/rsenses/Direccion-Deportiva"]
@@ -28,6 +44,25 @@ composer install
     "composer test",
     """
 opencode --prompt "/ship"
+""",
+    """
+opencode run --agent reviewer "/preflight"
+""",
+    """
+npm install && npm run build
+""",
+    """
+npm run build
+""",
+    """
+opencode run "/ship"
+""",
+    """
+opencode run --agent reviewer "/ship"
+""",
+    """
+npm install
+npm run build
 """,
 ]
 

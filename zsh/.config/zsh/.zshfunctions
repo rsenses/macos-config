@@ -1,3 +1,44 @@
+# download organizer
+dlorg() {
+  local base="$HOME/Downloads"
+  local file target abs_target
+
+  while true; do
+    file=$(
+      find "$base" -mindepth 1 -maxdepth 1 \
+        ! -name work ! -name personal \
+        -print | sed "s|^$base/||" | sort |
+      fzf \
+        --prompt="Downloads> " \
+        --preview '
+          p="$HOME/Downloads/{}"
+          if [ -d "$p" ]; then
+            eza -la --color=always "$p" 2>/dev/null || ls -la "$p"
+          elif file --mime "$p" | grep -q "text/"; then
+            bat --style=numbers --color=always "$p" 2>/dev/null || sed -n "1,120p" "$p"
+          else
+            file "$p"
+          fi
+        '
+    )
+
+    [ -z "$file" ] && break
+
+    target=$(
+      find "$base/work" "$base/personal" -type d \
+        | sed "s|^$base/||" \
+        | sort |
+      fzf --prompt="Move to> "
+    )
+
+    [ -z "$target" ] && continue
+
+    abs_target="$base/$target"
+    mv "$base/$file" "$abs_target/"
+    printf 'Moved: %s -> %s\n' "$file" "$target"
+  done
+}
+
 # ssh
 ss() {
   local ssh_config="$HOME/.ssh/config"
@@ -17,6 +58,17 @@ ss() {
   ) || return
 
   [[ -n "$server" ]] && ssh "$server"
+}
+
+# select notes dir and open in nvim
+notes() {
+  local type=$(printf "work\npersonal" | fzf)
+  nvim ~/\$type/notes
+}
+
+# show last downloaded file
+lastdl() {
+  echo "$HOME/Downloads/$(ls -t ~/Downloads | head -n 1)"
 }
 
 # cambiar de rama con preview

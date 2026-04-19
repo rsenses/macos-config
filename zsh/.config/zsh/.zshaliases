@@ -16,8 +16,8 @@ rm() {
     return 1
   fi
 
-  # si el usuario quiere confirmación explícita
-  if [[ "$*" == *"-i"* ]]; then
+  # si hay flags, usa el rm real para no romper herramientas externas
+  if [[ "$1" == -* ]]; then
     command rm "$@"
     return
   fi
@@ -80,8 +80,6 @@ git() {
     commit)
       if [[ "$*" == *"--amend"* ]]; then
         echo "[hint] usa: gca → git commit --amend" >&2
-      elif [[ "$*" == *"-m"* ]]; then
-        echo '[hint] usa: gcm "mensaje" → git commit -m "mensaje"' >&2
       else
         echo "[hint] usa: gc → git commit" >&2
       fi
@@ -91,6 +89,12 @@ git() {
       ;;
     pull)
       echo "[hint] usa: gl  → git pull" >&2
+      ;;
+    merge)
+      echo "[hint] usa: gm  → git merge" >&2
+      ;;
+    mergetool)
+      echo "[hint] usa: gmt  → git mergetool" >&2
       ;;
     branch)
       echo "[hint] usa: gb  → git branch" >&2
@@ -106,7 +110,7 @@ git() {
   command git "$@"
 }
 
--- git aliases
+# git aliases
 alias g='command git'
 alias gs='command git status -sb'
 alias gd='command git diff'

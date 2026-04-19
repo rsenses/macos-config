@@ -1,6 +1,6 @@
 ---
 description: Revisión final antes de commit o PR
-agent: plan
+agent: reviewer
 model: "opencode/minimax-m2.5-free"
 ---
 
@@ -36,15 +36,19 @@ Actúa así:
 2. comprueba si `CHANGELOG.md` falta o está incompleto para este cambio,
 3. valora si la entrada del changelog sigue razonablemente el formato Keep a Changelog,
 4. estima qué impacto SemVer sugiere el cambio (`patch`, `minor` o `major`),
-5. propone el tipo y scope de Conventional Commit más adecuados,
-6. recomienda un mensaje final en formato `type(scope): summary`,
-7. señala riesgos rápidos antes de enviar PR.
+5. señala riesgos rápidos antes de enviar PR.
 
 Ten en cuenta:
 
+- este comando es solo de revisión, no de cierre de tarea,
 - no ejecutes `composer fix` ni `composer test` en esta fase,
+- no ejecutes nunca tests de ningún tipo, aunque parezca que fallan,
+- no intentes buscar, abrir ni analizar archivos de test,
+- no intentes arreglar tests ni derivar trabajo adicional fuera del diff staged,
 - no hagas commit automáticamente,
 - no modifiques archivos en esta fase salvo que se indique explícitamente.
+
+Limítate exclusivamente al diff staged y a `CHANGELOG.md` si está incluido en ese diff.
 
 Prioriza:
 
@@ -59,5 +63,4 @@ Salida final:
 - estado de changelog
 - impacto SemVer
 - archivos staged
-- sugerencia de Conventional Commit
 - riesgos antes del PR

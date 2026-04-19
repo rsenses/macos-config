@@ -1,6 +1,6 @@
 ---
 description: Revisa rama y estado antes de empezar una tarea
-agent: plan
+agent: reviewer
 model: "opencode/minimax-m2.5-free"
 ---
 

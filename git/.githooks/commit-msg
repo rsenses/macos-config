@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+msg_file="$1"
+msg="$(cat "$msg_file")"
+
+pattern='^(Merge( .+)?$|(?:wip|feat|fix|docs|style|refactor|test|chore)(\(.+\))?: .+)'
+
+if ! printf '%s' "$msg" | grep -Eq "$pattern"; then
+  echo "Invalid commit message."
+  echo $msg
+  echo "Example: feat(auth): add session refresh"
+  exit 1
+fi
