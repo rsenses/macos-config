@@ -1,41 +1,97 @@
-# download organizer
-dlorg() {
-  local base="$HOME/Downloads"
-  local file target abs_target
+# destinations, my file organization
+destinations() {
+  local base="$HOME/data"
+  local root
 
-  while true; do
-    file=$(
-      find "$base" -mindepth 1 -maxdepth 1 \
-        ! -name work ! -name personal \
-        -print | sed "s|^$base/||" | sort |
-      fzf \
+  for root in "$base/work" "$base/personal"; do
+    [[ -d "$root" ]] || continue
+
+    # 🔹 destinos base (rápidos)
+    [[ -d "$root/inbox" ]] && printf '%s\n' "$root/inbox"
+    [[ -d "$root/media" ]] && printf '%s\n' "$root/media"
+    [[ -d "$root/notes" ]] && printf '%s\n' "$root/notes"
+
+    # 🔹 docs/topics (niveles semánticos)
+    if [[ -d "$root/docs/topics" ]]; then
+      find "$root/docs/topics" -mindepth 1 -maxdepth 2 -type d
+    fi
+
+    # 🔹 clients → solo destinos útiles (no raíz cliente)
+    if [[ -d "$root/docs/clients" ]]; then
+      find "$root/docs/clients" -mindepth 2 -maxdepth 3 -type d
+    fi
+
+    # 🔹 proyectos personales
+    if [[ -d "$root/projects" ]]; then
+      find "$root/projects" -mindepth 1 -maxdepth 2 -type d
+    fi
+
+  done | sort -u
+}
+
+
+# select destination
+dest() {
+  destinations | sed "s|^$HOME/|~/|" | fzf --prompt="Destino> "
+}
+
+# send downloaded files on destination
+send_downloads() {
+  local downloads="$HOME/Downloads"
+  local src src_abs dst
+
+  [[ -d "$downloads" ]] || return 1
+
+  while :; do
+    src="$(
+      find "$downloads" -mindepth 1 -maxdepth 1 ! -name '.DS_Store' \
+      | sed "s|^$HOME/|~/|" \
+      | fzf \
         --prompt="Downloads> " \
+        --header="ENTER mover | CTRL-D trash | CTRL-O quicklook | CTRL-R rename | ESC salir" \
         --preview '
-          p="$HOME/Downloads/{}"
+          p="${1/#\~/'"$HOME"'}"
           if [ -d "$p" ]; then
-            eza -la --color=always "$p" 2>/dev/null || ls -la "$p"
-          elif file --mime "$p" | grep -q "text/"; then
-            bat --style=numbers --color=always "$p" 2>/dev/null || sed -n "1,120p" "$p"
+            eza -la --group-directories-first --color=always "$p" 2>/dev/null ||
+            ls -la "$p"
+          elif file --mime "$p" | grep -q "charset=binary"; then
+            file "$p"
           else
+            bat --style=numbers --color=always "$p" 2>/dev/null ||
             file "$p"
           fi
-        '
-    )
+        ' \
+        --bind "ctrl-d:execute-silent(
+          printf '%s\n' {} | sed 's|^~|$HOME|' | xargs -I {} trash \"{}\"
+        )+reload(
+          find $downloads -mindepth 1 -maxdepth 1 ! -name '.DS_Store' | sed 's|^$HOME/|~/|'
+        )" \
+        --bind "ctrl-o:execute-silent(
+          p=\$(printf '%s\n' {} | sed 's|^~|$HOME|');
+          qlmanage -p \"\$p\" >/dev/null 2>&1 &
+        )" \
+        --bind "ctrl-r:execute(
+          p=\$(printf '%s\n' {} | sed 's|^~|$HOME|');
+          dir=\$(dirname \"\$p\");
+          base=\$(basename \"\$p\");
+          printf 'Rename %s -> ' \"\$base\" > /dev/tty;
+          read -r newname < /dev/tty;
+          if [ -n \"\$newname\" ] && [ \"\$newname\" != \"\$base\" ]; then
+            mv \"\$p\" \"\$dir/\$newname\";
+          fi
+        )+reload(
+          find $downloads -mindepth 1 -maxdepth 1 ! -name '.DS_Store' | sed 's|^$HOME/|~/|'
+        )"
+    )" || break
 
-    [ -z "$file" ] && break
+    [[ -z "$src" ]] && break
+    src_abs="${src/#\~/$HOME}"
 
-    target=$(
-      find "$base/work" "$base/personal" -type d \
-        | sed "s|^$base/||" \
-        | sort |
-      fzf --prompt="Move to> "
-    )
+    dst="$(dest)" || continue
+    [[ -n "$dst" ]] || continue
+    dst="${dst/#\~/$HOME}"
 
-    [ -z "$target" ] && continue
-
-    abs_target="$base/$target"
-    mv "$base/$file" "$abs_target/"
-    printf 'Moved: %s -> %s\n' "$file" "$target"
+    mv "$src_abs" "$dst"
   done
 }
 
@@ -54,7 +110,7 @@ ss() {
     ' "$ssh_config" \
       | grep -vE '(^\*|!|[*?])' \
       | sort -u \
-      | fzf --prompt="ssh > "
+      | fzf --prompt="ssh > " --preview ':' --preview-window hidden
   ) || return
 
   [[ -n "$server" ]] && ssh "$server"
@@ -62,8 +118,9 @@ ss() {
 
 # select notes dir and open in nvim
 notes() {
-  local type=$(printf "work\npersonal" | fzf)
-  nvim ~/\$type/notes
+  local type
+  type=$(printf "work\npersonal" | fzf) || return
+  nvim "$HOME/data/$type/notes/daily.md"
 }
 
 # show last downloaded file
