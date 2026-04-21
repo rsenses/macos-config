@@ -53,9 +53,6 @@ alias lsize='ls -lhSF'
 #weather
 alias weather='curl "wttr.in/Leganes?T&lang=es"'
 
-# tmux
-alias ta='tmux attach -t'
-
 # git
 unalias git 2>/dev/null
 

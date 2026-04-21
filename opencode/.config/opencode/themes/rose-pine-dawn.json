@@ -1,0 +1,237 @@
+{
+	"$schema": "https://opencode.ai/theme.json",
+	"defs": {
+		"rosePineBase": "#191724",
+		"rosePineSurface": "#1f1d2e",
+		"rosePineOverlay": "#26233a",
+		"rosePineMuted": "#6e6a86",
+		"rosePineSubtle": "#908caa",
+		"rosePineText": "#e0def4",
+		"rosePineLove": "#eb6f92",
+		"rosePineGold": "#f6c177",
+		"rosePineRose": "#ebbcba",
+		"rosePinePine": "#31748f",
+		"rosePineFoam": "#9ccfd8",
+		"rosePineIris": "#c4a7e7",
+		"rosePineHighlightLow": "#21202e",
+		"rosePineHighlightMed": "#403d52",
+		"rosePineHighlightHigh": "#524f67",
+		"rosePineDawnBase": "#faf4ed",
+		"rosePineDawnSurface": "#fffaf3",
+		"rosePineDawnOverlay": "#f2e9e1",
+		"rosePineDawnMuted": "#9893a5",
+		"rosePineDawnSubtle": "#797593",
+		"rosePineDawnText": "#575279",
+		"rosePineDawnLove": "#b4637a",
+		"rosePineDawnGold": "#ea9d34",
+		"rosePineDawnRose": "#d7827e",
+		"rosePineDawnPine": "#286983",
+		"rosePineDawnFoam": "#56949f",
+		"rosePineDawnIris": "#907aa9",
+		"rosePineDawnHighlightLow": "#f4ede8",
+		"rosePineDawnHighlightMed": "#dfdad9",
+		"rosePineDawnHighlightHigh": "#cecacd"
+	},
+	"theme": {
+		"primary": {
+			"dark": "rosePineDawnPine",
+			"light": "rosePineDawnPine"
+		},
+		"secondary": {
+			"dark": "rosePineDawnIris",
+			"light": "rosePineDawnIris"
+		},
+		"accent": {
+			"dark": "rosePineDawnRose",
+			"light": "rosePineDawnRose"
+		},
+		"error": {
+			"dark": "rosePineDawnLove",
+			"light": "rosePineDawnLove"
+		},
+		"warning": {
+			"dark": "rosePineDawnGold",
+			"light": "rosePineDawnGold"
+		},
+		"success": {
+			"dark": "rosePineDawnPine",
+			"light": "rosePineDawnPine"
+		},
+		"info": {
+			"dark": "rosePineDawnFoam",
+			"light": "rosePineDawnFoam"
+		},
+		"text": {
+			"dark": "rosePineDawnText",
+			"light": "rosePineDawnText"
+		},
+		"textMuted": {
+			"dark": "rosePineDawnSubtle",
+			"light": "rosePineDawnSubtle"
+		},
+		"background": {
+			"dark": "rosePineDawnBase",
+			"light": "rosePineDawnBase"
+		},
+		"backgroundPanel": {
+			"dark": "rosePineDawnSurface",
+			"light": "rosePineDawnSurface"
+		},
+		"backgroundElement": {
+			"dark": "rosePineDawnOverlay",
+			"light": "rosePineDawnOverlay"
+		},
+		"border": {
+			"dark": "rosePineDawnHighlightMed",
+			"light": "rosePineDawnHighlightMed"
+		},
+		"borderActive": {
+			"dark": "rosePineDawnHighlightHigh",
+			"light": "rosePineDawnHighlightHigh"
+		},
+		"borderSubtle": {
+			"dark": "rosePineDawnHighlightLow",
+			"light": "rosePineDawnHighlightLow"
+		},
+		"diffAdded": {
+			"dark": "rosePineDawnPine",
+			"light": "rosePineDawnPine"
+		},
+		"diffRemoved": {
+			"dark": "rosePineDawnLove",
+			"light": "rosePineDawnLove"
+		},
+		"diffContext": {
+			"dark": "rosePineDawnMuted",
+			"light": "rosePineDawnMuted"
+		},
+		"diffHunkHeader": {
+			"dark": "rosePineDawnSubtle",
+			"light": "rosePineDawnSubtle"
+		},
+		"diffHighlightAdded": {
+			"dark": "rosePineDawnPine",
+			"light": "rosePineDawnPine"
+		},
+		"diffHighlightRemoved": {
+			"dark": "rosePineDawnLove",
+			"light": "rosePineDawnLove"
+		},
+		"diffAddedBg": {
+			"dark": "rosePineDawnHighlightLow",
+			"light": "rosePineDawnHighlightLow"
+		},
+		"diffRemovedBg": {
+			"dark": "rosePineDawnHighlightLow",
+			"light": "rosePineDawnHighlightLow"
+		},
+		"diffContextBg": {
+			"dark": "rosePineDawnSurface",
+			"light": "rosePineDawnSurface"
+		},
+		"diffLineNumber": {
+			"dark": "rosePineDawnMuted",
+			"light": "rosePineDawnMuted"
+		},
+		"diffAddedLineNumberBg": {
+			"dark": "rosePineDawnHighlightLow",
+			"light": "rosePineDawnHighlightLow"
+		},
+		"diffRemovedLineNumberBg": {
+			"dark": "rosePineDawnHighlightLow",
+			"light": "rosePineDawnHighlightLow"
+		},
+		"markdownText": {
+			"dark": "rosePineDawnText",
+			"light": "rosePineDawnText"
+		},
+		"markdownHeading": {
+			"dark": "rosePineDawnFoam",
+			"light": "rosePineDawnFoam"
+		},
+		"markdownLink": {
+			"dark": "rosePineDawnPine",
+			"light": "rosePineDawnPine"
+		},
+		"markdownLinkText": {
+			"dark": "rosePineDawnRose",
+			"light": "rosePineDawnRose"
+		},
+		"markdownCode": {
+			"dark": "rosePineDawnGold",
+			"light": "rosePineDawnGold"
+		},
+		"markdownBlockQuote": {
+			"dark": "rosePineDawnSubtle",
+			"light": "rosePineDawnSubtle"
+		},
+		"markdownEmph": {
+			"dark": "rosePineDawnRose",
+			"light": "rosePineDawnRose"
+		},
+		"markdownStrong": {
+			"dark": "rosePineDawnGold",
+			"light": "rosePineDawnGold"
+		},
+		"markdownHorizontalRule": {
+			"dark": "rosePineDawnHighlightMed",
+			"light": "rosePineDawnHighlightMed"
+		},
+		"markdownListItem": {
+			"dark": "rosePineDawnFoam",
+			"light": "rosePineDawnFoam"
+		},
+		"markdownListEnumeration": {
+			"dark": "rosePineDawnRose",
+			"light": "rosePineDawnRose"
+		},
+		"markdownImage": {
+			"dark": "rosePineDawnIris",
+			"light": "rosePineDawnIris"
+		},
+		"markdownImageText": {
+			"dark": "rosePineDawnRose",
+			"light": "rosePineDawnRose"
+		},
+		"markdownCodeBlock": {
+			"dark": "rosePineDawnText",
+			"light": "rosePineDawnText"
+		},
+		"syntaxComment": {
+			"dark": "rosePineDawnMuted",
+			"light": "rosePineDawnMuted"
+		},
+		"syntaxKeyword": {
+			"dark": "rosePineDawnPine",
+			"light": "rosePineDawnPine"
+		},
+		"syntaxFunction": {
+			"dark": "rosePineDawnFoam",
+			"light": "rosePineDawnFoam"
+		},
+		"syntaxVariable": {
+			"dark": "rosePineDawnRose",
+			"light": "rosePineDawnRose"
+		},
+		"syntaxString": {
+			"dark": "rosePineDawnGold",
+			"light": "rosePineDawnGold"
+		},
+		"syntaxNumber": {
+			"dark": "rosePineDawnIris",
+			"light": "rosePineDawnIris"
+		},
+		"syntaxType": {
+			"dark": "rosePineDawnRose",
+			"light": "rosePineDawnRose"
+		},
+		"syntaxOperator": {
+			"dark": "rosePineDawnPine",
+			"light": "rosePineDawnPine"
+		},
+		"syntaxPunctuation": {
+			"dark": "rosePineDawnText",
+			"light": "rosePineDawnText"
+		}
+	}
+}
