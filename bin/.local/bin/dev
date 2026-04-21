@@ -3,19 +3,18 @@ set -euo pipefail
 
 SITES_DIR="$HOME/dev/caddy-sites"
 CADDYFILE="/opt/homebrew/etc/Caddyfile"
-BASE_PORT=8010
-REGISTRY_FILE="$HOME/.cache/dev/registry.tsv"
 
 PROJECT_DIR=""
 REPO_NAME=""
 DOMAIN=""
 SNIPPET=""
 CONFIG_FILE=""
+WEB_ROOT=""
 PORT=""
 CONFIG_PORT=""
+PHP_LOG_FILE=""
+PHP_PID_FILE=""
 declare -a ALIASES=()
-IN_GIT_REPO="no"
-GIT_COMMON_DIR=""
 
 usage() {
   echo "Uso:"
@@ -36,76 +35,9 @@ trim() {
   printf '%s' "$s"
 }
 
-ensure_registry_dir() {
-  mkdir -p "$(dirname "$REGISTRY_FILE")"
-  touch "$REGISTRY_FILE"
-}
-
-registry_get_by_domain() {
-  local wanted_domain="$1"
-  local last_match=""
-
-  [[ -f "$REGISTRY_FILE" ]] || return 1
-
-  while IFS=$'\t' read -r d dir p; do
-    [[ -z "${d:-}" ]] && continue
-    if [[ "$d" == "$wanted_domain" ]]; then
-      last_match="$d"$'\t'"$dir"$'\t'"$p"
-    fi
-  done < "$REGISTRY_FILE"
-
-  [[ -n "$last_match" ]] || return 1
-  printf '%s\n' "$last_match"
-}
-
-registry_upsert() {
-  local d="$1"
-  local dir="$2"
-  local p="$3"
-  local tmp
-
-  ensure_registry_dir
-  tmp="$(mktemp)"
-
-  if [[ -f "$REGISTRY_FILE" ]]; then
-    while IFS=$'\t' read -r cd cdir cp; do
-      [[ -z "${cd:-}" ]] && continue
-      [[ "$cd" == "$d" ]] && continue
-      printf '%s\t%s\t%s\n' "$cd" "$cdir" "$cp" >> "$tmp"
-    done < "$REGISTRY_FILE"
-  fi
-
-  printf '%s\t%s\t%s\n' "$d" "$dir" "$p" >> "$tmp"
-  mv "$tmp" "$REGISTRY_FILE"
-}
-
-registry_remove() {
-  local wanted_domain="$1"
-  local tmp
-
-  [[ -f "$REGISTRY_FILE" ]] || return 0
-  tmp="$(mktemp)"
-
-  while IFS=$'\t' read -r d dir p; do
-    [[ -z "${d:-}" ]] && continue
-    [[ "$d" == "$wanted_domain" ]] && continue
-    printf '%s\t%s\t%s\n' "$d" "$dir" "$p" >> "$tmp"
-  done < "$REGISTRY_FILE"
-
-  mv "$tmp" "$REGISTRY_FILE"
-}
-
 port_is_listening() {
   local p="$1"
   lsof -nP -iTCP:"$p" -sTCP:LISTEN >/dev/null 2>&1
-}
-
-find_free_port() {
-  local candidate="$1"
-  while port_is_listening "$candidate"; do
-    candidate="$((candidate + 1))"
-  done
-  printf '%s\n' "$candidate"
 }
 
 wait_for_port() {
@@ -155,18 +87,21 @@ resolve_project() {
 
     PROJECT_DIR="$repo_root"
     REPO_NAME="$(basename "$(dirname "$git_common")")"
-    IN_GIT_REPO="yes"
-    GIT_COMMON_DIR="$git_common"
   else
     PROJECT_DIR="$target_dir"
     REPO_NAME="$(basename "$target_dir")"
-    IN_GIT_REPO="no"
-    GIT_COMMON_DIR=""
   fi
 
   DOMAIN="${REPO_NAME}.test"
   SNIPPET="$SITES_DIR/${REPO_NAME}.caddy"
   CONFIG_FILE="$PROJECT_DIR/.config/caddy"
+  WEB_ROOT="$PROJECT_DIR"
+  PHP_LOG_FILE="/tmp/dev-${REPO_NAME}.log"
+  PHP_PID_FILE="/tmp/dev-${REPO_NAME}.pid"
+
+  if [[ -d "$PROJECT_DIR/public" ]]; then
+    WEB_ROOT="$PROJECT_DIR/public"
+  fi
 }
 
 append_alias_if_missing() {
@@ -184,112 +119,77 @@ append_alias_if_missing() {
   ALIASES+=("$candidate")
 }
 
-load_aliases_file() {
-  local file="$1"
-  [[ -f "$file" ]] || return 0
+normalize_alias_host() {
+  local host="$1"
 
-  while IFS= read -r raw; do
-    local line
-    line="$(trim "${raw%%#*}")"
-    [[ -z "$line" ]] && continue
-    append_alias_if_missing "$line"
-  done < "$file"
+  host="$(trim "$host")"
+  [[ -n "$host" ]] || return 0
+
+  case "$host" in
+    *.test) printf '%s\n' "$host" ;;
+    *) printf '%s.test\n' "$host" ;;
+  esac
+}
+
+load_alias_values() {
+  local value="$1"
+  local token
+
+  value="$(trim "$value")"
+
+  case "$value" in
+    '"'*) value="${value#\"}"; value="${value%\"}" ;;
+    "'"*) value="${value#\'}"; value="${value%\'}" ;;
+  esac
+
+  value="${value//,/ }"
+  for token in $value; do
+    append_alias_if_missing "$(normalize_alias_host "$token")"
+  done
 }
 
 load_project_config() {
-  local legacy_aliases
-
   CONFIG_PORT=""
   ALIASES=()
 
-  if [[ -f "$CONFIG_FILE" ]]; then
-    while IFS= read -r raw; do
-      local line
-      local value
-      line="$(trim "${raw%%#*}")"
-      [[ -z "$line" ]] && continue
+  [[ -f "$CONFIG_FILE" ]] || return 0
 
-      if [[ "$line" == PORT=* ]]; then
-        value="$(trim "${line#PORT=}")"
+  while IFS= read -r raw; do
+    local line
+    local value
+
+    line="$(trim "${raw%%#*}")"
+    [[ -z "$line" ]] && continue
+
+    case "$line" in
+      [Pp][Oo][Rr][Tt]=*)
+        value="$(trim "${line#*=}")"
+        case "$value" in
+          '"'*) value="${value#\"}"; value="${value%\"}" ;;
+          "'"*) value="${value#\'}"; value="${value%\'}" ;;
+        esac
         CONFIG_PORT="$value"
-      elif [[ "$line" == ALIASES=* ]]; then
-        local token
-        value="$(trim "${line#ALIASES=}")"
-        value="${value//,/ }"
-        for token in $value; do
-          append_alias_if_missing "$token"
-        done
-      fi
-    done < "$CONFIG_FILE"
-  fi
-
-  legacy_aliases="$PROJECT_DIR/.aliases"
-  load_aliases_file "$legacy_aliases"
+        ;;
+      [Aa][Ll][Ii][Aa][Ss][Ee][Ss]=*)
+        value="${line#*=}"
+        load_alias_values "$value"
+        ;;
+    esac
+  done < "$CONFIG_FILE"
 }
 
 pick_port() {
-  local reg_line=""
-  local _reg_domain=""
-  local _reg_dir=""
-  local reg_port=""
-
-  if [[ -n "$CONFIG_PORT" ]]; then
-    if [[ ! "$CONFIG_PORT" =~ ^[0-9]+$ ]]; then
-      echo "Error: PORT inválido en $CONFIG_FILE" >&2
-      exit 1
-    fi
-    PORT="$CONFIG_PORT"
-    return
+  if [[ -z "$CONFIG_PORT" ]]; then
+    echo "Error: falta PORT en $CONFIG_FILE" >&2
+    exit 1
   fi
 
-  if reg_line="$(registry_get_by_domain "$DOMAIN" 2>/dev/null)"; then
-    IFS=$'\t' read -r _reg_domain _reg_dir reg_port <<< "$reg_line"
-    if [[ -n "$reg_port" && "$reg_port" =~ ^[0-9]+$ ]]; then
-      PORT="$reg_port"
-      return
-    fi
+  if [[ ! "$CONFIG_PORT" =~ ^[0-9]+$ ]]; then
+    echo "Error: PORT inválido en $CONFIG_FILE" >&2
+    exit 1
   fi
 
-  PORT="$(find_free_port "$BASE_PORT")"
-}
-
-stop_server_for_dir() {
-  local dir="$1"
-  [[ -n "$dir" ]] || return 0
-  symfony local:server:stop --dir="$dir" >/dev/null 2>&1 || true
-}
-
-kill_port_listeners() {
-  local p="$1"
-  local pids=""
-
-  pids="$(lsof -tiTCP:"$p" -sTCP:LISTEN 2>/dev/null | tr '\n' ' ')"
-  pids="$(trim "$pids")"
-  [[ -n "$pids" ]] || return 0
-
-  kill $pids >/dev/null 2>&1 || true
-  sleep 0.3
-
-  if port_is_listening "$p"; then
-    kill -9 $pids >/dev/null 2>&1 || true
-    sleep 0.2
-  fi
-}
-
-stop_other_worktrees_servers() {
-  local line
-  local wt_dir
-
-  [[ "$IN_GIT_REPO" == "yes" ]] || return 0
-
-  while IFS= read -r line; do
-    if [[ "$line" == worktree\ * ]]; then
-      wt_dir="${line#worktree }"
-      if [[ "$wt_dir" != "$PROJECT_DIR" ]]; then
-        stop_server_for_dir "$wt_dir"
-      fi
-    fi
-  done < <(git -C "$PROJECT_DIR" worktree list --porcelain 2>/dev/null || true)
+  PORT="$CONFIG_PORT"
 }
 
 write_snippet() {
@@ -311,9 +211,10 @@ write_snippet() {
   cat > "$SNIPPET" <<SNIP
 ${host_line} {
   tls internal
-  reverse_proxy 127.0.0.1:${PORT} {
-    header_up Host {host}
-  }
+reverse_proxy 127.0.0.1:${PORT} {
+  header_up Host {host}
+  header_up X-Forwarded-Proto https
+}
 }
 SNIP
 }
@@ -349,81 +250,100 @@ reload_caddy() {
   run_caddy reload --config "$CADDYFILE" --adapter caddyfile
 }
 
-case "${cmd}" in
-  up)
-    reg_line=""
-    reg_domain=""
-    reg_dir=""
-    reg_port=""
+start_php_server() {
+  mkdir -p "$(dirname "$PHP_LOG_FILE")"
+  : > "$PHP_LOG_FILE"
 
-    resolve_project
-    load_project_config
-    stop_other_worktrees_servers
+  mkdir -p "$(dirname "$PHP_PID_FILE")"
 
-    if reg_line="$(registry_get_by_domain "$DOMAIN" 2>/dev/null)"; then
-      IFS=$'\t' read -r reg_domain reg_dir reg_port <<< "$reg_line"
-      if [[ -n "$reg_dir" && "$reg_dir" != "$PROJECT_DIR" ]]; then
-        stop_server_for_dir "$reg_dir"
+  (
+    cd "$PROJECT_DIR"
+    nohup php -S "127.0.0.1:${PORT}" -t "$WEB_ROOT" >"$PHP_LOG_FILE" 2>&1 < /dev/null &
+    printf '%s\n' "$!" > "$PHP_PID_FILE"
+  )
+}
+
+show_php_log() {
+  if [[ -f "$PHP_LOG_FILE" ]]; then
+    tail -n 40 "$PHP_LOG_FILE" >&2 || true
+  else
+    echo "Log no encontrado: $PHP_LOG_FILE" >&2
+  fi
+}
+
+read_php_pid() {
+  local pid=""
+
+  [[ -f "$PHP_PID_FILE" ]] || return 1
+  pid="$(trim "$(<"$PHP_PID_FILE")")"
+  [[ -n "$pid" && "$pid" =~ ^[0-9]+$ ]] || return 1
+  printf '%s\n' "$pid"
+}
+
+php_pid_is_running() {
+  local pid="$1"
+
+  [[ -n "$pid" ]] || return 1
+  kill -0 "$pid" >/dev/null 2>&1
+}
+
+stop_php_server() {
+  local pid=""
+
+  if pid="$(read_php_pid 2>/dev/null)"; then
+    if php_pid_is_running "$pid"; then
+      kill "$pid" >/dev/null 2>&1 || true
+      sleep 0.2
+      if php_pid_is_running "$pid"; then
+        kill -9 "$pid" >/dev/null 2>&1 || true
       fi
     fi
+    rm -f "$PHP_PID_FILE"
+    return 0
+  fi
+
+  return 1
+}
+
+case "${cmd}" in
+  up)
+    resolve_project
+    load_project_config
+
+    stop_php_server || true
 
     pick_port
 
     if port_is_listening "$PORT"; then
-      if [[ -n "$CONFIG_PORT" ]]; then
-        kill_port_listeners "$PORT"
-        if port_is_listening "$PORT"; then
-          echo "Error: puerto $PORT ocupado para ${DOMAIN}. No pude liberar el puerto automáticamente." >&2
-          echo "Sugerencia: revisa el proceso con 'lsof -nP -iTCP:$PORT -sTCP:LISTEN'" >&2
-          exit 1
-        fi
-      else
-        PORT="$(find_free_port "$((PORT + 1))")"
-      fi
-    fi
-
-    stop_server_for_dir "$PROJECT_DIR"
-    write_snippet
-
-    symfony local:server:start --dir="$PROJECT_DIR" -d --port="${PORT}" >/dev/null
-    if ! wait_for_port "$PORT" 10; then
-      echo "Error: Symfony no quedó escuchando en el puerto $PORT para ${DOMAIN}." >&2
-      symfony local:server:status --dir="$PROJECT_DIR" >&2 || true
+      echo "Error: puerto $PORT ocupado para ${DOMAIN}." >&2
+      echo "Sugerencia: revisa el proceso con 'lsof -nP -iTCP:$PORT -sTCP:LISTEN'" >&2
       exit 1
     fi
 
-    registry_upsert "$DOMAIN" "$PROJECT_DIR" "$PORT"
+    if [[ ! -f "$SNIPPET" ]]; then
+      write_snippet
+      reload_caddy yes
+    fi
 
-    reload_caddy yes
+    start_php_server
+    if ! wait_for_port "$PORT" 10; then
+      echo "Error: PHP no quedó escuchando en el puerto $PORT para ${DOMAIN}." >&2
+      show_php_log
+      exit 1
+    fi
+
     echo "OK: https://${DOMAIN}  ->  127.0.0.1:${PORT} (${PROJECT_DIR})"
+    echo "Log: $PHP_LOG_FILE"
     ;;
 
   down)
-    reg_line=""
-    _d=""
-    reg_dir=""
-    _p=""
-
     resolve_project
 
-    if reg_line="$(registry_get_by_domain "$DOMAIN" 2>/dev/null)"; then
-      IFS=$'\t' read -r _d reg_dir _p <<< "$reg_line"
-      stop_server_for_dir "$reg_dir"
-    fi
-
-    stop_server_for_dir "$PROJECT_DIR"
-    rm -f "$SNIPPET"
-    registry_remove "$DOMAIN"
-    reload_caddy
+    stop_php_server || true
     echo "OK: parado ${DOMAIN}"
     ;;
 
   status)
-    reg_line=""
-    reg_domain=""
-    reg_dir=""
-    reg_port=""
-
     resolve_project
     load_project_config
 
@@ -433,40 +353,38 @@ case "${cmd}" in
     if [[ -f "$CONFIG_FILE" ]]; then
       echo "Config: $CONFIG_FILE"
     else
-      echo "Config: (sin .dev/caddy)"
+      echo "Config: (sin .config/caddy)"
     fi
 
     if [[ -n "$CONFIG_PORT" ]]; then
+      PORT="$CONFIG_PORT"
       echo "Puerto fijo (config): $CONFIG_PORT"
-    elif reg_line="$(registry_get_by_domain "$DOMAIN" 2>/dev/null)"; then
-      IFS=$'\t' read -r reg_domain reg_dir reg_port <<< "$reg_line"
-      echo "Puerto (registry): $reg_port"
-      echo "Activo en: $reg_dir"
     else
+      PORT=""
       echo "Puerto: (sin asignar)"
     fi
 
-    symfony local:server:status --dir="$PROJECT_DIR" || true
+    if pid="$(read_php_pid 2>/dev/null)" && php_pid_is_running "$pid"; then
+      echo "Servidor PHP: activo en 127.0.0.1:$PORT"
+      echo "Log: $PHP_LOG_FILE"
+    else
+      echo "Servidor PHP: inactivo"
+      echo "Log: $PHP_LOG_FILE"
+    fi
+
+    show_php_log
     ;;
 
   down-all)
     echo "Parando todos los proyectos..."
 
-    # Parar todos los Symfony servers activos
-    symfony server:stop --all >/dev/null 2>&1 || true
+    for pidfile in /tmp/dev-*.pid; do
+      [[ -f "$pidfile" ]] || continue
+      PHP_PID_FILE="$pidfile"
+      stop_php_server
+    done
 
-    # Eliminar todos los snippets de Caddy
-    rm -f "$SITES_DIR"/*.caddy 2>/dev/null || true
-
-    # Limpiar estado local
-    rm -f "$REGISTRY_FILE" 2>/dev/null || true
-
-    # Recargar Caddy solo si está corriendo
-    if curl -fsS http://localhost:2019/config/ >/dev/null 2>&1; then
-      sudo caddy reload --config "$CADDYFILE" --adapter caddyfile >/dev/null
-    fi
-
-    echo "OK: todos los servidores detenidos y snippets eliminados"
+    echo "OK: todos los servidores PHP detenidos"
     ;;
 
   *)
