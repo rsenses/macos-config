@@ -4,10 +4,10 @@
   "share": "manual",
   "agent": {
     "plan": {
+      // "model": "nvidia/moonshotai/kimi-k2-instruct-0905",
+      // "model": "nvidia/minimaxai/minimax-m2.7",
       "model": "opencode/minimax-m2.5-free",
-      // "model": "openrouter/google/gemma-4-31b-it:free",
       // "model": "openai/gpt-5.4-mini",
-      // "model": "opencode/nemotron-3-super-free",
       "tools": {
         "write": false,
         "edit": false,

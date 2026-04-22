@@ -1,3 +1,38 @@
+# Paths
+if command -v zoxide >/dev/null 2>&1; then
+  eval "$(zoxide init --cmd cd zsh)"
+fi
+
+if command -v fzf >/dev/null 2>&1; then
+  eval "$(fzf --zsh)"
+fi
+
+if [[ "${widgets[zle-keymap-select]#user:}" == "starship_zle-keymap-select" || \
+      "${widgets[zle-keymap-select]#user:}" == "starship_zle-keymap-select-wrapped" ]]; then
+    zle -N zle-keymap-select "";
+fi
+
+if command -v starship >/dev/null 2>&1; then
+  eval "$(starship init zsh)"
+fi
+
+# Worktrunk
+if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
+
+if [[ $(uname) == "Darwin" ]]; then
+    path=(
+        "/Applications/Visual Studio Code - Insiders.app/Contents/Resources/app/bin"
+        "$HOME/go/bin"
+        $path
+    )
+fi
+
+path=(
+    "$HOME/.local/bin"
+    "$HOME/.composer/vendor/bin"
+    $path
+)
+
 # OPTIONS ========================================
 HISTFILE=~/.zsh_history
 HISTSIZE=1000000
@@ -25,29 +60,6 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:
 autoload -z edit-command-line
 zle -N edit-command-line
 bindkey "^X^E" edit-command-line
-
-# set -o vi
-
-# EVALS =========================================
-if command -v mise >/dev/null 2>&1; then
-  eval "$(mise activate zsh)"
-fi
-
-if command -v fzf >/dev/null 2>&1; then
-  eval "$(fzf --zsh)"
-fi
-
-if [[ "${widgets[zle-keymap-select]#user:}" == "starship_zle-keymap-select" || \
-      "${widgets[zle-keymap-select]#user:}" == "starship_zle-keymap-select-wrapped" ]]; then
-    zle -N zle-keymap-select "";
-fi
-
-if command -v starship >/dev/null 2>&1; then
-  eval "$(starship init zsh)"
-fi
-
-# Worktrunk
-if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
 
 # ALIASES ========================================
 if [ -f ~/.config/zsh/.zshaliases ]; then
@@ -81,6 +93,6 @@ export CLICOLOR=1  # macOS ls colors
 # autoload -U down-line-or-beginning-search
 
 # KEYBINDINGS ============================================
+# bindkey '^y' autosuggest-accept
 bindkey "^H" backward-delete-char
 bindkey "^?" backward-delete-char
-# bindkey '^y' autosuggest-accept

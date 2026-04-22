@@ -11,27 +11,10 @@ export XDG_CONFIG_HOME="$HOME/.config"
 
 typeset -gU path PATH
 
-# PATHS ========================================
-# Asegurar entorno de Homebrew (por si /etc/zprofile tocó PATH)
 if [ -x /opt/homebrew/bin/brew ]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
-if command -v zoxide >/dev/null 2>&1; then
-  eval "$(zoxide init --cmd cd zsh)"
+if command -v mise >/dev/null 2>&1; then
+  eval "$(mise activate zsh)"
 fi
-
-if [[ $(uname) == "Darwin" ]]; then
-    path=(
-        "/Applications/Visual Studio Code - Insiders.app/Contents/Resources/app/bin"
-        "$HOME/go/bin"
-        $path
-    )
-fi
-
-path=(
-    "$HOME/.local/bin"
-    "$HOME/.composer/vendor/bin"
-    "$HOME/go"
-    $path
-)
