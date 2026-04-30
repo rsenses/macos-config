@@ -1,7 +1,7 @@
 {
   "plugins": {
     "conform.nvim": {
-      "rev": "086a40dc7ed8242c03be9f47fbcee68699cc2395",
+      "rev": "dca1a190aa85f9065979ef35802fb77131911106",
       "src": "https://github.com/stevearc/conform.nvim"
     },
     "kulala.nvim": {
@@ -9,11 +9,11 @@
       "src": "https://github.com/mistweaverco/kulala.nvim"
     },
     "mini.nvim": {
-      "rev": "5849ef04c32a6a8e55957b946c0a275801d87530",
+      "rev": "be81509b7160aa02264a59789164a2e1c4a6750a",
       "src": "https://github.com/nvim-mini/mini.nvim"
     },
     "nvim-lspconfig": {
-      "rev": "e146efacbafed3789ac568abcc5a981c5decaa58",
+      "rev": "f7e89f3d19fb436e1fbeff3bf4291eef35da94e3",
       "src": "https://github.com/neovim/nvim-lspconfig"
     },
     "nvim-treesitter": {
@@ -34,11 +34,11 @@
       "src": "https://github.com/stevearc/oil.nvim"
     },
     "render-markdown.nvim": {
-      "rev": "d67113f11384c0dad96fced2f7b91f1fc811e97f",
+      "rev": "3f3eea97b80839f629c951ca660ffd125bfa5b34",
       "src": "https://github.com/MeanderingProgrammer/render-markdown.nvim"
     },
     "rose-pine": {
-      "rev": "9504524e5ed0e326534698f637f9d038ba4cd0ee",
+      "rev": "6a961effd67f6130d36df6d1c05c48c739796dd2",
       "src": "https://github.com/rose-pine/neovim"
     },
     "supermaven-nvim": {

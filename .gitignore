@@ -15,3 +15,6 @@ node_modules
 **/node_modules
 .worktrees
 nvim-pack-lock.json
+auth.json
+run-history.jsonl
+pi/**/sessions/*

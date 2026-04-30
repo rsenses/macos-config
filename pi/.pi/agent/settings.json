@@ -1,0 +1,85 @@
+{
+  "lastChangelogVersion": "0.70.6",
+  "defaultProvider": "openai",
+  "defaultModel": "openai-codex/gpt-5.4-mini",
+  "defaultThinkingLevel": "medium",
+  "theme": "light",
+  "packages": [
+    "npm:@sherif-fanous/pi-rtk",
+    "npm:pi-subagents",
+    {
+      "source": "git:github.com/rytswd/pi-agent-extensions",
+      "extensions": [
+        "-notify/index.ts",
+        "-slow-mode/index.ts",
+        "-stash/index.ts",
+        "-statusline/index.ts",
+        "-direnv/index.ts"
+      ]
+    },
+    "npm:@ff-labs/pi-fff"
+  ],
+  "enabledModels": [
+    "openai-codex/gpt-5.4-mini",
+    "openai-codex/gpt-5.3-codex",
+    "openai-codex/gpt-5.4",
+    "openai-codex/gpt-5.5",
+    "opencode/minimax-m2.5-free",
+    "openrouter/google/gemma-4-31b-it:free"
+  ],
+  "subagents": {
+    "agentOverrides": {
+      "scout": {
+        "model": "groq/llama-3.3-70b-versatile",
+        "fallbackModels": ["opencode/minimax-m2.5-free"]
+      },
+      "context-builder": {
+        "model": "openrouter/google/gemma-4-31b-it:free",
+        "fallbackModels": ["opencode/minimax-m2.5-free"]
+      },
+      "researcher": {
+        "model": "openrouter/google/gemma-4-31b-it:free",
+        "fallbackModels": [
+          "opencode/minimax-m2.5-free",
+          "openai-codex/gpt-5.4-mini"
+        ]
+      },
+      "planner": {
+        "model": "openai-codex/gpt-5.4-mini",
+        "thinking": "medium",
+        "fallbackModels": ["openai-codex/gpt-5.3-codex"]
+      },
+      "worker": {
+        "model": "opencode/minimax-m2.5-free",
+        "fallbackModels": ["openai-codex/gpt-5.4-mini"]
+      },
+      "reviewer": {
+        "model": "openrouter/google/gemma-4-31b-it:free",
+        "fallbackModels": ["openai-codex/gpt-5.4-mini"]
+      },
+      "debugger": {
+        "model": "openai-codex/gpt-5.4-mini",
+        "thinking": "high",
+        "fallbackModels": [
+          "openai-codex/gpt-5.3-codex",
+          "opencode/minimax-m2.5-free"
+        ]
+      },
+      "delegate": {
+        "model": "openai-codex/gpt-5.4-mini",
+        "thinking": "medium",
+        "fallbackModels": ["opencode/minimax-m2.5-free"]
+      },
+      "oracle": {
+        "model": "openai-codex/gpt-5.4",
+        "thinking": "medium",
+        "fallbackModels": ["openai-codex/gpt-5.3-codex"]
+      },
+      "oracle-executor": {
+        "model": "opencode/minimax-m2.5-free",
+        "fallbackModels": ["openai-codex/gpt-5.4-mini"]
+      }
+    }
+  },
+  "enableInstallTelemetry": false
+}
