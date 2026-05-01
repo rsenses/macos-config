@@ -25,7 +25,8 @@
     "openai-codex/gpt-5.4",
     "openai-codex/gpt-5.5",
     "opencode/minimax-m2.5-free",
-    "openrouter/google/gemma-4-31b-it:free"
+    "groq/llama-3.3-70b-versatile",
+    "google/gemma-4-31b-it"
   ],
   "subagents": {
     "agentOverrides": {
@@ -34,11 +35,11 @@
         "fallbackModels": ["opencode/minimax-m2.5-free"]
       },
       "context-builder": {
-        "model": "openrouter/google/gemma-4-31b-it:free",
+        "model": "google/gemma-4-31b-it",
         "fallbackModels": ["opencode/minimax-m2.5-free"]
       },
       "researcher": {
-        "model": "openrouter/google/gemma-4-31b-it:free",
+        "model": "google/gemma-4-31b-it",
         "fallbackModels": [
           "opencode/minimax-m2.5-free",
           "openai-codex/gpt-5.4-mini"
@@ -54,7 +55,7 @@
         "fallbackModels": ["openai-codex/gpt-5.4-mini"]
       },
       "reviewer": {
-        "model": "openrouter/google/gemma-4-31b-it:free",
+        "model": "google/gemma-4-31b-it",
         "fallbackModels": ["openai-codex/gpt-5.4-mini"]
       },
       "debugger": {
@@ -83,3 +84,4 @@
   },
   "enableInstallTelemetry": false
 }
+

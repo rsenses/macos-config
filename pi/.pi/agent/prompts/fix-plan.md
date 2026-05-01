@@ -20,6 +20,11 @@ Rules:
 - PHPStan is allowed and should be run after code changes when relevant.
 - Do not modify unrelated files.
 - Do not broaden scope.
+- Prefer not to overthink.
+- Do not re-plan the task unless strictly necessary.
+- Execute directly when the plan is clear.
+- Avoid long reasoning chains.
+- Prefer short decisions and fast delegation.
 
 Validation:
 

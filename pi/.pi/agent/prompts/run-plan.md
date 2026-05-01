@@ -17,6 +17,11 @@ Rules:
 - Do not run refactor commands.
 - Do not broaden scope.
 - Stop if the plan is unclear or risky.
+- Prefer not to overthink.
+- Do not re-plan the task unless strictly necessary.
+- Execute directly when the plan is clear.
+- Avoid long reasoning chains.
+- Prefer short decisions and fast delegation.
 
 Validation:
 
