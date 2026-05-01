@@ -2,7 +2,8 @@
 description: Run fix and test, then leave the task ready for final review
 ---
 
-Use the `worker` subagent for this task.
+Use the main agent for orchestration.
+Use the `worker` subagent only for concrete file edits.
 
 I am ready to close this task. Run the project’s final validation flow and leave everything ready for final review.
 
@@ -24,10 +25,11 @@ Context:
 Agent escalation rules:
 
 - Do not use reviewer agents by default.
+- The main agent should handle orchestration, changelog checks, and commit message suggestions.
 - Escalate to the `reviewer` subagent only if:
-  - `composer fix` introduces non-trivial changes,
-  - the changelog requires interpreting user-facing impact,
-  - there is ambiguity about whether the task is ready to ship.
+  - `composer fix` introduces non-trivial logic changes,
+  - the readiness-to-ship verdict is ambiguous after reading the diff and command outputs,
+  - the changelog impact is ambiguous, user-facing, and cannot be determined from the diff and plan alone.
 - Escalate to the `debugger` subagent only if:
   - `composer test` fails,
   - there is a CI/CD or deployment risk,
