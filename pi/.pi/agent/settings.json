@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.70.6",
+  "lastChangelogVersion": "0.72.0",
   "defaultProvider": "openai",
   "defaultModel": "openai-codex/gpt-5.4-mini",
   "defaultThinkingLevel": "medium",
@@ -17,7 +17,9 @@
         "-direnv/index.ts"
       ]
     },
-    "npm:@ff-labs/pi-fff"
+    "npm:@ff-labs/pi-fff",
+    "npm:pi-web-access",
+    "npm:pi-mcp-adapter"
   ],
   "enabledModels": [
     "openai-codex/gpt-5.4-mini",
@@ -31,8 +33,8 @@
   "subagents": {
     "agentOverrides": {
       "scout": {
-        "model": "groq/llama-3.3-70b-versatile",
-        "fallbackModels": ["opencode/minimax-m2.5-free"]
+        "model": "opencode/minimax-m2.5-free",
+        "fallbackModels": ["groq/llama-3.3-70b-versatile"]
       },
       "context-builder": {
         "model": "google/gemma-4-31b-it",
