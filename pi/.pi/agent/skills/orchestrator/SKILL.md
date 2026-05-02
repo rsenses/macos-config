@@ -16,7 +16,7 @@ Never start implementing until you are **100% certain** of what needs to be done
 
 **Fill knowledge gaps with:**
 - **`ask_user_question`** — ambiguous requirements, preference between approaches, any detail that would materially change the implementation. One question per call. Never guess what the user wants.
-- **`subagent` scout** — quick codebase recon: how the codebase works, what patterns exist, which files are involved. Prefer `ffgrep`, `fffind`, and `fff-multi-grep` for search; fall back to `read`, `bash`, `rg`, `fd`, and `ls` when they fit better. Fast and cheap; optimize for low-latency, low-cost handoffs.
+- **`subagent` scout** — quick codebase recon: how the codebase works, what patterns exist, which files are involved. Prefer `rg` for content search and `fffind` for fuzzy file discovery; use `ffgrep` only when FFF is explicitly requested or clearly better. Fall back to `read`, `bash`, `fd`, and `ls` when they fit better. Fast and cheap; optimize for low-latency, low-cost handoffs.
 - **`subagent` researcher** — API docs, library behavior, migration guides, external knowledge. Tools: `fetch` and any available MCP servers in the target repo (especially Laravel Boost for Laravel docs).
 - **`subagent` planner** — turns confirmed requirements into an implementation plan.
 - **`subagent` reviewer** — reviews diffs, plans, and proposed solutions.

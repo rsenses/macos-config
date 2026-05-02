@@ -34,7 +34,8 @@
     "agentOverrides": {
       "scout": {
         "model": "opencode/minimax-m2.5-free",
-        "fallbackModels": ["groq/llama-3.3-70b-versatile"]
+        "fallbackModels": ["groq/llama-3.3-70b-versatile"],
+        "skills": ["search-policy"]
       },
       "context-builder": {
         "model": "google/gemma-4-31b-it",
@@ -86,4 +87,3 @@
   },
   "enableInstallTelemetry": false
 }
-
