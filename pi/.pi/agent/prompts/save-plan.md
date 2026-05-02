@@ -2,19 +2,18 @@
 description: Save the current agreed plan to a Markdown file
 ---
 
-Use the `context-builder` subagent for this task.
-
-Save the current plan from this conversation to a Markdown file.
+Save the current agreed plan from this conversation to a Markdown file.
 
 Context:
-
-The user has already discussed and refined a plan with you. Your job is not to create a new plan, but to persist the current agreed plan.
+The user has already discussed and refined a plan. Your job is to persist the latest agreed plan, not to create a new one.
 
 Rules:
 
 - Extract the latest agreed plan from the conversation.
-- Do not invent new steps.
-- Do not significantly rewrite the plan except to make it clear and structured.
+- Preserve the user's intent, constraints, and decisions.
+- Do not invent new steps, requirements, risks, or verification commands.
+- You may lightly restructure the plan for clarity.
+- The plan may be very small or very large; adapt the level of detail accordingly.
 - Store it in `.ai/plan/` relative to the current working directory.
 - Create `.ai/plan/` if it does not exist.
 - Use the current local timestamp.
@@ -28,26 +27,35 @@ Markdown format:
 
 - Timestamp: <YYYY-MM-DD HH:mm>
 - Status: planned
+- Scope: <small | medium | large | unknown>
 
 ## Goal
 
 <Brief goal of the plan>
 
-## Approved Plan
+## Context
 
-<The current agreed plan>
+<Relevant background from the conversation, only if useful>
 
-## Constraints
+## Plan
 
-<Important constraints decided during planning>
+<The agreed plan. Use a short checklist for simple plans and sections/phases for larger plans.>
 
-## Risks
+## Decisions and Constraints
 
-<Known risks or open concerns>
+<Important decisions, constraints, non-goals, or preferences agreed during planning>
 
-## Verification
+## Expected Changes
 
-<Tests, refactor commands, review steps, or checks to run>
+<Likely areas/files/components affected, if known. Keep generic if unknown.>
+
+## Risks and Open Questions
+
+<Known risks, assumptions, or unresolved questions. Use "None identified" if none.>
+
+## Notes for Implementation
+
+<Useful guidance for whoever executes the plan. Keep concise.>
 
 After saving, reply only with:
 
