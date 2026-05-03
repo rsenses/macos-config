@@ -41,6 +41,10 @@ Markdown format:
 
 <The agreed plan. Use a short checklist for simple plans and sections/phases for larger plans.>
 
+## TODO
+
+<A concise checklist derived from the plan. Use checkboxes. For simple plans, use 1–3 items. For larger plans, group by phase. Do not invent tasks beyond the agreed plan.>
+
 ## Decisions and Constraints
 
 <Important decisions, constraints, non-goals, or preferences agreed during planning>

@@ -22,6 +22,10 @@ Rules:
 - Execute directly when the plan is clear.
 - Avoid long reasoning chains.
 - Prefer short decisions and fast delegation.
+- Prefer framework-native features and existing project conventions.
+- Do not duplicate framework guarantees.
+- Do not add new abstractions unless they clearly reduce complexity now.
+- Choose the smallest direct implementation that satisfies the plan.
 
 Validation:
 

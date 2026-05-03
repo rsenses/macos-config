@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.72.0",
+  "lastChangelogVersion": "0.72.1",
   "defaultProvider": "openai",
   "defaultModel": "openai-codex/gpt-5.4-mini",
   "defaultThinkingLevel": "medium",
@@ -14,7 +14,8 @@
         "-slow-mode/index.ts",
         "-stash/index.ts",
         "-statusline/index.ts",
-        "-direnv/index.ts"
+        "-direnv/index.ts",
+        "-fetch/index.ts"
       ]
     },
     "npm:@ff-labs/pi-fff",
@@ -34,12 +35,18 @@
     "agentOverrides": {
       "scout": {
         "model": "opencode/minimax-m2.5-free",
-        "fallbackModels": ["groq/llama-3.3-70b-versatile"],
-        "skills": ["search-policy"]
+        "fallbackModels": [
+          "groq/llama-3.3-70b-versatile"
+        ],
+        "skills": [
+          "search-policy"
+        ]
       },
       "context-builder": {
         "model": "google/gemma-4-31b-it",
-        "fallbackModels": ["opencode/minimax-m2.5-free"]
+        "fallbackModels": [
+          "opencode/minimax-m2.5-free"
+        ]
       },
       "researcher": {
         "model": "google/gemma-4-31b-it",
@@ -51,15 +58,21 @@
       "planner": {
         "model": "openai-codex/gpt-5.4-mini",
         "thinking": "medium",
-        "fallbackModels": ["openai-codex/gpt-5.3-codex"]
+        "fallbackModels": [
+          "openai-codex/gpt-5.3-codex"
+        ]
       },
       "worker": {
         "model": "opencode/minimax-m2.5-free",
-        "fallbackModels": ["openai-codex/gpt-5.4-mini"]
+        "fallbackModels": [
+          "openai-codex/gpt-5.4-mini"
+        ]
       },
       "reviewer": {
         "model": "google/gemma-4-31b-it",
-        "fallbackModels": ["openai-codex/gpt-5.4-mini"]
+        "fallbackModels": [
+          "openai-codex/gpt-5.4-mini"
+        ]
       },
       "debugger": {
         "model": "openai-codex/gpt-5.4-mini",
@@ -72,16 +85,22 @@
       "delegate": {
         "model": "openai-codex/gpt-5.4-mini",
         "thinking": "medium",
-        "fallbackModels": ["opencode/minimax-m2.5-free"]
+        "fallbackModels": [
+          "opencode/minimax-m2.5-free"
+        ]
       },
       "oracle": {
         "model": "openai-codex/gpt-5.4",
         "thinking": "medium",
-        "fallbackModels": ["openai-codex/gpt-5.3-codex"]
+        "fallbackModels": [
+          "openai-codex/gpt-5.3-codex"
+        ]
       },
       "oracle-executor": {
         "model": "opencode/minimax-m2.5-free",
-        "fallbackModels": ["openai-codex/gpt-5.4-mini"]
+        "fallbackModels": [
+          "openai-codex/gpt-5.4-mini"
+        ]
       }
     }
   },
