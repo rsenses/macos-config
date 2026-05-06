@@ -18,3 +18,4 @@ nvim-pack-lock.json
 auth.json
 run-history.jsonl
 pi/**/sessions/*
+mcp-cache.json

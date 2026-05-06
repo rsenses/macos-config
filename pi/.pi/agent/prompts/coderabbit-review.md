@@ -18,7 +18,7 @@ Rules:
 Execution:
 
 - Run:
-  `cr review --agent`
+  `cr review --agent --type uncommitted`
 
 - If the command fails due to missing installation or authentication:
   - explain the issue
