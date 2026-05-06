@@ -20,7 +20,7 @@ vim.pack.add({
     name = 'rose-pine',
   },
   'https://github.com/stevearc/conform.nvim',
-  'https://github.com/stevearc/oil.nvim',
+  'https://github.com/barrettruth/canola.nvim',
   -- 'https://github.com/stevearc/quicker.nvim',
   'https://github.com/supermaven-inc/supermaven-nvim',
   'https://github.com/rachartier/tiny-cmdline.nvim', -- centered cmdline
