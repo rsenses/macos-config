@@ -1,6 +1,6 @@
 ---
 name: orchestrator
-description: Coordinate coding work with pi-subagents while keeping the main agent in control. Use for planning, implementation, fixing, debugging, reviewing, or any non-trivial development task where subagents can reduce context, cost, ambiguity, or risk. The main agent delegates focused work to scout, planner, context-builder, researcher, delegate, worker, reviewer, debugger, and oracle without replacing pi-subagents' own behavior.
+description: Coordinate coding work with pi-subagents while keeping the main agent in control. Use for planning, implementation, fixing, debugging, reviewing, or any non-trivial development task where subagents can reduce context, cost, ambiguity, or risk. The main agent delegates focused work to scout, planner, context-builder, researcher, delegate, worker, reviewer and oracle without replacing pi-subagents' own behavior.
 ---
 
 # Orchestrator
@@ -34,9 +34,8 @@ For non-trivial coding work, prefer this pattern:
 4. Use `planner` when the solution needs a structured plan before implementation.
 5. Use `delegate` when a plan or task must be split into smaller pieces.
 6. Use `worker` for focused implementation.
-7. Use `debugger` for unclear failures, failing commands, or bug investigation.
-8. Use `reviewer` only for explicit checkpoints, risky diffs, or uncertainty.
-9. Use `oracle` for high-impact decisions, architecture, drift detection, or risky tradeoffs.
+7. Use `reviewer` only for explicit checkpoints, risky diffs, or uncertainty.
+8. Use `oracle` for high-impact decisions, architecture, drift detection, or risky tradeoffs.
 
 Do not delegate just because delegation is possible. Delegate when it improves quality, reduces context, lowers cost, or reduces risk.
 
@@ -163,19 +162,6 @@ Use reviewer when:
 Reviewer should usually be review-only.
 
 Ask reviewer for evidence-backed findings, not broad rewrites.
-
-### debugger
-
-Use debugger when something fails and the cause is unclear.
-
-Good debugger tasks:
-
-- analyze failing PHPStan output,
-- analyze failing tests,
-- trace a bug,
-- identify likely root cause.
-
-Do not use debugger for straightforward implementation.
 
 ### oracle
 

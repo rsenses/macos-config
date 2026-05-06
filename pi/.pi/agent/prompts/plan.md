@@ -23,7 +23,7 @@ Rules:
   - use `scout` to locate relevant code, entry points, flows, tests, or existing patterns,
   - use `researcher` for framework/library/package documentation or external facts,
   - use `planner` only for medium or complex plans that benefit from structured decomposition.
-- Do not use `worker`, `reviewer`, or `debugger` during planning unless explicitly needed for non-mutating analysis.
+- Do not use `worker` or `reviewer` during planning unless explicitly needed for non-mutating analysis.
 - State assumptions explicitly.
 - Prefer the smallest safe change that solves the task.
 - Prefer framework-native features and existing project conventions.

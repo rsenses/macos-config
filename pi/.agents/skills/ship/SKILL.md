@@ -16,15 +16,6 @@ Use the `worker` subagent only for concrete repository changes, such as:
 - editing `CHANGELOG.md`
 - creating the commit
 
-Do not use the `debugger` subagent by default.
-
-Use the `debugger` subagent only if:
-
-- the diff indicates a likely CI/CD or deployment risk
-- merge conflict markers are found
-- the change appears technically unsafe
-- tests were explicitly requested and fail
-
 ## Goal
 
 Help the user avoid forgetting:

@@ -1,7 +1,7 @@
 {
   "lastChangelogVersion": "0.73.0",
-  "defaultProvider": "openai",
-  "defaultModel": "openai-codex/gpt-5.4-mini",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.4-mini",
   "defaultThinkingLevel": "medium",
   "theme": "light",
   "packages": [
@@ -25,20 +25,13 @@
   "enabledModels": [
     "openai-codex/gpt-5.4-mini",
     "openai-codex/gpt-5.3-codex",
-    "openai-codex/gpt-5.4",
-    "openai-codex/gpt-5.5",
-    "google/gemma-4-31b-it",
-    "opencode-go/qwen3.6-plus",
-    "opencode-go/kimi-k2.6",
-    "opencode-go/deepseek-v4-flash"
+    "openai-codex/gpt-5.5"
   ],
   "subagents": {
     "agentOverrides": {
       "scout": {
         "model": "opencode-go/deepseek-v4-flash",
-        "fallbackModels": [
-          "opencode-go/qwen3.5-plus"
-        ]
+        "fallbackModels": ["opencode-go/qwen3.5-plus"]
       },
       "context-builder": {
         "model": "opencode-go/kimi-k2.6",
@@ -81,15 +74,6 @@
           "openai-codex/gpt-5.4-mini"
         ]
       },
-      "debugger": {
-        "model": "openai-codex/gpt-5.4-mini",
-        "thinking": "high",
-        "fallbackModels": [
-          "opencode-go/deepseek-v4-pro",
-          "opencode-go/minimax-m2.7",
-          "openai-codex/gpt-5.5"
-        ]
-      },
       "delegate": {
         "model": "openai-codex/gpt-5.4-mini",
         "thinking": "medium",
@@ -104,14 +88,6 @@
         "fallbackModels": [
           "openai-codex/gpt-5.4",
           "opencode-go/deepseek-v4-pro"
-        ]
-      },
-      "oracle-executor": {
-        "model": "opencode-go/deepseek-v4-flash",
-        "fallbackModels": [
-          "opencode-go/minimax-m2.7",
-          "opencode-go/deepseek-v4-pro",
-          "openai-codex/gpt-5.4-mini"
         ]
       }
     }

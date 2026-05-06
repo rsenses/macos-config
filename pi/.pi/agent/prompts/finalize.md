@@ -36,10 +36,6 @@ Agent escalation rules:
   - the fix/format command introduces non-trivial logic changes,
   - the readiness-to-ship verdict is ambiguous after reading the diff and command outputs,
   - the changelog impact is ambiguous, user-facing, and cannot be determined from the diff and plan alone.
-- Escalate to the `debugger` subagent only if:
-  - the test command fails,
-  - there is a CI/CD or deployment risk,
-  - you detect a contradiction with the implemented task.
 - If this task produced a durable project lesson or decision, mention that it may be worth saving to memory. Do not update long-term memory unless explicitly appropriate.
 
 Rules:
