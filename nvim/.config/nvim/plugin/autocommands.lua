@@ -96,9 +96,11 @@ local function update_winbar()
 
   vim.wo.winbar = '%#WinBar1#%m ' .. '%#WinBar2#󰓩' .. buffer_count .. ' ' .. '%#WinBar1# [' .. '%n' .. '] %f' .. diagnostics
 end
--- Autocmd to update the winbar on BufEnter and WinEnter events
-vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter', 'ModeChanged', 'DiagnosticChanged' }, {
-  callback = update_winbar,
+-- Update winbar outside of textlock-sensitive events
+vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter', 'DiagnosticChanged' }, {
+  callback = function()
+    vim.schedule(update_winbar)
+  end,
 })
 
 -- Auto-resize splits when window is resized

@@ -32,6 +32,7 @@ if [[ $(uname) == "Darwin" ]]; then
 fi
 
 path=(
+    "$HOME/.cargo/bin"
     "$HOME/.local/bin"
     "$HOME/.composer/vendor/bin"
     $path

@@ -19,3 +19,6 @@ auth.json
 run-history.jsonl
 pi/**/sessions/*
 mcp-cache.json
+cache.json
+context.md
+progress.md
