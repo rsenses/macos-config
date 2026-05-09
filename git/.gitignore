@@ -1,7 +1,6 @@
 .DS_Store
 .AppleDouble
 .LSOverride
-Icon
 .Spotlight-V100
 .Trashes
 vendor-tags
@@ -17,6 +16,6 @@ _ide_helper_models.php
 /.fleet
 /.idea
 /.vscode
-# Thumbnails
 ._*
 .valetrc
+.envrc
