@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.73.0",
+  "lastChangelogVersion": "0.74.0",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.4-mini",
   "defaultThinkingLevel": "medium",
@@ -19,8 +19,7 @@
       ]
     },
     "npm:pi-web-access",
-    "npm:pi-mcp-adapter",
-    "git:github.com/jo-inc/pi-mem"
+    "npm:pi-mcp-adapter"
   ],
   "enabledModels": [
     "openai-codex/gpt-5.4-mini",
@@ -31,7 +30,9 @@
     "agentOverrides": {
       "scout": {
         "model": "opencode-go/deepseek-v4-flash",
-        "fallbackModels": ["opencode-go/qwen3.5-plus"]
+        "fallbackModels": [
+          "opencode-go/qwen3.5-plus"
+        ]
       },
       "context-builder": {
         "model": "opencode-go/kimi-k2.6",
@@ -92,5 +93,6 @@
       }
     }
   },
-  "enableInstallTelemetry": false
+  "enableInstallTelemetry": false,
+  "showHardwareCursor": false
 }
