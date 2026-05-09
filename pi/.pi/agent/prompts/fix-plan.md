@@ -4,6 +4,7 @@ argument-hint: "<feedback>"
 ---
 
 Use the `orchestrator` skill for this task.
+Use the `memory` skill for this task.
 
 Apply a focused correction to the current implementation based on my feedback.
 
@@ -27,7 +28,9 @@ Rules:
 - Prefer short decisions and fast delegation.
 - Avoid long reasoning chains.
 - Execute directly when the requested fix is clear.
+- Use loaded project memory only to avoid repeated mistakes or known project pitfalls.
 - Do not let memory broaden the requested fix.
+- Append a concise daily note only if the correction involved meaningful work.
 
 Validation:
 

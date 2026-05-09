@@ -5,7 +5,7 @@ argument-hint: "<task>"
 
 Use the `orchestrator` skill for this task.
 
-Plan the following task without modifying files.
+Plan the following task without modifying files. Use loaded project memory as context, but do not write memory, daily notes, or plan files during this read-only planning command.
 
 Task:
 $ARGUMENTS

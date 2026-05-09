@@ -2,6 +2,8 @@
 description: Save the current agreed plan to a Markdown file
 ---
 
+Use the `memory` skill for this task.
+
 Save the current agreed plan from this conversation to a Markdown file.
 
 Context:
@@ -27,6 +29,7 @@ Rules:
 - Filename format: `YYYY-MM-DD-HHmm-short-slug.md`.
 - Do not overwrite existing files.
 - Do not edit files outside the current working directory.
+- This command itself satisfies the memory plan-saving step; do not create a second duplicate plan file.
 
 Markdown format:
 

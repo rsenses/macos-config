@@ -3,6 +3,7 @@ description: Run fix and test, then leave the task ready for final review
 ---
 
 Use the `orchestrator` skill for this task.
+Use the `memory` skill for this task.
 Use the `worker` subagent only for concrete file edits.
 
 I am ready to close this task. Run the project’s final validation flow and leave everything ready for final review.
@@ -36,7 +37,8 @@ Agent escalation rules:
   - the fix/format command introduces non-trivial logic changes,
   - the readiness-to-ship verdict is ambiguous after reading the diff and command outputs,
   - the changelog impact is ambiguous, user-facing, and cannot be determined from the diff and plan alone.
-- If this task produced a durable project lesson or decision, mention that it may be worth saving to memory. Do not update long-term memory unless explicitly appropriate.
+- If this task produced a durable project lesson or decision, update `.ai/MEMORY.md` only when it is clearly appropriate; otherwise put it in today's daily note.
+- Append a concise daily note with validation results, remaining risks, and final verdict.
 
 Rules:
 
@@ -56,3 +58,4 @@ Final output:
 - final verdict: `ready to ship` or `not ready to ship`
 - risks before final review
 - Conventional Commit suggestion
+- memory/daily entry status

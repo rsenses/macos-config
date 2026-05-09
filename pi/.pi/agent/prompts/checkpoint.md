@@ -4,7 +4,7 @@ description: Review whether current changes are properly grouped for commit
 
 Use the `reviewer` subagent for this task.
 
-I want to review whether my current changes are properly grouped before committing.
+I want to review whether my current changes are properly grouped before committing. Do not update memory files during this read-only grouping review.
 
 1. Inspect the current branch, git status, staged files, and unstaged files.
 2. Clearly separate reasoning between staged and unstaged changes.

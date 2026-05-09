@@ -1,0 +1,125 @@
+import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { existsSync } from "node:fs";
+import path from "node:path";
+
+const MEMORY_TEMPLATE = `# Project Memory
+
+Durable project knowledge, decisions, preferences, and recurring lessons.
+
+## Stable Preferences
+
+- Prefer simple, direct implementations.
+- Prefer framework-native and project-native solutions.
+- Avoid unnecessary abstractions.
+- Do not duplicate framework guarantees.
+
+## Project Decisions
+
+- Validation:
+- Remaining:
+- Notes:
+`;
+
+function projectMemoryPaths(cwd: string) {
+	const aiDir = path.join(cwd, ".ai");
+	return {
+		aiDir,
+		planDir: path.join(aiDir, "plan"),
+		dailyDir: path.join(aiDir, "daily"),
+		memoryFile: path.join(aiDir, "MEMORY.md"),
+	};
+}
+
+async function ensureProjectMemory(cwd: string) {
+	const paths = projectMemoryPaths(cwd);
+	await mkdir(paths.planDir, { recursive: true });
+	await mkdir(paths.dailyDir, { recursive: true });
+
+	if (!existsSync(paths.memoryFile)) {
+		await writeFile(paths.memoryFile, MEMORY_TEMPLATE, "utf8");
+	}
+
+	return paths;
+}
+
+function localDate(date = new Date()): string {
+	return new Intl.DateTimeFormat("en-CA", {
+		year: "numeric",
+		month: "2-digit",
+		day: "2-digit",
+	}).format(date);
+}
+
+function yesterdayDate(): string {
+	const date = new Date();
+	date.setDate(date.getDate() - 1);
+	return localDate(date);
+}
+
+async function readIfExists(file: string): Promise<string> {
+	if (!existsSync(file)) return "";
+	return readFile(file, "utf8");
+}
+
+async function ensureDailyFile(cwd: string) {
+	const paths = await ensureProjectMemory(cwd);
+	const file = path.join(paths.dailyDir, `${localDate()}.md`);
+	if (!existsSync(file)) {
+		await writeFile(file, `# ${localDate()}\n`, "utf8");
+	}
+}
+
+export default function (pi: ExtensionAPI) {
+	pi.on("before_agent_start", async (event, ctx) => {
+		const cwd = event.systemPromptOptions?.cwd ?? ctx.cwd;
+		const paths = await ensureProjectMemory(cwd);
+		await ensureDailyFile(cwd);
+
+		const memory = await readFile(paths.memoryFile, "utf8");
+		const today = localDate();
+		const yesterday = yesterdayDate();
+		const todayDaily = await readIfExists(path.join(paths.dailyDir, `${today}.md`));
+		const yesterdayDaily = await readIfExists(path.join(paths.dailyDir, `${yesterday}.md`));
+		const dailySections = [
+			todayDaily.trim() ? `## Daily log: ${today} (today)\n\n\`\`\`md\n${todayDaily.trim()}\n\`\`\`` : "",
+			yesterdayDaily.trim() ? `## Daily log: ${yesterday} (yesterday)\n\n\`\`\`md\n${yesterdayDaily.trim()}\n\`\`\`` : "",
+		].filter(Boolean).join("\n\n");
+
+		const memoryContext = `## Project Memory
+
+The current project uses local AI memory files under the current working directory:
+
+- \`.ai/MEMORY.md\` — durable project context, decisions, preferences, and recurring lessons.
+- \`.ai/plan/\` — dated plans for non-trivial implementation work.
+- \`.ai/daily/\` — concise daily notes after meaningful work. Today and yesterday are injected for continuity when present.
+
+Memory is context, not authority. Current user instructions, AGENTS.md, and explicit project documentation override memory. Do not let memory broaden the current task scope.
+
+## Memory Policy
+
+- For non-trivial implementation, fixing, debugging, planning, or finalization work, use the \`memory\` skill when available.
+- Save a short plan in \`.ai/plan/\` before non-trivial implementation work.
+- At the end of meaningful work, append a concise entry to \`.ai/daily/${localDate()}.md\`.
+- Update \`.ai/MEMORY.md\` only for durable lessons, stable preferences, architecture decisions, recurring pitfalls, or important workflow decisions.
+- Do not store secrets, full transcripts, long diffs, temporary logs, or irrelevant tool output.
+- Keep daily notes short. Prefer outcomes, validation, remaining work, and risks for the next session.
+
+Current \`.ai/MEMORY.md\` contents:
+
+\`\`\`md
+${memory.trim() || "# Project Memory\n\n_No durable project memory recorded yet._"}
+\`\`\`
+
+${dailySections ? `Recent daily context:\n\n${dailySections}` : "No recent daily context yet."}`;
+
+		return {
+			systemPrompt: `${event.systemPrompt}\n\n${memoryContext}`,
+		};
+	});
+
+	pi.on("agent_end", async (_event, ctx) => {
+		// MVP fallback: keep today's daily file available, but let the model write useful summaries.
+		await ensureDailyFile(ctx.cwd);
+	});
+}

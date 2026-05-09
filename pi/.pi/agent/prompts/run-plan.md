@@ -3,6 +3,7 @@ description: Execute the approved/current plan
 ---
 
 Use the `orchestrator` skill for this task.
+Use the `memory` skill for this task.
 
 Implement the approved/current plan, but do not run the full validation flow yet.
 
@@ -54,6 +55,7 @@ Final output:
 
 - files changed
 - concise summary
+- memory/daily entry status
 - important assumptions
 - PHPStan status, if run
 - anything I should manually r-eview first

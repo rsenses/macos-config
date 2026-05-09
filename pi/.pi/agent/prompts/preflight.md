@@ -4,7 +4,7 @@ description: Review branch and repository state before starting a task
 
 Use the `planner` subagent for this task.
 
-I am starting this task.
+I am starting this task. Use loaded project memory as context, but do not create or update memory files during this preflight check.
 
 1. Inspect the current branch.
 2. Review the git status.

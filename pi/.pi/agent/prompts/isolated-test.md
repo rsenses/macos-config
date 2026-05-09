@@ -4,6 +4,7 @@ argument-hint: "[optional focus area]"
 ---
 
 Use the `orchestrator` skill for this task.
+Use the `memory` skill for this task.
 
 Create focused tests for the current agreed plan or requested behavior.
 
@@ -22,7 +23,9 @@ Rules:
 - Test behavior, not implementation details.
 - Keep tests minimal and directly related to the current plan.
 - Do not implement production code unless a tiny test-support change is strictly necessary and already matches project conventions.
+- Use loaded project memory to avoid repeated discovery and known test pitfalls, but do not let memory broaden scope.
 - Do not broaden scope.
+- Append a concise daily note if tests were added, changed, or validated.
 - If framework/library behavior matters, consult official documentation or MCP tools when relevant.
 - Use `scout` only if needed to locate existing tests, conventions, or relevant code.
 - Use `researcher` only if framework/library testing behavior is unclear.

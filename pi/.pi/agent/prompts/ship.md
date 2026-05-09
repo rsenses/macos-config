@@ -3,6 +3,7 @@ description: Final review before commit or PR
 ---
 
 Use the `orchestrator` skill for this task.
+Use the `memory` skill for this task.
 Use the `reviewer` subagent for this task.
 
 I am about to commit these changes. Perform a final review of the staged diff and tell me whether it is ready to submit.
@@ -21,6 +22,7 @@ Rules:
 - Do not run fixers.
 - Do not modify files.
 - Do not commit automatically.
+- Do not modify source files, but if the review reveals a durable project lesson, mention whether it belongs in `.ai/MEMORY.md` after the review.
 
 Review checklist:
 
@@ -41,3 +43,4 @@ Final output:
 - blocking risks
 - non-blocking risks
 - final verdict: `ready to submit` or `not ready to submit`
+- memory recommendation, if any
