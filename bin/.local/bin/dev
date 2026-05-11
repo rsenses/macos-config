@@ -20,6 +20,7 @@ usage() {
   echo "Uso:"
   echo "  dev up [nombre_carpeta]"
   echo "  dev down [nombre_carpeta]"
+  echo "  dev reload [nombre_carpeta]"
   echo "  dev status [nombre_carpeta]"
   echo "  dev down-all"
   exit 1
@@ -341,6 +342,11 @@ case "${cmd}" in
 
     stop_php_server || true
     echo "OK: parado ${DOMAIN}"
+    ;;
+
+  reload)
+    "$0" down "${name:-}"
+    "$0" up "${name:-}"
     ;;
 
   status)
