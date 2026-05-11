@@ -77,13 +77,15 @@ Use one plan file per Pi session/task, not one plan per interaction.
 The memory extension injects the current session plan path, for example:
 
 ```text
-.ai/plan/YYYY-MM-DD-<session-id>.md
+.ai/plan/YYYY-MM-DD-<session-id>-<short-slug>.md
 ```
+
+The session id prevents duplicate plans in one Pi session; the slug keeps filenames understandable. If a plan already exists for the current session id, update it even if the slug is imperfect.
 
 Rules:
 
 - For non-trivial implementation/fix/debug/finalization work, create or update that single current session plan before changing code.
-- On later turns in the same session, update the same plan file instead of creating a new one.
+- On later turns in the same session, find the existing `.ai/plan/YYYY-MM-DD-<session-id>-*.md` file and update it instead of creating a new one.
 - If the task changes materially, revise the same plan with updated status, decisions, TODOs, and remaining work.
 - Do not create timestamped duplicate plans unless the user explicitly asks to archive a separate agreed plan.
 - Keep the plan useful and current; it is operational, not a transcript.

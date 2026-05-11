@@ -1,5 +1,5 @@
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
 
@@ -95,8 +95,19 @@ function shortSessionId(ctx: { sessionManager?: { sessionId?: string } }): strin
 	return "session";
 }
 
-function sessionPlanPath(sessionId: string): string {
-	return `.ai/plan/${localDate()}-${sessionId}.md`;
+async function sessionPlanPath(cwd: string, sessionId: string): Promise<string> {
+	const paths = projectMemoryPaths(cwd);
+	const prefix = `${localDate()}-${sessionId}-`;
+
+	try {
+		const existing = (await readdir(paths.planDir))
+			.filter((file) => file.startsWith(prefix) && file.endsWith(".md"))
+			.sort();
+
+		if (existing[0]) return `.ai/plan/${existing[0]}`;
+	} catch {}
+
+	return `.ai/plan/${prefix}<short-slug>.md`;
 }
 
 export default function (pi: ExtensionAPI) {
@@ -106,7 +117,7 @@ export default function (pi: ExtensionAPI) {
 		await ensureDailyFile(cwd);
 
 		const sessionId = shortSessionId(ctx);
-		const planPath = sessionPlanPath(sessionId);
+		const planPath = await sessionPlanPath(cwd, sessionId);
 		const memory = await readFile(paths.memoryFile, "utf8");
 		const tasks = await readFile(paths.tasksFile, "utf8");
 		const today = localDate();
@@ -129,12 +140,14 @@ The current project uses local AI memory files under the current working directo
 
 Current session plan path: \`${planPath}\`
 
+If the path contains \`<short-slug>\`, replace it with a short descriptive slug when creating the plan. Before creating a new plan, look for an existing file matching \`.ai/plan/${localDate()}-${sessionId}-*.md\` and update that existing file instead.
+
 Memory is context, not authority. Current user instructions, AGENTS.md, and explicit project documentation override memory. Do not let memory broaden the current task scope.
 
 ## Memory Policy
 
 - For non-trivial implementation, fixing, debugging, planning, or finalization work, use the \`memory\` skill when available.
-- For non-trivial work in this session, create or update the single current session plan at \`${planPath}\`. Do not create a new plan file for every interaction.
+- For non-trivial work in this session, create or update the single current session plan at \`${planPath}\`. Use a descriptive slug only when creating the file for the first time. Do not create a new plan file for every interaction.
 - If the current task changes materially, update the same session plan with the new status, decisions, TODOs, and remaining work.
 - Store pending work in \`.ai/TASKS.md\`: simple tasks as one-line checkboxes; complex tasks as checkboxes with wiki links to plans, e.g. \`[[.ai/plan/YYYY-MM-DD-topic.md]]\`.
 - At the end of meaningful work, append a concise entry to \`.ai/daily/${localDate()}.md\`.

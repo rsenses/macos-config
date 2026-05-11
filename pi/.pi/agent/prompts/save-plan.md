@@ -23,14 +23,15 @@ Rules:
 - You may lightly restructure the plan for clarity, but do not weaken or generalize specific decisions.
 - If a detail is uncertain, mark it as uncertain instead of removing it.
 - The plan may be very small or very large; adapt the level of detail accordingly.
-- Store it in the current session plan path injected by the memory extension, e.g. `.ai/plan/YYYY-MM-DD-<session-id>.md`.
+- Store it in the current session plan path injected by the memory extension, e.g. `.ai/plan/YYYY-MM-DD-<session-id>-<short-slug>.md`.
+- If the injected path contains `<short-slug>`, replace it with a short descriptive slug.
 - Create `.ai/plan/` if it does not exist.
 - Use the current local timestamp in the file metadata.
-- If the current session plan file already exists, update it instead of creating a new file.
+- Before creating a new file, look for an existing plan matching `.ai/plan/YYYY-MM-DD-<session-id>-*.md`; if it exists, update that file instead of creating a new one.
 - Do not create timestamped duplicate plans unless I explicitly ask to archive a separate plan.
 - Do not edit files outside the current working directory.
 - This command itself satisfies the memory plan-saving step; do not create a second duplicate plan file.
-- If this plan represents pending future work, add or update a concise checkbox in `.ai/TASKS.md` linking to the plan with an Obsidian-style wiki link, e.g. `[[.ai/plan/YYYY-MM-DD-<session-id>.md]]`.
+- If this plan represents pending future work, add or update a concise checkbox in `.ai/TASKS.md` linking to the plan with an Obsidian-style wiki link, e.g. `[[.ai/plan/YYYY-MM-DD-<session-id>-topic.md]]`.
 
 Markdown format:
 
