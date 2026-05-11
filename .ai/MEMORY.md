@@ -11,6 +11,8 @@ Durable project knowledge, decisions, preferences, and recurring lessons.
 
 ## Project Decisions
 
+- Memory POC: pending work lives in `.ai/TASKS.md`; simple tasks are one-line checkboxes and complex tasks link to plans with wiki links like `[[.ai/plan/file.md]]`.
+- Memory POC: use one current session plan file (`.ai/plan/YYYY-MM-DD-<session-id>.md`) and update it across turns instead of creating a new plan per interaction.
 - Validation:
 - Remaining:
 - Notes:

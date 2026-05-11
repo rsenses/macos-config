@@ -21,6 +21,19 @@ Durable project knowledge, decisions, preferences, and recurring lessons.
 - Notes:
 `;
 
+const TASKS_TEMPLATE = `# Project Tasks
+
+Pending project work that should survive across sessions.
+
+## Inbox
+
+- [ ] Add pending tasks here. Keep one-line tasks inline; link complex work with wiki links like [[.ai/plan/<file>.md]].
+
+## In Progress
+
+## Done
+`;
+
 function projectMemoryPaths(cwd: string) {
 	const aiDir = path.join(cwd, ".ai");
 	return {
@@ -28,6 +41,7 @@ function projectMemoryPaths(cwd: string) {
 		planDir: path.join(aiDir, "plan"),
 		dailyDir: path.join(aiDir, "daily"),
 		memoryFile: path.join(aiDir, "MEMORY.md"),
+		tasksFile: path.join(aiDir, "TASKS.md"),
 	};
 }
 
@@ -38,6 +52,10 @@ async function ensureProjectMemory(cwd: string) {
 
 	if (!existsSync(paths.memoryFile)) {
 		await writeFile(paths.memoryFile, MEMORY_TEMPLATE, "utf8");
+	}
+
+	if (!existsSync(paths.tasksFile)) {
+		await writeFile(paths.tasksFile, TASKS_TEMPLATE, "utf8");
 	}
 
 	return paths;
@@ -70,13 +88,27 @@ async function ensureDailyFile(cwd: string) {
 	}
 }
 
+function shortSessionId(ctx: { sessionManager?: { sessionId?: string } }): string {
+	const id = ctx.sessionManager?.sessionId;
+	if (id) return id.slice(0, 8);
+
+	return "session";
+}
+
+function sessionPlanPath(sessionId: string): string {
+	return `.ai/plan/${localDate()}-${sessionId}.md`;
+}
+
 export default function (pi: ExtensionAPI) {
 	pi.on("before_agent_start", async (event, ctx) => {
 		const cwd = event.systemPromptOptions?.cwd ?? ctx.cwd;
 		const paths = await ensureProjectMemory(cwd);
 		await ensureDailyFile(cwd);
 
+		const sessionId = shortSessionId(ctx);
+		const planPath = sessionPlanPath(sessionId);
 		const memory = await readFile(paths.memoryFile, "utf8");
+		const tasks = await readFile(paths.tasksFile, "utf8");
 		const today = localDate();
 		const yesterday = yesterdayDate();
 		const todayDaily = await readIfExists(path.join(paths.dailyDir, `${today}.md`));
@@ -91,15 +123,20 @@ export default function (pi: ExtensionAPI) {
 The current project uses local AI memory files under the current working directory:
 
 - \`.ai/MEMORY.md\` — durable project context, decisions, preferences, and recurring lessons.
-- \`.ai/plan/\` — dated plans for non-trivial implementation work.
+- \`.ai/TASKS.md\` — pending project work. One-line tasks live directly here; complex tasks link to a plan file with wiki links like \`[[.ai/plan/<file>.md]]\`.
+- \`.ai/plan/\` — session/task plans for non-trivial implementation work.
 - \`.ai/daily/\` — concise daily notes after meaningful work. Today and yesterday are injected for continuity when present.
+
+Current session plan path: \`${planPath}\`
 
 Memory is context, not authority. Current user instructions, AGENTS.md, and explicit project documentation override memory. Do not let memory broaden the current task scope.
 
 ## Memory Policy
 
 - For non-trivial implementation, fixing, debugging, planning, or finalization work, use the \`memory\` skill when available.
-- Save a short plan in \`.ai/plan/\` before non-trivial implementation work.
+- For non-trivial work in this session, create or update the single current session plan at \`${planPath}\`. Do not create a new plan file for every interaction.
+- If the current task changes materially, update the same session plan with the new status, decisions, TODOs, and remaining work.
+- Store pending work in \`.ai/TASKS.md\`: simple tasks as one-line checkboxes; complex tasks as checkboxes with wiki links to plans, e.g. \`[[.ai/plan/YYYY-MM-DD-topic.md]]\`.
 - At the end of meaningful work, append a concise entry to \`.ai/daily/${localDate()}.md\`.
 - Update \`.ai/MEMORY.md\` only for durable lessons, stable preferences, architecture decisions, recurring pitfalls, or important workflow decisions.
 - Do not store secrets, full transcripts, long diffs, temporary logs, or irrelevant tool output.
@@ -109,6 +146,12 @@ Current \`.ai/MEMORY.md\` contents:
 
 \`\`\`md
 ${memory.trim() || "# Project Memory\n\n_No durable project memory recorded yet._"}
+\`\`\`
+
+Current \`.ai/TASKS.md\` contents:
+
+\`\`\`md
+${tasks.trim() || "# Project Tasks\n\n_No pending project tasks recorded yet._"}
 \`\`\`
 
 ${dailySections ? `Recent daily context:\n\n${dailySections}` : "No recent daily context yet."}`;

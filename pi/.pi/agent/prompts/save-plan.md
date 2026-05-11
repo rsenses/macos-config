@@ -4,10 +4,10 @@ description: Save the current agreed plan to a Markdown file
 
 Use the `memory` skill for this task.
 
-Save the current agreed plan from this conversation to a Markdown file.
+Save or update the current agreed plan from this conversation in the current session plan file.
 
 Context:
-The user has already discussed and refined a plan. Your job is to persist the latest agreed plan accurately, not to create a new one.
+The user has already discussed and refined a plan. Your job is to persist the latest agreed plan accurately in the current session plan path injected by the memory extension, not to create a new file every time.
 
 This command is archival and operational: the saved Markdown file should contain enough detail for a future agent or developer to implement the plan without needing to reread the full conversation.
 
@@ -23,20 +23,21 @@ Rules:
 - You may lightly restructure the plan for clarity, but do not weaken or generalize specific decisions.
 - If a detail is uncertain, mark it as uncertain instead of removing it.
 - The plan may be very small or very large; adapt the level of detail accordingly.
-- Store it in `.ai/plan/` relative to the current working directory.
+- Store it in the current session plan path injected by the memory extension, e.g. `.ai/plan/YYYY-MM-DD-<session-id>.md`.
 - Create `.ai/plan/` if it does not exist.
-- Use the current local timestamp.
-- Filename format: `YYYY-MM-DD-HHmm-short-slug.md`.
-- Do not overwrite existing files.
+- Use the current local timestamp in the file metadata.
+- If the current session plan file already exists, update it instead of creating a new file.
+- Do not create timestamped duplicate plans unless I explicitly ask to archive a separate plan.
 - Do not edit files outside the current working directory.
 - This command itself satisfies the memory plan-saving step; do not create a second duplicate plan file.
+- If this plan represents pending future work, add or update a concise checkbox in `.ai/TASKS.md` linking to the plan with an Obsidian-style wiki link, e.g. `[[.ai/plan/YYYY-MM-DD-<session-id>.md]]`.
 
 Markdown format:
 
 # <Plan title>
 
-- Timestamp: <YYYY-MM-DD HH:mm>
-- Status: planned
+- Updated: <YYYY-MM-DD HH:mm>
+- Status: planned | in-progress | blocked | done
 - Scope: <small | medium | large | unknown>
 
 ## Goal

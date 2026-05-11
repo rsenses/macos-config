@@ -1,0 +1,1 @@
+/Users/rubensilvarodriguez/.local/share/mise/installs/node/24.13.0/lib/node_modules/@futurelab-studio/telepi/extensions/telepi-handoff.ts
