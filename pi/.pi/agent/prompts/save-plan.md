@@ -3,6 +3,7 @@ description: Save the current agreed plan to a Markdown file
 ---
 
 Use the `memory` skill for this task.
+Use `spec-driven-development` conventions only to preserve an existing or newly agreed Spec / Contract; do not inflate a simple plan into a heavy spec.
 
 Save or update the current agreed plan from this conversation in the current session plan file.
 
@@ -44,6 +45,10 @@ Markdown format:
 ## Goal
 
 <The goal of the plan. Include the user-visible or developer-visible outcome.>
+
+## Spec / Contract
+
+<For normal tasks, keep this lightweight: objective, expected behavior, success criteria, out of scope, and open questions. If no separate contract was discussed, write "Not separately defined" rather than inventing one.>
 
 ## Context
 

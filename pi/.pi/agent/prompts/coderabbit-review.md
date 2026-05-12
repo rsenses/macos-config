@@ -13,7 +13,7 @@ Rules:
 - Use the predefined command below.
 - Summarize only actionable findings.
 - Separate blocking issues from optional suggestions.
-- Ignore purely stylistic suggestions that would be handled by `composer fix`.
+- Ignore purely stylistic suggestions that would be handled by the project's formatter/fixer.
 
 Execution:
 

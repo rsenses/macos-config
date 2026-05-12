@@ -5,6 +5,7 @@ argument-hint: "[optional focus area]"
 
 Use the `orchestrator` skill for this task.
 Use the `memory` skill for this task.
+Use the `pragmatic-testing` skill for this task.
 
 Create focused tests for the current agreed plan or requested behavior.
 
@@ -12,7 +13,7 @@ Focus area, if provided:
 $ARGUMENTS
 
 Context:
-This command is for TDD-lite. Use it only when tests add clear value: business rules, edge cases, bug reproduction, reusable logic, or behavior that is easy to isolate.
+This command is for pragmatic, focused test creation. Use it only when tests add clear value: business rules, edge cases, bug reproduction, reusable logic, or behavior that is easy to isolate.
 
 Rules:
 

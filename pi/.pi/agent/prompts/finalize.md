@@ -4,6 +4,7 @@ description: Run fix and test, then leave the task ready for final review
 
 Use the `orchestrator` skill for this task.
 Use the `memory` skill for this task.
+Use the `ship` skill for changelog and commit-message readiness.
 Use the `worker` subagent only for concrete file edits.
 
 I am ready to close this task. Run the project’s final validation flow and leave everything ready for final review.
@@ -16,9 +17,7 @@ Context:
 Validation flow:
 
 1. Read AGENTS.md or project guidance to identify the project’s standard fix/format command and test command.
-2. If no project-specific commands are defined, use these defaults:
-   - fix command: `composer fix`
-   - test command: `composer test`
+2. If no project-specific commands are defined, infer commands from project manifests/scripts. Ask before using fallback commands if ambiguity remains.
 3. Run the project’s standard fix/format command.
 4. Check whether it modified any files and summarize those changes.
 5. Run the project’s standard test command.

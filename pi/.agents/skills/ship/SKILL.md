@@ -1,4 +1,5 @@
 ---
+name: ship
 description: Use when the user asks to commit, ship, finalize changes, prepare a commit, create a PR-ready commit, review staged changes, or generate a changelog/conventional commit message.
 ---
 
@@ -8,7 +9,7 @@ Use this skill when the user asks to commit, ship, finalize, prepare changes, re
 
 ## Agent routing
 
-Use the `reviewer` subagent as the default agent for this skill.
+Use the `reviewer` subagent as the default agent for non-trivial staged diff review. For tiny, obvious commits, the main agent may inspect directly.
 
 Use the `worker` subagent only for concrete repository changes, such as:
 
@@ -111,9 +112,9 @@ feat(api)!: remove legacy export endpoint
 
 ### 6. Commit
 
-Use the `worker` subagent for the actual commit operation.
+Use the `worker` subagent for the actual commit operation when delegation adds safety. The main agent may commit directly for simple, approved commits.
 
-Before committing, show the proposed message and included files. If everything is coherent, create the commit:
+Before committing, show the proposed message and included files. Only commit after explicit user approval. If everything is coherent and approval is given, create the commit:
 
 ```bash
 git commit -m "<message>"
@@ -178,5 +179,5 @@ Stop and ask the user before committing if:
 - the changelog change is unclear
 - the commit would be too large
 - there are merge conflict markers
-- the change appears to require tests but none are present
+- the change appears to require validation but none is present
 - SemVer impact appears to be `major`

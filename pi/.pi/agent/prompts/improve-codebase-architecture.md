@@ -4,6 +4,8 @@ argument-hint: "[optional focus area]"
 ---
 
 Use the `orchestrator` skill for this task.
+Use `code-simplification` when evaluating unnecessary complexity.
+Use `source-driven-development` when recommendations depend on framework/library guidance.
 
 Analyze the codebase architecture and suggest improvements that would make it easier to understand, maintain, and work with.
 
@@ -29,6 +31,7 @@ Rules:
 - For framework-specific recommendations, consult official documentation or MCP tools when relevant.
 - Keep recommendations practical, incremental, and reversible.
 - Do not suggest large rewrites unless there is a clear, strong reason.
+- Prefer recommendations that can be implemented incrementally and verified with project-native checks.
 - Prefer improvements that reduce ambiguity, coupling, hidden behavior, repeated discovery cost, or unnecessary complexity.
 - Prefer framework-native and project-native patterns over new abstractions.
 - Distinguish between:

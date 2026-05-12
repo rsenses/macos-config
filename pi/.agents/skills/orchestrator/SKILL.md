@@ -18,11 +18,31 @@ Subagents are focused helpers. They should not own the whole task, redesign the 
 The main agent must:
 
 1. understand the user's intent,
-2. decide whether delegation helps,
-3. delegate focused tasks,
-4. read subagent results,
-5. decide the next step,
-6. correct or stop when needed.
+2. surface assumptions or confusion before they become implementation,
+3. decide whether delegation helps,
+4. delegate focused tasks,
+5. read subagent results,
+6. decide the next step,
+7. correct or stop when needed.
+
+## Skill routing
+
+Before non-trivial coding work, consider whether a focused skill applies. Use skills as lightweight workflows, not ceremony.
+
+Default routing:
+
+- vague or ambiguous feature requirements → `spec-driven-development`
+- clear but large work → `planning-and-task-breakdown`
+- multi-file implementation → `incremental-implementation`
+- behavior changes or bug fixes → `pragmatic-testing`
+- unfamiliar framework/library APIs → `source-driven-development`
+- failing tests/builds or unexpected behavior → `debugging-and-error-recovery`
+- risky or agent-written diffs → `code-review-and-quality`
+- overcomplicated working code → `code-simplification`
+- context drift or task switching → `context-engineering`
+- finalization/commit/PR prep → `ship`
+
+Do not apply every matching skill. Pick the smallest workflow that reduces risk for the current task.
 
 ## Default behavior
 
@@ -34,10 +54,22 @@ For non-trivial coding work, prefer this pattern:
 4. Use `planner` when the solution needs a structured plan before implementation.
 5. Use `delegate` when a plan or task must be split into smaller pieces.
 6. Use `worker` for focused implementation.
-7. Use `reviewer` only for explicit checkpoints, risky diffs, or uncertainty.
+7. Use `reviewer` only for explicit checkpoints, risky diffs, confirmation-bias checks, or uncertainty.
 8. Use `oracle` for high-impact decisions, architecture, drift detection, or risky tradeoffs.
 
 Do not delegate just because delegation is possible. Delegate when it improves quality, reduces context, lowers cost, or reduces risk.
+
+## Operating discipline
+
+Apply these defaults across skills and subagents:
+
+- State important assumptions before implementing non-trivial behavior.
+- Stop and ask when requirements, code, memory, AGENTS.md, or the plan conflict.
+- Push back on approaches that add clear risk or unnecessary complexity.
+- Prefer the smallest framework-native/project-native solution.
+- Keep scope surgical; do not clean up adjacent code unless asked.
+- Verify with the cheapest credible evidence for the risk level.
+- Do not infer commands, stack, or conventions from examples in skills; inspect the project.
 
 ## Worker rules
 
@@ -141,7 +173,7 @@ A worker prompt should include:
 - constraints,
 - what not to change,
 - acceptance criteria,
-- whether PHPStan or a targeted check should be run.
+- which targeted project check should be run, if any.
 
 Do not ask worker to re-plan, redesign, or broaden scope.
 
@@ -153,7 +185,7 @@ Do not use reviewer by default.
 
 Use reviewer when:
 
-- tests or PHPStan fail and the cause is unclear,
+- tests, static analysis, or project checks fail and the cause is unclear,
 - the diff touches auth, permissions, database, billing, security, deployment, or CI/CD,
 - the change affects multiple files or public behavior,
 - there is uncertainty about correctness,
@@ -161,7 +193,7 @@ Use reviewer when:
 
 Reviewer should usually be review-only.
 
-Ask reviewer for evidence-backed findings, not broad rewrites.
+Ask reviewer for evidence-backed findings, not broad rewrites. For adversarial checks, ask whether the code truly satisfies the contract or merely satisfies the visible test.
 
 ### oracle
 

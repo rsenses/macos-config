@@ -5,6 +5,8 @@ argument-hint: "<feedback>"
 
 Use the `orchestrator` skill for this task.
 Use the `memory` skill for this task.
+Use `incremental-implementation` if the correction touches multiple files.
+Use `pragmatic-testing` when the correction changes behavior.
 
 Apply a focused correction to the current implementation based on my feedback.
 
@@ -34,9 +36,9 @@ Rules:
 
 Validation:
 
-- Run PHPStan after applying the requested fix when relevant.
-- PHPStan is allowed during this phase because it catches many issues cheaply.
-- Prefer the narrowest relevant PHPStan command if the project supports one.
+- Run the project's relevant static analysis/type check after applying the requested fix when it is cheap and useful.
+- In PHP/Laravel projects, PHPStan/Larastan is allowed during this phase when relevant because it catches many issues cheaply.
+- Prefer the narrowest relevant project check if the project supports one.
 - Do not claim full validation unless the full validation flow was explicitly requested.
 
 Final output:
@@ -44,5 +46,5 @@ Final output:
 - feedback applied
 - files changed
 - concise diff summary
-- PHPStan status, if run
+- targeted check/static analysis status, if run
 - anything I should manually review again

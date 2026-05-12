@@ -4,6 +4,8 @@ argument-hint: "<task>"
 ---
 
 Use the `orchestrator` skill for this task.
+Use `spec-driven-development` only when requirements are ambiguous, large, or architectural.
+Use `planning-and-task-breakdown` when requirements are clear but need decomposition.
 
 Plan the following task without modifying files. Use loaded project memory as context, but do not write memory, daily notes, or plan files during this read-only planning command.
 
@@ -25,6 +27,7 @@ Rules:
   - use `planner` only for medium or complex plans that benefit from structured decomposition.
 - Do not use `worker` or `reviewer` during planning unless explicitly needed for non-mutating analysis.
 - State assumptions explicitly.
+- If useful, separate the output into `Spec / Contract` and `Implementation Plan`; do not create a standalone spec unless durability is justified.
 - Prefer the smallest safe change that solves the task.
 - Prefer framework-native features and existing project conventions.
 - Do not over-engineer.
@@ -46,3 +49,5 @@ Output:
 - proposed plan
 - risks or open questions
 - suggested next step
+
+Do not infer commands or stack from generic examples; inspect project files or AGENTS.md before naming commands.

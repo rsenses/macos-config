@@ -4,6 +4,7 @@ argument-hint: "<task>"
 ---
 
 Use the `orchestrator` skill for this task.
+Use `spec-driven-development` lightly: clarify the behavior contract, not a heavy document.
 
 Interview me to clarify the task before planning.
 
@@ -44,6 +45,7 @@ Focus on:
 When enough information is gathered, summarize:
 
 - clarified goal
+- Spec / Contract summary
 - important decisions
 - unresolved assumptions, if any
 - recommended next step

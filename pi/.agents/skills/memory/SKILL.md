@@ -89,6 +89,7 @@ Rules:
 - If the task changes materially, revise the same plan with updated status, decisions, TODOs, and remaining work.
 - Do not create timestamped duplicate plans unless the user explicitly asks to archive a separate agreed plan.
 - Keep the plan useful and current; it is operational, not a transcript.
+- For normal tasks, keep the lightweight spec/contract and implementation plan in this same file. Create a separate durable spec only when the work is large, multi-session, architectural, or useful to future humans outside the agent workflow.
 
 Recommended plan shape:
 
@@ -100,6 +101,14 @@ Recommended plan shape:
 - Scope: small | medium | large | unknown
 
 ## Goal
+
+## Spec / Contract
+
+- Objective:
+- Expected behavior:
+- Success criteria:
+- Out of scope:
+- Open questions:
 
 ## Current Plan
 
@@ -204,7 +213,7 @@ If unsure whether something belongs in long-term memory, write it to the daily n
 At the end of meaningful work:
 
 1. Update the current session plan status/TODOs if work changed.
-2. Append a daily note.
+2. Append a daily note after meaningful work.
 3. Update `.ai/TASKS.md` if pending work changed.
 4. Update `.ai/MEMORY.md` only if a durable lesson or decision emerged.
 5. Mention files written in the final response.

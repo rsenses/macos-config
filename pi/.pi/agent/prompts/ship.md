@@ -4,9 +4,10 @@ description: Final review before commit or PR
 
 Use the `orchestrator` skill for this task.
 Use the `memory` skill for this task.
-Use the `reviewer` subagent for this task.
+Use the `ship` skill for this task.
+Use the `reviewer` subagent for non-trivial staged diffs.
 
-I am about to commit these changes. Perform a final review of the staged diff and tell me whether it is ready to submit.
+I am about to commit these changes. Perform a final review of the staged diff and tell me whether it is ready to submit. Do not commit unless I explicitly approve a commit after the review.
 
 Rules:
 
@@ -22,6 +23,7 @@ Rules:
 - Do not run fixers.
 - Do not modify files.
 - Do not commit automatically.
+- Use project-specific validation history from the diff/context, but do not invent checks that were not run.
 - Do not modify source files, but if the review reveals a durable project lesson, mention whether it belongs in `.ai/MEMORY.md` after the review.
 
 Review checklist:

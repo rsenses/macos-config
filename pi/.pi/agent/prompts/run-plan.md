@@ -4,6 +4,8 @@ description: Execute the approved/current plan
 
 Use the `orchestrator` skill for this task.
 Use the `memory` skill for this task.
+Use `incremental-implementation` for multi-file or multi-step changes.
+Use `pragmatic-testing` when behavior changes need targeted evidence.
 
 Implement the approved/current plan, but do not run the full validation flow yet.
 
@@ -26,6 +28,7 @@ Rules:
   - constraints
   - what not to change
   - acceptance criteria
+  - which targeted project check should be run, if any
 - Do not ask a worker to implement the whole plan at once unless the plan is genuinely tiny.
 - Do not invoke `reviewer` unless there is uncertainty or a possible contradiction with the plan.
 - Do not run tests.
@@ -45,9 +48,9 @@ Rules:
 
 Validation:
 
-- Run PHPStan after implementation changes when relevant.
-- PHPStan is allowed during this phase because it catches many issues cheaply.
-- Prefer the narrowest relevant PHPStan command if the project supports one.
+- Run the project's relevant static analysis/type check after implementation changes when it is cheap and useful.
+- In PHP/Laravel projects, PHPStan/Larastan is allowed during this phase when relevant because it catches many issues cheaply.
+- Prefer the narrowest relevant project check if the project supports one.
 - Do not run the full test suite, formatters, refactors, or reviewer agents unless explicitly requested.
 - Do not claim full validation unless the full validation flow was explicitly requested.
 
@@ -57,5 +60,5 @@ Final output:
 - concise summary
 - memory/daily entry status
 - important assumptions
-- PHPStan status, if run
+- targeted check/static analysis status, if run
 - anything I should manually r-eview first
