@@ -1,5 +1,6 @@
 ---
 description: Execute the approved/current plan
+argument-hint: "<prompt>"
 ---
 
 Use the `orchestrator` skill for this task.
@@ -9,6 +10,9 @@ Use `pragmatic-testing` when behavior changes need targeted evidence.
 
 Implement the approved/current plan, but do not run the full validation flow yet.
 
+User input:
+$ARGUMENTS
+
 Context:
 The implementation should follow the current agreed plan or the latest saved plan in `.ai/plan/` when available.
 
@@ -16,6 +20,7 @@ Rules:
 
 - Read the approved/current plan before changing files.
 - Focus only on implementation.
+- Treat any `argument-hint` or `$ARGUMENTS` text as the user's extra prompt for this run.
 - Do not restart or redesign the plan.
 - If no clear plan exists, stop and ask me to run `/plan` or clarify the task.
 - Use `scout` only if needed to locate files, entry points, existing patterns, or affected areas.

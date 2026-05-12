@@ -25,6 +25,7 @@ Rules:
 - Do not commit automatically.
 - Use project-specific validation history from the diff/context, but do not invent checks that were not run.
 - Do not modify source files, but if the review reveals a durable project lesson, mention whether it belongs in `.ai/MEMORY.md` after the review.
+- When naming the commit, prefer the user-visible task goal or session plan goal over internal helper names or the lowest-level implementation detail.
 
 Review checklist:
 
@@ -46,3 +47,4 @@ Final output:
 - non-blocking risks
 - final verdict: `ready to submit` or `not ready to submit`
 - memory recommendation, if any
+- commit message guidance: base the summary on the user's stated outcome and current session plan Goal / Expected Changes when available

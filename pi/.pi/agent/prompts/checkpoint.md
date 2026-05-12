@@ -14,5 +14,6 @@ I want to review whether my current changes are properly grouped before committi
 4. Propose clean commit groupings and which files belong to each.
 5. Identify which files should be removed from the current commit.
 6. Suggest 2–3 precise commit messages.
+   Base them on the user's stated outcome and current session plan Goal / Expected Changes when available, not on the most recent low-level implementation detail.
 
 Be strict about logical separation of changes. Focus on clarity, minimal scope per commit, and maintainable history. Do not modify files or memory.

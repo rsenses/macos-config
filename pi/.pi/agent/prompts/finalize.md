@@ -27,6 +27,7 @@ Validation flow:
 9. If a user-visible changelog entry is missing and the project convention requires one, add it using Keep a Changelog format aligned with SemVer.
 10. Do not commit automatically.
 11. Propose the most appropriate Conventional Commit type and scope, and recommend a final commit message in the format `type(scope): summary`.
+    Base the summary on the user's stated outcome and the current session plan's Goal / Expected Changes when available, not on internal helper names or the lowest-level code detail.
 
 Agent escalation rules:
 

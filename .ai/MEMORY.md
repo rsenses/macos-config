@@ -16,4 +16,5 @@ Durable project knowledge, decisions, preferences, and recurring lessons.
 - Validation:
 - Remaining:
 - Notes:
-- `project_search` should treat user queries defensively: use ripgrep's explicit pattern form and fall back to literal matching for regex-invalid snippets so code fragments like `->mount(` do not fail.
+- `project_search` should treat user queries defensively: prefer literal text first so snippets with metacharacters like `$ARGUMENTS` or `->mount(` work naturally, and keep explicit regex as an opt-in only path.
+- When finalizing commits, prefer the task's user-facing goal or current session plan Goal / Expected Changes over low-level implementation wording when choosing the commit summary.

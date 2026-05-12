@@ -74,16 +74,83 @@ function normalizeFileQuery(query: string): string {
 	return query.trim().replace(/^\*+/, "").replace(/\*+$/, "");
 }
 
-function rgPatternArgs(query: string): string[] {
-	try {
-		// Preserve regex support when the query is valid, but fall back to a literal
-		// search for text snippets that would otherwise fail regex parsing.
-		// This keeps queries like "->mount(" working without requiring escaping.
-		void new RegExp(query);
-		return ["-e", query];
-	} catch {
-		return ["-F", "-e", query];
+type SearchPattern = {
+	pattern: string;
+	fixedStrings: boolean;
+};
+
+function projectSearchPattern(query: string): SearchPattern | undefined {
+	const trimmed = query.trim();
+	if (!trimmed) return undefined;
+
+	if (trimmed.startsWith("re:")) {
+		return { pattern: trimmed.slice(3), fixedStrings: false };
 	}
+
+	if (trimmed.length > 1 && trimmed.startsWith("/") && trimmed.endsWith("/")) {
+		return { pattern: trimmed.slice(1, -1), fixedStrings: false };
+	}
+
+	return { pattern: trimmed, fixedStrings: true };
+}
+
+type SearchMatches = {
+	grouped: Map<string, string[]>;
+	firstLines: Map<string, number>;
+};
+
+function collectSearchMatches(stdout: string, maxFiles: number, maxMatchesPerFile: number): SearchMatches {
+	const grouped = new Map<string, string[]>();
+	const firstLines = new Map<string, number>();
+
+	for (const line of normalizeLines(stdout)) {
+		const match = line.match(/^(.+?):(\d+):(\d+):(.*)$/);
+		if (!match) continue;
+
+		const [, file, lineNumber, column, content] = match;
+		if (!grouped.has(file) && grouped.size >= maxFiles) continue;
+
+		const entries = grouped.get(file) ?? [];
+		if (entries.length >= maxMatchesPerFile) continue;
+
+		const numericLine = Number(lineNumber);
+		if (!firstLines.has(file)) firstLines.set(file, numericLine);
+		entries.push(`L${lineNumber}:C${column}: ${compactLine(content)}`);
+		grouped.set(file, entries);
+	}
+
+	return { grouped, firstLines };
+}
+
+function renderSearchMatches(grouped: Map<string, string[]>, firstLines: Map<string, number>, maxFiles: number, maxMatchesPerFile: number): string {
+	const sections = [`Found matches in ${grouped.size} file(s). Showing up to ${maxMatchesPerFile} match(es) per file.`, ""];
+
+	for (const [file, matches] of grouped) {
+		sections.push(`## ${file}`);
+		sections.push(...matches.map((match) => `- ${match}`));
+		sections.push("");
+	}
+
+	sections.push("## Suggested reads");
+	for (const [file, line] of [...firstLines.entries()].slice(0, Math.min(5, maxFiles))) {
+		sections.push(`- read_window path=${JSON.stringify(file)} line=${line} before=20 after=40`);
+	}
+	sections.push("");
+	sections.push("Next step: use read_window for the most relevant hits, or refine query/globs for a smaller result set.");
+
+	return sections.join("\n");
+}
+
+function findPatternLine(lines: string[], pattern: string): number | undefined {
+	let regex: RegExp | undefined;
+	try {
+		regex = new RegExp(pattern);
+	} catch {
+		regex = undefined;
+	}
+
+	const index = lines.findIndex((line) => regex ? regex.test(line) : line.includes(pattern));
+	return index >= 0 ? index + 1 : undefined;
 }
 
 export default function (pi: ExtensionAPI) {
@@ -141,7 +208,7 @@ export default function (pi: ExtensionAPI) {
 	pi.registerTool({
 		name: "project_search",
 		label: "Project Search",
-		description: "Search project contents with rg and return grouped, capped matches. Designed as a compact alternative to broad raw rg output.",
+		description: "Search project contents with rg and return grouped, capped matches. Literal text is the default so snippets like PHP variables with $ work naturally; explicit regex is available only via re:/.../ or /.../ syntax. Designed as a compact alternative to broad raw rg output.",
 		promptSnippet: "Search project contents with grouped, capped results",
 		promptGuidelines: [
 			"Prefer project_search over raw rg/grep for broad codebase discovery unless the user explicitly asks for a raw shell command or project_search cannot express the query.",
@@ -152,9 +219,10 @@ export default function (pi: ExtensionAPI) {
 			"Do not infer runtime behavior from builder/helper methods alone; verify the activation path or dispatch path with project_search/read_window.",
 			"When checking test coverage or examples, restrict project_search with kind='test' or test-specific globs instead of repeating broad searches.",
 			"If project_search returns too much, refine query, kind, or globs instead of dumping raw rg output.",
+			"Use literal text by default; only use explicit regex when you really need pattern matching.",
 		],
 		parameters: Type.Object({
-			query: Type.String({ description: "Regex/text query to search for." }),
+			query: Type.String({ description: "Search text. Literal by default; use re:... or /.../ for explicit regex." }),
 			kind: Type.Optional(Type.String({ description: "Optional kind: any, php, test, config, doc, js. Default: any." })),
 			globs: Type.Optional(Type.Array(Type.String(), { description: "Additional rg globs, e.g. ['app/**', '*.php']." })),
 			maxFiles: Type.Optional(Type.Number({ description: "Maximum files to show. Default: 8, max: 30." })),
@@ -163,6 +231,11 @@ export default function (pi: ExtensionAPI) {
 		async execute(_toolCallId, params, signal, _onUpdate, ctx) {
 			const maxFiles = clamp(params.maxFiles, 8, 1, 30);
 			const maxMatchesPerFile = clamp(params.maxMatchesPerFile, 3, 1, 10);
+			const searchPattern = projectSearchPattern(params.query);
+			if (!searchPattern) {
+				return { content: [{ type: "text", text: `No matches for ${JSON.stringify(params.query)}.` }], details: { count: 0 } };
+			}
+
 			const args = [
 				"--line-number",
 				"--column",
@@ -172,7 +245,7 @@ export default function (pi: ExtensionAPI) {
 				...excludeArgsForRg(),
 				...globArgs(kindGlobs(params.kind)),
 				...globArgs(params.globs),
-				...rgPatternArgs(params.query),
+				...(searchPattern.fixedStrings ? ["-F", "-e", searchPattern.pattern] : ["-e", searchPattern.pattern]),
 				".",
 			];
 
@@ -187,40 +260,13 @@ export default function (pi: ExtensionAPI) {
 				};
 			}
 
-			const grouped = new Map<string, string[]>();
-			const firstLines = new Map<string, number>();
-			for (const line of normalizeLines(result.stdout)) {
-				const match = line.match(/^(.+?):(\d+):(\d+):(.*)$/);
-				if (!match) continue;
-				const [, file, lineNumber, column, content] = match;
-				if (!grouped.has(file) && grouped.size >= maxFiles) continue;
-				const entries = grouped.get(file) ?? [];
-				if (entries.length >= maxMatchesPerFile) continue;
-				const numericLine = Number(lineNumber);
-				if (!firstLines.has(file)) firstLines.set(file, numericLine);
-				entries.push(`L${lineNumber}:C${column}: ${compactLine(content)}`);
-				grouped.set(file, entries);
-			}
-
+			const { grouped, firstLines } = collectSearchMatches(result.stdout, maxFiles, maxMatchesPerFile);
 			if (grouped.size === 0) {
-				return { content: [{ type: "text", text: `No parseable matches for ${JSON.stringify(params.query)}.` }], details: { count: 0 } };
+				return { content: [{ type: "text", text: `No matches for ${JSON.stringify(params.query)}.` }], details: { count: 0 } };
 			}
-
-			const sections = [`Found matches in ${grouped.size} file(s). Showing up to ${maxMatchesPerFile} match(es) per file.`, ""];
-			for (const [file, matches] of grouped) {
-				sections.push(`## ${file}`);
-				sections.push(...matches.map((match) => `- ${match}`));
-				sections.push("");
-			}
-			sections.push("## Suggested reads");
-			for (const [file, line] of [...firstLines.entries()].slice(0, Math.min(5, maxFiles))) {
-				sections.push(`- read_window path=${JSON.stringify(file)} line=${line} before=20 after=40`);
-			}
-			sections.push("");
-			sections.push("Next step: use read_window for the most relevant hits, or refine query/globs for a smaller result set.");
 
 			return {
-				content: [{ type: "text", text: sections.join("\n") }],
+				content: [{ type: "text", text: renderSearchMatches(grouped, firstLines, maxFiles, maxMatchesPerFile) }],
 				details: { files: grouped.size, maxFiles, maxMatchesPerFile, suggestedReads: firstLines.size },
 			};
 		},
@@ -263,17 +309,8 @@ export default function (pi: ExtensionAPI) {
 			let matchedPattern = false;
 
 			if (!targetLine && params.pattern) {
-				let regex: RegExp | undefined;
-				try {
-					regex = new RegExp(params.pattern);
-				} catch {
-					regex = undefined;
-				}
-				const index = lines.findIndex((line) => regex ? regex.test(line) : line.includes(params.pattern!));
-				if (index >= 0) {
-					targetLine = index + 1;
-					matchedPattern = true;
-				}
+				targetLine = findPatternLine(lines, params.pattern);
+				if (targetLine) matchedPattern = true;
 			}
 
 			if (!targetLine) {
