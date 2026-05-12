@@ -16,3 +16,4 @@ Durable project knowledge, decisions, preferences, and recurring lessons.
 - Validation:
 - Remaining:
 - Notes:
+- `project_search` should treat user queries defensively: use ripgrep's explicit pattern form and fall back to literal matching for regex-invalid snippets so code fragments like `->mount(` do not fail.

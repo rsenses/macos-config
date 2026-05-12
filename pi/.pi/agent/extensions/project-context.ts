@@ -74,6 +74,18 @@ function normalizeFileQuery(query: string): string {
 	return query.trim().replace(/^\*+/, "").replace(/\*+$/, "");
 }
 
+function rgPatternArgs(query: string): string[] {
+	try {
+		// Preserve regex support when the query is valid, but fall back to a literal
+		// search for text snippets that would otherwise fail regex parsing.
+		// This keeps queries like "->mount(" working without requiring escaping.
+		void new RegExp(query);
+		return ["-e", query];
+	} catch {
+		return ["-F", "-e", query];
+	}
+}
+
 export default function (pi: ExtensionAPI) {
 	pi.registerTool({
 		name: "project_files",
@@ -160,7 +172,7 @@ export default function (pi: ExtensionAPI) {
 				...excludeArgsForRg(),
 				...globArgs(kindGlobs(params.kind)),
 				...globArgs(params.globs),
-				params.query,
+				...rgPatternArgs(params.query),
 				".",
 			];
 
