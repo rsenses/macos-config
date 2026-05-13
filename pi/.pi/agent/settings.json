@@ -30,9 +30,7 @@
     "agentOverrides": {
       "scout": {
         "model": "opencode-go/deepseek-v4-flash",
-        "fallbackModels": [
-          "opencode-go/qwen3.5-plus"
-        ]
+        "fallbackModels": ["opencode-go/qwen3.5-plus"]
       },
       "context-builder": {
         "model": "opencode-go/kimi-k2.6",
@@ -54,6 +52,7 @@
         "model": "openai-codex/gpt-5.4-mini",
         "thinking": "medium",
         "fallbackModels": [
+          "opencode-go/kimi-k2.6",
           "opencode-go/deepseek-v4-pro",
           "opencode-go/minimax-m2.7",
           "openai-codex/gpt-5.5"
@@ -63,15 +62,16 @@
         "model": "opencode-go/deepseek-v4-flash",
         "fallbackModels": [
           "opencode-go/minimax-m2.7",
+          "opencode-go/kimi-k2.6",
           "opencode-go/deepseek-v4-pro",
           "openai-codex/gpt-5.4-mini"
         ]
       },
       "reviewer": {
-        "model": "opencode-go/qwen3.6-plus",
+        "model": "opencode-go/kimi-k2.6",
         "fallbackModels": [
           "google/gemma-4-31b-it",
-          "opencode-go/kimi-k2.6",
+          "opencode-go/qwen3.6-plus",
           "openai-codex/gpt-5.4-mini"
         ]
       },
