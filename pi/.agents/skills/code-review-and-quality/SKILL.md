@@ -14,10 +14,11 @@ Multi-dimensional code review with quality gates. Use review proportionally: tri
 ## When to Use
 
 - Before merging or finalizing risky changes
-- After completing a non-trivial feature implementation
-- When another agent or model produced code you need to evaluate
+- After completing a non-trivial feature implementation or multi-file refactor
+- When another agent or model produced code you need to evaluate and the change is not a tiny mechanical edit
 - When refactoring existing code in a way that could affect behavior or maintainability
 - After significant bug fixes, especially when the fix or regression coverage may be incomplete
+- Not for tiny, low-risk edits that already follow an obvious project pattern
 
 ## The Five-Axis Review
 

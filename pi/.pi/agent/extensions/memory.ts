@@ -149,6 +149,7 @@ Memory is context, not authority. Current user instructions, AGENTS.md, and expl
 - For non-trivial implementation, fixing, debugging, planning, or finalization work, use the \`memory\` skill when available.
 - For non-trivial work in this session, create or update the single current session plan at \`${planPath}\`. Use a descriptive slug only when creating the file for the first time. Do not create a new plan file for every interaction.
 - If the current task changes materially, update the same session plan with the new status, decisions, TODOs, and remaining work.
+- Treat the current session plan, \`.ai/TASKS.md\`, \`.ai/daily/${localDate()}.md\`, and \`.ai/MEMORY.md\` as required file writes when they change; do not leave persistence as something to mention only in the response.
 - Store pending work in \`.ai/TASKS.md\`: simple tasks as one-line checkboxes; complex tasks as checkboxes with wiki links to plans, e.g. \`[[.ai/plan/YYYY-MM-DD-topic.md]]\`.
 - At the end of meaningful work, append a concise entry to \`.ai/daily/${localDate()}.md\`.
 - Update \`.ai/MEMORY.md\` only for durable lessons, stable preferences, architecture decisions, recurring pitfalls, or important workflow decisions.

@@ -35,14 +35,14 @@ Default routing:
 - clear but large work → `planning-and-task-breakdown`
 - multi-file implementation → `incremental-implementation`
 - behavior changes or bug fixes → `pragmatic-testing`
-- unfamiliar framework/library APIs → `source-driven-development`
+- unfamiliar framework/library APIs → `source-driven-development` only when the local project pattern is not already clear
 - failing tests/builds or unexpected behavior → `debugging-and-error-recovery`
-- risky or agent-written diffs → `code-review-and-quality`
+- risky or agent-written diffs → `code-review-and-quality` only when the change is multi-file, behavior-changing, or still uncertain after a cheap check
 - overcomplicated working code → `code-simplification`
 - context drift or task switching → `context-engineering`
 - finalization/commit/PR prep → `ship`
 
-Do not apply every matching skill. Pick the smallest workflow that reduces risk for the current task.
+Do not apply every matching skill. Prefer existing project patterns before external docs or extra review on small changes. Pick the smallest workflow that reduces risk for the current task.
 
 ## Default behavior
 
@@ -69,6 +69,8 @@ Apply these defaults across skills and subagents:
 - Prefer the smallest framework-native/project-native solution.
 - Keep scope surgical; do not clean up adjacent code unless asked.
 - Verify with the cheapest credible evidence for the risk level.
+- Decide validation ownership before delegating implementation so workers and the main agent do not repeat the same checks.
+- If the repo already shows a clear pattern, follow it instead of adding documentation research.
 - Do not infer commands, stack, or conventions from examples in skills; inspect the project.
 
 ## Worker rules
@@ -91,6 +93,16 @@ The main agent may edit directly when:
 - delegating would add more overhead than value.
 
 Do not ask `worker` to redesign, re-plan, or broaden scope.
+
+Before delegating to `worker`, choose and state one validation policy:
+
+- `no-tests`: implement only; do not add tests or run checks.
+- `targeted-check`: run only the named cheap check after implementation.
+- `add-test`: add or update the specific test described in the prompt; do not broaden coverage.
+- `test-first`: create a focused reproduction before fixing; use only for bugs where proving the failure matters.
+- `defer-validation`: implement only; validation will happen in finalize/ship.
+
+By default, use `defer-validation` for straightforward implementation tasks and `targeted-check` for changes where a cheap static/type check gives useful evidence.
 
 ## Role usage
 
@@ -173,9 +185,12 @@ A worker prompt should include:
 - constraints,
 - what not to change,
 - acceptance criteria,
-- which targeted project check should be run, if any.
+- validation policy: `no-tests`, `targeted-check`, `add-test`, `test-first`, or `defer-validation`,
+- the exact targeted project check to run, if the policy is `targeted-check`.
 
-Do not ask worker to re-plan, redesign, or broaden scope.
+Do not ask worker to re-plan, redesign, broaden scope, add tests, or run test suites unless the validation policy explicitly asks for it.
+
+If a worker believes more tests are needed than requested, it should report that recommendation instead of adding them.
 
 Prefer several focused worker tasks over one broad worker task.
 
@@ -209,6 +224,18 @@ Good oracle tasks:
 
 Oracle is advisory. The main agent decides what to do with the recommendation.
 
+## Testing ownership
+
+The main agent owns validation strategy. Workers execute only the validation policy they were given.
+
+Default rules:
+
+- Do not let worker decide to add tests or run broad suites by default.
+- Do not repeat a passing check unless files relevant to that check changed afterward.
+- Reserve full suites, formatters, and CI-readiness checks for finalize/ship unless risk or the user explicitly requires them earlier.
+- Separate implementation from test authoring when that reduces loopiness: one worker may implement, another may add a specific test, and the main agent runs the final targeted check.
+- If existing tests fail for unrelated reasons, stop and report instead of turning the worker task into a debugging session.
+
 ## Delegation contracts
 
 When launching a subagent, provide a compact contract:
@@ -218,7 +245,7 @@ When launching a subagent, provide a compact contract:
 - Files, paths, plan, diff, or command output
 - Success criteria
 - Hard constraints
-- Validation expectations
+- Validation policy and exact check, if any
 - Stop rules
 
 Do not pass the entire conversation unless necessary.

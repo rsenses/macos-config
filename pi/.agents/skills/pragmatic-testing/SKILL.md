@@ -72,12 +72,24 @@ For new or changed behavior:
 - Do not repeat the same passing command without intervening changes; it adds no confidence.
 - Prefer targeted checks during implementation.
 - Reserve full suites, formatting, and CI-readiness checks for finalize/ship unless the user asks earlier or risk demands it.
+- Do not repeat the worker's passing targeted check unless relevant files changed afterward.
+- Treat validation as a single owned plan, not something every agent independently expands.
 
 ## Working with subagents
 
 For complex bugs, the main agent may ask a reviewer or worker to create a reproduction test before the fix. This helps avoid confirmation bias.
 
 The main agent remains responsible for deciding whether the test is meaningful and whether the final evidence is sufficient.
+
+When delegating implementation, give workers an explicit validation policy:
+
+- `no-tests`: do not add tests or run checks.
+- `targeted-check`: run only the named cheap check.
+- `add-test`: add or update only the named focused test.
+- `test-first`: create a focused reproduction before fixing.
+- `defer-validation`: implement only; validation happens later.
+
+Workers should not invent broader test work. If they think the requested validation is insufficient, they should report the recommendation and stop or continue only within the given policy.
 
 ## Verification checklist
 

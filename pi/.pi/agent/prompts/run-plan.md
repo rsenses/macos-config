@@ -21,11 +21,14 @@ Rules:
 - Read the approved/current plan before changing files.
 - Focus only on implementation.
 - Treat any `argument-hint` or `$ARGUMENTS` text as the user's extra prompt for this run.
+- If the codebase already shows a clear local pattern, follow it instead of spending extra time on documentation or broader investigation.
 - Do not restart or redesign the plan.
 - If no clear plan exists, stop and ask me to run `/plan` or clarify the task.
 - Use `scout` only if needed to locate files, entry points, existing patterns, or affected areas.
 - Use `worker` for small focused implementation edits. The main agent may make tiny
   direct edits when delegation would be unnecessary overhead.
+- Decide the validation policy before delegating: `no-tests`, `targeted-check`, `add-test`, `test-first`, or `defer-validation`.
+- For normal implementation during `/run-plan`, prefer `defer-validation` or one cheap `targeted-check`; do not ask workers to add tests unless the approved plan explicitly calls for tests.
 - Give each worker a bounded task with:
   - exact objective
   - relevant plan context
@@ -33,10 +36,12 @@ Rules:
   - constraints
   - what not to change
   - acceptance criteria
-  - which targeted project check should be run, if any
+  - validation policy
+  - exact targeted project check, only if using `targeted-check`
 - Do not ask a worker to implement the whole plan at once unless the plan is genuinely tiny.
 - Do not invoke `reviewer` unless there is uncertainty or a possible contradiction with the plan.
-- Do not run tests.
+- Do not run tests unless the chosen validation policy explicitly requires a targeted test.
+- Do not repeat a worker's passing targeted check unless relevant files changed afterward.
 - Do not run formatters.
 - Do not run refactor commands.
 - Do not broaden scope.

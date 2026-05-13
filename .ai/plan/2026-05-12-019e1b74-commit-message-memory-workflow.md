@@ -1,46 +1,51 @@
-# Project-context simplification
+# Memory auto-persistence hardening
 
-- Updated: 2026-05-12 13:40  
-- Status: in-progress  
+- Updated: 2026-05-13
+- Status: in-progress
 - Scope: medium
 
 ## Goal
 
-Simplify `pi/.pi/agent/extensions/project-context.ts` without changing behavior.
+Review why `.ai/MEMORY.md`, `.ai/TASKS.md`, and daily notes were not being persisted consistently, then harden the prompt-driven flow with the smallest practical change.
 
 ## Spec / Contract
 
-- Objective: reduce reader effort in the project search/read-window extension.
-- Expected behavior: preserve current tool behavior, especially literal `$` searches and explicit regex support.
-- Success criteria: clearer control flow, smaller main functions, no behavior regressions.
-- Out of scope: changing tool features or semantics.
-- Open questions: none.
+- Objective: determine whether memory persistence is only manual/contextual or if there is an automatic write path missing.
+- Expected behavior: memory, tasks, and daily notes should persist the right level of information without requiring fragile manual steps for every meaningful session.
+- Success criteria: clear understanding of why entries are missing and a practical path to improve coverage.
+- Out of scope: changing unrelated agent workflows.
+- Open questions: should persistence happen via automatic hooks, model prompts, or a small helper command?
 
 ## Current Plan
 
-- Inspect the current extension for simplification opportunities.
-- Extract only the helpers that reduce repetition or nesting.
-- Keep the search/read behavior exactly as-is.
-- Validate the edited file as far as the environment allows.
+- Inspect the memory extension hooks and current prompt-driven persistence flow.
+- Verify where memory/tasks/daily are supposed to be updated versus merely injected as context.
+- Identify whether a small automatic write path or prompt tweak would solve the gaps.
+- Record findings and next steps.
 
 ## TODO
 
-- [x] Inspect the extension and identify simplification seams.
-- [x] Apply a small, behavior-preserving refactor.
-- [ ] Validate the refactor.
+- [x] Inspect `memory.ts`, `update-expertise.md`, `save-plan.md`, and current `.ai/` state.
+- [x] Compare expected persistence against actual behavior.
+- [x] Decide to keep the flow prompt-driven but make file-write language explicit.
+- [x] Harden the relevant prompts/skill text to say "write the file" rather than only "update".
+- [x] Fix the extension parse error caused by an unescaped backtick in the injected prompt text.
 
 ## Decisions and Constraints
 
-- Prefer clarity over compactness.
-- Avoid drive-by changes outside `project-context.ts`.
-- Keep the literal-by-default `$` search behavior.
+- Memory extension currently injects context; it does not write durable memory or tasks by itself.
+- Daily files are created automatically, but content persistence still depends on the agent/prompt flow.
+- Prompt wording should say "write the file" explicitly; advisory phrasing alone is easier for the model to narrate than to execute.
+- Prefer the smallest change that improves persistence without adding noisy or low-value logs.
 
 ## Validation
 
-- `git diff --check` passed.
-- TypeScript CLI validation is blocked in this environment because local module/type dependencies are unavailable.
+- Reread `memory.ts`, `finalize.md`, `memory/SKILL.md`, and `.ai/MEMORY.md` after the wording change.
+- `git diff --check` passed after the edits.
 
 ## Remaining / Next
 
-- Validate the refactor and decide if any further simplification is still worth it.
+- Observe future tasks to see whether the stronger wording improves actual file writes.
+- If persistence still slips, revisit a hook-based fallback; keep it small and scoped.
+- Confirm the extension now loads cleanly after the backtick escape fix.
 

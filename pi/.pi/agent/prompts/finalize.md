@@ -37,6 +37,7 @@ Agent escalation rules:
   - the fix/format command introduces non-trivial logic changes,
   - the readiness-to-ship verdict is ambiguous after reading the diff and command outputs,
   - the changelog impact is ambiguous, user-facing, and cannot be determined from the diff and plan alone.
+- Before your final response, actually write any needed `.ai` updates (plan, TASKS, daily, MEMORY); do not leave them implied in prose.
 - If this task produced a durable project lesson or decision, update `.ai/MEMORY.md` only when it is clearly appropriate; otherwise put it in today's daily note.
 - Append a concise daily note with validation results, remaining risks, and final verdict.
 

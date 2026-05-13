@@ -5,7 +5,7 @@ argument-hint: "[optional focus area]"
 
 Use the `orchestrator` skill for this task.
 Use `code-simplification` when evaluating unnecessary complexity.
-Use `source-driven-development` when recommendations depend on framework/library guidance.
+Use `researcher` when framework/library guidance matters.
 
 Analyze the codebase architecture and suggest improvements that would make it easier to understand, maintain, and work with.
 

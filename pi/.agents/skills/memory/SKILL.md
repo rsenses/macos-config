@@ -212,8 +212,8 @@ If unsure whether something belongs in long-term memory, write it to the daily n
 
 At the end of meaningful work:
 
-1. Update the current session plan status/TODOs if work changed.
-2. Append a daily note after meaningful work.
+1. Update the current session plan status/TODOs if work changed, and write the file before replying.
+2. Append a daily note after meaningful work, and write the file before replying.
 3. Update `.ai/TASKS.md` if pending work changed.
 4. Update `.ai/MEMORY.md` only if a durable lesson or decision emerged.
 5. Mention files written in the final response.

@@ -6,6 +6,8 @@ Pending project work that should survive across sessions.
 
 ## In Progress
 
+- [ ] Memory auto-persistence hardening — see [[.ai/plan/2026-05-12-019e1b74-commit-message-memory-workflow.md]]
+
 ## Done
 
 - [x] Commit message memory workflow — see [[.ai/plan/2026-05-12-019e1b74-commit-message-memory-workflow.md]]

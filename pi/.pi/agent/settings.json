@@ -30,7 +30,9 @@
     "agentOverrides": {
       "scout": {
         "model": "opencode-go/deepseek-v4-flash",
-        "fallbackModels": ["opencode-go/qwen3.5-plus"]
+        "fallbackModels": [
+          "opencode-go/qwen3.5-plus"
+        ]
       },
       "context-builder": {
         "model": "opencode-go/kimi-k2.6",

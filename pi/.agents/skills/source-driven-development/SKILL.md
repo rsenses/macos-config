@@ -7,21 +7,22 @@ description: Grounds framework and library decisions in authoritative documentat
 
 ## Overview
 
-Important framework-specific code decisions should be backed by authoritative documentation or project-provided MCP tools. Don't implement unfamiliar or version-sensitive APIs from memory — verify, cite when useful, and let the user see sources for non-obvious choices. Keep verification proportional: obvious syntax and established project patterns do not need ceremony.
+Important framework-specific code decisions should be backed by authoritative documentation or project-provided MCP tools. Don't implement unfamiliar or version-sensitive APIs from memory — verify, cite when useful, and let the user see sources for non-obvious choices. Keep verification proportional: obvious syntax and established project patterns do not need ceremony. If the codebase already shows the pattern clearly, prefer the local pattern and skip deeper docs unless the version/API choice is actually unclear.
 
 ## When to Use
 
-- The user wants code that follows current best practices for a given framework
+- The user wants code that follows current best practices for a given framework and the codebase does not already establish the pattern
 - Building boilerplate, starter code, or patterns that will be copied across a project
 - The user explicitly asks for documented, verified, or "correct" implementation
 - Implementing features where the framework's recommended approach matters (forms, routing, data fetching, state management, auth)
-- Reviewing or improving code that uses framework-specific patterns
+- Reviewing or improving code that uses framework-specific patterns when the local pattern is ambiguous or missing
 - Any time you are about to write unfamiliar or version-sensitive framework-specific code from memory
 
 **When NOT to use:**
 
 - Correctness does not depend on a specific version (renaming variables, fixing typos, moving files)
 - Pure logic that works the same across all versions (loops, conditionals, data structures)
+- The codebase already demonstrates the same pattern clearly
 - The user explicitly wants speed over verification ("just do it quickly")
 
 ## The Process
@@ -94,6 +95,8 @@ GOOD: Fetch docs.djangoproject.com/en/6.0/topics/auth/
 ```
 
 After fetching, extract the key patterns and note any deprecation warnings or migration guidance.
+
+If the repo already contains a clear example, verify that example first and stop unless the docs conflict with it or the version matters.
 
 When official sources conflict with each other (e.g. a migration guide contradicts the API reference), surface the discrepancy to the user and verify which pattern actually works against the detected version.
 
