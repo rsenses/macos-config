@@ -4,6 +4,7 @@ argument-hint: "<prompt>"
 ---
 
 Use the `orchestrator` skill for this task.
+If the work is multi-file, multi-step, or parallelizable, actually delegate focused pieces through orchestrator (e.g. scout/planner/worker) instead of keeping everything in the main agent.
 Use the `memory` skill for this task.
 Use `incremental-implementation` for multi-file or multi-step changes.
 Use `pragmatic-testing` when behavior changes need targeted evidence.

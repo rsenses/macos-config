@@ -1,8 +1,8 @@
 {
   "lastChangelogVersion": "0.74.0",
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.4-mini",
-  "defaultThinkingLevel": "medium",
+  "defaultProvider": "opencode-go",
+  "defaultModel": "deepseek-v4-flash",
+  "defaultThinkingLevel": "high",
   "theme": "light",
   "packages": [
     "npm:@sherif-fanous/pi-rtk",
@@ -15,11 +15,83 @@
         "-stash/index.ts",
         "-statusline/index.ts",
         "-direnv/index.ts",
-        "-fetch/index.ts"
+        "-questionnaire/index.ts",
+        "+fetch/index.ts"
       ]
     },
-    "npm:pi-web-access",
-    "npm:pi-mcp-adapter"
+    "npm:pi-mcp-adapter",
+    {
+      "source": "git:github.com/aldoborrero/pi-agent-kit",
+      "extensions": [
+        "-extensions/bitwarden/bitwarden.ts",
+        "-extensions/brave-search/brave-search.ts",
+        "-extensions/btw/btw.ts",
+        "-extensions/codex/index.ts",
+        "-extensions/context/context.ts",
+        "-extensions/diff/diff.ts",
+        "-extensions/direnv/direnv.ts",
+        "-extensions/exa-search/exa-search.ts",
+        "-extensions/exit/exit.ts",
+        "-extensions/footer/footer.ts",
+        "-extensions/git-checkpoint/git-checkpoint.ts",
+        "-extensions/git-commit-context/git-commit-context.ts",
+        "-extensions/github-search/github-search.ts",
+        "-extensions/groq-provider/groq-provider.ts",
+        "-extensions/handoff/handoff.ts",
+        "-extensions/inline-bash/inline-bash.ts",
+        "-extensions/jina/jina.ts",
+        "-extensions/loop/cron.ts",
+        "-extensions/notify/notify.ts",
+        "-extensions/openrouter-provider/openrouter-provider.ts",
+        "-extensions/oracle/index.ts",
+        "-extensions/permission-gate/permission-gate.ts",
+        "-node_modules/pi-interactive-shell/index.ts",
+        "-node_modules/pi-mcp-adapter/index.ts",
+        "-extensions/plan-mode/index.ts",
+        "-extensions/questionnaire/index.ts",
+        "-extensions/recorder/recorder.ts",
+        "-extensions/sandbox/index.ts",
+        "-extensions/skill-namespaces/skill-namespaces.ts",
+        "-node_modules/pi-lsp-extension/src/index.ts",
+        "-extensions/subagent/index.ts",
+        "-extensions/together-provider/together-provider.ts",
+        "-extensions/tuicr/tuicr.ts",
+        "-extensions/until/loop.ts",
+        "-extensions/voice/voice.ts",
+        "-extensions/walkie/index.ts",
+        "-extensions/web-tools/index.ts"
+      ],
+      "skills": [
+        "-skills/blueprint/SKILL.md",
+        "-skills/superpowers/brainstorming/SKILL.md",
+        "-skills/superpowers/dispatching-parallel-agents/SKILL.md",
+        "-skills/superpowers/executing-plans/SKILL.md",
+        "-skills/superpowers/finishing-a-development-branch/SKILL.md",
+        "-skills/kagi-search/SKILL.md",
+        "-skills/pexpect-cli/SKILL.md",
+        "-skills/superpowers/receiving-code-review/SKILL.md",
+        "-skills/superpowers/requesting-code-review/SKILL.md",
+        "-skills/searxng-search/SKILL.md",
+        "-skills/superpowers/subagent-driven-development/SKILL.md",
+        "-skills/superpowers/systematic-debugging/SKILL.md",
+        "-skills/superpowers/test-driven-development/SKILL.md",
+        "-skills/superpowers/using-git-worktrees/SKILL.md",
+        "-skills/superpowers/verification-before-completion/SKILL.md",
+        "-skills/superpowers/writing-plans/SKILL.md",
+        "-skills/superpowers/writing-skills/SKILL.md"
+      ],
+      "prompts": [
+        "-prompts/brainstorm.md",
+        "-prompts/debug.md",
+        "-prompts/explore.md",
+        "-prompts/full-cycle.md",
+        "-prompts/review.md"
+      ],
+      "themes": [
+        "-themes/catppuccin-mocha.json",
+        "-themes/lavender.json"
+      ]
+    }
   ],
   "enabledModels": [
     "openai-codex/gpt-5.4-mini",
@@ -96,5 +168,8 @@
     }
   },
   "enableInstallTelemetry": false,
-  "showHardwareCursor": false
+  "showHardwareCursor": false,
+  "extensions": [
+    "-extensions/project-context.ts"
+  ]
 }

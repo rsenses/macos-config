@@ -4,6 +4,7 @@ argument-hint: "<feedback>"
 ---
 
 Use the `orchestrator` skill for this task.
+If the correction touches multiple files or can be split into bounded pieces, actually delegate focused work through orchestrator (e.g. scout/worker/reviewer) instead of doing everything in the main agent.
 Use the `memory` skill for this task.
 Use `incremental-implementation` if the correction touches multiple files.
 Use `pragmatic-testing` when the correction changes behavior.

@@ -16,10 +16,13 @@ Durable project knowledge, decisions, preferences, and recurring lessons.
 - Validation:
 - Remaining:
 - Notes:
-- `project_search` should treat user queries defensively: prefer literal text first so snippets with metacharacters like `$ARGUMENTS` or `->mount(` work naturally, and keep explicit regex as an opt-in only path.
+- For execution prompts like `run-plan` and `fix-plan`, a bare “use orchestrator” line is not enough; they should explicitly tell the agent to delegate bounded pieces through orchestrator when the task is multi-file or multi-step.
+- Pi extensions always live in `pi/.pi/agent/extensions/` for this repo.
 - When finalizing commits, prefer the task's user-facing goal or current session plan Goal / Expected Changes over low-level implementation wording when choosing the commit summary.
 - Agent workflow: the main agent owns validation strategy; worker delegations should include an explicit validation policy and workers should not add tests or run broad suites unless asked.
 - Agent workflow: for small changes, prefer existing repo patterns before source-driven docs or code review; treat those skills as opt-in for unfamiliar or risky diffs.
+- Global Pi preference: prefer `fd` over `find` for file discovery; use `find` only when `fd` is unavailable or POSIX-specific behavior is required.
+- UI feedback: for post-response warnings based on final context usage, prefer `agent_end` with `ctx.ui.notify(..., "error")` so the message appears after the agent finishes and renders in red.
 - Memory extension note: `pi/.pi/agent/extensions/memory.ts` currently injects `.ai/MEMORY.md`, `.ai/TASKS.md`, and daily notes into context, but durable persistence still depends on prompt/model flow; daily files are created automatically, not populated automatically.
 - Persistence lesson: prompt wording needs to say "write the file" explicitly; advisory phrasing like "update memory" is easier for the model to narrate than to execute.
 - Extension pitfall: when editing `memory.ts` template literals, escape literal markdown backticks inside the injected prompt; otherwise the extension can fail to parse on load.
