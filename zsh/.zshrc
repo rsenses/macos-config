@@ -23,21 +23,6 @@ fi
 # Worktrunk
 if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
 
-if [[ $(uname) == "Darwin" ]]; then
-    path=(
-        "/Applications/Visual Studio Code - Insiders.app/Contents/Resources/app/bin"
-        "$HOME/go/bin"
-        $path
-    )
-fi
-
-path=(
-    "$HOME/.cargo/bin"
-    "$HOME/.local/bin"
-    "$HOME/.composer/vendor/bin"
-    $path
-)
-
 # OPTIONS ========================================
 HISTFILE=~/.zsh_history
 HISTSIZE=1000000
