@@ -1,7 +1,8 @@
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, readdir, writeFile, appendFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
+import { Type } from "typebox";
 
 const MEMORY_TEMPLATE = `# Project Memory
 
@@ -32,6 +33,21 @@ Pending project work that should survive across sessions.
 ## In Progress
 
 ## Done
+`;
+
+const PLAN_TEMPLATE = (slug: string, sessionId: string) => `# Plan: ${slug}
+- Status: in-progress
+- Created: ${new Date().toISOString().split("T")[0]}
+- Session ID: ${sessionId}
+
+## Goal
+
+## Spec / Contract
+
+## Tasks
+- [ ] Task 1: ...
+
+## Validation
 `;
 
 function projectMemoryPaths(cwd: string) {
@@ -88,14 +104,13 @@ async function ensureDailyFile(cwd: string) {
 	}
 }
 
-function shortSessionId(ctx: { sessionManager?: { sessionId?: string } }): string {
-	const id = ctx.sessionManager?.sessionId;
+function shortSessionId(ctx: any): string {
+	const id = ctx.sessionManager?.sessionId || ctx.sessionId;
 	if (id) return id.slice(0, 8);
-
 	return "session";
 }
 
-async function sessionPlanPath(cwd: string, sessionId: string): Promise<string> {
+async function sessionPlanPath(cwd: string, sessionId: string): Promise<{ path: string; exists: boolean }> {
 	const paths = projectMemoryPaths(cwd);
 	const prefix = `${localDate()}-${sessionId}-`;
 
@@ -104,20 +119,65 @@ async function sessionPlanPath(cwd: string, sessionId: string): Promise<string> 
 			.filter((file) => file.startsWith(prefix) && file.endsWith(".md"))
 			.sort();
 
-		if (existing[0]) return `.ai/plan/${existing[0]}`;
+		if (existing[0]) return { path: `.ai/plan/${existing[0]}`, exists: true };
 	} catch {}
 
-	return `.ai/plan/${prefix}<short-slug>.md`;
+	return { path: `.ai/plan/${prefix}<short-slug>.md`, exists: false };
 }
 
 export default function (pi: ExtensionAPI) {
+	// --- Tools ---
+
+	pi.registerTool({
+		name: "create_session_plan",
+		description: "Creates or retrieves the session plan file. Use this at the start of any non-trivial task.",
+		parameters: Type.Object({
+			slug: Type.String({ description: "Short descriptive slug for the plan (e.g. 'fix-auth-bug')." }),
+		}),
+		async execute(_id, params, _signal, _update, ctx) {
+			const cwd = ctx.cwd;
+			const sessionId = shortSessionId(ctx);
+			const { path: planPath, exists } = await sessionPlanPath(cwd, sessionId);
+
+			if (exists) {
+				return { content: [{ type: "text", text: `Session plan already exists at: ${planPath}` }] };
+			}
+
+			const finalPath = planPath.replace("<short-slug>", params.slug);
+			const fullPath = path.join(cwd, finalPath);
+			await writeFile(fullPath, PLAN_TEMPLATE(params.slug, sessionId), "utf8");
+
+			return { content: [{ type: "text", text: `Created session plan at: ${finalPath}` }] };
+		},
+	});
+
+	pi.registerTool({
+		name: "add_daily_note",
+		description: "Adds a concise note to today's daily log.",
+		parameters: Type.Object({
+			note: Type.String({ description: "The note to add (summary of work, risks, or decisions)." }),
+		}),
+		async execute(_id, params, _signal, _update, ctx) {
+			const cwd = ctx.cwd;
+			await ensureDailyFile(cwd);
+			const dailyFile = path.join(cwd, ".ai", "daily", `${localDate()}.md`);
+			const timestamp = new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+			const entry = `\n- **${timestamp}**: ${params.note}\n`;
+			await appendFile(dailyFile, entry, "utf8");
+
+			return { content: [{ type: "text", text: "Note added to daily log." }] };
+		},
+	});
+
+	// --- Lifecycle Hooks ---
+
 	pi.on("before_agent_start", async (event, ctx) => {
 		const cwd = event.systemPromptOptions?.cwd ?? ctx.cwd;
 		const paths = await ensureProjectMemory(cwd);
 		await ensureDailyFile(cwd);
 
 		const sessionId = shortSessionId(ctx);
-		const planPath = await sessionPlanPath(cwd, sessionId);
+		const { path: planPath } = await sessionPlanPath(cwd, sessionId);
 		const memory = await readFile(paths.memoryFile, "utf8");
 		const tasks = await readFile(paths.tasksFile, "utf8");
 		const today = localDate();
@@ -131,39 +191,26 @@ export default function (pi: ExtensionAPI) {
 
 		const memoryContext = `## Project Memory
 
-The current project uses local AI memory files under the current working directory:
+The current project uses local AI memory files:
+- \`.ai/MEMORY.md\` — durable context and decisions.
+- \`.ai/TASKS.md\` — pending project work.
+- \`.ai/plan/\` — task-specific implementation plans.
+- \`.ai/daily/\` — concise daily notes.
 
-- \`.ai/MEMORY.md\` — durable project context, decisions, preferences, and recurring lessons.
-- \`.ai/TASKS.md\` — pending project work. One-line tasks live directly here; complex tasks link to a plan file with wiki links like \`[[.ai/plan/<file>.md]]\`.
-- \`.ai/plan/\` — session/task plans for non-trivial implementation work.
-- \`.ai/daily/\` — concise daily notes after meaningful work. Today and yesterday are injected for continuity when present.
+Current session plan: \`${planPath}\`
 
-Current session plan path: \`${planPath}\`
-
-If the path contains \`<short-slug>\`, replace it with a short descriptive slug when creating the plan. Before creating a new plan, look for an existing file matching \`.ai/plan/${localDate()}-${sessionId}-*.md\` and update that existing file instead.
-
-Memory is context, not authority. Current user instructions, AGENTS.md, and explicit project documentation override memory. Do not let memory broaden the current task scope.
-
-## Memory Policy
-
-- For non-trivial implementation, fixing, debugging, planning, or finalization work, use the \`memory\` skill when available.
-- For non-trivial work in this session, create or update the single current session plan at \`${planPath}\`. Use a descriptive slug only when creating the file for the first time. Do not create a new plan file for every interaction.
-- If the current task changes materially, update the same session plan with the new status, decisions, TODOs, and remaining work.
-- Treat the current session plan, \`.ai/TASKS.md\`, \`.ai/daily/${localDate()}.md\`, and \`.ai/MEMORY.md\` as required file writes when they change; do not leave persistence as something to mention only in the response.
-- Store pending work in \`.ai/TASKS.md\`: simple tasks as one-line checkboxes; complex tasks as checkboxes with wiki links to plans, e.g. \`[[.ai/plan/YYYY-MM-DD-topic.md]]\`.
-- At the end of meaningful work, append a concise entry to \`.ai/daily/${localDate()}.md\`.
-- Update \`.ai/MEMORY.md\` only for durable lessons, stable preferences, architecture decisions, recurring pitfalls, or important workflow decisions.
-- Do not store secrets, full transcripts, long diffs, temporary logs, or irrelevant tool output.
-- Keep daily notes short. Prefer outcomes, validation, remaining work, and risks for the next session.
+### Memory Policy
+- **Planning**: Use \`create_session_plan\` at the start of non-trivial tasks. Update the plan file directly.
+- **Tasks**: Use \`.ai/TASKS.md\` for work that survives sessions. Use wiki-links \`[[.ai/plan/file.md]]\` for complex tasks.
+- **Daily**: Use \`add_daily_note\` after meaningful work. Do not write to daily files manually.
+- **Durable**: Update \`.ai/MEMORY.md\` only for long-term project decisions or stable preferences.
 
 Current \`.ai/MEMORY.md\` contents:
-
 \`\`\`md
 ${memory.trim() || "# Project Memory\n\n_No durable project memory recorded yet._"}
 \`\`\`
 
 Current \`.ai/TASKS.md\` contents:
-
 \`\`\`md
 ${tasks.trim() || "# Project Tasks\n\n_No pending project tasks recorded yet._"}
 \`\`\`
@@ -176,7 +223,6 @@ ${dailySections ? `Recent daily context:\n\n${dailySections}` : "No recent daily
 	});
 
 	pi.on("agent_end", async (_event, ctx) => {
-		// MVP fallback: keep today's daily file available, but let the model write useful summaries.
 		await ensureDailyFile(ctx.cwd);
 	});
 }

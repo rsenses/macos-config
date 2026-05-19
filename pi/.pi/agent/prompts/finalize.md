@@ -2,61 +2,19 @@
 description: Run fix and test, then leave the task ready for final review
 ---
 
-Use the `orchestrator` skill for this task.
-Use the `memory` skill for this task.
-Use the `ship` skill for changelog and commit-message readiness.
-Use the `worker` subagent only for concrete file edits.
+Use the `ops`, `architect`, and `dev` skills. Use worker for file edits only.
 
-I am ready to close this task. Run the project’s final validation flow and leave everything ready for final review.
+1. **Validation**: Identify and run project-specific fix/format and test commands. Summarize file changes and failures.
+2. **Changelog**: Check if `CHANGELOG.md` needs a SemVer entry for user-visible changes. Add it if required.
+3. **Escalation**: Only use `reviewer` if formatting changes logic or readiness is ambiguous.
+4. **Persistence**: Use memory tools (`add_daily_note`, `create_session_plan`) to update `.ai/` files before finishing.
+5. **Outcome**: Propose a `type(scope): summary` commit message based on the task goal. Do not commit automatically.
 
-Context:
-
-- The implementation has already been manually reviewed by me.
-- Do not perform a broad review unless tests fail, the fix changes relevant logic, or you detect a clear risk.
-
-Validation flow:
-
-1. Read AGENTS.md or project guidance to identify the project’s standard fix/format command and test command.
-2. If no project-specific commands are defined, infer commands from project manifests/scripts. Ask before using fallback commands if ambiguity remains.
-3. Run the project’s standard fix/format command.
-4. Check whether it modified any files and summarize those changes.
-5. Run the project’s standard test command.
-6. Summarize any errors or failures.
-7. Prioritize any issue that could break CI/CD or block deployment.
-8. Check whether `CHANGELOG.md` needs to be updated based on the changes.
-9. If a user-visible changelog entry is missing and the project convention requires one, add it using Keep a Changelog format aligned with SemVer.
-10. Do not commit automatically.
-11. Propose the most appropriate Conventional Commit type and scope, and recommend a final commit message in the format `type(scope): summary`.
-    Base the summary on the user's stated outcome and the current session plan's Goal / Expected Changes when available, not on internal helper names or the lowest-level code detail.
-
-Agent escalation rules:
-
-- Do not use reviewer agents by default.
-- The main agent should handle orchestration, changelog checks, and commit message suggestions.
-- Escalate to the `reviewer` subagent only if:
-  - the fix/format command introduces non-trivial logic changes,
-  - the readiness-to-ship verdict is ambiguous after reading the diff and command outputs,
-  - the changelog impact is ambiguous, user-facing, and cannot be determined from the diff and plan alone.
-- Before your final response, actually write any needed `.ai` updates (plan, TASKS, daily, MEMORY); do not leave them implied in prose.
-- If this task produced a durable project lesson or decision, update `.ai/MEMORY.md` only when it is clearly appropriate; otherwise put it in today's daily note.
-- Append a concise daily note with validation results, remaining risks, and final verdict.
-
-Rules:
-
-- Do not introduce unrelated refactors.
-- Do not expand the task scope.
-- Do not update `CHANGELOG.md` for purely internal changes unless the project convention requires it.
-
-Final output:
-
-- checks executed
-- files modified by fix/format
-- test status
-- final working tree status
-- changelog status
-- blocking issues
-- non-blocking issues
-- final verdict: `ready to ship` or `not ready to ship`
-- risks before final review
-- Conventional Commit suggestion
-- memory/daily entry status
+Final Output:
+- Executed checks and test status.
+- Files modified by fixers.
+- Changelog and working tree status.
+- Blocking/non-blocking issues and risks.
+- Final verdict: `ready to ship` or `not ready to ship`.
+- Conventional Commit suggestion.
+- Memory/daily entry status.

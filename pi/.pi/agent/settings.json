@@ -1,12 +1,22 @@
 {
-  "lastChangelogVersion": "0.74.0",
-  "defaultProvider": "opencode-go",
-  "defaultModel": "deepseek-v4-flash",
-  "defaultThinkingLevel": "high",
+  "lastChangelogVersion": "0.75.3",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.4-mini",
+  "defaultThinkingLevel": "medium",
   "theme": "light",
   "packages": [
-    "npm:@sherif-fanous/pi-rtk",
-    "npm:pi-subagents",
+    {
+      "source": "npm:pi-subagents",
+      "prompts": [
+        "-prompts/gather-context-and-clarify.md",
+        "-prompts/parallel-cleanup.md",
+        "-prompts/parallel-context-build.md",
+        "-prompts/parallel-handoff-plan.md",
+        "-prompts/parallel-research.md",
+        "-prompts/parallel-review.md",
+        "-prompts/review-loop.md"
+      ]
+    },
     {
       "source": "git:github.com/rytswd/pi-agent-extensions",
       "extensions": [
@@ -25,7 +35,6 @@
       "extensions": [
         "-extensions/bitwarden/bitwarden.ts",
         "-extensions/brave-search/brave-search.ts",
-        "-extensions/btw/btw.ts",
         "-extensions/codex/index.ts",
         "-extensions/context/context.ts",
         "-extensions/diff/diff.ts",
@@ -91,7 +100,8 @@
         "-themes/catppuccin-mocha.json",
         "-themes/lavender.json"
       ]
-    }
+    },
+    "npm:@sherif-fanous/pi-rtk"
   ],
   "enabledModels": [
     "openai-codex/gpt-5.4-mini",
@@ -167,9 +177,5 @@
       }
     }
   },
-  "enableInstallTelemetry": false,
-  "showHardwareCursor": false,
-  "extensions": [
-    "-extensions/project-context.ts"
-  ]
+  "enableInstallTelemetry": false
 }
