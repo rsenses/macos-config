@@ -231,12 +231,12 @@ reload_caddy() {
       return 0
     fi
 
-    if sudo -n caddy "$subcmd" "$@" >/dev/null 2>&1; then
+    if sudo caddy "$subcmd" "$@" >/dev/null 2>&1; then
       return 0
     fi
 
-    echo "Error: no pude ejecutar 'caddy $subcmd' sin interacción." >&2
-    echo "Ejecuta 'sudo -v' una vez y vuelve a lanzar 'dev up'." >&2
+    echo "Error: no pude ejecutar 'caddy $subcmd'." >&2
+    echo "Prueba con 'sudo -v' o ejecuta 'sudo dev up' una vez para autorizar Caddy." >&2
     return 1
   }
 
@@ -323,8 +323,9 @@ case "${cmd}" in
 
     if [[ ! -f "$SNIPPET" ]]; then
       write_snippet
-      reload_caddy yes
     fi
+
+    reload_caddy yes
 
     start_php_server
     if ! wait_for_port "$PORT" 10; then
