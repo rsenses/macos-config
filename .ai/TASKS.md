@@ -7,6 +7,8 @@ Pending project work that should survive across sessions.
 ## In Progress
 
 - [ ] Memory auto-persistence hardening — see [[.ai/plan/2026-05-12-019e1b74-commit-message-memory-workflow.md]]
+- [ ] rtk extension not working — see [[.ai/plan/2026-05-15-019e2ad2-rtk-extension-debug.md]]
+- [ ] `dev up` should autostart Caddy when down — see [[.ai/plan/2026-05-18-019e3a11-caddy-autostart.md]]
 
 ## Done
 
