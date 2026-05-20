@@ -1,27 +1,7 @@
 -- LSPCONFIG
--- vim.lsp.config('html', {
---   filetypes = {
---     'html',
---     'blade',
---   },
--- })
 
-vim.lsp.config('intelephense', {
-  init_options = {
-    licenceKey = os.getenv 'HOME' .. '/.config/intelephense/licence.txt',
-  },
-  filetypes = { 'php', 'blade' },
-  settings = {
-    intelephense = {
-      environment = {
-        include_paths = {
-          './vendor/pestphp',
-          './vendor/phpunit/phpunit',
-        },
-      },
-    },
-  },
-})
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+vim.lsp.config('*', { capabilities = capabilities })
 
 vim.lsp.config('lua_ls', {
   settings = {
@@ -59,6 +39,8 @@ vim.lsp.enable {
   'stylelint_lsp',
   'tailwindcss',
 }
+
+vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { desc = 'LSP: go to definition' })
 -- END LSPCONFIG
 
 -- Diagnostics
@@ -90,5 +72,3 @@ vim.diagnostic.config {
     },
   },
 }
-
-vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { desc = 'LSP: go to definition' })

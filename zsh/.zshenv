@@ -18,19 +18,3 @@ fi
 if command -v mise >/dev/null 2>&1; then
   eval "$(mise activate zsh)"
 fi
-
-if [[ $(uname) == "Darwin" ]]; then
-    path=(
-        "/opt/homebrew/bin"
-        "/Applications/Visual Studio Code - Insiders.app/Contents/Resources/app/bin"
-        "$HOME/go/bin"
-        $path
-    )
-fi
-
-path=(
-    "$HOME/.cargo/bin"
-    "$HOME/.local/bin"
-    "$HOME/.composer/vendor/bin"
-    $path
-)

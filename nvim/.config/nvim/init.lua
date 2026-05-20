@@ -27,12 +27,13 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
+-- Experimental UI2: floating cmdline and messages
+require('vim._core.ui2').enable {}
+-- recuerda g< para abrir los mensajes
+
 -- [[ Configure and install plugins ]]
---
---  To update plugins, run:
---    :lua vim.pack.update()
---
 --  Plugin revisions are tracked in `nvim-pack-lock.json`.
 require 'custom.pack'
+
 -- Faster find files
 require('custom.find').setup()

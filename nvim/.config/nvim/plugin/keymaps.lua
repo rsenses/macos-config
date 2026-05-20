@@ -11,8 +11,8 @@ vim.keymap.set('n', 'n', 'nzzzv')
 vim.keymap.set('n', 'N', 'Nzzzv')
 
 -- Copiar, pegar y borrar del clipboard
+vim.keymap.set('x', 'p', [["_dP]], { desc = 'Paste over selection without losing yanked text' })
 vim.keymap.set({ 'n', 'v' }, '<leader>y', [["+y]], { desc = '[Y]ank to clipboard' })
-vim.keymap.set('n', '<leader>Y', [["+Y]], { desc = '[Y]ank to end of line from clipboard' })
 
 -- surround
 vim.keymap.set('x', '(', 'c(<ESC>pa)')
@@ -55,6 +55,9 @@ end, { desc = 'Diagnostics buffer → quickfix' })
 vim.keymap.set('n', 'grD', function()
   vim.diagnostic.setqflist { open = true }
 end, { desc = 'Diagnostics proyecto → quickfix' })
+
+-- Editor restart
+vim.keymap.set('n', '<leader>er', '<cmd>restart<cr>', { desc = 'Restart config :restart' })
 
 -- Generic formater
 vim.keymap.set('n', '<leader>cF', 'gg=G``', { desc = 'Format the entire file' })

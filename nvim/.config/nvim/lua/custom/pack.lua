@@ -20,10 +20,8 @@ vim.pack.add({
     name = 'rose-pine',
   },
   'https://github.com/stevearc/conform.nvim',
-  'https://github.com/barrettruth/canola.nvim',
-  -- 'https://github.com/stevearc/quicker.nvim',
+  -- 'https://github.com/barrettruth/canola.nvim',
   'https://github.com/supermaven-inc/supermaven-nvim',
-  'https://github.com/rachartier/tiny-cmdline.nvim', -- centered cmdline
 }, {
   confirm = false,
   load = true,
@@ -103,55 +101,6 @@ vim.keymap.set('', '<leader>cf', function()
   require('conform').format { async = true, lsp_format = 'fallback', timeout_ms = 2500 }
 end, { desc = '[C]ode [F]ormat LSP' })
 -- END CONFORM
-
--- DADBOD
--- vim.g.db_ui_use_nerd_fonts = 1
--- vim.g.db_ui_auto_execute_table_helpers = 1
--- vim.g.db_ui_save_location = vim.fn.stdpath 'data' .. '/dadbod_queries'
--- vim.g.db_ui_winwidth = 35
--- vim.o.previewheight = 30
--- vim.g.db_ui_show_help = 0
--- vim.g.db_ui_show_database_icon = 1
--- vim.g.db_ui_force_echo_notifications = 1
---
--- local dbfile = vim.fn.getcwd() .. '/.db.lua'
--- if vim.fn.filereadable(dbfile) == 1 then
---   local ok, project_dbs = pcall(dofile, dbfile)
---   if ok and type(project_dbs) == 'table' then
---     vim.g.dbs = vim.tbl_extend('force', vim.g.dbs or {}, project_dbs)
---   end
--- end
---
--- vim.g.db_ui_table_helpers = {
---   mysql = {
---     List = 'SELECT * FROM `{dbname}`.`{table}` ORDER BY id DESC LIMIT 200',
---     Count = 'SELECT COUNT(*) AS total FROM `{dbname}`.`{table}`',
---     ['Last 50'] = 'SELECT * FROM `{dbname}`.`{table}` ORDER BY id DESC LIMIT 50',
---     ['Filter template'] = [[
--- SELECT *
--- FROM `{dbname}`.`{table}`
--- WHERE 1 = 1
--- LIMIT 200
--- ]],
---   },
---   sqlite = {
---     List = 'SELECT * FROM `{table}` ORDER BY id DESC LIMIT 200',
---     Count = 'SELECT COUNT(*) AS total FROM `{table}`',
---     ['Last 50'] = 'SELECT * FROM `{table}` ORDER BY id DESC LIMIT 50',
---     ['Filter template'] = [[
--- SELECT *
--- FROM `{table}`
--- WHERE 1 = 1
--- LIMIT 200
--- ]],
---   },
--- }
---
--- vim.keymap.set('n', '<leader>du', '<cmd>DBUIToggle<cr>', { desc = 'Dadbod UI' })
--- vim.keymap.set('n', '<leader>df', '<cmd>DBUIFindBuffer<cr>', { desc = 'Dadbod find buffer' })
--- vim.keymap.set('n', '<leader>dr', '<cmd>DBUIRenameBuffer<cr>', { desc = 'Dadbod rename buffer' })
--- vim.keymap.set('n', '<leader>dl', '<cmd>DBUILastQueryInfo<cr>', { desc = 'Dadbod last query info' })
--- END DADBOD
 
 -- KULALA
 require('kulala').setup {
@@ -354,61 +303,65 @@ miniclue.setup {
 --   },
 -- }
 
--- require('mini.notify').setup()
+-- mini files ----
+local MiniFiles = require 'mini.files'
+MiniFiles.setup {
+  mappings = {
+    go_in = 'l',
+    go_in_plus = '<CR>',
+    go_out = 'h',
+    go_out_plus = '-',
+  },
+}
+
+vim.keymap.set('n', '-', '<cmd>lua MiniFiles.open()<CR>', { desc = 'Toggle mini file explorer' })
+vim.keymap.set('n', '<leader>-', function()
+  MiniFiles.open(vim.api.nvim_buf_get_name(0), false)
+  MiniFiles.reveal_cwd()
+end, { desc = 'Toggle into currently opened file' })
+
+---- mini notify ----
+require('mini.notify').setup {
+  -- only show messages
+  content = {
+    format = function(notif)
+      return notif.msg
+    end,
+  },
+}
 
 -- END MINI
 
 -- OIL
-require('oil').setup {
-  default_file_explorer = true,
-  delete_to_trash = true,
-  skip_confirm_for_simple_edits = true,
-  lsp_file_methods = {
-    enabled = true,
-    timeout_ms = 1000,
-    autosave_changes = true,
-  },
-  view_options = {
-    show_hidden = true,
-    natural_order = true,
-    is_always_hidden = function(name)
-      local ignored_files = { '.git', 'node_modules', '.idea', '.DS_Store' }
-      return vim.tbl_contains(ignored_files, name)
-    end,
-  },
-  win_options = {
-    wrap = true,
-    winblend = 0,
-  },
-  keymaps = {
-    ['<C-c>'] = false,
-    q = 'actions.close',
-  },
-}
-
-vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
--- END OIL
-
--- QUICKER
--- require('quicker').setup {
---   keys = {
---     {
---       '>',
---       function()
---         require('quicker').expand { before = 2, after = 2, add_to_existing = true }
---       end,
---       desc = 'Expand quickfix context',
---     },
---     {
---       '<',
---       function()
---         require('quicker').collapse()
---       end,
---       desc = 'Collapse quickfix context',
---     },
+-- require('oil').setup {
+--   default_file_explorer = true,
+--   delete_to_trash = true,
+--   skip_confirm_for_simple_edits = true,
+--   lsp_file_methods = {
+--     enabled = true,
+--     timeout_ms = 1000,
+--     autosave_changes = true,
+--   },
+--   view_options = {
+--     show_hidden = true,
+--     natural_order = true,
+--     is_always_hidden = function(name)
+--       local ignored_files = { '.git', 'node_modules', '.idea', '.DS_Store' }
+--       return vim.tbl_contains(ignored_files, name)
+--     end,
+--   },
+--   win_options = {
+--     wrap = true,
+--     winblend = 0,
+--   },
+--   keymaps = {
+--     ['<C-c>'] = false,
+--     q = 'actions.close',
 --   },
 -- }
--- END QUICKER
+--
+-- vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
+-- END OIL
 
 -- MARKDOWN
 require('render-markdown').setup {

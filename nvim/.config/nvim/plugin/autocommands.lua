@@ -68,40 +68,40 @@ vim.api.nvim_create_autocmd('LspAttach', {
 
 -- WINBAR
 -- Function to get the number of open buffers using the :ls command
-local function get_buffer_count()
-  local count = 0
-  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-    if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].buflisted then
-      count = count + 1
-    end
-  end
-  return count
-end
+-- local function get_buffer_count()
+--   local count = 0
+--   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+--     if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].buflisted then
+--       count = count + 1
+--     end
+--   end
+--   return count
+-- end
 
 -- Function to update the winbar
-local function update_winbar()
-  local win_config = vim.api.nvim_win_get_config(0)
-  if win_config.relative ~= '' or vim.bo.buftype ~= '' then
-    return
-  end
-
-  if vim.bo.filetype == 'qf' then
-    vim.wo.winbar = ''
-    return
-  end
-  local buffer_count = get_buffer_count()
-  local bufnr = vim.api.nvim_get_current_buf()
-  local diagnostics_status = vim.diagnostic.status(bufnr)
-  local diagnostics = diagnostics_status ~= '' and (' %#WinBar2#' .. diagnostics_status) or ''
-
-  vim.wo.winbar = '%#WinBar1#%m ' .. '%#WinBar2#󰓩' .. buffer_count .. ' ' .. '%#WinBar1# [' .. '%n' .. '] %f' .. diagnostics
-end
+-- local function update_winbar()
+--   local win_config = vim.api.nvim_win_get_config(0)
+--   if win_config.relative ~= '' or vim.bo.buftype ~= '' then
+--     return
+--   end
+--
+--   if vim.bo.filetype == 'qf' then
+--     vim.wo.winbar = ''
+--     return
+--   end
+--   local buffer_count = get_buffer_count()
+--   local bufnr = vim.api.nvim_get_current_buf()
+--   local diagnostics_status = vim.diagnostic.status(bufnr)
+--   local diagnostics = diagnostics_status ~= '' and (' %#WinBar2#' .. diagnostics_status) or ''
+--
+--   vim.wo.winbar = '%#WinBar1#%m ' .. '%#WinBar2#󰓩' .. buffer_count .. ' ' .. '%#WinBar1# [' .. '%n' .. '] %f' .. diagnostics
+-- end
 -- Update winbar outside of textlock-sensitive events
-vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter', 'DiagnosticChanged' }, {
-  callback = function()
-    vim.schedule(update_winbar)
-  end,
-})
+-- vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter', 'DiagnosticChanged' }, {
+--   callback = function()
+--     vim.schedule(update_winbar)
+--   end,
+-- })
 
 -- Auto-resize splits when window is resized
 local default = vim.api.nvim_create_augroup('user_default', { clear = true })

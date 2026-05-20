@@ -1,9 +1,5 @@
 {
   "plugins": {
-    "canola.nvim": {
-      "rev": "88af183e96724cca98a4602511061662cd5e88f3",
-      "src": "https://github.com/barrettruth/canola.nvim"
-    },
     "conform.nvim": {
       "rev": "18aeab3d63d350dcf44d64c462cc489a3412af40",
       "src": "https://github.com/stevearc/conform.nvim"
@@ -13,7 +9,7 @@
       "src": "https://github.com/mistweaverco/kulala.nvim"
     },
     "mini.nvim": {
-      "rev": "95fdea57f1ec4ead21fa582f9df56c2f93b8649f",
+      "rev": "264b5c8fc6e82212af0dc5c345145cfa916efeb6",
       "src": "https://github.com/nvim-mini/mini.nvim"
     },
     "nvim-lspconfig": {
@@ -44,10 +40,6 @@
     "supermaven-nvim": {
       "rev": "07d20fce48a5629686aefb0a7cd4b25e33947d50",
       "src": "https://github.com/supermaven-inc/supermaven-nvim"
-    },
-    "tiny-cmdline.nvim": {
-      "rev": "ad58747b955d0743ccfd56e97da1a4c1fac89f58",
-      "src": "https://github.com/rachartier/tiny-cmdline.nvim"
     },
     "vim-tmux-navigator": {
       "rev": "e41c431a0c7b7388ae7ba341f01a0d217eb3a432",
