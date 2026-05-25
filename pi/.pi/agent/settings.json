@@ -1,7 +1,7 @@
 {
-  "lastChangelogVersion": "0.75.3",
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.4-mini",
+  "lastChangelogVersion": "0.75.5",
+  "defaultProvider": "google",
+  "defaultModel": "gemma-4-31b-it",
   "defaultThinkingLevel": "medium",
   "theme": "light",
   "packages": [
@@ -15,93 +15,26 @@
         "-prompts/parallel-research.md",
         "-prompts/parallel-review.md",
         "-prompts/review-loop.md"
-      ]
-    },
-    {
-      "source": "git:github.com/rytswd/pi-agent-extensions",
+      ],
       "extensions": [
-        "-notify/index.ts",
-        "-slow-mode/index.ts",
-        "-stash/index.ts",
-        "-statusline/index.ts",
-        "-direnv/index.ts",
-        "-questionnaire/index.ts",
-        "+fetch/index.ts"
+        "-src/extension/index.ts"
+      ],
+      "skills": [
+        "-skills/pi-subagents/SKILL.md"
       ]
     },
     "npm:pi-mcp-adapter",
     {
-      "source": "git:github.com/aldoborrero/pi-agent-kit",
+      "source": "npm:pi-web-access",
       "extensions": [
-        "-extensions/bitwarden/bitwarden.ts",
-        "-extensions/brave-search/brave-search.ts",
-        "-extensions/codex/index.ts",
-        "-extensions/context/context.ts",
-        "-extensions/diff/diff.ts",
-        "-extensions/direnv/direnv.ts",
-        "-extensions/exa-search/exa-search.ts",
-        "-extensions/exit/exit.ts",
-        "-extensions/footer/footer.ts",
-        "-extensions/git-checkpoint/git-checkpoint.ts",
-        "-extensions/git-commit-context/git-commit-context.ts",
-        "-extensions/github-search/github-search.ts",
-        "-extensions/groq-provider/groq-provider.ts",
-        "-extensions/handoff/handoff.ts",
-        "-extensions/inline-bash/inline-bash.ts",
-        "-extensions/jina/jina.ts",
-        "-extensions/loop/cron.ts",
-        "-extensions/notify/notify.ts",
-        "-extensions/openrouter-provider/openrouter-provider.ts",
-        "-extensions/oracle/index.ts",
-        "-extensions/permission-gate/permission-gate.ts",
-        "-node_modules/pi-interactive-shell/index.ts",
-        "-node_modules/pi-mcp-adapter/index.ts",
-        "-extensions/plan-mode/index.ts",
-        "-extensions/questionnaire/index.ts",
-        "-extensions/recorder/recorder.ts",
-        "-extensions/sandbox/index.ts",
-        "-extensions/skill-namespaces/skill-namespaces.ts",
-        "-node_modules/pi-lsp-extension/src/index.ts",
-        "-extensions/subagent/index.ts",
-        "-extensions/together-provider/together-provider.ts",
-        "-extensions/tuicr/tuicr.ts",
-        "-extensions/until/loop.ts",
-        "-extensions/voice/voice.ts",
-        "-extensions/walkie/index.ts",
-        "-extensions/web-tools/index.ts"
+        "-index.ts"
       ],
       "skills": [
-        "-skills/blueprint/SKILL.md",
-        "-skills/superpowers/brainstorming/SKILL.md",
-        "-skills/superpowers/dispatching-parallel-agents/SKILL.md",
-        "-skills/superpowers/executing-plans/SKILL.md",
-        "-skills/superpowers/finishing-a-development-branch/SKILL.md",
-        "-skills/kagi-search/SKILL.md",
-        "-skills/pexpect-cli/SKILL.md",
-        "-skills/superpowers/receiving-code-review/SKILL.md",
-        "-skills/superpowers/requesting-code-review/SKILL.md",
-        "-skills/searxng-search/SKILL.md",
-        "-skills/superpowers/subagent-driven-development/SKILL.md",
-        "-skills/superpowers/systematic-debugging/SKILL.md",
-        "-skills/superpowers/test-driven-development/SKILL.md",
-        "-skills/superpowers/using-git-worktrees/SKILL.md",
-        "-skills/superpowers/verification-before-completion/SKILL.md",
-        "-skills/superpowers/writing-plans/SKILL.md",
-        "-skills/superpowers/writing-skills/SKILL.md"
-      ],
-      "prompts": [
-        "-prompts/brainstorm.md",
-        "-prompts/debug.md",
-        "-prompts/explore.md",
-        "-prompts/full-cycle.md",
-        "-prompts/review.md"
-      ],
-      "themes": [
-        "-themes/catppuccin-mocha.json",
-        "-themes/lavender.json"
+        "-skills/librarian/SKILL.md"
       ]
     },
-    "npm:@sherif-fanous/pi-rtk"
+    "npm:pi-lean-ctx",
+    "npm:pi-lsp-bridge"
   ],
   "enabledModels": [
     "openai-codex/gpt-5.4-mini",
@@ -116,13 +49,6 @@
           "opencode-go/qwen3.5-plus"
         ]
       },
-      "context-builder": {
-        "model": "opencode-go/kimi-k2.6",
-        "fallbackModels": [
-          "opencode-go/qwen3.5-plus",
-          "opencode-go/deepseek-v4-flash"
-        ]
-      },
       "researcher": {
         "model": "opencode-go/kimi-k2.6",
         "fallbackModels": [
@@ -132,16 +58,6 @@
           "openai-codex/gpt-5.4-mini"
         ]
       },
-      "planner": {
-        "model": "openai-codex/gpt-5.4-mini",
-        "thinking": "medium",
-        "fallbackModels": [
-          "opencode-go/kimi-k2.6",
-          "opencode-go/deepseek-v4-pro",
-          "opencode-go/minimax-m2.7",
-          "openai-codex/gpt-5.5"
-        ]
-      },
       "worker": {
         "model": "opencode-go/deepseek-v4-flash",
         "fallbackModels": [
@@ -149,30 +65,6 @@
           "opencode-go/kimi-k2.6",
           "opencode-go/deepseek-v4-pro",
           "openai-codex/gpt-5.4-mini"
-        ]
-      },
-      "reviewer": {
-        "model": "opencode-go/kimi-k2.6",
-        "fallbackModels": [
-          "google/gemma-4-31b-it",
-          "opencode-go/qwen3.6-plus",
-          "openai-codex/gpt-5.4-mini"
-        ]
-      },
-      "delegate": {
-        "model": "openai-codex/gpt-5.4-mini",
-        "thinking": "medium",
-        "fallbackModels": [
-          "opencode-go/qwen3.6-plus",
-          "opencode-go/deepseek-v4-flash"
-        ]
-      },
-      "oracle": {
-        "model": "openai-codex/gpt-5.5",
-        "thinking": "low",
-        "fallbackModels": [
-          "openai-codex/gpt-5.4",
-          "opencode-go/deepseek-v4-pro"
         ]
       }
     }

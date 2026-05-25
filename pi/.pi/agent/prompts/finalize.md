@@ -6,7 +6,7 @@ Use the `ops`, `architect`, and `dev` skills. Use worker for file edits only.
 
 1. **Validation**: Identify and run project-specific fix/format and test commands. Summarize file changes and failures.
 2. **Changelog**: Check if `CHANGELOG.md` needs a SemVer entry for user-visible changes. Add it if required.
-3. **Escalation**: Only use `reviewer` if formatting changes logic or readiness is ambiguous.
+3. **Escalation**: Only use `scout`/`researcher` if readiness is ambiguous or you need extra context. There is no separate reviewer subagent.
 4. **Persistence**: Use memory tools (`add_daily_note`, `create_session_plan`) to update `.ai/` files before finishing.
 5. **Outcome**: Propose a `type(scope): summary` commit message based on the task goal. Do not commit automatically.
 

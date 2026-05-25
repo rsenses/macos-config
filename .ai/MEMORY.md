@@ -19,6 +19,7 @@ Durable project knowledge, decisions, preferences, and recurring lessons.
 - Notes:
 - For execution prompts like `run-plan` and `fix-plan`, a bare “use orchestrator” line is not enough; they should explicitly tell the agent to delegate bounded pieces through orchestrator when the task is multi-file or multi-step.
 - Pi extensions always live in `pi/.pi/agent/extensions/` for this repo.
+- `pi-subagents` currently exposes only `scout`, `researcher`, and `worker`; avoid stale references to `planner`, `delegate`, `reviewer`, `oracle`, or `context-builder` unless the extension grows.
 - `pi-rtk` only rewrites `bash` tool calls and `!<cmd>` shell commands; `!!<cmd>` is intentionally excluded, and the session toggle is in-memory only.
 - When finalizing commits, prefer the task's user-facing goal or current session plan Goal / Expected Changes over low-level implementation wording when choosing the commit summary.
 - Agent workflow: the main agent owns validation strategy; worker delegations should include an explicit validation policy and workers should not add tests or run broad suites unless asked.

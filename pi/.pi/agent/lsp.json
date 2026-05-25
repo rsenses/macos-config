@@ -1,0 +1,15 @@
+{
+  "servers": {
+    "phpantom": {
+      "command": "phpantom_lsp",
+      "extension": ["php", "blade.php"],
+      "externalPatterns": ["**/vendor/**"]
+    },
+    "typescript": {
+      "command": "typescript-language-server",
+      "args": ["--stdio"],
+      "extension": ["ts", "tsx", "js", "jsx"],
+      "externalPatterns": ["**/node_modules/**"]
+    }
+  }
+}
