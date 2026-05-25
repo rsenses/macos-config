@@ -1,38 +1,11 @@
 {
   "lastChangelogVersion": "0.75.5",
-  "defaultProvider": "google",
-  "defaultModel": "gemma-4-31b-it",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.4-mini",
   "defaultThinkingLevel": "medium",
   "theme": "light",
   "packages": [
-    {
-      "source": "npm:pi-subagents",
-      "prompts": [
-        "-prompts/gather-context-and-clarify.md",
-        "-prompts/parallel-cleanup.md",
-        "-prompts/parallel-context-build.md",
-        "-prompts/parallel-handoff-plan.md",
-        "-prompts/parallel-research.md",
-        "-prompts/parallel-review.md",
-        "-prompts/review-loop.md"
-      ],
-      "extensions": [
-        "-src/extension/index.ts"
-      ],
-      "skills": [
-        "-skills/pi-subagents/SKILL.md"
-      ]
-    },
     "npm:pi-mcp-adapter",
-    {
-      "source": "npm:pi-web-access",
-      "extensions": [
-        "-index.ts"
-      ],
-      "skills": [
-        "-skills/librarian/SKILL.md"
-      ]
-    },
     "npm:pi-lean-ctx",
     "npm:pi-lsp-bridge"
   ],
@@ -41,33 +14,5 @@
     "openai-codex/gpt-5.3-codex",
     "openai-codex/gpt-5.5"
   ],
-  "subagents": {
-    "agentOverrides": {
-      "scout": {
-        "model": "opencode-go/deepseek-v4-flash",
-        "fallbackModels": [
-          "opencode-go/qwen3.5-plus"
-        ]
-      },
-      "researcher": {
-        "model": "opencode-go/kimi-k2.6",
-        "fallbackModels": [
-          "opencode-go/qwen3.6-plus",
-          "opencode-go/qwen3.5-plus",
-          "opencode-go/deepseek-v4-flash",
-          "openai-codex/gpt-5.4-mini"
-        ]
-      },
-      "worker": {
-        "model": "opencode-go/deepseek-v4-flash",
-        "fallbackModels": [
-          "opencode-go/minimax-m2.7",
-          "opencode-go/kimi-k2.6",
-          "opencode-go/deepseek-v4-pro",
-          "openai-codex/gpt-5.4-mini"
-        ]
-      }
-    }
-  },
   "enableInstallTelemetry": false
 }
