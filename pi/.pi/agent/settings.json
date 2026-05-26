@@ -1,8 +1,8 @@
 {
   "lastChangelogVersion": "0.75.5",
   "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.4-mini",
-  "defaultThinkingLevel": "medium",
+  "defaultModel": "gpt-5.5",
+  "defaultThinkingLevel": "low",
   "theme": "light",
   "packages": [
     "npm:pi-mcp-adapter",
@@ -11,7 +11,6 @@
   ],
   "enabledModels": [
     "openai-codex/gpt-5.4-mini",
-    "openai-codex/gpt-5.3-codex",
     "openai-codex/gpt-5.5"
   ],
   "enableInstallTelemetry": false

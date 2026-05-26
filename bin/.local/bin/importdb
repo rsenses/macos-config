@@ -1,0 +1,175 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SOURCE_DIR="${SOURCE_DIR:-/Users/rubensilvarodriguez/data/work/docs/topics/general/sql}"
+MARIADB_HOST="${MARIADB_HOST:-localhost}"
+MARIADB_USER="${MARIADB_USER:-}"
+MARIADB_PASSWORD="${MARIADB_PASSWORD:-}"
+MARIADB_EXTRA_ARGS="${MARIADB_EXTRA_ARGS:-}"
+
+preview_file() {
+  local file="$1"
+
+  case "$file" in
+    *.gz)
+      gzip -dc -- "$file" | sed -n '1,160p'
+      ;;
+    *)
+      sed -n '1,160p' -- "$file"
+      ;;
+  esac
+}
+
+build_mariadb_args() {
+  mariadb_args=(
+    --host="$MARIADB_HOST"
+    --batch
+    --raw
+    --skip-column-names
+    --progress-reports
+  )
+
+  if [[ -n "$MARIADB_USER" ]]; then
+    mariadb_args+=(--user="$MARIADB_USER")
+  fi
+
+  if [[ -n "$MARIADB_PASSWORD" ]]; then
+    mariadb_args+=(--password="$MARIADB_PASSWORD")
+  fi
+
+  if [[ -n "$MARIADB_EXTRA_ARGS" ]]; then
+    # shellcheck disable=SC2206
+    extra_args=( $MARIADB_EXTRA_ARGS )
+    mariadb_args+=("${extra_args[@]}")
+  fi
+}
+
+show_status() {
+  local message="$1"
+
+  if [[ -t 2 ]]; then
+    printf '%s\r' "$message" >&2
+  else
+    printf '%s\n' "$message" >&2
+  fi
+}
+
+run_with_spinner() {
+  local message="$1"
+  shift
+
+  local start elapsed pid status spin_chars spin_index
+  spin_chars='|/-\\'
+  spin_index=0
+  start=$(date +%s)
+
+  if [[ ! -t 2 ]]; then
+    show_status "$message..."
+    "$@"
+    status=$?
+    elapsed=$(( $(date +%s) - start ))
+    show_status "OK: ${message} (${elapsed}s)"
+    return "$status"
+  fi
+
+  ( "$@" ) &
+  pid=$!
+
+  while kill -0 "$pid" >/dev/null 2>&1; do
+    elapsed=$(( $(date +%s) - start ))
+    printf '\r%s [%s] %ss' "$message" "${spin_chars:spin_index%4:1}" "$elapsed" >&2
+    sleep 1
+    spin_index=$((spin_index + 1))
+  done
+
+  wait "$pid"
+  status=$?
+  elapsed=$(( $(date +%s) - start ))
+
+  if [[ $status -eq 0 ]]; then
+    printf '\r%s [done] %ss\n' "$message" "$elapsed" >&2
+  else
+    printf '\r%s [failed] %ss\n' "$message" "$elapsed" >&2
+  fi
+
+  return "$status"
+}
+
+import_selected_file() {
+  local file="$1"
+  local database="$2"
+
+  if [[ "$file" == *.gz ]]; then
+    gzip -dc -- "$file" | mariadb "${mariadb_args[@]}" "$database"
+  else
+    mariadb "${mariadb_args[@]}" "$database" < "$file"
+  fi
+}
+
+command -v fzf >/dev/null 2>&1 || { echo "Error: falta fzf" >&2; exit 1; }
+command -v mariadb >/dev/null 2>&1 || { echo "Error: falta mariadb" >&2; exit 1; }
+command -v fd >/dev/null 2>&1 || { echo "Error: falta fd" >&2; exit 1; }
+
+if [[ ! -d "$SOURCE_DIR" ]]; then
+  echo "Error: no existe el directorio $SOURCE_DIR" >&2
+  exit 1
+fi
+
+mapfile -t files < <(
+  fd -t f . "$SOURCE_DIR" |
+    while IFS= read -r file; do
+      [[ "$file" == *.sql || "$file" == *.gz ]] || continue
+      printf '%s\t%s\t%s\n' "$(stat -f '%m' "$file")" "${file##*/}" "$file"
+    done |
+    sort -nr |
+    cut -f2-
+)
+
+if [[ ${#files[@]} -eq 0 ]]; then
+  echo "Error: no encontré archivos .sql ni .gz en $SOURCE_DIR" >&2
+  exit 1
+fi
+
+selected_entry="$(
+  printf '%s\n' "${files[@]}" |
+    fzf \
+      --height=100% \
+      --layout=reverse \
+      --border=none \
+      --delimiter=$'\t' \
+      --with-nth=1 \
+      --prompt='sql > ' \
+      --header="$SOURCE_DIR" \
+      --preview='bash -c '\''preview_file "$1"'\'' _ {2}' \
+      --preview-window='right:60%:wrap'
+)" || exit 0
+selected_file="${selected_entry#*$'\t'}"
+
+[[ -n "${selected_file:-}" ]] || exit 0
+
+build_mariadb_args
+
+mapfile -t databases < <(
+  mariadb "${mariadb_args[@]}" -e 'SHOW DATABASES' |
+    awk 'BEGIN { skip["information_schema"]; skip["mysql"]; skip["performance_schema"]; skip["sys"] } !($1 in skip) { print }'
+)
+
+if [[ ${#databases[@]} -eq 0 ]]; then
+  echo "Error: no pude obtener bases de datos desde MariaDB en $MARIADB_HOST" >&2
+  exit 1
+fi
+
+database="$(
+  printf '%s\n' "${databases[@]}" |
+    fzf \
+      --height=100% \
+      --layout=reverse \
+      --border=none \
+      --prompt='db > '
+)" || exit 0
+
+[[ -n "${database:-}" ]] || exit 0
+
+run_with_spinner "Importando $selected_file -> $database" import_selected_file "$selected_file" "$database"
+
+echo "OK: $selected_file -> $database"

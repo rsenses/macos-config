@@ -35,6 +35,10 @@ vim.keymap.set('n', '<C-w>|', function()
   vim.cmd.vsplit()
 end, { desc = 'Split window vertically' })
 
+vim.keymap.set('n', "<C-w>'", function()
+  vim.cmd.vsplit()
+end, { desc = 'Split window vertically' })
+
 -- Press 'S' for quick find/replace for the word under the cursor
 vim.keymap.set({ 'n' }, 'S', function()
   local cmd = ':%s/<C-r><C-w>/<C-r><C-w>/gI<Left><Left><Left>'

@@ -13,6 +13,11 @@ Classify the task before opening context or delegating:
 - **Serious**: Auth, security, critical data, framework behavior, or risky bugs. Deep investigation + subagents.
   **Rules**: If in doubt, start with a quick check. Do not assume; do not over-investigate.
 
+## Loop Control
+
+- If a search, diagnosis, or fix produces no new evidence after two passes, change strategy or stop and ask.
+- If the same failure repeats twice, do not keep retrying; summarize the blocker and update the plan.
+
 ## Subagents: when to use them
 
 Use subagents when the work benefits from a separate context or parallelization.

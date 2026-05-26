@@ -21,6 +21,7 @@ Durable project knowledge, decisions, preferences, and recurring lessons.
 - Pi extensions always live in `pi/.pi/agent/extensions/` for this repo.
 - `pi-subagents` currently exposes only `scout`, `researcher`, and `worker`; avoid stale references to `planner`, `delegate`, `reviewer`, `oracle`, or `context-builder` unless the extension grows.
 - `pi-rtk` only rewrites `bash` tool calls and `!<cmd>` shell commands; `!!<cmd>` is intentionally excluded, and the session toggle is in-memory only.
+- Before editing important config files (ssh, launch agents, shell init, etc.), make a backup copy first.
 - When finalizing commits, prefer the task's user-facing goal or current session plan Goal / Expected Changes over low-level implementation wording when choosing the commit summary.
 - Agent workflow: the main agent owns validation strategy; worker delegations should include an explicit validation policy and workers should not add tests or run broad suites unless asked.
 - Agent workflow: for small changes, prefer existing repo patterns before source-driven docs or code review; treat those skills as opt-in for unfamiliar or risky diffs.
