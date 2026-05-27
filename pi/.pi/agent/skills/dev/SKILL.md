@@ -42,3 +42,10 @@ Before task completion:
 - [ ] Build succeeds (if relevant).
 - [ ] No dead code or unrelated "cleanup" remains.
 - [ ] Behavior matches the spec/contract.
+
+## 6. Editing Discipline
+
+- Read the relevant code before editing existing files.
+- Prefer surgical edits over full-file rewrites.
+- Do not rewrite entire files unless necessary.
+- If an edit or patch fails twice, re-read the current file and reassess.

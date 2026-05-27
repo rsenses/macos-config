@@ -18,9 +18,15 @@ Durable project knowledge, decisions, preferences, and recurring lessons.
 
 ## Project Decisions
 
-- Validation:
-- Remaining:
-- Notes:
+<!-- Durable technical or product decisions. -->
+
+## Known Pitfalls
+
+<!-- Recurring problems, fragile flows, or common agent mistakes. -->
+
+## Agent Lessons
+
+<!-- Lessons that help future agents work better in this project. -->
 `;
 
 const TASKS_TEMPLATE = `# Project Tasks
@@ -334,9 +340,11 @@ export default function (pi: ExtensionAPI) {
 		const yesterday = yesterdayDate();
 		const todayDaily = await readIfExists(path.join(paths.dailyDir, `${today}.md`));
 		const yesterdayDaily = await readIfExists(path.join(paths.dailyDir, `${yesterday}.md`));
+		const todayDailyPreview = previewText(todayDaily, 80, 6000);
+		const yesterdayDailyPreview = previewText(yesterdayDaily, 40, 3000);
 		const dailySections = [
-			todayDaily.trim() ? `## Daily log: ${today} (today)\n\n\`\`\`md\n${todayDaily.trim()}\n\`\`\`` : "",
-			yesterdayDaily.trim() ? `## Daily log: ${yesterday} (yesterday)\n\n\`\`\`md\n${yesterdayDaily.trim()}\n\`\`\`` : "",
+			todayDailyPreview.trim() ? `## Daily log: ${today} (today)\n\n\`\`\`md\n${todayDailyPreview.trim()}\n\`\`\`` : "",
+			yesterdayDailyPreview.trim() ? `## Daily log: ${yesterday} (yesterday)\n\n\`\`\`md\n${yesterdayDailyPreview.trim()}\n\`\`\`` : "",
 		].filter(Boolean).join("\n\n");
 
 		const memoryContext = `## Project Memory
