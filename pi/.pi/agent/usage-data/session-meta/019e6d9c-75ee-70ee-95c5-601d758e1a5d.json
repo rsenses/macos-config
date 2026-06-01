@@ -1,0 +1,53 @@
+{
+  "session_id": "019e6d9c-75ee-70ee-95c5-601d758e1a5d",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-contrib-dotfiles--/2026-05-28T08-03-50-894Z_019e6d9c-75ee-70ee-95c5-601d758e1a5d.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/contrib/dotfiles",
+  "start_time": "2026-05-28T08:03:50.894Z",
+  "duration_minutes": 5,
+  "user_message_count": 1,
+  "assistant_message_count": 10,
+  "tool_counts": {
+    "create_session_plan": 1,
+    "ctx_find": 1,
+    "ctx_ls": 1,
+    "subagent": 1,
+    "ctx_read": 8,
+    "ask_user_question": 1,
+    "edit": 2,
+    "add_daily_note": 1
+  },
+  "languages": {
+    "Markdown": 10
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 37240,
+  "output_tokens": 1857,
+  "total_cost": 0.2821020000000001,
+  "first_prompt": "he agregado una nueva skill, grill-with-docs, me gusta la idea para usar con plan, lo he obtenido de https://github.com/mattpocock/skills, quiero que la analices para ver como se integra con mi flujo actual de pi, por favor, me gustaría usarla con el comando plan",
+  "user_interruptions": 0,
+  "user_response_times": [],
+  "tool_errors": 1,
+  "tool_error_categories": {
+    "Other": 1
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 8,
+  "lines_removed": 7,
+  "files_modified": 1,
+  "message_hours": [
+    10
+  ],
+  "user_message_timestamps": [
+    "2026-05-28T08:05:31.969Z"
+  ],
+  "model_usage": {
+    "gpt-5.5": {
+      "input_tokens": 37240,
+      "output_tokens": 1857,
+      "cost": 0.2821020000000001,
+      "message_count": 10
+    }
+  }
+}

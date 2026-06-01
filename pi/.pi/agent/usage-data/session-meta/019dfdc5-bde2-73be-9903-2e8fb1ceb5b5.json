@@ -1,0 +1,56 @@
+{
+  "session_id": "019dfdc5-bde2-73be-9903-2e8fb1ceb5b5",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-06T14-51-28-100Z_019dfdc5-bde2-73be-9903-2e8fb1ceb5b5.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-06T14:51:28.100Z",
+  "duration_minutes": 953,
+  "user_message_count": 4,
+  "assistant_message_count": 36,
+  "tool_counts": {
+    "subagent": 4,
+    "read": 18,
+    "bash": 11,
+    "edit": 14
+  },
+  "languages": {
+    "Markdown": 2
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 140149,
+  "output_tokens": 14189,
+  "total_cost": 0.26185185,
+  "first_prompt": "Use the `orchestrator` skill for this task.\n\nAnalyze the codebase architecture and suggest improvements that would make it easier to understand, maintain, and work with.\n\nFocus area, if provided:\n\n\nGoal:\nIdentify architectural, structural, or convention-level friction that makes development harder f",
+  "user_interruptions": 0,
+  "user_response_times": [
+    174.19,
+    14.191
+  ],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 107,
+  "lines_removed": 80,
+  "files_modified": 9,
+  "message_hours": [
+    16,
+    8,
+    8,
+    8
+  ],
+  "user_message_timestamps": [
+    "2026-05-06T14:51:47.749Z",
+    "2026-05-07T06:38:34.033Z",
+    "2026-05-07T06:43:27.546Z",
+    "2026-05-07T06:44:11.590Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 140149,
+      "output_tokens": 14189,
+      "cost": 0.26185185,
+      "message_count": 36
+    }
+  }
+}

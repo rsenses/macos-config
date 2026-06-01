@@ -1,0 +1,55 @@
+{
+  "session_id": "019e261e-0b7f-7008-aea6-c5a9355279cc",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-feature-config-simplifications--/2026-05-14T10-52-43-778Z_019e261e-0b7f-7008-aea6-c5a9355279cc.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/feature-config-simplifications",
+  "start_time": "2026-05-14T10:52:43.778Z",
+  "duration_minutes": 2,
+  "user_message_count": 3,
+  "assistant_message_count": 40,
+  "tool_counts": {
+    "mcp": 20,
+    "subagent": 3,
+    "web_search": 1,
+    "project_search": 8,
+    "read": 12,
+    "grep": 14,
+    "find": 5
+  },
+  "languages": {},
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 150522,
+  "output_tokens": 18799,
+  "total_cost": 0.29045340000000003,
+  "first_prompt": "Vamos a simplificar la configuración que se extrae de @app/Models/Config.php para ello, lo primero, obtén esos datos del tenant 1, por favor, usando el servidor mcp y muéstramelos como json en pantalla",
+  "user_interruptions": 0,
+  "user_response_times": [
+    282.513,
+    5.151
+  ],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    12,
+    12,
+    12
+  ],
+  "user_message_timestamps": [
+    "2026-05-14T10:44:36.473Z",
+    "2026-05-14T10:50:02.315Z",
+    "2026-05-14T10:52:45.702Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 150522,
+      "output_tokens": 18799,
+      "cost": 0.29045340000000003,
+      "message_count": 40
+    }
+  }
+}

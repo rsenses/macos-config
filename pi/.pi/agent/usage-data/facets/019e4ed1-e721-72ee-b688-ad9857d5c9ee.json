@@ -1,0 +1,16 @@
+{
+  "underlying_goal": "Plan the upgrade from Laravel 10 to Laravel 12 for a specific project",
+  "goal_categories": {
+    "planning": 1
+  },
+  "outcome": "unclear_from_transcript",
+  "user_satisfaction_counts": {},
+  "assistant_helpfulness": "unclear_from_transcript",
+  "session_type": "single_task",
+  "friction_counts": {},
+  "friction_detail": "",
+  "primary_success": "none",
+  "brief_summary": "User requested a plan to upgrade from Laravel 10 to 12 using architect skill and subagents; the session ended with a review of the project state but the transcript cuts off before the full plan was delivered or user feedback was given.",
+  "user_instructions_to_assistant": [],
+  "session_id": "019e4ed1-e721-72ee-b688-ad9857d5c9ee"
+}

@@ -1,0 +1,87 @@
+{
+  "session_id": "019df7b7-9a01-7677-b22a-aaa09748e9aa",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-05T10-38-18-114Z_019df7b7-9a01-7677-b22a-aaa09748e9aa.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-05T10:38:18.114Z",
+  "duration_minutes": 146,
+  "user_message_count": 12,
+  "assistant_message_count": 144,
+  "tool_counts": {
+    "fffind": 6,
+    "bash": 64,
+    "read": 65,
+    "subagent": 6,
+    "mcp": 4,
+    "edit": 22,
+    "write": 3
+  },
+  "languages": {
+    "JavaScript": 2,
+    "Markdown": 5
+  },
+  "git_commits": 1,
+  "git_pushes": 0,
+  "input_tokens": 318581,
+  "output_tokens": 63892,
+  "total_cost": 1.4294257499999998,
+  "first_prompt": "en un comit de hace unos días nos hemos cargado algo necesario, primero, analiza /Users/rubensilvarodriguez/dev/www/gda.metech.es y busca de donde obtiene la info de patrones del desplegable 'Patrón utilizado:'",
+  "user_interruptions": 0,
+  "user_response_times": [
+    1111.468,
+    2062.198,
+    733.896,
+    23.635,
+    7.077,
+    3.033,
+    2127.18,
+    490.986,
+    509.651,
+    3.573,
+    29.451
+  ],
+  "tool_errors": 18,
+  "tool_error_categories": {
+    "Other": 18
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 600,
+  "lines_removed": 352,
+  "files_modified": 14,
+  "message_hours": [
+    12,
+    12,
+    13,
+    13,
+    13,
+    13,
+    14,
+    14,
+    14,
+    14,
+    14,
+    15
+  ],
+  "user_message_timestamps": [
+    "2026-05-05T10:40:03.077Z",
+    "2026-05-05T10:59:03.701Z",
+    "2026-05-05T11:36:36.157Z",
+    "2026-05-05T11:49:53.929Z",
+    "2026-05-05T11:50:17.575Z",
+    "2026-05-05T11:50:39.704Z",
+    "2026-05-05T12:01:38.100Z",
+    "2026-05-05T12:40:13.314Z",
+    "2026-05-05T12:49:25.037Z",
+    "2026-05-05T12:58:24.389Z",
+    "2026-05-05T12:59:14.940Z",
+    "2026-05-05T13:00:03.028Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 318581,
+      "output_tokens": 63892,
+      "cost": 1.4294257499999998,
+      "message_count": 144
+    }
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "session_id": "019e1764-a2a2-7597-911c-d3ff4eb7d53c",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-11T14-15-31-749Z_019e1764-a2a2-7597-911c-d3ff4eb7d53c.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-11T14:15:31.749Z",
+  "duration_minutes": 27,
+  "user_message_count": 8,
+  "assistant_message_count": 62,
+  "tool_counts": {
+    "subagent": 3,
+    "mcp": 2,
+    "read_window": 26,
+    "project_search": 8,
+    "project_files": 3,
+    "bash": 16,
+    "write": 2,
+    "edit": 16,
+    "read": 1
+  },
+  "languages": {
+    "Markdown": 15
+  },
+  "git_commits": 1,
+  "git_pushes": 0,
+  "input_tokens": 288026,
+  "output_tokens": 32215,
+  "total_cost": 0.573915,
+  "first_prompt": "Use the `orchestrator` skill for this task.\n\nPlan the following task without modifying files. Use loaded project memory as context, but do not write memory, daily notes, or plan files during this read-only planning command.\n\nTask:\nVamos a crear una nueva feature, relativamente sencilla, ahora mismo ",
+  "user_interruptions": 0,
+  "user_response_times": [
+    129.919,
+    50.964,
+    13.093,
+    8.021,
+    368.269,
+    15.454,
+    39.272
+  ],
+  "tool_errors": 1,
+  "tool_error_categories": {
+    "Other": 1
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 324,
+  "lines_removed": 157,
+  "files_modified": 8,
+  "message_hours": [
+    16,
+    16,
+    16,
+    16,
+    16,
+    16,
+    16,
+    16
+  ],
+  "user_message_timestamps": [
+    "2026-05-11T14:19:18.315Z",
+    "2026-05-11T14:27:06.200Z",
+    "2026-05-11T14:27:57.174Z",
+    "2026-05-11T14:28:10.280Z",
+    "2026-05-11T14:28:45.474Z",
+    "2026-05-11T14:37:50.340Z",
+    "2026-05-11T14:40:19.743Z",
+    "2026-05-11T14:42:21.160Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 288026,
+      "output_tokens": 32215,
+      "cost": 0.573915,
+      "message_count": 62
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "session_id": "019e0130-10c4-75ac-b0ba-1b47330e5ce7",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-contrib-dotfiles--/2026-05-07T06-46-27-784Z_019e0130-10c4-75ac-b0ba-1b47330e5ce7.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/contrib/dotfiles",
+  "start_time": "2026-05-07T06:46:27.784Z",
+  "duration_minutes": 3,
+  "user_message_count": 1,
+  "assistant_message_count": 16,
+  "tool_counts": {
+    "bash": 10,
+    "read": 5,
+    "code_search": 2,
+    "web_search": 1,
+    "edit": 1
+  },
+  "languages": {},
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 46446,
+  "output_tokens": 6895,
+  "total_cost": 0.08314200000000001,
+  "first_prompt": "hay un fallo en vim que me está volviendo loco, empiezo a escribir y veo este error: E565: Not allowed to change text or change window\na medida que escribo, el buffer donde se ve el error va creciendo en altura y a su vez, moviendo todo el layout de nvim",
+  "user_interruptions": 0,
+  "user_response_times": [],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_subagent": false,
+  "uses_mcp": false,
+  "lines_added": 7,
+  "lines_removed": 5,
+  "files_modified": 1,
+  "message_hours": [
+    8
+  ],
+  "user_message_timestamps": [
+    "2026-05-07T06:47:29.448Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 46446,
+      "output_tokens": 6895,
+      "cost": 0.08314200000000001,
+      "message_count": 16
+    }
+  }
+}

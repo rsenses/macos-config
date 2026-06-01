@@ -1,0 +1,52 @@
+{
+  "session_id": "019df308-a61b-75fc-ac88-62e811de4814",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-04T12-48-43-548Z_019df308-a61b-75fc-ac88-62e811de4814.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-04T12:48:43.548Z",
+  "duration_minutes": 6,
+  "user_message_count": 3,
+  "assistant_message_count": 30,
+  "tool_counts": {
+    "mcp": 25,
+    "bash": 7
+  },
+  "languages": {},
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 22446,
+  "output_tokens": 6057,
+  "total_cost": 0.09493259999999999,
+  "first_prompt": "busca en la base de datos, con el mcp de laravel, la tabla actions y quiero que extraigas todos los norm distintos que existen en el campo data, data es un json",
+  "user_interruptions": 0,
+  "user_response_times": [
+    9.037,
+    147.812
+  ],
+  "tool_errors": 1,
+  "tool_error_categories": {
+    "Other": 1
+  },
+  "uses_subagent": false,
+  "uses_mcp": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    14,
+    14,
+    14
+  ],
+  "user_message_timestamps": [
+    "2026-05-04T12:49:25.715Z",
+    "2026-05-04T12:50:21.607Z",
+    "2026-05-04T12:53:43.642Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 22446,
+      "output_tokens": 6057,
+      "cost": 0.09493259999999999,
+      "message_count": 30
+    }
+  }
+}

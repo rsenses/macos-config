@@ -1,0 +1,78 @@
+{
+  "session_id": "019e68e6-b279-71dc-b010-c0ea073b75db",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-feature-config-simplifications--/2026-05-27T10-06-49-977Z_019e68e6-b279-71dc-b010-c0ea073b75db.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/feature-config-simplifications",
+  "start_time": "2026-05-27T10:06:49.977Z",
+  "duration_minutes": 10,
+  "user_message_count": 8,
+  "assistant_message_count": 46,
+  "tool_counts": {
+    "create_session_plan": 1,
+    "mcp": 3,
+    "ctx_read": 16,
+    "ctx_grep": 5,
+    "ctx_ls": 3,
+    "ctx_find": 1,
+    "edit": 9,
+    "ctx_shell": 16,
+    "write": 1,
+    "web_fetch": 1
+  },
+  "languages": {
+    "Markdown": 1,
+    "JSON": 1
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 78515,
+  "output_tokens": 10504,
+  "total_cost": 0.21394305000000002,
+  "first_prompt": "a ver si me ayudas, por favor, desde ayer me aparece esto en los archivos js de livewire y flux y no cargan, es algo del servidor, claramente, tal vez el comando dev, pero no se pq : <br />\n<b>Deprecated</b>:  Constant PDO::MYSQL_ATTR_SSL_CA is deprecated since 8.5, use Pdo\\Mysql::ATTR_SSL_CA instea",
+  "user_interruptions": 0,
+  "user_response_times": [
+    97.257,
+    36.711,
+    60.967,
+    24.964,
+    46.767,
+    77.336,
+    49.525
+  ],
+  "tool_errors": 12,
+  "tool_error_categories": {
+    "Other": 12
+  },
+  "uses_subagent": false,
+  "uses_mcp": false,
+  "lines_added": 97,
+  "lines_removed": 90,
+  "files_modified": 2,
+  "message_hours": [
+    12,
+    12,
+    12,
+    12,
+    12,
+    12,
+    12,
+    12
+  ],
+  "user_message_timestamps": [
+    "2026-05-27T10:08:10.748Z",
+    "2026-05-27T10:11:45.744Z",
+    "2026-05-27T10:12:22.484Z",
+    "2026-05-27T10:13:23.466Z",
+    "2026-05-27T10:13:48.447Z",
+    "2026-05-27T10:14:35.227Z",
+    "2026-05-27T10:15:57.111Z",
+    "2026-05-27T10:16:48.742Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 78515,
+      "output_tokens": 10504,
+      "cost": 0.21394305000000002,
+      "message_count": 46
+    }
+  }
+}

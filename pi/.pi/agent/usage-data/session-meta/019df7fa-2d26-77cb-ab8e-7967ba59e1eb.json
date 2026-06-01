@@ -1,0 +1,78 @@
+{
+  "session_id": "019df7fa-2d26-77cb-ab8e-7967ba59e1eb",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-05T11-51-01-158Z_019df7fa-2d26-77cb-ab8e-7967ba59e1eb.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-05T11:51:01.158Z",
+  "duration_minutes": 1,
+  "user_message_count": 7,
+  "assistant_message_count": 68,
+  "tool_counts": {
+    "fffind": 6,
+    "bash": 32,
+    "read": 37,
+    "subagent": 2,
+    "mcp": 3,
+    "edit": 2,
+    "write": 1
+  },
+  "languages": {
+    "JavaScript": 2,
+    "Markdown": 2
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 592387,
+  "output_tokens": 22937,
+  "total_cost": 0.4194975,
+  "first_prompt": "en un comit de hace unos días nos hemos cargado algo necesario, primero, analiza /Users/rubensilvarodriguez/dev/www/gda.metech.es y busca de donde obtiene la info de patrones del desplegable 'Patrón utilizado:'",
+  "user_interruptions": 0,
+  "user_response_times": [
+    1111.468,
+    2062.198,
+    733.896,
+    23.635,
+    7.077,
+    23.231
+  ],
+  "tool_errors": 10,
+  "tool_error_categories": {
+    "Other": 10
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 115,
+  "lines_removed": 15,
+  "files_modified": 3,
+  "message_hours": [
+    12,
+    12,
+    13,
+    13,
+    13,
+    13,
+    13
+  ],
+  "user_message_timestamps": [
+    "2026-05-05T10:40:03.077Z",
+    "2026-05-05T10:59:03.701Z",
+    "2026-05-05T11:36:36.157Z",
+    "2026-05-05T11:49:53.929Z",
+    "2026-05-05T11:50:17.575Z",
+    "2026-05-05T11:50:39.704Z",
+    "2026-05-05T11:51:02.943Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 143232,
+      "output_tokens": 21435,
+      "cost": 0.4194975,
+      "message_count": 62
+    },
+    "minimax-m2.5-free": {
+      "input_tokens": 449155,
+      "output_tokens": 1502,
+      "cost": 0,
+      "message_count": 6
+    }
+  }
+}

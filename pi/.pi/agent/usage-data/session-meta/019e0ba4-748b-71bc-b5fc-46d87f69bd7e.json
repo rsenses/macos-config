@@ -1,0 +1,79 @@
+{
+  "session_id": "019e0ba4-748b-71bc-b5fc-46d87f69bd7e",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-feature-api-request--/2026-05-09T07-29-47-661Z_019e0ba4-748b-71bc-b5fc-46d87f69bd7e.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/feature-api-request",
+  "start_time": "2026-05-09T07:29:47.661Z",
+  "duration_minutes": 4442,
+  "user_message_count": 10,
+  "assistant_message_count": 43,
+  "tool_counts": {
+    "subagent": 5,
+    "project_search": 34,
+    "project_files": 2,
+    "bash": 20,
+    "read": 41,
+    "code_search": 1
+  },
+  "languages": {
+    "JSON": 1,
+    "Markdown": 2
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 409772,
+  "output_tokens": 16200,
+  "total_cost": 0.5319090000000002,
+  "first_prompt": "tienes acceso a la memoria del proyecto?",
+  "user_interruptions": 0,
+  "user_response_times": [
+    23.278,
+    22.781,
+    577.737,
+    276.373,
+    342.129,
+    178.336,
+    142.638,
+    461.852
+  ],
+  "tool_errors": 3,
+  "tool_error_categories": {
+    "Other": 3
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    9,
+    9,
+    9,
+    9,
+    9,
+    9,
+    9,
+    10,
+    11,
+    11
+  ],
+  "user_message_timestamps": [
+    "2026-05-09T07:30:26.463Z",
+    "2026-05-09T07:30:49.787Z",
+    "2026-05-09T07:31:12.580Z",
+    "2026-05-09T07:40:50.333Z",
+    "2026-05-09T07:46:57.260Z",
+    "2026-05-09T07:55:25.135Z",
+    "2026-05-09T07:58:30.628Z",
+    "2026-05-09T08:01:00.943Z",
+    "2026-05-12T09:22:33.636Z",
+    "2026-05-12T09:31:44.122Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 409772,
+      "output_tokens": 16200,
+      "cost": 0.5319090000000002,
+      "message_count": 43
+    }
+  }
+}

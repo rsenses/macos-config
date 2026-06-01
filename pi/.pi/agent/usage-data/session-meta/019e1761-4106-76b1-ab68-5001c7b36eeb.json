@@ -1,0 +1,95 @@
+{
+  "session_id": "019e1761-4106-76b1-ab68-5001c7b36eeb",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-11T14-11-50-153Z_019e1761-4106-76b1-ab68-5001c7b36eeb.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-11T14:11:50.153Z",
+  "duration_minutes": 1,
+  "user_message_count": 12,
+  "assistant_message_count": 95,
+  "tool_counts": {
+    "subagent": 6,
+    "mcp": 3,
+    "read_window": 38,
+    "project_files": 2,
+    "bash": 22,
+    "write": 3,
+    "edit": 23,
+    "read": 8,
+    "project_search": 15,
+    "ask_user_question": 1
+  },
+  "languages": {
+    "Markdown": 25
+  },
+  "git_commits": 2,
+  "git_pushes": 0,
+  "input_tokens": 458632,
+  "output_tokens": 41342,
+  "total_cost": 0.8420199855999997,
+  "first_prompt": "Use the `orchestrator` skill for this task.\n\nPlan the following task without modifying files. Use loaded project memory as context, but do not write memory, daily notes, or plan files during this read-only planning command.\n\nTask:\nHola, vamos a analizar y planear una nueva feature, sobre todo, ver q",
+  "user_interruptions": 0,
+  "user_response_times": [
+    555.089,
+    27.247,
+    6.18,
+    1770.212,
+    46.438,
+    60.752,
+    33.885,
+    106.105,
+    139.942,
+    92.437,
+    12.261
+  ],
+  "tool_errors": 5,
+  "tool_error_categories": {
+    "Other": 5
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 463,
+  "lines_removed": 203,
+  "files_modified": 11,
+  "message_hours": [
+    15,
+    15,
+    15,
+    15,
+    15,
+    15,
+    15,
+    15,
+    15,
+    16,
+    16,
+    16
+  ],
+  "user_message_timestamps": [
+    "2026-05-11T13:08:19.670Z",
+    "2026-05-11T13:19:59.792Z",
+    "2026-05-11T13:20:27.069Z",
+    "2026-05-11T13:20:44.653Z",
+    "2026-05-11T13:53:40.025Z",
+    "2026-05-11T13:55:21.252Z",
+    "2026-05-11T13:56:22.018Z",
+    "2026-05-11T13:57:23.997Z",
+    "2026-05-11T13:59:14.164Z",
+    "2026-05-11T14:08:29.402Z",
+    "2026-05-11T14:11:28.622Z",
+    "2026-05-11T14:11:51.888Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 365468,
+      "output_tokens": 40828,
+      "cost": 0.8280413999999997,
+      "message_count": 91
+    },
+    "deepseek-v4-flash": {
+      "input_tokens": 93164,
+      "output_tokens": 514,
+      "cost": 0.013978585600000001,
+      "message_count": 4
+    }
+  }
+}

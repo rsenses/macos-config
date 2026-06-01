@@ -1,0 +1,77 @@
+{
+  "session_id": "019e1b2f-12d9-752b-b58a-d0749e7d1b74",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-12T07-55-30-407Z_019e1b2f-12d9-752b-b58a-d0749e7d1b74.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-12T07:55:30.407Z",
+  "duration_minutes": 28,
+  "user_message_count": 6,
+  "assistant_message_count": 88,
+  "tool_counts": {
+    "read": 24,
+    "project_files": 3,
+    "write": 7,
+    "mcp": 6,
+    "project_search": 17,
+    "read_window": 7,
+    "edit": 13,
+    "bash": 15,
+    "subagent": 2
+  },
+  "languages": {
+    "Markdown": 21
+  },
+  "git_commits": 1,
+  "git_pushes": 0,
+  "input_tokens": 440581,
+  "output_tokens": 27356,
+  "total_cost": 1.5257853500000005,
+  "first_prompt": "Tenemos que hacer un pequeño fix, al importar multiple @app/Models/Tool.php desde @app/Livewire/Tools/ToolsPage.php almacena todas en el store_id 5 y no se porque, por tanto, lo primero es analizar que está pasando, porque se comporta de esa forma y luego ya pensamos como corregirlo de la forma mas ",
+  "user_interruptions": 0,
+  "user_response_times": [
+    299.457,
+    26.175,
+    307.737,
+    12.303,
+    133.074
+  ],
+  "tool_errors": 6,
+  "tool_error_categories": {
+    "Other": 5,
+    "File Not Found": 1
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 448,
+  "lines_removed": 200,
+  "files_modified": 10,
+  "message_hours": [
+    9,
+    10,
+    10,
+    10,
+    10,
+    10
+  ],
+  "user_message_timestamps": [
+    "2026-05-12T07:57:08.894Z",
+    "2026-05-12T08:05:57.294Z",
+    "2026-05-12T08:08:20.711Z",
+    "2026-05-12T08:18:03.412Z",
+    "2026-05-12T08:19:50.650Z",
+    "2026-05-12T08:23:00.816Z"
+  ],
+  "model_usage": {
+    "gpt-5.5": {
+      "input_tokens": 88708,
+      "output_tokens": 3262,
+      "cost": 0.850904,
+      "message_count": 23
+    },
+    "gpt-5.4-mini": {
+      "input_tokens": 351873,
+      "output_tokens": 24094,
+      "cost": 0.67488135,
+      "message_count": 65
+    }
+  }
+}

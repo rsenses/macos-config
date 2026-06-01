@@ -1,5 +1,5 @@
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { mkdir, readFile, readdir, stat, writeFile, appendFile } from "node:fs/promises";
+import { mkdir, readFile, readdir, stat, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { spawn } from "node:child_process";
 import path from "node:path";
@@ -68,7 +68,6 @@ function projectMemoryPaths(cwd: string) {
 	return {
 		aiDir,
 		planDir: path.join(aiDir, "plan"),
-		dailyDir: path.join(aiDir, "daily"),
 		memoryFile: path.join(aiDir, "MEMORY.md"),
 		tasksFile: path.join(aiDir, "TASKS.md"),
 	};
@@ -77,7 +76,6 @@ function projectMemoryPaths(cwd: string) {
 async function ensureProjectMemory(cwd: string) {
 	const paths = projectMemoryPaths(cwd);
 	await mkdir(paths.planDir, { recursive: true });
-	await mkdir(paths.dailyDir, { recursive: true });
 
 	if (!existsSync(paths.memoryFile)) {
 		await writeFile(paths.memoryFile, MEMORY_TEMPLATE, "utf8");
@@ -98,12 +96,6 @@ function localDate(date = new Date()): string {
 	}).format(date);
 }
 
-function yesterdayDate(): string {
-	const date = new Date();
-	date.setDate(date.getDate() - 1);
-	return localDate(date);
-}
-
 async function readIfExists(file: string): Promise<string> {
 	if (!existsSync(file)) return "";
 	return readFile(file, "utf8");
@@ -120,6 +112,21 @@ function previewText(text: string, maxLines = 12, maxChars = 1200): string {
 	}
 	if (lines.length > maxLines) {
 		preview += "\n\n[truncated]";
+	}
+	return preview;
+}
+
+function tailPreview(text: string, maxLines = 12, maxChars = 1200): string {
+	const normalized = text.replace(/\r\n/g, "\n").trim();
+	if (!normalized) return "";
+	const lines = normalized.split("\n");
+	const clippedLines = lines.slice(Math.max(0, lines.length - maxLines));
+	let preview = clippedLines.join("\n");
+	if (preview.length > maxChars) {
+		preview = `...[truncated]\n${preview.slice(-maxChars)}`;
+	}
+	if (lines.length > maxLines) {
+		preview = `[truncated ${lines.length - maxLines} earlier line(s)]\n\n${preview}`;
 	}
 	return preview;
 }
@@ -161,14 +168,6 @@ async function latestPlanPath(cwd: string): Promise<string | undefined> {
 
 function countOpenTasks(tasks: string): number {
 	return tasks.split("\n").filter((line) => /^- \[ \] /.test(line.trim())).length;
-}
-
-async function ensureDailyFile(cwd: string) {
-	const paths = await ensureProjectMemory(cwd);
-	const file = path.join(paths.dailyDir, `${localDate()}.md`);
-	if (!existsSync(file)) {
-		await writeFile(file, `# ${localDate()}\n`, "utf8");
-	}
 }
 
 function shortSessionId(ctx: any): string {
@@ -215,24 +214,6 @@ export default function (pi: ExtensionAPI) {
 			await writeFile(fullPath, PLAN_TEMPLATE(params.slug, sessionId), "utf8");
 
 			return { content: [{ type: "text", text: `Created session plan at: ${finalPath}` }] };
-		},
-	});
-
-	pi.registerTool({
-		name: "add_daily_note",
-		description: "Adds a concise note to today's daily log.",
-		parameters: Type.Object({
-			note: Type.String({ description: "The note to add (summary of work, risks, or decisions)." }),
-		}),
-		async execute(_id, params, _signal, _update, ctx) {
-			const cwd = ctx.cwd;
-			await ensureDailyFile(cwd);
-			const dailyFile = path.join(cwd, ".ai", "daily", `${localDate()}.md`);
-			const timestamp = new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
-			const entry = `\n- **${timestamp}**: ${params.note}\n`;
-			await appendFile(dailyFile, entry, "utf8");
-
-			return { content: [{ type: "text", text: "Note added to daily log." }] };
 		},
 	});
 
@@ -330,22 +311,11 @@ export default function (pi: ExtensionAPI) {
 	pi.on("before_agent_start", async (event, ctx) => {
 		const cwd = event.systemPromptOptions?.cwd ?? ctx.cwd;
 		const paths = await ensureProjectMemory(cwd);
-		await ensureDailyFile(cwd);
 
 		const sessionId = shortSessionId(ctx);
 		const { path: planPath } = await sessionPlanPath(cwd, sessionId);
 		const memory = await readFile(paths.memoryFile, "utf8");
 		const tasks = await readFile(paths.tasksFile, "utf8");
-		const today = localDate();
-		const yesterday = yesterdayDate();
-		const todayDaily = await readIfExists(path.join(paths.dailyDir, `${today}.md`));
-		const yesterdayDaily = await readIfExists(path.join(paths.dailyDir, `${yesterday}.md`));
-		const todayDailyPreview = previewText(todayDaily, 80, 6000);
-		const yesterdayDailyPreview = previewText(yesterdayDaily, 40, 3000);
-		const dailySections = [
-			todayDailyPreview.trim() ? `## Daily log: ${today} (today)\n\n\`\`\`md\n${todayDailyPreview.trim()}\n\`\`\`` : "",
-			yesterdayDailyPreview.trim() ? `## Daily log: ${yesterday} (yesterday)\n\n\`\`\`md\n${yesterdayDailyPreview.trim()}\n\`\`\`` : "",
-		].filter(Boolean).join("\n\n");
 
 		const memoryContext = `## Project Memory
 
@@ -353,7 +323,6 @@ The current project uses local AI memory files:
 - \`.ai/MEMORY.md\` — durable context and decisions.
 - \`.ai/TASKS.md\` — pending project work.
 - \`.ai/plan/\` — task-specific implementation plans.
-- \`.ai/daily/\` — concise daily notes.
 
 Current session plan: \`${planPath}\`
 
@@ -361,8 +330,10 @@ Current session plan: \`${planPath}\`
 - **Planning**: Use \`create_session_plan\` at the start of non-trivial tasks. Update the plan file directly.
 - **Inspect**: Use \`get_current_plan\` for the active plan and \`summarize_worktree\` for a compact repo snapshot.
 - **Tasks**: Use \`.ai/TASKS.md\` for work that survives sessions. Use wiki-links \`[[.ai/plan/file.md]]\` for complex tasks.
-- **Daily**: Use \`add_daily_note\` after meaningful work. Do not write to daily files manually.
 - **Durable**: Update \`.ai/MEMORY.md\` only for long-term project decisions or stable preferences.
+- **Reference discipline**: When a route, component, file, or decision is already recorded, refer to the existing section or item instead of restating the whole list.
+- **Inventory discipline**: For route/component reports, keep one canonical list and append only new or changed entries.
+- **Delta focus**: In iterative frontend, CSS, or JS work, answer with the smallest useful delta rather than reprinting prior inventories.
 
 Current \`.ai/MEMORY.md\` contents:
 \`\`\`md
@@ -372,16 +343,12 @@ ${memory.trim() || "# Project Memory\n\n_No durable project memory recorded yet.
 Current \`.ai/TASKS.md\` contents:
 \`\`\`md
 ${tasks.trim() || "# Project Tasks\n\n_No pending project tasks recorded yet._"}
-\`\`\`
-
-${dailySections ? `Recent daily context:\n\n${dailySections}` : "No recent daily context yet."}`;
+\`\`\``;
 
 		return {
 			systemPrompt: `${event.systemPrompt}\n\n${memoryContext}`,
 		};
 	});
 
-	pi.on("agent_end", async (_event, ctx) => {
-		await ensureDailyFile(ctx.cwd);
-	});
+
 }

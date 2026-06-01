@@ -1,0 +1,43 @@
+{
+  "session_id": "019e4f59-b887-722c-8fa9-5d803584392f",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-eventosyconferenciasue.com--/2026-05-22T11-02-20-551Z_019e4f59-b887-722c-8fa9-5d803584392f.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/eventosyconferenciasue.com",
+  "start_time": "2026-05-22T11:02:20.551Z",
+  "duration_minutes": 1,
+  "user_message_count": 1,
+  "assistant_message_count": 6,
+  "tool_counts": {
+    "ctx_read": 1,
+    "ctx_shell": 4
+  },
+  "languages": {},
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 34659,
+  "output_tokens": 692,
+  "total_cost": 0,
+  "first_prompt": "por favor, revisa .gitignore a ver porque en git me sigue apareciendo storage/rector, no quiero nada de eso en git",
+  "user_interruptions": 0,
+  "user_response_times": [],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_subagent": false,
+  "uses_mcp": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    13
+  ],
+  "user_message_timestamps": [
+    "2026-05-22T11:03:17.998Z"
+  ],
+  "model_usage": {
+    "gemma-4-31b-it": {
+      "input_tokens": 34659,
+      "output_tokens": 692,
+      "cost": 0,
+      "message_count": 6
+    }
+  }
+}

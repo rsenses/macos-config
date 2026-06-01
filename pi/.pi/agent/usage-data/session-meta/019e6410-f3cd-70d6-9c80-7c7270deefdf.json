@@ -1,0 +1,50 @@
+{
+  "session_id": "019e6410-f3cd-70d6-9c80-7c7270deefdf",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-contrib-dotfiles--/2026-05-26T11-34-53-133Z_019e6410-f3cd-70d6-9c80-7c7270deefdf.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/contrib/dotfiles",
+  "start_time": "2026-05-26T11:34:53.133Z",
+  "duration_minutes": 3,
+  "user_message_count": 1,
+  "assistant_message_count": 15,
+  "tool_counts": {
+    "ctx_read": 8,
+    "ctx_grep": 8,
+    "edit": 2,
+    "ctx_shell": 3,
+    "add_daily_note": 1
+  },
+  "languages": {
+    "Markdown": 1
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 21697,
+  "output_tokens": 3972,
+  "total_cost": 0.051234749999999996,
+  "first_prompt": "el comando @bin/.local/bin/importdb tiene un fallo, al mostrarme los archivos para importar, me muestra el path completo y no se ve si la pantalla es pequeña, que me muestre solo el archivo, por favor, no el path completo",
+  "user_interruptions": 0,
+  "user_response_times": [],
+  "tool_errors": 3,
+  "tool_error_categories": {
+    "Other": 3
+  },
+  "uses_subagent": false,
+  "uses_mcp": false,
+  "lines_added": 53,
+  "lines_removed": 50,
+  "files_modified": 1,
+  "message_hours": [
+    13
+  ],
+  "user_message_timestamps": [
+    "2026-05-26T11:35:54.224Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 21697,
+      "output_tokens": 3972,
+      "cost": 0.051234749999999996,
+      "message_count": 15
+    }
+  }
+}

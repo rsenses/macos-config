@@ -1,0 +1,67 @@
+{
+  "session_id": "019e49a3-7e1d-7ed8-80e2-2389b796cf78",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-contrib-dotfiles--/2026-05-21T08-25-11-965Z_019e49a3-7e1d-7ed8-80e2-2389b796cf78.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/contrib/dotfiles",
+  "start_time": "2026-05-21T08:25:11.965Z",
+  "duration_minutes": 5,
+  "user_message_count": 4,
+  "assistant_message_count": 19,
+  "tool_counts": {
+    "create_session_plan": 1,
+    "subagent": 2,
+    "ctx_find": 4,
+    "ctx_ls": 9,
+    "ctx_read": 8,
+    "ctx_grep": 2,
+    "ctx_shell": 1,
+    "edit": 1,
+    "write": 1,
+    "add_daily_note": 1
+  },
+  "languages": {
+    "Markdown": 7,
+    "JavaScript": 1,
+    "TypeScript": 2
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 187740,
+  "output_tokens": 3609,
+  "total_cost": 1.4711619999999999,
+  "first_prompt": "hay un problema con las skills y no se porque, mira esto: Tienes razón: ese archivo es una skill, no una definición explícita de agente.\n\n La skill contiene solo esto en frontmatter:\n\n ```md\n   ---\n   name: architect\n   description: Specification design, behavior contracts, and task decomposition.\n ",
+  "user_interruptions": 0,
+  "user_response_times": [
+    85.878,
+    119.508,
+    16.357
+  ],
+  "tool_errors": 4,
+  "tool_error_categories": {
+    "Other": 4
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 31,
+  "lines_removed": 4,
+  "files_modified": 1,
+  "message_hours": [
+    10,
+    10,
+    10,
+    10
+  ],
+  "user_message_timestamps": [
+    "2026-05-21T08:25:34.907Z",
+    "2026-05-21T08:28:11.934Z",
+    "2026-05-21T08:30:11.452Z",
+    "2026-05-21T08:30:31.869Z"
+  ],
+  "model_usage": {
+    "gpt-5.5": {
+      "input_tokens": 187740,
+      "output_tokens": 3609,
+      "cost": 1.4711619999999999,
+      "message_count": 19
+    }
+  }
+}

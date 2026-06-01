@@ -1,0 +1,51 @@
+{
+  "session_id": "019e3fc1-29f4-77a2-88cc-88977f78f044",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-19T10-21-24-340Z_019e3fc1-29f4-77a2-88cc-88977f78f044.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-19T10:21:24.340Z",
+  "duration_minutes": 1,
+  "user_message_count": 1,
+  "assistant_message_count": 10,
+  "tool_counts": {
+    "create_session_plan": 1,
+    "read": 4,
+    "mcp": 2,
+    "edit": 1,
+    "bash": 2,
+    "add_daily_note": 1
+  },
+  "languages": {
+    "Markdown": 1
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 27990,
+  "output_tokens": 1378,
+  "total_cost": 0.042207900000000007,
+  "first_prompt": "vamos a corregir este test, algo simple, por favor, es un cambiio mínimo:   FAILED  Tests\\Feature\\Views\\Orders\\Actions\\UpdateModalTest > it shows quick next action date buttons and required binding in the update modal\n  Expected: <flux:modal name=\"action-update\" class=\"space-y-6 text-left md:w-96\">\\",
+  "user_interruptions": 0,
+  "user_response_times": [],
+  "tool_errors": 1,
+  "tool_error_categories": {
+    "Other": 1
+  },
+  "uses_subagent": false,
+  "uses_mcp": false,
+  "lines_added": 3,
+  "lines_removed": 2,
+  "files_modified": 1,
+  "message_hours": [
+    12
+  ],
+  "user_message_timestamps": [
+    "2026-05-19T10:21:52.258Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 27990,
+      "output_tokens": 1378,
+      "cost": 0.042207900000000007,
+      "message_count": 10
+    }
+  }
+}

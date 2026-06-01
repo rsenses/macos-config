@@ -1,0 +1,65 @@
+{
+  "session_id": "019df2eb-773c-757e-ad3a-ab1c86f3036e",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-04T12-16-51-005Z_019df2eb-773c-757e-ad3a-ab1c86f3036e.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-04T12:16:51.005Z",
+  "duration_minutes": 11,
+  "user_message_count": 5,
+  "assistant_message_count": 64,
+  "tool_counts": {
+    "read": 16,
+    "bash": 15,
+    "mcp": 8,
+    "fffind": 3,
+    "ffgrep": 11,
+    "edit": 9,
+    "write": 2
+  },
+  "languages": {
+    "Markdown": 2
+  },
+  "git_commits": 1,
+  "git_pushes": 0,
+  "input_tokens": 116401,
+  "output_tokens": 17456,
+  "total_cost": 0.39233595,
+  "first_prompt": "Vamos a solucionar un error en producción, la validación es lo importante aquí: - **Level:** ERROR\n- **Exception:** Illuminate\\Database\\UniqueConstraintViolationException\n- **Timestamp:** 2026-05-04 11:29:30\n- **Environment:** \n- **Route:** \n- **User:** 10\n\n**Message:** SQLSTATE[23000]: Integrity co",
+  "user_interruptions": 0,
+  "user_response_times": [
+    17.985,
+    79.843,
+    173.54,
+    62.657
+  ],
+  "tool_errors": 4,
+  "tool_error_categories": {
+    "Other": 4
+  },
+  "uses_subagent": false,
+  "uses_mcp": false,
+  "lines_added": 211,
+  "lines_removed": 143,
+  "files_modified": 5,
+  "message_hours": [
+    14,
+    14,
+    14,
+    14,
+    14
+  ],
+  "user_message_timestamps": [
+    "2026-05-04T12:17:19.657Z",
+    "2026-05-04T12:18:23.797Z",
+    "2026-05-04T12:21:00.889Z",
+    "2026-05-04T12:25:17.126Z",
+    "2026-05-04T12:28:09.960Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 116401,
+      "output_tokens": 17456,
+      "cost": 0.39233595,
+      "message_count": 64
+    }
+  }
+}

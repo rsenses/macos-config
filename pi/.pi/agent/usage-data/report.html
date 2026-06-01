@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pi Insights — 2026-05-04 to 2026-05-30</title>
+<style>
+  :root {
+    --bg: #0d0f12; --bg2: #161a1f; --bg3: #1e2329;
+    --border: #2a2f38; --border2: #343b47;
+    --text: #e4e8ef; --dim: #8892a0; --muted: #4e5866;
+    --accent: #4f9cf9; --accent2: #38bdf8;
+    --green: #4ade80; --yellow: #fbbf24; --red: #f87171;
+    --purple: #c084fc; --teal: #2dd4bf;
+    --radius: 10px; --radius-sm: 6px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, 'Segoe UI', sans-serif; font-size: 16px; line-height: 1.7; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  strong { font-weight: 600; }
+
+  .container { max-width: 1040px; margin: 0 auto; padding: 40px 24px 80px; }
+  header { text-align: center; padding: 48px 0 40px; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
+  header h1 { font-size: 38px; font-weight: 700; color: var(--text); letter-spacing: -0.5px; }
+  header .subtitle { color: var(--dim); margin-top: 8px; font-size: 14px; }
+
+  nav { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 40px; }
+  nav a { background: var(--bg3); border: 1px solid var(--border); padding: 6px 14px; border-radius: 20px; color: var(--dim); font-size: 13px; transition: all 0.15s; }
+  nav a:hover { color: var(--text); border-color: var(--border2); text-decoration: none; background: var(--bg2); }
+
+  section { margin-bottom: 48px; }
+  h2 { font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  h2 .emoji { font-size: 18px; }
+  h3 { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 10px; }
+
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 24px; }
+  .card + .card { margin-top: 12px; }
+  .card-grid { display: grid; gap: 12px; }
+  .card-grid.cols2 { grid-template-columns: repeat(2, 1fr); }
+  .card-grid.cols3 { grid-template-columns: repeat(3, 1fr); }
+
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; text-align: center; }
+  .stat-value { font-size: 26px; font-weight: 700; color: var(--accent); }
+  .stat-label { font-size: 12px; color: var(--dim); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .stat-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; font-size: 14px; }
+  .bar-row.compact { margin-bottom: 2px; }
+  .bar-label { width: 140px; flex-shrink: 0; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar-track { flex: 1; height: 10px; background: var(--bg3); border-radius: 5px; overflow: hidden; }
+  .bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 5px; transition: width 0.4s ease; }
+  .bar-count { width: 40px; text-align: right; color: var(--muted); flex-shrink: 0; }
+
+  .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+  .chart-box { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; }
+  .chart-box h3 { font-size: 13px; font-weight: 600; color: var(--dim); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px; }
+
+  .at-a-glance { background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--radius); overflow: hidden; }
+  .at-a-glance-part { padding: 20px 24px; border-bottom: 1px solid var(--border); }
+  .at-a-glance-part:last-child { border-bottom: none; }
+  .at-a-glance-part h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--accent); margin-bottom: 10px; }
+  .at-a-glance-part p { color: var(--text); line-height: 1.7; }
+
+  .area-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; }
+  .area-card h3 { color: var(--accent2); font-size: 17px; }
+  .area-card .count { color: var(--muted); font-size: 12px; margin-left: 8px; }
+  .area-card p { color: var(--dim); margin-top: 8px; font-size: 14px; }
+
+  .workflow-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; }
+  .workflow-card h3 { color: var(--green); font-size: 17px; }
+  .workflow-card p { color: var(--dim); margin-top: 8px; font-size: 14px; }
+
+  .friction-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; }
+  .friction-card h3 { color: var(--yellow); font-size: 17px; }
+  .friction-card p { color: var(--dim); margin-top: 8px; font-size: 14px; }
+  .friction-card .examples { margin-top: 10px; }
+  .friction-card .example { font-size: 13px; color: var(--muted); padding: 4px 0 4px 14px; border-left: 2px solid var(--border2); margin-top: 6px; }
+
+  .sugg-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; }
+  .sugg-card .tag { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; margin-bottom: 8px; background: var(--bg3); color: var(--dim); border: 1px solid var(--border2); }
+  .sugg-card h3 { font-size: 14px; color: var(--text); }
+  .sugg-card p { color: var(--dim); font-size: 13px; margin-top: 6px; }
+  .sugg-card .why { color: var(--muted); font-size: 12px; margin-top: 6px; font-style: italic; }
+  .sugg-card label { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; }
+  .sugg-card input[type=checkbox] { margin-top: 3px; accent-color: var(--accent); width: 15px; height: 15px; flex-shrink: 0; }
+
+  .copy-box { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px; color: var(--teal); white-space: pre-wrap; word-break: break-all; margin-top: 10px; }
+  .copy-btn { display: inline-flex; align-items: center; gap: 6px; background: var(--bg3); border: 1px solid var(--border2); color: var(--dim); font-size: 12px; padding: 5px 12px; border-radius: var(--radius-sm); cursor: pointer; margin-top: 8px; transition: all 0.15s; }
+  .copy-btn:hover { color: var(--text); border-color: var(--accent); background: var(--bg2); }
+  .copy-all-btn { background: var(--accent); color: #fff; font-weight: 600; border: none; padding: 8px 18px; border-radius: var(--radius-sm); cursor: pointer; font-size: 13px; margin-top: 16px; transition: opacity 0.15s; }
+  .copy-all-btn:hover { opacity: 0.85; }
+
+  .horizon-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 24px; }
+  .horizon-card h3 { color: var(--purple); font-size: 15px; }
+  .horizon-card p { color: var(--dim); margin-top: 8px; font-size: 14px; }
+  .horizon-card .how { color: var(--muted); font-size: 13px; margin-top: 8px; }
+
+  .fun-box { background: linear-gradient(135deg, #1a1f2e, #1e2329); border: 1px solid var(--border2); border-radius: var(--radius); padding: 28px 32px; text-align: center; }
+  .fun-box .headline { font-size: 18px; font-weight: 600; color: var(--text); line-height: 1.5; }
+  .fun-box .detail { color: var(--dim); font-size: 14px; margin-top: 10px; }
+
+  .muted { color: var(--muted); font-size: 14px; }
+  .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+  .badge.green { background: rgba(74,222,128,0.15); color: var(--green); }
+  .badge.yellow { background: rgba(251,191,36,0.15); color: var(--yellow); }
+  .badge.red { background: rgba(248,113,113,0.15); color: var(--red); }
+
+  @media (max-width: 700px) {
+    .card-grid.cols2, .card-grid.cols3 { grid-template-columns: 1fr; }
+    .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    .charts-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>🔍 Pi Insights</h1>
+  <div class="subtitle">
+    2026-05-04 – 2026-05-30
+    &nbsp;·&nbsp;
+    149 sessions
+    &nbsp;·&nbsp;
+    Generated 30/5/2026
+  </div>
+</header>
+
+<nav>
+  <a href="#at-a-glance">Summary</a>
+  <a href="#stats">Numbers</a>
+  <a href="#projects">Where You Worked</a>
+  <a href="#style">How You Work</a>
+  <a href="#what-works">Wins</a>
+  <a href="#friction">Friction</a>
+  <a href="#suggestions">Next Steps</a>
+  <a href="#horizon">Future</a>
+  <a href="#model-efficiency">Model Spend</a>
+</nav>
+
+
+<div style="background:linear-gradient(135deg,#1a2332,#1e2a3a);border:1px solid var(--border2);border-radius:var(--radius);padding:24px 28px;margin-bottom:32px">
+  <h3 style="color:var(--accent2);font-size:13px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:14px">📈 What Changed This Week</h3>
+  <div style="display:flex;flex-wrap:wrap;gap:10px">
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 14px;font-size:14px;color:var(--text)">Cost down 63% ($11.7 → $4.4/session)</div>
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 14px;font-size:14px;color:var(--text)">Model shifted: 5 → 4-mini</div>
+  </div>
+  <div style="margin-top:14px;padding:10px 14px;background:var(--bg);border-radius:var(--radius-sm);border-left:3px solid var(--purple);font-size:13px;color:var(--dim)"><strong style="color:var(--purple)">Major shift (2026-05-28):</strong> Shifted from 4-mini to deepseek-v4-pro. Impact: Cost down 57%, errors down 51%</div>
+</div>
+
+<!-- ── At a Glance ── -->
+<section id="at-a-glance">
+  <h2><span class="emoji">⚡</span> Summary</h2>
+  <div class="at-a-glance">
+    <div class="at-a-glance-part">
+      <h3>What's Working</h3>
+      <p>You've developed a powerful pattern of methodical, test-driven refactoring — dividing large migrations into atomic slices, validating each step, and pushing through legacy PHP upgrades from 7.0 all the way to 8.4 with zero tolerance for regressions. Your recent model switch to deepseek-v4-pro shows sharp cost-awareness, cutting expenses by 57% while simultaneously reducing errors by 51%. The CSS modernization project exemplifies your willingness to iterate through multiple rejected approaches until the output is genuinely production-ready, not just functional.</p>
+    </div>
+    <div class="at-a-glance-part">
+      <h3>What's Hindering You</h3>
+      <p>Misunderstood requests remain your primary friction point — the assistant frequently jumps into execution without clarifying intent, like misreading your TablePlus password extraction request as a cracking attempt or pushing auto-selection when you explicitly wanted delegation instructions. Buggy code and excessive changes often stem from over-aggressive cleanup that removes functional classes without scanning the full codebase first, forcing you into multi-iteration correction loops especially during UI refactors. On your side, the absence of pre-execution clarification routines means ambiguous requests repeatedly trigger wrong approaches before you can intervene, and the lack of standardized skill templates for your most frequent workflows (debugging, security reviews, dependency updates) leaves each session reinventing the process.</p>
+    </div>
+    <div class="at-a-glance-part">
+      <h3>Quick Wins to Try</h3>
+      <p>Create a `/skill:debug` template with your proven slice-at-a-time pattern (reproduce → trace root cause → propose minimal fix → validate) to eliminate improvisation during your most common workflow — this directly counters the Wrong Approach friction. Add a pre-execution rule to AGENTS.md requiring the assistant to paraphrase the goal and list 2-3 edge case assumptions before touching any code, using your `ask-user-question` extension to gate execution on your explicit approval. For UI refactors, adopt your own checkpoint pattern that worked well with the Classlife API: commit after each component migration, visually verify identical design before proceeding, and require a full project-wide reference search before deleting any CSS class.</p>
+    </div>
+    <div class="at-a-glance-part">
+      <h3>Ambitious Workflows</h3>
+      <p>As models improve, self-correcting refactoring pipelines become viable — a worker subagent proposes changes, a test-runner validates against your full suite, and a reviewer agent automatically rejects regressions, eliminating the buggy-code correction loops that dominate your CSS and PHP refactoring sessions. Parallel subagents could decompose a feature like 'team invitations' into independent model, controller, validation, and Blade slices, executing them simultaneously with a coordinator resolving conflicts — compressing your multi-hour sessions into minutes. Intent clarification loops where the assistant paraphrases goals and enumerates ambiguous edge cases before making edits could virtually eliminate the 37 misunderstood requests you encountered in the last two weeks.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Stats ── -->
+<section id="stats">
+  <h2><span class="emoji">📊</span> By the Numbers</h2>
+  <div class="stat-grid">
+    <div class="stat-card">
+  <div class="stat-value">149</div>
+  <div class="stat-label">Sessions</div>
+  <div class="stat-sub">23 active days</div>
+</div>
+    <div class="stat-card">
+  <div class="stat-value">2552</div>
+  <div class="stat-label">Messages</div>
+  <div class="stat-sub">17.1 per session</div>
+</div>
+    <div class="stat-card">
+  <div class="stat-value">490.8h</div>
+  <div class="stat-label">Active Time</div>
+  <div class="stat-sub">21.3h/day</div>
+</div>
+    <div class="stat-card">
+  <div class="stat-value">207.9M</div>
+  <div class="stat-label">Tokens In</div>
+  
+</div>
+    <div class="stat-card">
+  <div class="stat-value">9.9M</div>
+  <div class="stat-label">Tokens Out</div>
+  
+</div>
+    <div class="stat-card">
+  <div class="stat-value">$869.49</div>
+  <div class="stat-label">Total Cost</div>
+  
+</div>
+    <div class="stat-card">
+  <div class="stat-value">117k</div>
+  <div class="stat-label">Lines Added</div>
+  
+</div>
+    <div class="stat-card">
+  <div class="stat-value">42k</div>
+  <div class="stat-label">Lines Removed</div>
+  
+</div>
+    <div class="stat-card">
+  <div class="stat-value">34</div>
+  <div class="stat-label">Git Commits</div>
+  <div class="stat-sub">1 pushes</div>
+</div>
+    <div class="stat-card">
+  <div class="stat-value">2k</div>
+  <div class="stat-label">Files Modified</div>
+  
+</div>
+    <div class="stat-card">
+  <div class="stat-value">2854</div>
+  <div class="stat-label">Tool Errors</div>
+  
+</div>
+    <div class="stat-card">
+  <div class="stat-value">0</div>
+  <div class="stat-label">Interruptions</div>
+  
+</div>
+    <div class="stat-card">
+  <div class="stat-value">117</div>
+  <div class="stat-label">Subagent Sessions</div>
+  
+</div>
+    
+    <div class="stat-card">
+  <div class="stat-value">123</div>
+  <div class="stat-label">Parallel Sessions</div>
+  <div class="stat-sub">overlap events</div>
+</div>
+  </div>
+
+  <div class="charts-grid">
+    <div class="chart-box">
+      <h3>Goal Categories</h3>
+      <div class="bar-row">
+  <div class="bar-label">Debug Error</div>
+  <div class="bar-track"><div class="bar-fill" style="width:100.0%"></div></div>
+  <div class="bar-count">8</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Security Review</div>
+  <div class="bar-track"><div class="bar-fill" style="width:93.4%"></div></div>
+  <div class="bar-count">7</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Debugging And Fixing</div>
+  <div class="bar-track"><div class="bar-fill" style="width:92.2%"></div></div>
+  <div class="bar-count">7</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Update Dependencies</div>
+  <div class="bar-track"><div class="bar-fill" style="width:80.8%"></div></div>
+  <div class="bar-count">6</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Dependency Update</div>
+  <div class="bar-track"><div class="bar-fill" style="width:80.0%"></div></div>
+  <div class="bar-count">6</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Refactor Ui Component</div>
+  <div class="bar-track"><div class="bar-fill" style="width:65.4%"></div></div>
+  <div class="bar-count">5</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Frontend Update</div>
+  <div class="bar-track"><div class="bar-fill" style="width:60.0%"></div></div>
+  <div class="bar-count">5</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Debugging</div>
+  <div class="bar-track"><div class="bar-fill" style="width:54.2%"></div></div>
+  <div class="bar-count">4</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Code Generation</div>
+  <div class="bar-track"><div class="bar-fill" style="width:54.0%"></div></div>
+  <div class="bar-count">4</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Upgrade Dependencies</div>
+  <div class="bar-track"><div class="bar-fill" style="width:53.4%"></div></div>
+  <div class="bar-count">4</div>
+</div>
+    </div>
+    <div class="chart-box">
+      <h3>Outcomes</h3>
+      <div class="bar-row">
+  <div class="bar-label">Not Achieved</div>
+  <div class="bar-track"><div class="bar-fill" style="width:4.4%"></div></div>
+  <div class="bar-count">1</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Partially Achieved</div>
+  <div class="bar-track"><div class="bar-fill" style="width:15.9%"></div></div>
+  <div class="bar-count">3</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Mostly Achieved</div>
+  <div class="bar-track"><div class="bar-fill" style="width:100.0%"></div></div>
+  <div class="bar-count">17</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Fully Achieved</div>
+  <div class="bar-track"><div class="bar-fill" style="width:61.7%"></div></div>
+  <div class="bar-count">11</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Unclear</div>
+  <div class="bar-track"><div class="bar-fill" style="width:8.1%"></div></div>
+  <div class="bar-count">1</div>
+</div>
+    </div>
+    <div class="chart-box">
+      <h3>Satisfaction</h3>
+      <div class="bar-row">
+  <div class="bar-label">Frustrated</div>
+  <div class="bar-track"><div class="bar-fill" style="width:8.7%"></div></div>
+  <div class="bar-count">11</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Dissatisfied</div>
+  <div class="bar-track"><div class="bar-fill" style="width:19.9%"></div></div>
+  <div class="bar-count">26</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Likely Satisfied</div>
+  <div class="bar-track"><div class="bar-fill" style="width:100.0%"></div></div>
+  <div class="bar-count">131</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Satisfied</div>
+  <div class="bar-track"><div class="bar-fill" style="width:47.8%"></div></div>
+  <div class="bar-count">63</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Happy</div>
+  <div class="bar-track"><div class="bar-fill" style="width:10.5%"></div></div>
+  <div class="bar-count">14</div>
+</div>
+    </div>
+    <div class="chart-box">
+      <h3>Top Tools</h3>
+      <div class="bar-row">
+  <div class="bar-label">Ctx Shell</div>
+  <div class="bar-track"><div class="bar-fill" style="width:100.0%"></div></div>
+  <div class="bar-count">6477</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Ctx Read</div>
+  <div class="bar-track"><div class="bar-fill" style="width:64.1%"></div></div>
+  <div class="bar-count">4152</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Read</div>
+  <div class="bar-track"><div class="bar-fill" style="width:63.5%"></div></div>
+  <div class="bar-count">4110</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Edit</div>
+  <div class="bar-track"><div class="bar-fill" style="width:62.9%"></div></div>
+  <div class="bar-count">4071</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Bash</div>
+  <div class="bar-track"><div class="bar-fill" style="width:61.4%"></div></div>
+  <div class="bar-count">3977</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Ctx Grep</div>
+  <div class="bar-track"><div class="bar-fill" style="width:46.7%"></div></div>
+  <div class="bar-count">3025</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Write</div>
+  <div class="bar-track"><div class="bar-fill" style="width:15.8%"></div></div>
+  <div class="bar-count">1023</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Project Search</div>
+  <div class="bar-track"><div class="bar-fill" style="width:14.5%"></div></div>
+  <div class="bar-count">938</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Subagent</div>
+  <div class="bar-track"><div class="bar-fill" style="width:13.9%"></div></div>
+  <div class="bar-count">901</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Read Window</div>
+  <div class="bar-track"><div class="bar-fill" style="width:12.6%"></div></div>
+  <div class="bar-count">813</div>
+</div>
+    </div>
+    <div class="chart-box">
+      <h3>Languages</h3>
+      <div class="bar-row">
+  <div class="bar-label">Markdown</div>
+  <div class="bar-track"><div class="bar-fill" style="width:100.0%"></div></div>
+  <div class="bar-count">2064</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">CSS</div>
+  <div class="bar-track"><div class="bar-fill" style="width:24.6%"></div></div>
+  <div class="bar-count">508</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">TypeScript</div>
+  <div class="bar-track"><div class="bar-fill" style="width:17.3%"></div></div>
+  <div class="bar-count">358</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">JSON</div>
+  <div class="bar-track"><div class="bar-fill" style="width:16.9%"></div></div>
+  <div class="bar-count">348</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">JavaScript</div>
+  <div class="bar-track"><div class="bar-fill" style="width:6.5%"></div></div>
+  <div class="bar-count">134</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">HTML</div>
+  <div class="bar-track"><div class="bar-fill" style="width:1.1%"></div></div>
+  <div class="bar-count">23</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">YAML</div>
+  <div class="bar-track"><div class="bar-fill" style="width:0.9%"></div></div>
+  <div class="bar-count">19</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Shell</div>
+  <div class="bar-track"><div class="bar-fill" style="width:0.2%"></div></div>
+  <div class="bar-count">5</div>
+</div>
+    </div>
+    <div class="chart-box">
+      <h3>Friction Types</h3>
+      <div class="bar-row">
+  <div class="bar-label">Misunderstood Request</div>
+  <div class="bar-track"><div class="bar-fill" style="width:100.0%"></div></div>
+  <div class="bar-count">27</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Buggy Code</div>
+  <div class="bar-track"><div class="bar-fill" style="width:92.3%"></div></div>
+  <div class="bar-count">25</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Wrong Approach</div>
+  <div class="bar-track"><div class="bar-fill" style="width:72.6%"></div></div>
+  <div class="bar-count">19</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Excessive Changes</div>
+  <div class="bar-track"><div class="bar-fill" style="width:72.1%"></div></div>
+  <div class="bar-count">19</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">User Rejected Action</div>
+  <div class="bar-track"><div class="bar-fill" style="width:61.1%"></div></div>
+  <div class="bar-count">16</div>
+</div>
+    </div>
+    <div class="chart-box">
+      <h3>Tool Errors</h3>
+      <div class="bar-row">
+  <div class="bar-label">Other</div>
+  <div class="bar-track"><div class="bar-fill" style="width:100.0%"></div></div>
+  <div class="bar-count">2763</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">File Not Found</div>
+  <div class="bar-track"><div class="bar-fill" style="width:1.5%"></div></div>
+  <div class="bar-count">42</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Command Failed</div>
+  <div class="bar-track"><div class="bar-fill" style="width:1.2%"></div></div>
+  <div class="bar-count">33</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Edit Failed</div>
+  <div class="bar-track"><div class="bar-fill" style="width:0.6%"></div></div>
+  <div class="bar-count">16</div>
+</div>
+    </div>
+    <div class="chart-box">
+      <h3>Response Times</h3>
+      <div class="bar-row">
+  <div class="bar-label">2–10s</div>
+  <div class="bar-track"><div class="bar-fill" style="width:23.3%"></div></div>
+  <div class="bar-count">135</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">10–30s</div>
+  <div class="bar-track"><div class="bar-fill" style="width:59.0%"></div></div>
+  <div class="bar-count">342</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">30s–1m</div>
+  <div class="bar-track"><div class="bar-fill" style="width:79.5%"></div></div>
+  <div class="bar-count">461</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">1–2m</div>
+  <div class="bar-track"><div class="bar-fill" style="width:100.0%"></div></div>
+  <div class="bar-count">580</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">2–5m</div>
+  <div class="bar-track"><div class="bar-fill" style="width:73.6%"></div></div>
+  <div class="bar-count">427</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">5–15m</div>
+  <div class="bar-track"><div class="bar-fill" style="width:54.1%"></div></div>
+  <div class="bar-count">314</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">&gt;15m</div>
+  <div class="bar-track"><div class="bar-fill" style="width:16.9%"></div></div>
+  <div class="bar-count">98</div>
+</div>
+    </div>
+    <div class="chart-box">
+      <h3>Time of Day</h3>
+      <div class="bar-row compact">
+  <div class="bar-label">00:00</div>
+  <div class="bar-track"><div class="bar-fill" style="width:0.0%"></div></div>
+  <div class="bar-count"></div>
+</div>
+<div class="bar-row compact">
+  <div class="bar-label">01:00</div>
+  <div class="bar-track"><div class="bar-fill" style="width:0.0%"></div></div>
+  <div class="bar-count"></div>
+</div>
+<div class="bar-row compact">
+  <div class="bar-label">02:00</div>
+  <div class="bar-track"><div class="bar-fill" style="width:0.0%"></div></div>
+  <div class="bar-count"></div>
+</div>
+<div class="bar-row compact">
+  <div class="bar-label">03:00</div>
+  <div class="bar-track"><div class="bar-fill" style="width:0.0%"></div></div>
+  <div class="bar-count"></div>
+</div>
+<div class="bar-row compact">
+  <div class="bar-label">04:00</div>
+  <div class="bar-track"><div class="bar-fill" style="width:0.0%"></div></div>
+  <div class="bar-count"></div>
+</div>
+<div class="bar-row compact">
+  <div class="bar-label">05:00</div>
+  <div class="bar-track"><div class="bar-fill" style="width:0.0%"></div></div>
+  <div class="bar-count"></div>
+</div>
+<div class="bar-row compact">
+  <div class="bar-label">06:00</div>
+  <div class="bar-track"><div class="bar-fill" style="width:0.0%"></div></div>
+  <div class="bar-count"></div>
+</div>
+<div class="bar-row compact">
+  <div class="bar-label">07:00</div>
+  <div class="bar-track"><div class="bar-fill" style="width:0.0%"></div></div>
+  <div class="bar-count"></div>
+</div>
+<div class="bar-row compact">
+  <div class="bar-label">08:00</div>
+  <div class="bar-track"><div class="bar-fill" style="width:14.6%"></div></div>
+  <div class="bar-count">60</div>
+</div>
+<div class="bar-row compact">
+  <div class="bar-label">09:00</div>
+  <div class="bar-track"><div class="bar-fill" style="width:46.8%"></div></div>
+  <div class="bar-count">192</div>
+</div>
+<div class="bar-row compact">
+  <div class="bar-label">10:00</div>
+  <div class="bar-track"><div class="bar-fill" style="width:40.7%"></div></div>
+  <div class="bar-count">167</div>
+</div>
+<div class="bar-row compact">
+  <div class="bar-label">11:00</div>
+  <div class="bar-track"><div class="bar-fill" style="width:54.4%"></div></div>
+  <div class="bar-count">223</div>
+</div>
+<div class="bar-row compact">
+  <div class="bar-label">12:00</div>
+  <div class="bar-track"><div class="bar-fill" style="width:56.8%"></div></div>
+  <div class="bar-count">233</div>
+</div>
+<div class="bar-row compact">
+  <div class="bar-label">13:00</div>
+  <div class="bar-track"><div class="bar-fill" style="width:58.5%"></div></div>
+  <div class="bar-count">240</div>
+</div>
+<div class="bar-row compact">
+  <div class="bar-label">14:00</div>
+  <div class="bar-track"><div class="bar-fill" style="width:41.7%"></div></div>
+  <div class="bar-count">171</div>
+</div>
+<div class="bar-row compact">
+  <div class="bar-label">15:00</div>
+  <div class="bar-track"><div class="bar-fill" style="width:38.0%"></div></div>
+  <div class="bar-count">156</div>
+</div>
+<div class="bar-row compact">
+  <div class="bar-label">16:00</div>
+  <div class="bar-track"><div class="bar-fill" style="width:100.0%"></div></div>
+  <div class="bar-count">410</div>
+</div>
+<div class="bar-row compact">
+  <div class="bar-label">17:00</div>
+  <div class="bar-track"><div class="bar-fill" style="width:86.8%"></div></div>
+  <div class="bar-count">356</div>
+</div>
+<div class="bar-row compact">
+  <div class="bar-label">18:00</div>
+  <div class="bar-track"><div class="bar-fill" style="width:39.5%"></div></div>
+  <div class="bar-count">162</div>
+</div>
+<div class="bar-row compact">
+  <div class="bar-label">19:00</div>
+  <div class="bar-track"><div class="bar-fill" style="width:33.7%"></div></div>
+  <div class="bar-count">138</div>
+</div>
+<div class="bar-row compact">
+  <div class="bar-label">20:00</div>
+  <div class="bar-track"><div class="bar-fill" style="width:5.9%"></div></div>
+  <div class="bar-count">24</div>
+</div>
+<div class="bar-row compact">
+  <div class="bar-label">21:00</div>
+  <div class="bar-track"><div class="bar-fill" style="width:2.7%"></div></div>
+  <div class="bar-count">11</div>
+</div>
+<div class="bar-row compact">
+  <div class="bar-label">22:00</div>
+  <div class="bar-track"><div class="bar-fill" style="width:2.2%"></div></div>
+  <div class="bar-count">9</div>
+</div>
+<div class="bar-row compact">
+  <div class="bar-label">23:00</div>
+  <div class="bar-track"><div class="bar-fill" style="width:0.0%"></div></div>
+  <div class="bar-count"></div>
+</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Project Areas ── -->
+<section id="projects">
+  <h2><span class="emoji">🗂️</span> Where You Worked</h2>
+  <div class="card-grid cols2">
+    <div class="area-card">
+      <h3>PHP Legacy Migration (7.0 → 8.2/8.4)<span class="count">11 sessions</span></h3>
+      <p>Multiple sessions dedicated to upgrading a legacy PHP 7.0 application to modern PHP versions. Pi systematically resolved Illuminate, Symfony, Flight, and Carbon compatibility errors, replaced abandoned packages (aura/auth, Valitron, SparkPost) with native implementations, updated frontend CDN dependencies (Bootstrap, jQuery), and configured PHPStan for progressive static analysis from level 2 to level 5 with baseline reduction.</p>
+    </div>
+<div class="area-card">
+      <h3>Laravel Project Refactoring &amp; Auditing<span class="count">9 sessions</span></h3>
+      <p>Comprehensive Laravel application modernization including dead code removal, middleware reorganization, controller restructuring to resourceful/invokable patterns, Form Request validation, model improvements, and PHPStan baseline reduction from 292 to 125 errors. Pi conducted deep audits generating PR backlogs and functional specifications for all public routes, followed by Pest test generation mimicking controller paths.</p>
+    </div>
+<div class="area-card">
+      <h3>CSS Modernization &amp; Design System Migration<span class="count">6 sessions</span></h3>
+      <p>Large-scale CSS modernization project migrating 3500+ lines to modern features (@layer, data-attributes, CSS nesting, design tokens, Flexbox/Grid). Pi achieved 16% CSS reduction with 103 passing tests, resolved multiple visual regressions from over-aggressive cleanup, built a dynamic JS-based title sizing system preventing overflow beyond 2 lines, and migrated Bootstrap 3 components toward Tailwind CSS 4 with working hero components.</p>
+    </div>
+<div class="area-card">
+      <h3>Semantic HTML &amp; Accessibility Updates<span class="count">3 sessions</span></h3>
+      <p>Modernization of 43 Blade template files to improve semantic HTML5 structure and accessibility while preserving visual design. Pi completed 18 tasks with 103 passing tests, resolving iterative style corrections for navigation buttons, dropdown alignment issues from browser default padding on unstyled lists, and calendar button sizing. Included JSON-LD structured data implementation with dedicated @yield sections.</p>
+    </div>
+<div class="area-card">
+      <h3>Pi Assistant Configuration &amp; Optimization<span class="count">5 sessions</span></h3>
+      <p>Focused improvements to the Pi AI assistant itself, including fixing fast-growing context from excessive diary content injection, aligning skills/prompts to reference only the 3 existing subagents (scout, researcher, worker), cleaning residual references to removed subagents across multiple files, implementing memory tools and template enhancements, and evaluating configurations for minimal token usage.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Interaction Style ── -->
+<section id="style">
+  <h2><span class="emoji">🎯</span> How You Work</h2>
+  <div class="card">
+    <div style="line-height:1.8">You interact with Pi as a decisive, hands-on technical lead who <strong>knows exactly what you want and expects precise execution</strong>, not exploration. You don't write detailed specs upfront—instead, you issue direct, surgical commands and then <strong>iterate rapidly through corrections</strong> when the assistant misses the mark. Your sessions are high-volume and fast-paced: you burned through 2,552 messages across 149 sessions in just 26 days, often running multiple sessions in parallel (110 sessions showed multi-Claude overlap). You favor action over analysis—when the assistant started proposing evaluation approaches for your subagent configuration, you pushed back demanding &quot;only surgical changes&quot; to minimize token usage.</p><p>Your most distinctive pattern is <strong>relentless iterative refinement with zero tolerance for unsolicited creativity</strong>. You frequently reject assistant actions that deviate from your explicit instructions, as seen when you demanded the assistant stop making commits despite a multi-session refactor, or when you corrected the assistant four separate times for misattributing a PHP deprecation warning to the wrong source. This friction isn't accidental—it reflects your engineering rigor. You provide <strong>highly specific technical constraints upfront</strong> (&quot;use @push('scripts') + @verbatim pattern,&quot; &quot;never cut words with automatic hyphens,&quot; &quot;only use #[Scope] not mixed scope definitions&quot;) and expect the assistant to follow them precisely. When the assistant overstepped on tooling configurations during your Laravel cleanup, you established clear boundaries that held for subsequent sessions.</p><p>You operate at <strong>enterprise scale with cost-conscious pragmatism</strong>. Your recent shift on May 28th from gpt-4-mini to deepseek-v4-pro cut session costs 57% and errors 51%, reflecting active model experimentation. You leverage the cheapest credible model for each task—deepseek-v4-flash for routine work ($0.87 total cost across 40 sessions), reserving gpt-5.5 for complex multi-file refactors. Your top goals reveal a security-first mindset (security_review is your #2 activity after debugging) and your satisfaction data shows you're happy when the assistant executes cleanly (131 likely_satisfied/happy scores) but frustrated when it misunderstands requests (37 instances in the last two weeks) or produces buggy code (33 instances). The $869 total spend over 491 hours reflects a <strong>professional developer who treats AI as a force multiplier</strong>, not a replacement for architectural judgment.</div>
+    <div style="margin-top:16px;padding:14px 16px;background:var(--bg3);border-radius:var(--radius-sm);border:1px solid var(--border2);color:var(--accent2);font-size:14px;font-style:italic">"A decisive technical lead who issues surgical commands and iterates relentlessly through corrections, rejecting any unsolicited changes with precise technical justifications."</div>
+  </div>
+</section>
+
+<!-- ── What's Working ── -->
+<section id="what-works">
+  <h2><span class="emoji">✨</span> Wins</h2>
+  <p style="color:var(--dim);margin-bottom:16px">You're a power user who has deeply integrated Pi into a massive Laravel/PHP modernization effort, achieving remarkable productivity across 149 sessions and nearly 500 hours of work.</p>
+  <div class="card-grid cols2">
+    <div class="workflow-card">
+      <h3>Legacy PHP Migration Pipeline</h3>
+      <p>You successfully migrated a legacy PHP 7.0 codebase all the way to PHP 8.4 through multiple systematic upgrade sessions. You tackled dependency hell by replacing abandoned packages like aura/auth and Valitron with custom secure implementations, updated frontend CDNs, and progressively increased PHPStan from level 2 to level 5 with zero errors, showing extraordinary persistence across dozens of interconnected sessions.</p>
+    </div>
+<div class="workflow-card">
+      <h3>Large-Scale CSS Modernization</h3>
+      <p>You orchestrated a complete CSS modernization of 3,500 lines across 39 files, migrating to modern features like @layer, data-* attributes, and CSS nesting while maintaining pixel-perfect visual design. You even built a dynamic JavaScript title-fitting system that prevents text from ever exceeding two lines without clipping or hyphenation, iterating through multiple rejected approaches until the solution was flawless.</p>
+    </div>
+<div class="workflow-card">
+      <h3>Strategic Model Optimization</h3>
+      <p>You demonstrated sophisticated cost awareness by shifting from expensive models to cheaper alternatives mid-month, cutting costs by 63% per session. Your transition to deepseek-v4-pro on May 28th reduced both costs by 57% and errors by 51%, showing you actively monitor and optimize which models handle different task complexities.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Friction ── -->
+<section id="friction">
+  <h2><span class="emoji">⚠️</span> Where Things Broke</h2>
+  <p style="color:var(--dim);margin-bottom:16px">Your friction trajectory is stable with a recent shift to deepseek-v4-pro reducing errors by 51%, but you're still hitting recurring pain points around misunderstood requests, buggy outputs, and excessive changes.</p>
+  
+  <div class="card-grid cols2">
+    <div class="friction-card">
+      <h3>Misunderstood Request <span class="badge red">high</span></h3>
+      <p>You frequently have to re-explain what you actually want because the assistant misinterprets your intent—sometimes catastrophically, like when it tried to crack a file password you already knew instead of extracting credentials from inside it. These misunderstandings waste sessions and erode trust.</p>
+      <div class="examples">
+        <div class="example">You asked to extract MySQL credentials from a TablePlus file whose password you knew, but the assistant treated it as a password-cracking attempt and refused to help with the real task.</div><div class="example">You asked why daily and tasks existed in the memory extension, and the assistant began searching files instead of just explaining directly—delaying a simple answer.</div>
+      </div>
+    </div>
+<div class="friction-card">
+      <h3>Buggy Code <span class="badge red">high</span></h3>
+      <p>You regularly receive code that doesn't work as intended, forcing you into multiple correction cycles—whether it's a JavaScript title-resizing function with broken line-height calculation, or CSS that removed functional classes and broke production layouts.</p>
+      <div class="examples">
+        <div class="example">Your dynamic title-adjustment script had bugs: lineHeight recalculated incorrectly, line-clamp truncated text you explicitly said shouldn't be clipped, and automatic hyphens split words against your instructions.</div><div class="example">Aggressive CSS cleanup removed functional utility classes like .embed-responsive, social brand colors, and btn-circle, causing multiple regressions you had to catch and roll back.</div>
+      </div>
+    </div>
+<div class="friction-card">
+      <h3>Excessive Changes <span class="badge yellow">medium</span></h3>
+      <p>You spend significant time reining in the assistant when it overshoots your request—removing too much CSS, editing email logic before confirming requirements, or adding features you never asked for. This creates unnecessary risk and review burden.</p>
+      <div class="examples">
+        <div class="example">The assistant removed so much CSS during cleanup that the event hero section broke entirely, and it also inverted overlay positioning relative to your text alignment.</div><div class="example">After you asked whether MariaDB had a native progress flag, the assistant added an entire spinner and progress indicator you didn't want, instead of just answering the question.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Suggestions ── -->
+<section id="suggestions">
+  <h2><span class="emoji">💡</span> Next Steps</h2>
+
+  <h3 style="margin-bottom:12px">Config Additions</h3>
+  <p style="color:var(--muted);font-size:13px;margin-bottom:16px">Select the ones you want, then copy them all at once.</p>
+  <div id="config-list">
+    <div class="sugg-card" id="cfg-0" style="margin-bottom:10px">
+      <label>
+        <input type="checkbox" class="cfg-check" checked data-addition="Cuando el usuario haga una pregunta directa, responde primero sin buscar archivos ni ejecutar herramientas. Solo busca archivos si la pregunta explícitamente lo requiere." data-where="AGENTS.md">
+        <div>
+          <div class="tag">AGENTS.md</div>
+          <h3>Cuando el usuario haga una pregunta directa, responde primero sin buscar archivos ni ejecutar herramientas. Solo busca archivos si la pregunta explícitamente lo requiere.</h3>
+          <p class="why">Why: Misunderstood Request es la fricción #1 (37 en 14d) — el asistente busca archivos en vez de responder preguntas directas como 'para qué sirve daily'.</p>
+        </div>
+      </label>
+    </div>
+<div class="sugg-card" id="cfg-1" style="margin-bottom:10px">
+      <label>
+        <input type="checkbox" class="cfg-check" checked data-addition="Antes de hacer cualquier cambio en archivos de configuración crítica (~/.ssh/config, settings.json, .env), haz backup automático y muéstralo al usuario antes de editar." data-where="AGENTS.md">
+        <div>
+          <div class="tag">AGENTS.md</div>
+          <h3>Antes de hacer cualquier cambio en archivos de configuración crítica (~/.ssh/config, settings.json, .env), haz backup automático y muéstralo al usuario antes de editar.</h3>
+          <p class="why">Why: User Rejected Action (26 en 14d) y Wrong Approach (27 en 14d) — el asistente rompió SSH config eliminando directivas sin backup.</p>
+        </div>
+      </label>
+    </div>
+<div class="sugg-card" id="cfg-2" style="margin-bottom:10px">
+      <label>
+        <input type="checkbox" class="cfg-check" checked data-addition="Nunca asumas que el usuario quiere crackear/romper una contraseña. Si pide extraer credenciales de un archivo protegido, pregunta si tiene la contraseña del archivo antes de rechazar la tarea." data-where="AGENTS.md">
+        <div>
+          <div class="tag">AGENTS.md</div>
+          <h3>Nunca asumas que el usuario quiere crackear/romper una contraseña. Si pide extraer credenciales de un archivo protegido, pregunta si tiene la contraseña del archivo antes de rechazar la tarea.</h3>
+          <p class="why">Why: Misunderstood Request recurrente — el asistente malinterpretó una petición de extracción de credenciales como intento de crackeo.</p>
+        </div>
+      </label>
+    </div>
+<div class="sugg-card" id="cfg-3" style="margin-bottom:10px">
+      <label>
+        <input type="checkbox" class="cfg-check" checked data-addition="En refactors CSS/UI, nunca elimines clases que parezcan no usadas sin buscar referencias en todo el proyecto (HTML, JS, y variables). Si rompes algo, revierte inmediatamente en vez de parchear." data-where="AGENTS.md">
+        <div>
+          <div class="tag">AGENTS.md</div>
+          <h3>En refactors CSS/UI, nunca elimines clases que parezcan no usadas sin buscar referencias en todo el proyecto (HTML, JS, y variables). Si rompes algo, revierte inmediatamente en vez de parchear.</h3>
+          <p class="why">Why: Excessive Changes (29 en 14d) y Buggy Code (33 en 14d) — limpieza agresiva eliminó clases funcionales causando regresiones en sponsor overrides, social colors y btn-circle.</p>
+        </div>
+      </label>
+    </div>
+<div class="sugg-card" id="cfg-4" style="margin-bottom:10px">
+      <label>
+        <input type="checkbox" class="cfg-check" checked data-addition="Para cambios en estilos visuales, valida con el usuario ANTES de aplicar si el cambio altera el diseño. Prioriza conservar el diseño visual existente salvo instrucción explícita." data-where="AGENTS.md">
+        <div>
+          <div class="tag">AGENTS.md</div>
+          <h3>Para cambios en estilos visuales, valida con el usuario ANTES de aplicar si el cambio altera el diseño. Prioriza conservar el diseño visual existente salvo instrucción explícita.</h3>
+          <p class="why">Why: User Rejected Action y Wrong Approach — cambios de sizing, posicionamiento y colores fueron rechazados por desviarse del diseño original.</p>
+        </div>
+      </label>
+    </div>
+<div class="sugg-card" id="cfg-5" style="margin-bottom:10px">
+      <label>
+        <input type="checkbox" class="cfg-check" checked data-addition="skills_dir: ~/.pi/agent/skills" data-where="settings.json">
+        <div>
+          <div class="tag">settings.json</div>
+          <h3>skills_dir: ~/.pi/agent/skills</h3>
+          <p class="why">Why: El usuario no tiene skills configurados — añadir el directorio permite crear plantillas para flujos repetitivos como debug_error (goal #1) y security_review (goal #2).</p>
+        </div>
+      </label>
+    </div>
+  </div>
+  <button class="copy-all-btn" onclick="copyAllConfig()">Copy Selected as AGENTS.md Block</button>
+  <div id="copy-all-output" style="display:none;margin-top:10px">
+    <div class="copy-box" id="copy-all-text"></div>
+    <button class="copy-btn" onclick="copyText('copy-all-text')">📋 Copy</button>
+  </div>
+
+  <h3 style="margin:24px 0 12px">Features to Try</h3>
+  <div class="card-grid cols2">
+    <div class="sugg-card">
+      <div class="tag">Skills</div>
+      <h3>Plantillas de prompt en Markdown invocables con /skill:name que estandarizan flujos repetitivos como debugging, code review, y actualización de dependencias.</h3>
+      <p>Tus top goals son debug_error, security_review, y dependency_update — flujos repetitivos perfectos para skills. Con ~50 sesiones/mes haciendo debugging, un skill estandarizado reduciría Wrong Approach y Buggy Code al darle al asistente un proceso fijo en vez de improvisar.</p>
+      <div class="copy-box">Crear ~/.pi/agent/skills/debug.md con pasos: 1) Reproduce el error 2) Traza la causa raíz con ctx_grep 3) Propón fix mínimo 4) Valida con test. Invocar con /skill:debug</div>
+      <button class="copy-btn" onclick="copyFromBox(this)">📋 Copy</button>
+    </div>
+<div class="sugg-card">
+      <div class="tag">Lifecycle hooks</div>
+      <h3>Extensiones que reaccionan a eventos tool_call, tool_result, before_agent_start para ejecutar validaciones automáticas como type checks o formateo.</h3>
+      <p>Buggy Code es tu fricción #2 (33 en 14d). Un hook en tool_result que ejecute phpstan o el linter del proyecto sobre los archivos modificados catcharía errores antes de que el usuario los vea, reduciendo iteraciones de corrección.</p>
+      <div class="copy-box">Extensión que en tool_result de 'edit' ejecuta './vendor/bin/phpstan analyse archivo_modificado.php' y notifica si hay errores nuevos</div>
+      <button class="copy-btn" onclick="copyFromBox(this)">📋 Copy</button>
+    </div>
+<div class="sugg-card">
+      <div class="tag">Extensions</div>
+      <h3>Módulos TypeScript que registran herramientas, comandos y atajos personalizados para automatizar acciones repetitivas.</h3>
+      <p>Haces dependency updates (goal #3), security reviews (goal #2), y migrationes frecuentemente. Una extensión que automatice 'composer outdated', 'npm audit', o 'security checker' ahorraría sesiones y reduciría cambios excesivos al estandarizar estos flujos.</p>
+      <div class="copy-box">Extensión ~/.pi/agent/extensions/dependency-audit.ts que expone un comando /audit-deps ejecutando composer outdated --direct y npm outdated y formateando resultado</div>
+      <button class="copy-btn" onclick="copyFromBox(this)">📋 Copy</button>
+    </div>
+  </div>
+
+  <h3 style="margin:24px 0 12px">Usage Patterns</h3>
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <div class="sugg-card">
+      <h3>Usa deepseek-v4-pro como default y deepseek-v4-flash para subagentes</h3>
+      <p>Tu transición a deepseek-v4-pro bajó costos 57% y errores 51%. Deepseek-v4-flash cuesta ~$0.02/sesión vs $2/sesión con v4-pro. Para tareas exploratorias con subagentes (scout, researcher), flash es suficiente.</p>
+      <p style="margin-top:8px;font-size:13px;color:var(--muted)">Tienes 117 sesiones con subagentes. Si usas v4-flash para el subagente researcher que explora código base y v4-pro solo para la sesión principal y tareas críticas (debugging, refactors de seguridad), tu costo promedio bajaría aún más de los $4.4/sesión actuales. En sesiones como la auditoría PHP legacy donde el subagente falló y tuviste que repetir manualmente, considera usar v4-pro también para subagentes en tareas de alta precisión.</p>
+      <div class="copy-box">/model deepseek-v4-pro  # Para sesión principal
+# En config de subagentes researcher/scout:
+# model: deepseek-v4-flash
+# Para subagentes de precisión (worker):
+# model: deepseek-v4-pro</div>
+      <button class="copy-btn" onclick="copyFromBox(this)">📋 Copy</button>
+    </div>
+<div class="sugg-card">
+      <h3>Crea un skill /security-review para el goal #2</h3>
+      <p>Security review es tu segundo goal más frecuente. Un skill estandarizado evitaría que el asistente improvise enfoques incorrectos y haría las revisiones más rápidas y completas.</p>
+      <p style="margin-top:8px;font-size:13px;color:var(--muted)">En la sesión de limpieza de configuración de subagentes (2026-05-30), el asistente inicialmente usó un enfoque de análisis amplio en vez de ir directo a los fixes, causando fricción. Un skill con checklist fijo (CSRF, XSS, SQLi, dependencias obsoletas, secretos en .env, etc.) aplicado sistemáticamente evitaría divagaciones. Combinado con el patrón de 'ejecutar un slice a la vez' que ya usas con éxito en tareas de API y migraciones.</p>
+      <div class="copy-box">/skill:security-review --scope=controllers,services --php-version=8.4 --framework=laravel-13
+Revisa según OWASP Top 10, ejecuta un slice a la vez, valida con phpstan nivel 5 después de cada cambio.</div>
+      <button class="copy-btn" onclick="copyFromBox(this)">📋 Copy</button>
+    </div>
+<div class="sugg-card">
+      <h3>Prepara un pre-prompt para cambios masivos de UI con checkpoints</h3>
+      <p>En refactors de UI (Bootstrap a Tailwind, modernización CSS), los cambios excesivos y código buggy causan regresiones dolorosas. Usa checkpoints explícitos y validación visual.</p>
+      <p style="margin-top:8px;font-size:13px;color:var(--muted)">La migración Bootstrap→Tailwind falló por conflictos globales CSS, y la modernización CSS de 39 archivos requirió múltiples iteraciones por clases eliminadas incorrectamente (per-sponsor, btn-circle, social colors). Un patrón de 'commit después de cada componente migrado + validar visualmente' reduciría el riesgo. Esto se alinea con tu instrucción de 'ejecutar un slice a la vez' que dio buenos resultados en la integración de Classlife API.</p>
+      <div class="copy-box">Vamos a hacer un refactor de UI paso a paso. Reglas:
+1. Migra UN componente a la vez (nav, luego footer, luego hero...)
+2. Antes de seguir, haz commit y verifica: '¿El diseño visual es idéntico al original?'
+3. Si hay regresión, revierte el último commit y ajusta antes de continuar
+4. No elimines ninguna clase CSS sin buscar referencias en TODO el proyecto (HTML, JS, PHP)
+5. Usa deepseek-v4-pro para precisión</div>
+      <button class="copy-btn" onclick="copyFromBox(this)">📋 Copy</button>
+    </div>
+<div class="sugg-card">
+      <h3>Usa subagente worker para PRs pequeños en refactors largos</h3>
+      <p>Dividir refactors grandes (Laravel refactoring, auditoría PHP) en PRs independientes ejecutados por el subagente worker reduce el riesgo de cambios excesivos y permite validación por slice.</p>
+      <p style="margin-top:8px;font-size:13px;color:var(--muted)">Tu sesión de auditoría profunda Laravel legacy generó un backlog de PRs ejecutables — esta estructura funcionó bien. El patrón de 'plan → dividir en PRs → ejecutar slice con subagente worker → test → commit' ya demostró éxito en la integración Classlife y en la migración a Laravel 13. Extiéndelo sistemáticamente a refactors de UI también. El subagente worker puede ejecutar un PR mientras tú validas el resultado, acelerando las sesiones de 491 horas acumuladas.</p>
+      <div class="copy-box">Analiza el plan de refactor y divide en PRs independientes (máximo 200 líneas cada uno):
+1. Cada PR debe ser atómico y testeable
+2. Asigna cada PR al subagente worker: /spawn worker --task='implementar PR-3: separar acciones de controladores'
+3. Después de cada PR, ejecuto phpstan y Pest
+4. Solo hago commit cuando los tests pasan</div>
+      <button class="copy-btn" onclick="copyFromBox(this)">📋 Copy</button>
+    </div>
+  </div>
+
+  <h3 style="margin:24px 0 12px;color:var(--red)">🛑 Consider Stopping</h3>
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <div class="card" style="border-left:3px solid var(--red)">
+      <h3 style="color:var(--red);font-size:14px">Delegar tareas de precisión (debugging, diagnóstico de errores) a subagentes sin supervisión directa — especialmente cuando el usuario ya ha corregido al asistente múltiples veces</h3>
+      <p style="color:var(--dim);margin-top:6px;font-size:13px">En la sesión de diagnóstico PHP deprecation, el asistente insistió en una causa incorrecta a pesar de múltiples correcciones del usuario (fricción: misunderstood_request 26.7, wrong_approach 19.4). En la auditoría Laravel profunda, un subagente scout falló forzando al usuario a pedir intervención manual. Los subagentes amplifican wrong_approach cuando la tarea requiere entender matices que solo el contexto completo de la conversación proporciona.</p>
+      <p style="color:var(--green);margin-top:6px;font-size:13px"><strong>Instead:</strong> Para debugging y diagnóstico, mantén la tarea en el agente principal con deepseek-v4-pro. Reserva subagentes para tareas bien acotadas y mecánicas: búsqueda de patrones en código (grep masivo), generación de tests repetitivos, o ejecución de PRs pre-definidos. Si el usuario corrige un diagnóstico una vez, no delegues el follow-up.</p>
+    </div>
+<div class="card" style="border-left:3px solid var(--red)">
+      <h3 style="color:var(--red);font-size:14px">Hacer commits sin que el usuario lo pida explícitamente, especialmente durante refactors en progreso</h3>
+      <p style="color:var(--dim);margin-top:6px;font-size:13px">En la sesión de refactorización sistemática Laravel, el asistente hizo commits no solicitados a pesar de instrucción explícita de no hacerlo. Esto cae en User Rejected Action (26 en 14d) y Excessive Changes — el usuario perdió control sobre el flujo de trabajo. En un refactor con múltiples archivos modificados (2003 archivos en el período), los commits no solicitados mezclan cambios no validados y complican revertir si algo falla.</p>
+      <p style="color:var(--green);margin-top:6px;font-size:13px"><strong>Instead:</strong> Solo haz commit cuando el usuario lo pida explícitamente o cuando un slice del plan esté completo Y validado con tests. Para checkpointing automático durante refactors largos, pregunta primero: '¿Hago commit de este componente ya validado?'</p>
+    </div>
+<div class="card" style="border-left:3px solid var(--red)">
+      <h3 style="color:var(--red);font-size:14px">Aplicar cambios en configuración de sistema (SSH, Bitwarden, mise, TablePlus) sin entender completamente el mecanismo subyacente — especialmente cuando el setup del usuario usa herramientas no estándar</h3>
+      <p style="color:var(--dim);margin-top:6px;font-size:13px">La sesión de SSH/tunnel con TablePlus fue un desastre: el asistente eliminó directivas User del SSH config y cambió configuración de agente sin entender el mecanismo de filtrado de claves de Bitwarden. Causó una regresión completa que requirió recuperación manual. El costo de 'arreglar lo que el asistente rompió' en config de sistema es altísimo porque puede dejar al usuario sin acceso a sus servidores.</p>
+      <p style="color:var(--green);margin-top:6px;font-size:13px"><strong>Instead:</strong> Para tareas de configuración de sistema, sigue el principio de 'primero explica, luego ejecuta con backup'. Antes de tocar ~/.ssh/config o similar: 1) Haz backup explícito con timestamp 2) Explica qué vas a cambiar y por qué 3) Espera confirmación. Si no entiendes cómo funciona una herramienta (Bitwarden key filtering), pregunta en vez de asumir.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── On the Horizon ── -->
+<section id="horizon">
+  <h2><span class="emoji">🚀</span> Future Workflows</h2>
+  <p style="color:var(--dim);margin-bottom:16px">AI-assisted development is rapidly shifting from conversational code editing toward autonomous, multi-agent workflows that self-correct against test suites and minimize human intervention.</p>
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <div class="horizon-card">
+      <h3>Self-Correcting Pipelines with Test-Driven Guardrails</h3>
+      <p>Pi can orchestrate autonomous refactoring pipelines where subagents propose changes, a dedicated test-runner agent validates them against your full test suite, and a reviewer agent rejects regressions automatically—all without human intervention. This eliminates the 'Buggy Code' and 'Excessive Changes' friction patterns by making every edit prove itself against real assertions before merging.</p>
+      <p class="how">Start by pairing a worker subagent with a test-runner subagent in your AGENTS.md config. Give the worker a refactoring goal and instruct it to halt if the test-runner reports any failures.</p>
+      <div class="copy-box">I want to set up a self-correcting refactoring pipeline. Configure my pi-agent so that when I request a refactor, the worker subagent makes changes and then spawns a test-runner subagent that executes 'composer test' and 'npm test'. If any test fails, the worker must revert its changes, analyze the failure output, and attempt an alternative approach—looping until all tests pass or 3 iterations are exhausted. Start by refactoring the UserController to use invokable actions, and report every iteration outcome.</div>
+      <button class="copy-btn" onclick="copyFromBox(this)">📋 Copy</button>
+    </div>
+<div class="horizon-card">
+      <h3>Parallel Subagents for Multi-File Feature Delivery</h3>
+      <p>Rather than sequentially editing files, Pi can decompose a feature request into independent slices and dispatch parallel subagents to implement the model, controller, validation, and frontend simultaneously. A coordinator agent then integrates all changes, resolves merge conflicts, and validates the assembled feature—turning hour-long multi-file sessions into minutes of autonomous execution.</p>
+      <p class="how">Use the architect skill to generate a task decomposition, then manually approve spawning parallel worker subagents. Observe how much faster the total workflow completes compared to sequential editing.</p>
+      <div class="copy-box">I want to build a 'team invitations' feature with email sending, token-based acceptance, and a dashboard UI. Use the architect subagent to decompose this into 4 independent slices: (1) Invitation model + migration, (2) InvitationController with send/accept actions, (3) InvitationRequest validation with Form Request, and (4) Blade dashboard with invitation list and resend button. Then spawn 4 parallel worker subagents, one per slice, with instructions to work independently. After all complete, spawn an integrator subagent to resolve any conflicts, run 'composer test', and report the final state.</div>
+      <button class="copy-btn" onclick="copyFromBox(this)">📋 Copy</button>
+    </div>
+<div class="horizon-card">
+      <h3>Friction-Aware Intent Clarification Before Execution</h3>
+      <p>The dominant friction pattern of 'Misunderstood Request' (37 occurrences in 14 days) can be eliminated by a pre-flight clarification loop where Pi paraphrases the goal, enumerates ambiguous edge cases, and asks targeted questions before making any edits. This prevents the costly back-and-forth that wastes 26% of session time and builds user trust through demonstrated understanding.</p>
+      <p class="how">Add a pre-execution clarification rule to your AGENTS.md that requires Pi to summarize the request and list any assumptions before touching code. Use the ask-user-question extension to gate execution on explicit approval.</p>
+      <div class="copy-box">Before making any changes, I want you to adopt a clarification-first workflow for this session. For every request I make: (1) Paraphrase what you think I want in 1-2 sentences, (2) List 2-3 specific edge cases or assumptions you'd make (e.g., 'I assume the JSON-LD goes in the head, not footer'), and (3) Ask me to confirm before proceeding. Do this now: I need to add a contact form with spam protection to the landing page.</div>
+      <button class="copy-btn" onclick="copyFromBox(this)">📋 Copy</button>
+    </div>
+  </div>
+</section>
+
+<!-- ── Model Efficiency ── -->
+<section id="model-efficiency">
+  <h2><span class="emoji">💸</span> Model Spend</h2>
+  <p style="color:var(--dim);margin-bottom:16px">You spend 64% of your PAYG budget ($559) on gpt-5.5, a high-tier model that's disproportionately expensive at $0.0142/1k-tok vs your mid-tier workhorses gpt-5.4-mini ($0.0018) and kimi-k2.6 ($0.0017). Your recent shift to deepseek-v4-pro cut costs 57% without degrading quality, proving you can offload complex work from gpt-5.5. Your deepseek-v4-flash-free subscription is underutilized with only 370 messages — you're leaving quota on the table.</p>
+
+  <div class="stat-grid">
+    <div class="stat-card">
+  <div class="stat-value">$5.97</div>
+  <div class="stat-label">Estimated Waste</div>
+  <div class="stat-sub">from model mismatch</div>
+</div>
+    <div class="stat-card">
+  <div class="stat-value">2</div>
+  <div class="stat-label">Efficiency Flags</div>
+  <div class="stat-sub">2 overspend, 0 underspend, 0 quota pressure</div>
+</div>
+    <div class="stat-card">
+  <div class="stat-value">10</div>
+  <div class="stat-label">Models Used</div>
+  
+</div>
+  </div>
+
+  <div class="charts-grid">
+    <div class="chart-box">
+      <h3>Cost by Model</h3>
+      <div class="bar-row">
+  <div class="bar-label">Gpt-5.5</div>
+  <div class="bar-track"><div class="bar-fill" style="width:100.0%"></div></div>
+  <div class="bar-count">55903</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Gpt-5.4-Mini</div>
+  <div class="bar-track"><div class="bar-fill" style="width:34.4%"></div></div>
+  <div class="bar-count">19225</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Kimi-K2.6</div>
+  <div class="bar-track"><div class="bar-fill" style="width:18.0%"></div></div>
+  <div class="bar-count">10080</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Deepseek-V4-Pro</div>
+  <div class="bar-track"><div class="bar-fill" style="width:2.2%"></div></div>
+  <div class="bar-count">1208</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Glm-5.1</div>
+  <div class="bar-track"><div class="bar-fill" style="width:0.6%"></div></div>
+  <div class="bar-count">327</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Qwen3.6-Plus</div>
+  <div class="bar-track"><div class="bar-fill" style="width:0.2%"></div></div>
+  <div class="bar-count">120</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Deepseek-V4-Flash</div>
+  <div class="bar-track"><div class="bar-fill" style="width:0.2%"></div></div>
+  <div class="bar-count">87</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Deepseek-V4-Flash-Free</div>
+  <div class="bar-track"><div class="bar-fill" style="width:0.0%"></div></div>
+  <div class="bar-count">0</div>
+</div>
+      <p class="muted" style="margin-top:8px;font-size:11px">Values in cents</p>
+    </div>
+    <div class="chart-box">
+      <h3>Messages by Model</h3>
+      <div class="bar-row">
+  <div class="bar-label">Gpt-5.4-Mini</div>
+  <div class="bar-track"><div class="bar-fill" style="width:100.0%"></div></div>
+  <div class="bar-count">12915</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Gpt-5.5</div>
+  <div class="bar-track"><div class="bar-fill" style="width:55.1%"></div></div>
+  <div class="bar-count">7115</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Kimi-K2.6</div>
+  <div class="bar-track"><div class="bar-fill" style="width:26.8%"></div></div>
+  <div class="bar-count">3462</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Deepseek-V4-Pro</div>
+  <div class="bar-track"><div class="bar-fill" style="width:8.7%"></div></div>
+  <div class="bar-count">1121</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Deepseek-V4-Flash</div>
+  <div class="bar-track"><div class="bar-fill" style="width:6.4%"></div></div>
+  <div class="bar-count">824</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Deepseek-V4-Flash-Free</div>
+  <div class="bar-track"><div class="bar-fill" style="width:2.9%"></div></div>
+  <div class="bar-count">370</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Glm-5.1</div>
+  <div class="bar-track"><div class="bar-fill" style="width:1.0%"></div></div>
+  <div class="bar-count">135</div>
+</div>
+<div class="bar-row">
+  <div class="bar-label">Minimax-M2.5-Free</div>
+  <div class="bar-track"><div class="bar-fill" style="width:0.4%"></div></div>
+  <div class="bar-count">49</div>
+</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px;border-left:3px solid var(--yellow)">
+    <h3 style="color:var(--yellow);font-size:14px">Overspend Pattern</h3>
+    <p style="color:var(--dim);margin-top:8px">gpt-5.5 consumes $559 across 43 sessions despite kimi-k2.6 and deepseek-v4-pro handling similar debugging, refactoring, and audit goals at 5-8x lower cost per token. The gpt-5.4-mini→gpt-5.5 cost ratio is nearly 8:1 for tasks that your session outcomes show can succeed on mid-tier models.</p>
+  </div>
+
+  <div class="card" style="margin-top:12px;border-left:3px solid var(--red)">
+    <h3 style="color:var(--red);font-size:14px">Underspend Pattern</h3>
+    <p style="color:var(--dim);margin-top:8px">deepseek-v4-flash ($0.0002/1k-tok) is used in only 40 sessions and gemma-4-31b-it in just 1 session with 3 messages — you're defaulting to gpt-5.4-mini even for trivial file reads, searches, and shell operations where flash-tier models would succeed at 9x lower cost.</p>
+  </div>
+
+  <div class="card" style="margin-top:12px;border-left:3px solid var(--blue)">
+    <h3 style="color:var(--blue);font-size:14px">Subscription Quota Pressure</h3>
+    <p style="color:var(--dim);margin-top:8px">Your deepseek-v4-flash-free subscription saw only 370 messages across 3 sessions — this quota is going unused. Route simple lookups, shell commands, and file operations here to preserve your PAYG budget for complex architectural work.</p>
+  </div>
+
+  <div class="card" style="margin-top:12px;border-left:3px solid var(--green)">
+    <h3 style="color:var(--green);font-size:14px">Recommendation</h3>
+    <p style="color:var(--dim);margin-top:8px">Reserve gpt-5.5 for the 10-15% of sessions involving multi-file architectural refactors or Laravel migrations. For everything else, default to deepseek-v4-pro as your primary model, use deepseek-v4-flash for simple edits and shell tasks, and offload file reads/searches to deepseek-v4-flash-free to maximize that subscription quota.</p>
+    <p style="color:var(--muted);margin-top:6px;font-size:12px;font-style:italic">Shifting 70% of gpt-5.5 usage to deepseek-v4-pro and routing simple operations through deepseek-v4-flash could preserve roughly $350-400/month in PAYG costs while extending your flash-free subscription quota for lightweight work.</p>
+  </div>
+
+  <h3 style="margin-top:24px;margin-bottom:12px">Flagged Sessions</h3>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div class="card" style="padding:14px 18px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <span class="badge yellow">overspend</span>
+          <span style="color:var(--dim);font-size:13px;margin-left:8px">2026-05-20 · gpt-5.5</span>
+        </div>
+        <span style="color:var(--accent);font-weight:600;font-size:14px">$11.66</span>
+      </div>
+      <p style="color:var(--dim);font-size:13px;margin-top:6px">Spent $11.66 on gpt-5.5 but outcome was partially_achieved. Tokens were burned without reaching the goal.</p>
+      <p style="color:var(--muted);font-size:12px;margin-top:4px">Modernizar una aplicación web PHP 7.0 legacy para que funcione en PHP 8.2, actua</p>
+    </div>
+<div class="card" style="padding:14px 18px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <span class="badge yellow">overspend</span>
+          <span style="color:var(--dim);font-size:13px;margin-left:8px">2026-05-28 · gpt-5.5</span>
+        </div>
+        <span style="color:var(--accent);font-weight:600;font-size:14px">$0.18</span>
+      </div>
+      <p style="color:var(--dim);font-size:13px;margin-top:6px">Used gpt-5.5 for a simple quick_question that completed successfully. A lower-tier model would likely suffice.</p>
+      <p style="color:var(--muted);font-size:12px;margin-top:4px">Configurar Stow para ignorar archivos .DS_Store al hacer symlinks de dotfiles al</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Fun Ending ── -->
+<section>
+  <div class="fun-box">
+    <div class="headline">User asked to decrypt a TablePlus file to extract saved MySQL passwords, but the assistant kept insisting they were trying to crack the file password — even though the user already knew it and just needed what was inside.</div>
+    <div class="detail">Happened in a session where the user's actual goal was straightforward credential extraction, but the assistant moralized about password cracking instead of helping with the real task.</div>
+  </div>
+</section>
+
+</div>
+<script>
+function copyText(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  navigator.clipboard.writeText(el.textContent).then(() => {
+    const btn = el.nextElementSibling;
+    if (btn) { btn.textContent = '✅ Copied'; setTimeout(() => { btn.textContent = '📋 Copy'; }, 2000); }
+  });
+}
+function copyFromBox(btn) {
+  const box = btn.previousElementSibling;
+  if (!box) return;
+  navigator.clipboard.writeText(box.textContent).then(() => {
+    btn.textContent = '✅ Copied';
+    setTimeout(() => { btn.textContent = '📋 Copy'; }, 2000);
+  });
+}
+function copyAllConfig() {
+  const checks = document.querySelectorAll('.cfg-check:checked');
+  const lines = ['# Pi AGENTS.md additions (generated by /insights)', ''];
+  for (const ch of checks) {
+    const where = ch.dataset.where || '';
+    const addition = ch.dataset.addition || '';
+    lines.push('# ' + where);
+    lines.push(addition);
+    lines.push('');
+  }
+  const text = lines.join('\n');
+  const out = document.getElementById('copy-all-output');
+  const textEl = document.getElementById('copy-all-text');
+  if (out && textEl) { textEl.textContent = text; out.style.display = 'block'; }
+  navigator.clipboard.writeText(text);
+}
+</script>
+</body>
+</html>

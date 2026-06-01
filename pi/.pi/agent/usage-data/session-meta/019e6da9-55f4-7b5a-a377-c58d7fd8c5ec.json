@@ -1,0 +1,66 @@
+{
+  "session_id": "019e6da9-55f4-7b5a-a377-c58d7fd8c5ec",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-contrib-dotfiles--/2026-05-28T08-17-54-676Z_019e6da9-55f4-7b5a-a377-c58d7fd8c5ec.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/contrib/dotfiles",
+  "start_time": "2026-05-28T08:17:54.676Z",
+  "duration_minutes": 329,
+  "user_message_count": 2,
+  "assistant_message_count": 27,
+  "tool_counts": {
+    "create_session_plan": 1,
+    "summarize_worktree": 1,
+    "ctx_ls": 4,
+    "subagent": 1,
+    "ctx_read": 33,
+    "ctx_find": 3,
+    "write": 6,
+    "edit": 5,
+    "ctx_shell": 4,
+    "add_daily_note": 1
+  },
+  "languages": {
+    "Markdown": 34,
+    "TypeScript": 9,
+    "JSON": 1
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 73185,
+  "output_tokens": 16643,
+  "total_cost": 0.12346663680000003,
+  "first_prompt": "he minimizado mi configuración de pi y honestamente, me encanta, la verdad, pero veo dos problemas que quiero que intentemos corregir, primero, siento que el contexto crece demasiado rápido y diría que no estamos agregando demasiado contexto, en general, pero analízalo, sobre todo me pasa con tareas",
+  "user_interruptions": 0,
+  "user_response_times": [],
+  "tool_errors": 8,
+  "tool_error_categories": {
+    "Other": 7,
+    "File Not Found": 1
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 253,
+  "lines_removed": 86,
+  "files_modified": 8,
+  "message_hours": [
+    10,
+    15
+  ],
+  "user_message_timestamps": [
+    "2026-05-28T08:22:01.796Z",
+    "2026-05-28T13:45:55.953Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 30310,
+      "output_tokens": 13480,
+      "cost": 0.1158789,
+      "message_count": 20
+    },
+    "deepseek-v4-flash": {
+      "input_tokens": 42875,
+      "output_tokens": 3163,
+      "cost": 0.0075877368000000014,
+      "message_count": 7
+    }
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "session_id": "019dfda8-db41-70ee-b4ac-14fd001432e9",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-06T14-19-55-075Z_019dfda8-db41-70ee-b4ac-14fd001432e9.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-06T14:19:55.075Z",
+  "duration_minutes": 1,
+  "user_message_count": 5,
+  "assistant_message_count": 69,
+  "tool_counts": {
+    "read": 29,
+    "mcp": 6,
+    "bash": 33,
+    "edit": 1,
+    "write": 3,
+    "memory_write": 1,
+    "subagent": 5
+  },
+  "languages": {
+    "Markdown": 3,
+    "JSON": 1
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 487070,
+  "output_tokens": 13458,
+  "total_cost": 0.7625918759999999,
+  "first_prompt": "En dashboard hay un pequeño bug, si entro como super-admin puedo leer, en el tenant 1, ageweb:\nEquipos totales\n4353 uds.\n\nAhora bien, si entro como responsable, es decir, usuario de un store, veo el\nmimo número de equipos.\n\nCon el mapa de ubicaciones pasa lo mismo, veo todas, solo debería ver las\npr",
+  "user_interruptions": 0,
+  "user_response_times": [
+    108.636,
+    80.626,
+    144.182,
+    16.381
+  ],
+  "tool_errors": 7,
+  "tool_error_categories": {
+    "Other": 6,
+    "File Not Found": 1
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 135,
+  "lines_removed": 40,
+  "files_modified": 2,
+  "message_hours": [
+    16,
+    16,
+    16,
+    16,
+    16
+  ],
+  "user_message_timestamps": [
+    "2026-05-06T14:04:27.511Z",
+    "2026-05-06T14:09:19.771Z",
+    "2026-05-06T14:11:32.581Z",
+    "2026-05-06T14:16:10.951Z",
+    "2026-05-06T14:19:56.977Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 481480,
+      "output_tokens": 11817,
+      "cost": 0.7571600999999999,
+      "message_count": 62
+    },
+    "deepseek-v4-flash": {
+      "input_tokens": 5590,
+      "output_tokens": 1641,
+      "cost": 0.005431775999999999,
+      "message_count": 7
+    }
+  }
+}

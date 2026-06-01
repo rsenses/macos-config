@@ -1,0 +1,74 @@
+{
+  "session_id": "019e1732-e97d-711d-a242-f91aca728d37",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-11T13-21-13-086Z_019e1732-e97d-711d-a242-f91aca728d37.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-11T13:21:13.086Z",
+  "duration_minutes": 2,
+  "user_message_count": 5,
+  "assistant_message_count": 28,
+  "tool_counts": {
+    "subagent": 4,
+    "mcp": 2,
+    "read_window": 14,
+    "project_files": 1,
+    "bash": 4,
+    "write": 1,
+    "edit": 5,
+    "read": 6,
+    "project_search": 2,
+    "grep": 2
+  },
+  "languages": {
+    "Markdown": 4
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 105186,
+  "output_tokens": 11915,
+  "total_cost": 0.11771289,
+  "first_prompt": "Use the `orchestrator` skill for this task.\n\nPlan the following task without modifying files. Use loaded project memory as context, but do not write memory, daily notes, or plan files during this read-only planning command.\n\nTask:\nHola, vamos a analizar y planear una nueva feature, sobre todo, ver q",
+  "user_interruptions": 0,
+  "user_response_times": [
+    555.089,
+    27.247,
+    6.18,
+    7.391
+  ],
+  "tool_errors": 3,
+  "tool_error_categories": {
+    "Other": 3
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 91,
+  "lines_removed": 21,
+  "files_modified": 5,
+  "message_hours": [
+    15,
+    15,
+    15,
+    15,
+    15
+  ],
+  "user_message_timestamps": [
+    "2026-05-11T13:08:19.670Z",
+    "2026-05-11T13:19:59.792Z",
+    "2026-05-11T13:20:27.069Z",
+    "2026-05-11T13:20:44.653Z",
+    "2026-05-11T13:21:14.722Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 71505,
+      "output_tokens": 5674,
+      "cost": 0.11038094999999999,
+      "message_count": 18
+    },
+    "deepseek-v4-flash": {
+      "input_tokens": 33681,
+      "output_tokens": 6241,
+      "cost": 0.007331940000000002,
+      "message_count": 10
+    }
+  }
+}

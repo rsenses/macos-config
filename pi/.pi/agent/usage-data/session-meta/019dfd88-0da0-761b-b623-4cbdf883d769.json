@@ -1,0 +1,95 @@
+{
+  "session_id": "019dfd88-0da0-761b-b623-4cbdf883d769",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-06T13-44-05-282Z_019dfd88-0da0-761b-b623-4cbdf883d769.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-06T13:44:05.282Z",
+  "duration_minutes": 0,
+  "user_message_count": 11,
+  "assistant_message_count": 111,
+  "tool_counts": {
+    "read": 32,
+    "mcp": 2,
+    "subagent": 6,
+    "bash": 44,
+    "memory_write": 4,
+    "write": 3,
+    "edit": 25
+  },
+  "languages": {
+    "Markdown": 7
+  },
+  "git_commits": 1,
+  "git_pushes": 0,
+  "input_tokens": 427962,
+  "output_tokens": 19110,
+  "total_cost": 4.123474103200002,
+  "first_prompt": "Vamos a analizar y planear, en caso necesario, un issue de github\n Isolate cache warmup from AppServiceProvider boot #247\n\n Problem\n\n AppServiceProvider hace trabajo de “boot” que depende de la base de datos y de\n tablas existentes para precargar cachés. Eso introduce efectos laterales en el\n arranq",
+  "user_interruptions": 0,
+  "user_response_times": [
+    294.856,
+    75.226,
+    2125.138,
+    57.792,
+    30.742,
+    48.72,
+    52.018,
+    25.909,
+    122.415,
+    12.516
+  ],
+  "tool_errors": 5,
+  "tool_error_categories": {
+    "Other": 5
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 291,
+  "lines_removed": 190,
+  "files_modified": 13,
+  "message_hours": [
+    14,
+    14,
+    14,
+    15,
+    15,
+    15,
+    15,
+    15,
+    15,
+    15,
+    15
+  ],
+  "user_message_timestamps": [
+    "2026-05-06T12:37:35.951Z",
+    "2026-05-06T12:45:19.670Z",
+    "2026-05-06T12:46:34.907Z",
+    "2026-05-06T13:31:46.137Z",
+    "2026-05-06T13:33:42.206Z",
+    "2026-05-06T13:35:18.405Z",
+    "2026-05-06T13:38:23.769Z",
+    "2026-05-06T13:40:31.313Z",
+    "2026-05-06T13:41:28.740Z",
+    "2026-05-06T13:43:39.404Z",
+    "2026-05-06T13:44:07.238Z"
+  ],
+  "model_usage": {
+    "gpt-5.5": {
+      "input_tokens": 264335,
+      "output_tokens": 14203,
+      "cost": 3.890485000000001,
+      "message_count": 90
+    },
+    "gpt-5.4-mini": {
+      "input_tokens": 156848,
+      "output_tokens": 4636,
+      "cost": 0.23157960000000002,
+      "message_count": 19
+    },
+    "deepseek-v4-flash": {
+      "input_tokens": 6779,
+      "output_tokens": 271,
+      "cost": 0.0014095032,
+      "message_count": 2
+    }
+  }
+}

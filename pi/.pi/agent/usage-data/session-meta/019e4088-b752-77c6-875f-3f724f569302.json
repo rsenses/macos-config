@@ -1,0 +1,40 @@
+{
+  "session_id": "019e4088-b752-77c6-875f-3f724f569302",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-contrib-dotfiles--/2026-05-19T13-59-22-194Z_019e4088-b752-77c6-875f-3f724f569302.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/contrib/dotfiles",
+  "start_time": "2026-05-19T13:59:22.194Z",
+  "duration_minutes": 0,
+  "user_message_count": 1,
+  "assistant_message_count": 1,
+  "tool_counts": {},
+  "languages": {},
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "total_cost": 0,
+  "first_prompt": "hax",
+  "user_interruptions": 0,
+  "user_response_times": [],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_subagent": false,
+  "uses_mcp": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    15
+  ],
+  "user_message_timestamps": [
+    "2026-05-19T13:59:24.737Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost": 0,
+      "message_count": 1
+    }
+  }
+}

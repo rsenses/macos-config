@@ -1,0 +1,79 @@
+{
+  "session_id": "019df7fd-357e-706a-b4bd-0302385c9c24",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-05T11-54-19-902Z_019df7fd-357e-706a-b4bd-0302385c9c24.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-05T11:54:19.902Z",
+  "duration_minutes": 3,
+  "user_message_count": 7,
+  "assistant_message_count": 97,
+  "tool_counts": {
+    "fffind": 6,
+    "bash": 36,
+    "read": 50,
+    "subagent": 4,
+    "mcp": 3,
+    "edit": 15,
+    "write": 1,
+    "grep": 2
+  },
+  "languages": {
+    "JavaScript": 2,
+    "Markdown": 2
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 1189471,
+  "output_tokens": 33192,
+  "total_cost": 0.49914915000000004,
+  "first_prompt": "en un comit de hace unos días nos hemos cargado algo necesario, primero, analiza /Users/rubensilvarodriguez/dev/www/gda.metech.es y busca de donde obtiene la info de patrones del desplegable 'Patrón utilizado:'",
+  "user_interruptions": 0,
+  "user_response_times": [
+    1111.468,
+    2062.198,
+    733.896,
+    23.635,
+    7.077,
+    5.017
+  ],
+  "tool_errors": 12,
+  "tool_error_categories": {
+    "Other": 12
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 344,
+  "lines_removed": 205,
+  "files_modified": 13,
+  "message_hours": [
+    12,
+    12,
+    13,
+    13,
+    13,
+    13,
+    13
+  ],
+  "user_message_timestamps": [
+    "2026-05-05T10:40:03.077Z",
+    "2026-05-05T10:59:03.701Z",
+    "2026-05-05T11:36:36.157Z",
+    "2026-05-05T11:49:53.929Z",
+    "2026-05-05T11:50:17.575Z",
+    "2026-05-05T11:50:39.704Z",
+    "2026-05-05T11:54:21.851Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 156011,
+      "output_tokens": 23813,
+      "cost": 0.49914915000000004,
+      "message_count": 72
+    },
+    "minimax-m2.5-free": {
+      "input_tokens": 1033460,
+      "output_tokens": 9379,
+      "cost": 0,
+      "message_count": 25
+    }
+  }
+}

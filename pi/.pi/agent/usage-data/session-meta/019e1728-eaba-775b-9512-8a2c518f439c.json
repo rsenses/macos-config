@@ -1,0 +1,51 @@
+{
+  "session_id": "019e1728-eaba-775b-9512-8a2c518f439c",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-11T13-10-18-044Z_019e1728-eaba-775b-9512-8a2c518f439c.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-11T13:10:18.044Z",
+  "duration_minutes": 0,
+  "user_message_count": 2,
+  "assistant_message_count": 9,
+  "tool_counts": {
+    "subagent": 3,
+    "mcp": 1,
+    "read_window": 10,
+    "write": 1
+  },
+  "languages": {
+    "Markdown": 1
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 39620,
+  "output_tokens": 3306,
+  "total_cost": 0.055420800000000006,
+  "first_prompt": "Use the `orchestrator` skill for this task.\n\nPlan the following task without modifying files. Use loaded project memory as context, but do not write memory, daily notes, or plan files during this read-only planning command.\n\nTask:\nHola, vamos a analizar y planear una nueva feature, sobre todo, ver q",
+  "user_interruptions": 0,
+  "user_response_times": [
+    5.91
+  ],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 79,
+  "lines_removed": 0,
+  "files_modified": 1,
+  "message_hours": [
+    15,
+    15
+  ],
+  "user_message_timestamps": [
+    "2026-05-11T13:08:19.670Z",
+    "2026-05-11T13:10:19.768Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 39620,
+      "output_tokens": 3306,
+      "cost": 0.055420800000000006,
+      "message_count": 9
+    }
+  }
+}

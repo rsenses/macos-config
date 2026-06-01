@@ -1,0 +1,75 @@
+{
+  "session_id": "019e6309-5fa4-7e42-919a-2d67b0f5bcaa",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-contrib-dotfiles--/2026-05-26T06-46-59-236Z_019e6309-5fa4-7e42-919a-2d67b0f5bcaa.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/contrib/dotfiles",
+  "start_time": "2026-05-26T06:46:59.236Z",
+  "duration_minutes": 24,
+  "user_message_count": 6,
+  "assistant_message_count": 61,
+  "tool_counts": {
+    "create_session_plan": 2,
+    "summarize_worktree": 1,
+    "ctx_ls": 2,
+    "ctx_grep": 3,
+    "ctx_shell": 41,
+    "ctx_find": 3,
+    "ctx_read": 9,
+    "get_current_plan": 3,
+    "write": 5,
+    "add_daily_note": 3,
+    "edit": 2,
+    "web_search": 1
+  },
+  "languages": {
+    "Shell": 2,
+    "Markdown": 1
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 122423,
+  "output_tokens": 22276,
+  "total_cost": 0.28348965000000004,
+  "first_prompt": "vamos a hacer un pequeño script que guardaremos en @bin/.local/bin/ para importar archivos sql, usaremos fzf para seleccionar los archivos de /Users/rubensilvarodriguez/data/work/docs/topics/general/sql tanto en gz como .sql y usaremos fzf para elegir la base de datos de localhost, siempre para mari",
+  "user_interruptions": 0,
+  "user_response_times": [
+    250.419,
+    107.954,
+    63.102,
+    492.879,
+    12.475
+  ],
+  "tool_errors": 12,
+  "tool_error_categories": {
+    "Other": 11,
+    "File Not Found": 1
+  },
+  "uses_subagent": false,
+  "uses_mcp": false,
+  "lines_added": 557,
+  "lines_removed": 21,
+  "files_modified": 3,
+  "message_hours": [
+    8,
+    8,
+    8,
+    9,
+    9,
+    9
+  ],
+  "user_message_timestamps": [
+    "2026-05-26T06:48:59.444Z",
+    "2026-05-26T06:56:00.808Z",
+    "2026-05-26T06:58:14.509Z",
+    "2026-05-26T07:00:24.448Z",
+    "2026-05-26T07:08:52.930Z",
+    "2026-05-26T07:09:05.478Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 122423,
+      "output_tokens": 22276,
+      "cost": 0.28348965000000004,
+      "message_count": 61
+    }
+  }
+}

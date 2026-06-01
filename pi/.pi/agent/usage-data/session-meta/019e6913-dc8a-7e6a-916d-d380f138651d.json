@@ -1,0 +1,71 @@
+{
+  "session_id": "019e6913-dc8a-7e6a-916d-d380f138651d",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-escuelaunidadeditorial.es--/2026-05-27T10-56-09-866Z_019e6913-dc8a-7e6a-916d-d380f138651d.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/escuelaunidadeditorial.es",
+  "start_time": "2026-05-27T10:56:09.866Z",
+  "duration_minutes": 23,
+  "user_message_count": 5,
+  "assistant_message_count": 45,
+  "tool_counts": {
+    "ctx_read": 23,
+    "web_fetch": 3,
+    "ctx_find": 5,
+    "ctx_ls": 3,
+    "create_session_plan": 1,
+    "ctx_grep": 3,
+    "web_search": 1,
+    "read": 1,
+    "write": 3,
+    "add_daily_note": 2,
+    "edit": 5,
+    "ctx_shell": 6
+  },
+  "languages": {
+    "YAML": 10,
+    "Markdown": 11
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 140042,
+  "output_tokens": 17828,
+  "total_cost": 0,
+  "first_prompt": "mira, te paso el contenido de un chat, a ver si puedes compronarlo, de que va la tarea? es un ecommerce, supuestamente está implementado, pero hay que habilitar una api con classlife cuando se confirma el pago: Línea 100: Después de crear el pago exitosamente. Este es el lugar más confiable porque e",
+  "user_interruptions": 0,
+  "user_response_times": [
+    119.432,
+    301.694,
+    594.131,
+    36.702
+  ],
+  "tool_errors": 11,
+  "tool_error_categories": {
+    "Other": 11
+  },
+  "uses_subagent": false,
+  "uses_mcp": false,
+  "lines_added": 526,
+  "lines_removed": 29,
+  "files_modified": 4,
+  "message_hours": [
+    12,
+    13,
+    13,
+    13,
+    13
+  ],
+  "user_message_timestamps": [
+    "2026-05-27T10:58:08.822Z",
+    "2026-05-27T11:00:38.841Z",
+    "2026-05-27T11:06:23.623Z",
+    "2026-05-27T11:16:56.348Z",
+    "2026-05-27T11:17:33.063Z"
+  ],
+  "model_usage": {
+    "deepseek-v4-flash-free": {
+      "input_tokens": 140042,
+      "output_tokens": 17828,
+      "cost": 0,
+      "message_count": 45
+    }
+  }
+}

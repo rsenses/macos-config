@@ -1,0 +1,70 @@
+{
+  "session_id": "019e1ca4-dda3-71bf-a803-31a46900b04f",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-12T14-43-47-236Z_019e1ca4-dda3-71bf-a803-31a46900b04f.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-12T14:43:47.236Z",
+  "duration_minutes": 2,
+  "user_message_count": 4,
+  "assistant_message_count": 94,
+  "tool_counts": {
+    "subagent": 3,
+    "project_files": 7,
+    "project_search": 55,
+    "mcp": 4,
+    "read_window": 34,
+    "bash": 18,
+    "write": 8,
+    "edit": 11,
+    "read": 8
+  },
+  "languages": {
+    "Markdown": 7
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 330047,
+  "output_tokens": 25533,
+  "total_cost": 0.6627302400000001,
+  "first_prompt": "me he cansado de la parte de templates, es poco operativa, primero, vamos a arreglar unos issues: # Illuminate\\View\\ViewException: Undefined array key \"code\" (View: /home/ploi/metech.wyrko.es-deploy/metech.wyrko.es/12052026_095842/resources/views/templates/attach/_search.blade.php) (View: /home/ploi",
+  "user_interruptions": 0,
+  "user_response_times": [
+    352.683,
+    345.61,
+    12.481
+  ],
+  "tool_errors": 9,
+  "tool_error_categories": {
+    "Other": 9
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 258,
+  "lines_removed": 86,
+  "files_modified": 9,
+  "message_hours": [
+    16,
+    16,
+    16,
+    16
+  ],
+  "user_message_timestamps": [
+    "2026-05-12T14:22:51.290Z",
+    "2026-05-12T14:31:15.734Z",
+    "2026-05-12T14:42:16.003Z",
+    "2026-05-12T14:43:49.002Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 241658,
+      "output_tokens": 20216,
+      "cost": 0.6447723000000001,
+      "message_count": 78
+    },
+    "deepseek-v4-flash": {
+      "input_tokens": 88389,
+      "output_tokens": 5317,
+      "cost": 0.01795794,
+      "message_count": 16
+    }
+  }
+}

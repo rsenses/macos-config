@@ -1,0 +1,79 @@
+{
+  "session_id": "019e3a72-d24d-723a-a78f-4c90b6b25614",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-18T09-37-44-013Z_019e3a72-d24d-723a-a78f-4c90b6b25614.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-18T09:37:44.013Z",
+  "duration_minutes": 1,
+  "user_message_count": 8,
+  "assistant_message_count": 46,
+  "tool_counts": {
+    "bash": 21,
+    "read": 44,
+    "write": 3,
+    "edit": 3,
+    "subagent": 4,
+    "mcp": 2
+  },
+  "languages": {
+    "Markdown": 16
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 167706,
+  "output_tokens": 20225,
+  "total_cost": 0.27244432560000004,
+  "first_prompt": "de momento vamos a analizar algo para que lo entiendas bien, luego te diré lo que quiero. Las exportaciones se hacen con @app/Exports/XlsxExporter.php pero de dos formas distintas, todos tiene descarga directa, por ejemplo, @app/Exports/ProductsExport.php excepto una, @app/Exports/ToolsExport.php qu",
+  "user_interruptions": 0,
+  "user_response_times": [
+    206.463,
+    74.802,
+    60.856,
+    36.114,
+    23.791,
+    3.591,
+    7.956
+  ],
+  "tool_errors": 8,
+  "tool_error_categories": {
+    "Other": 8
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 281,
+  "lines_removed": 59,
+  "files_modified": 4,
+  "message_hours": [
+    11,
+    11,
+    11,
+    11,
+    11,
+    11,
+    11,
+    11
+  ],
+  "user_message_timestamps": [
+    "2026-05-18T09:26:38.079Z",
+    "2026-05-18T09:30:42.080Z",
+    "2026-05-18T09:31:56.895Z",
+    "2026-05-18T09:33:15.318Z",
+    "2026-05-18T09:33:51.441Z",
+    "2026-05-18T09:34:15.250Z",
+    "2026-05-18T09:34:57.260Z",
+    "2026-05-18T09:37:45.597Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 108714,
+      "output_tokens": 16086,
+      "cost": 0.2621721000000001,
+      "message_count": 40
+    },
+    "deepseek-v4-flash": {
+      "input_tokens": 58992,
+      "output_tokens": 4139,
+      "cost": 0.0102722256,
+      "message_count": 6
+    }
+  }
+}

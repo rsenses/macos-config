@@ -1,0 +1,58 @@
+{
+  "session_id": "019e3b24-0c86-7b11-844d-2e088ff06086",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-18T12-51-18-790Z_019e3b24-0c86-7b11-844d-2e088ff06086.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-18T12:51:18.790Z",
+  "duration_minutes": 5,
+  "user_message_count": 2,
+  "assistant_message_count": 43,
+  "tool_counts": {
+    "bash": 9,
+    "subagent": 1,
+    "write": 1,
+    "edit": 9,
+    "mcp": 5,
+    "read": 25,
+    "ast_grep": 4
+  },
+  "languages": {
+    "Markdown": 7
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 98671,
+  "output_tokens": 11205,
+  "total_cost": 0.22956495,
+  "first_prompt": "ejecuta composer test y soluciona todos",
+  "user_interruptions": 0,
+  "user_response_times": [
+    36.582
+  ],
+  "tool_errors": 10,
+  "tool_error_categories": {
+    "File Not Found": 1,
+    "Other": 8,
+    "Edit Failed": 1
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 61,
+  "lines_removed": 39,
+  "files_modified": 6,
+  "message_hours": [
+    14,
+    14
+  ],
+  "user_message_timestamps": [
+    "2026-05-18T12:51:44.012Z",
+    "2026-05-18T12:55:55.148Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 98671,
+      "output_tokens": 11205,
+      "cost": 0.22956495,
+      "message_count": 43
+    }
+  }
+}

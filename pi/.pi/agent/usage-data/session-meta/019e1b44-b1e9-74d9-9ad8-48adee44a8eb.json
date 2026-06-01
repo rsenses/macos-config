@@ -1,0 +1,53 @@
+{
+  "session_id": "019e1b44-b1e9-74d9-9ad8-48adee44a8eb",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-contrib-dotfiles--/2026-05-12T08-19-07-375Z_019e1b44-b1e9-74d9-9ad8-48adee44a8eb.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/contrib/dotfiles",
+  "start_time": "2026-05-12T08:19:07.375Z",
+  "duration_minutes": 3,
+  "user_message_count": 1,
+  "assistant_message_count": 27,
+  "tool_counts": {
+    "project_files": 4,
+    "project_search": 2,
+    "read_window": 7,
+    "bash": 6,
+    "write": 1,
+    "edit": 9,
+    "read": 1
+  },
+  "languages": {
+    "TypeScript": 10,
+    "Markdown": 8
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 26318,
+  "output_tokens": 7668,
+  "total_cost": 0.0913773,
+  "first_prompt": "un fallo en @pi/.pi/agent/extensions/project-context.ts que he detectado:  project_search\n project_search failed.\n\n Command: rg \"--line-number\" \"--column\" \"--hidden\" \"--color\" \"never\" \"--max-count\" \"8\" \"--glob\" \"!.git/**\" \"--glob\" \"!.ai/**\" \"--glob\" \"!node_modules/**\" \"--glob\" \"!vendor/**\" \"--glob\" ",
+  "user_interruptions": 0,
+  "user_response_times": [],
+  "tool_errors": 2,
+  "tool_error_categories": {
+    "Other": 2
+  },
+  "uses_subagent": false,
+  "uses_mcp": false,
+  "lines_added": 72,
+  "lines_removed": 38,
+  "files_modified": 5,
+  "message_hours": [
+    10
+  ],
+  "user_message_timestamps": [
+    "2026-05-12T08:19:27.438Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 26318,
+      "output_tokens": 7668,
+      "cost": 0.0913773,
+      "message_count": 27
+    }
+  }
+}

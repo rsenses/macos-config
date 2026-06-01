@@ -1,0 +1,85 @@
+{
+  "session_id": "019e5e68-aecf-756b-bf75-c0b1878f3768",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-contrib-dotfiles--/2026-05-25T09-12-59-344Z_019e5e68-aecf-756b-bf75-c0b1878f3768.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/contrib/dotfiles",
+  "start_time": "2026-05-25T09:12:59.344Z",
+  "duration_minutes": 50,
+  "user_message_count": 9,
+  "assistant_message_count": 68,
+  "tool_counts": {
+    "create_session_plan": 3,
+    "ctx_ls": 9,
+    "ctx_find": 3,
+    "subagent": 1,
+    "ctx_read": 58,
+    "ctx_grep": 18,
+    "ctx_shell": 13,
+    "add_daily_note": 2,
+    "edit": 12,
+    "write": 2,
+    "lsp_document_symbols": 1,
+    "ask_user_question": 1,
+    "web_fetch": 2
+  },
+  "languages": {
+    "JSON": 6,
+    "Markdown": 41,
+    "TypeScript": 27
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 491643,
+  "output_tokens": 50783,
+  "total_cost": 0.9553741500000001,
+  "first_prompt": "Quiero que evalúes mi configuración actual de Pi como sistema de trabajo con agentes.\n\nRepositorio/configuración a revisar:\nhttps://github.com/rsenses/macos-config/tree/main/pi\n\nContexto importante:\n\nEstoy construyendo un workflow de IA para desarrollo de software, principalmente Laravel/PHP, aunque",
+  "user_interruptions": 0,
+  "user_response_times": [
+    487.403,
+    307.228,
+    95.24,
+    156.958,
+    93.556,
+    63.604,
+    784.082,
+    237.931
+  ],
+  "tool_errors": 13,
+  "tool_error_categories": {
+    "Other": 13
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 376,
+  "lines_removed": 92,
+  "files_modified": 4,
+  "message_hours": [
+    11,
+    11,
+    11,
+    11,
+    11,
+    11,
+    11,
+    11,
+    12
+  ],
+  "user_message_timestamps": [
+    "2026-05-25T09:13:13.866Z",
+    "2026-05-25T09:27:58.097Z",
+    "2026-05-25T09:33:05.373Z",
+    "2026-05-25T09:35:53.861Z",
+    "2026-05-25T09:38:30.862Z",
+    "2026-05-25T09:40:04.489Z",
+    "2026-05-25T09:41:08.151Z",
+    "2026-05-25T09:57:17.594Z",
+    "2026-05-25T10:01:36.924Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 491643,
+      "output_tokens": 50783,
+      "cost": 0.9553741500000001,
+      "message_count": 68
+    }
+  }
+}

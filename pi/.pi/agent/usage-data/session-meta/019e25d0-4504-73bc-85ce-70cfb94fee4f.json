@@ -1,0 +1,40 @@
+{
+  "session_id": "019e25d0-4504-73bc-85ce-70cfb94fee4f",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-14T09-27-46-700Z_019e25d0-4504-73bc-85ce-70cfb94fee4f.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-14T09:27:46.700Z",
+  "duration_minutes": 5,
+  "user_message_count": 1,
+  "assistant_message_count": 1,
+  "tool_counts": {},
+  "languages": {},
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 20078,
+  "output_tokens": 277,
+  "total_cost": 0.016305,
+  "first_prompt": "[2026-05-14 09:32:16] local.ERROR: Undefined property: App\\Observers\\ActionObserver::$integrationDispatcher {\"userId\":1,\"exception\":\"[object] (ErrorException(code: 0): Undefined property: App\\\\Observers\\\\ActionObserver::$integrationDispatcher at /Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.wor",
+  "user_interruptions": 0,
+  "user_response_times": [],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_subagent": false,
+  "uses_mcp": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    11
+  ],
+  "user_message_timestamps": [
+    "2026-05-14T09:32:50.490Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 20078,
+      "output_tokens": 277,
+      "cost": 0.016305,
+      "message_count": 1
+    }
+  }
+}

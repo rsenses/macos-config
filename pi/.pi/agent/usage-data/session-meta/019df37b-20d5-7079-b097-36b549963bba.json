@@ -1,0 +1,54 @@
+{
+  "session_id": "019df37b-20d5-7079-b097-36b549963bba",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-04T14-53-46-071Z_019df37b-20d5-7079-b097-36b549963bba.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-04T14:53:46.071Z",
+  "duration_minutes": 11,
+  "user_message_count": 2,
+  "assistant_message_count": 44,
+  "tool_counts": {
+    "read": 7,
+    "bash": 23,
+    "mcp": 2,
+    "fffind": 2,
+    "edit": 9
+  },
+  "languages": {
+    "Markdown": 2
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 125768,
+  "output_tokens": 24759,
+  "total_cost": 0.3279687,
+  "first_prompt": "hay algo que está mal en @app/Console/Commands/ImportOrderCommand.php con la fecha, si revisas el archivo /Users/rubensilvarodriguez/Downloads/BBDD\\ AM\\ MANTO\\ AGE.csv\ny buscas el cid 264473 al importarlo la fecha que aparece es 2023-11-16 y según las normas que introducimos en su día, debería ser 2",
+  "user_interruptions": 0,
+  "user_response_times": [
+    135.067
+  ],
+  "tool_errors": 5,
+  "tool_error_categories": {
+    "Other": 5
+  },
+  "uses_subagent": false,
+  "uses_mcp": false,
+  "lines_added": 100,
+  "lines_removed": 91,
+  "files_modified": 2,
+  "message_hours": [
+    16,
+    17
+  ],
+  "user_message_timestamps": [
+    "2026-05-04T14:56:31.580Z",
+    "2026-05-04T15:03:02.860Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 125768,
+      "output_tokens": 24759,
+      "cost": 0.3279687,
+      "message_count": 44
+    }
+  }
+}

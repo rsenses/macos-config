@@ -1,0 +1,48 @@
+{
+  "session_id": "019e1b8a-465e-7129-ae9a-9636e120088a",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-feature-api-request--/2026-05-12T09-35-07-363Z_019e1b8a-465e-7129-ae9a-9636e120088a.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/feature-api-request",
+  "start_time": "2026-05-12T09:35:07.363Z",
+  "duration_minutes": 3,
+  "user_message_count": 1,
+  "assistant_message_count": 16,
+  "tool_counts": {
+    "read": 4,
+    "project_files": 3,
+    "bash": 5,
+    "write": 5,
+    "edit": 1
+  },
+  "languages": {
+    "Markdown": 10
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 28100,
+  "output_tokens": 4281,
+  "total_cost": 0.0671043,
+  "first_prompt": "por el cambio en como hacemos memory, daily, etc, hay conflictos en esta rama al hacer merge desde la rama develop, concretamente:\n❯ git merge develop\n[hint] usa: gm → git merge\nAuto-merging .ai/MEMORY.md\nCONFLICT (add/add): Merge conflict in .ai/MEMORY.md\nAuto-merging .ai/TASKS.md\nCONFLICT (add/add",
+  "user_interruptions": 0,
+  "user_response_times": [],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_subagent": false,
+  "uses_mcp": false,
+  "lines_added": 100,
+  "lines_removed": 3,
+  "files_modified": 5,
+  "message_hours": [
+    11
+  ],
+  "user_message_timestamps": [
+    "2026-05-12T09:37:10.017Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 28100,
+      "output_tokens": 4281,
+      "cost": 0.0671043,
+      "message_count": 16
+    }
+  }
+}

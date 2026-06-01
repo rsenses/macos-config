@@ -1,0 +1,90 @@
+{
+  "session_id": "019e45e7-b88c-7966-88c4-2c06b84e7586",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-tedagua.com--/2026-05-20T15-01-14-508Z_019e45e7-b88c-7966-88c4-2c06b84e7586.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/tedagua.com",
+  "start_time": "2026-05-20T15:01:14.508Z",
+  "duration_minutes": 4,
+  "user_message_count": 9,
+  "assistant_message_count": 132,
+  "tool_counts": {
+    "create_session_plan": 1,
+    "ctx_ls": 3,
+    "ctx_find": 7,
+    "ctx_read": 25,
+    "ctx_grep": 24,
+    "ctx_shell": 70,
+    "edit": 13,
+    "write": 3,
+    "add_daily_note": 3,
+    "subagent": 2,
+    "read": 9,
+    "grep": 1
+  },
+  "languages": {
+    "JSON": 5,
+    "Markdown": 7
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 667300,
+  "output_tokens": 38737,
+  "total_cost": 8.267997788800004,
+  "first_prompt": "esta",
+  "user_interruptions": 0,
+  "user_response_times": [
+    73.429,
+    1154.368,
+    392.221,
+    204.861,
+    310.796,
+    88.187,
+    79.249,
+    12.263
+  ],
+  "tool_errors": 19,
+  "tool_error_categories": {
+    "Other": 18,
+    "Command Failed": 1
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 309,
+  "lines_removed": 92,
+  "files_modified": 7,
+  "message_hours": [
+    16,
+    16,
+    16,
+    16,
+    16,
+    16,
+    16,
+    17,
+    17
+  ],
+  "user_message_timestamps": [
+    "2026-05-20T14:09:07.093Z",
+    "2026-05-20T14:10:20.576Z",
+    "2026-05-20T14:32:19.467Z",
+    "2026-05-20T14:40:18.071Z",
+    "2026-05-20T14:47:28.350Z",
+    "2026-05-20T14:52:47.512Z",
+    "2026-05-20T14:59:41.063Z",
+    "2026-05-20T15:01:00.347Z",
+    "2026-05-20T15:01:17.055Z"
+  ],
+  "model_usage": {
+    "gpt-5.5": {
+      "input_tokens": 482550,
+      "output_tokens": 21580,
+      "cost": 8.231350000000003,
+      "message_count": 119
+    },
+    "deepseek-v4-flash": {
+      "input_tokens": 184750,
+      "output_tokens": 17157,
+      "cost": 0.03664778880000001,
+      "message_count": 13
+    }
+  }
+}

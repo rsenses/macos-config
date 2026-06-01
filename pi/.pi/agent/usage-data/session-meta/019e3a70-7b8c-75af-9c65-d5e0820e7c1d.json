@@ -1,0 +1,78 @@
+{
+  "session_id": "019e3a70-7b8c-75af-9c65-d5e0820e7c1d",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-18T09-35-10-732Z_019e3a70-7b8c-75af-9c65-d5e0820e7c1d.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-18T09:35:10.732Z",
+  "duration_minutes": 1,
+  "user_message_count": 8,
+  "assistant_message_count": 32,
+  "tool_counts": {
+    "bash": 13,
+    "read": 29,
+    "write": 2,
+    "edit": 4,
+    "subagent": 3
+  },
+  "languages": {
+    "Markdown": 15
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 139888,
+  "output_tokens": 14881,
+  "total_cost": 0.18334088480000002,
+  "first_prompt": "de momento vamos a analizar algo para que lo entiendas bien, luego te diré lo que quiero. Las exportaciones se hacen con @app/Exports/XlsxExporter.php pero de dos formas distintas, todos tiene descarga directa, por ejemplo, @app/Exports/ProductsExport.php excepto una, @app/Exports/ToolsExport.php qu",
+  "user_interruptions": 0,
+  "user_response_times": [
+    206.463,
+    74.802,
+    60.856,
+    36.114,
+    23.791,
+    3.591,
+    11.678
+  ],
+  "tool_errors": 5,
+  "tool_error_categories": {
+    "Other": 5
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 286,
+  "lines_removed": 100,
+  "files_modified": 4,
+  "message_hours": [
+    11,
+    11,
+    11,
+    11,
+    11,
+    11,
+    11,
+    11
+  ],
+  "user_message_timestamps": [
+    "2026-05-18T09:26:38.079Z",
+    "2026-05-18T09:30:42.080Z",
+    "2026-05-18T09:31:56.895Z",
+    "2026-05-18T09:33:15.318Z",
+    "2026-05-18T09:33:51.441Z",
+    "2026-05-18T09:34:15.250Z",
+    "2026-05-18T09:34:57.260Z",
+    "2026-05-18T09:35:12.490Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 92046,
+      "output_tokens": 10795,
+      "cost": 0.17509680000000002,
+      "message_count": 28
+    },
+    "deepseek-v4-flash": {
+      "input_tokens": 47842,
+      "output_tokens": 4086,
+      "cost": 0.0082440848,
+      "message_count": 4
+    }
+  }
+}

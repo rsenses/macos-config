@@ -1,0 +1,69 @@
+{
+  "session_id": "019e2603-ec1e-73d8-aebd-b6d5e62c765f",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-14T10-24-11-807Z_019e2603-ec1e-73d8-aebd-b6d5e62c765f.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-14T10:24:11.807Z",
+  "duration_minutes": 13,
+  "user_message_count": 6,
+  "assistant_message_count": 66,
+  "tool_counts": {
+    "subagent": 1,
+    "project_files": 9,
+    "mcp": 2,
+    "read": 42,
+    "project_search": 33,
+    "write": 3,
+    "edit": 18,
+    "bash": 3
+  },
+  "languages": {
+    "Markdown": 11
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 254095,
+  "output_tokens": 26808,
+  "total_cost": 0.5565064500000001,
+  "first_prompt": "En @app/Http/Controllers/Api/Orders/OrderController.php create y update, no veo los errores 422 en @resources/views/orders/form-inputs.blade.php imagino que habrá que agregar errores explícitamente: <flux:field>\n    <flux:label>Username</flux:label>\n    <flux:description>This will be publicly displa",
+  "user_interruptions": 0,
+  "user_response_times": [
+    67.423,
+    77.228,
+    40.604,
+    32.883,
+    118.284
+  ],
+  "tool_errors": 1,
+  "tool_error_categories": {
+    "Other": 1
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 617,
+  "lines_removed": 330,
+  "files_modified": 17,
+  "message_hours": [
+    12,
+    12,
+    12,
+    12,
+    12,
+    12
+  ],
+  "user_message_timestamps": [
+    "2026-05-14T10:25:31.049Z",
+    "2026-05-14T10:28:36.743Z",
+    "2026-05-14T10:31:11.102Z",
+    "2026-05-14T10:31:57.558Z",
+    "2026-05-14T10:32:30.455Z",
+    "2026-05-14T10:37:13.312Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 254095,
+      "output_tokens": 26808,
+      "cost": 0.5565064500000001,
+      "message_count": 66
+    }
+  }
+}

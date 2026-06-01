@@ -1,0 +1,52 @@
+{
+  "session_id": "019e1b98-7da6-7324-bec5-77deb93fc6b8",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-12T09-50-39-015Z_019e1b98-7da6-7324-bec5-77deb93fc6b8.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-12T09:50:39.015Z",
+  "duration_minutes": 3,
+  "user_message_count": 2,
+  "assistant_message_count": 11,
+  "tool_counts": {
+    "subagent": 1,
+    "project_files": 1,
+    "project_search": 3,
+    "web_search": 1,
+    "bash": 5,
+    "read_window": 2,
+    "edit": 1
+  },
+  "languages": {},
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 32706,
+  "output_tokens": 1909,
+  "total_cost": 0.048556800000000004,
+  "first_prompt": "soluciona este problema, por favor: {\"tool\":\"phpstan\",\"result\":\"failed\",\"errors\":1,\"error_details\":{\"/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop/app/Livewire/Tools/ImportToolsModal.php\":[{\"line\":23,\"message\":\"Access to an undefined property\n App\\\\Livewire\\\\Tools\\\\ImportTools",
+  "user_interruptions": 0,
+  "user_response_times": [
+    54.727
+  ],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 9,
+  "lines_removed": 6,
+  "files_modified": 1,
+  "message_hours": [
+    11,
+    11
+  ],
+  "user_message_timestamps": [
+    "2026-05-12T09:51:53.515Z",
+    "2026-05-12T09:53:19.937Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 32706,
+      "output_tokens": 1909,
+      "cost": 0.048556800000000004,
+      "message_count": 11
+    }
+  }
+}

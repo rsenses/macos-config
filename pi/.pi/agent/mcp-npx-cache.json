@@ -3,7 +3,7 @@
   "entries": {
     "[\"npx\",\"-y\",\"chrome-devtools-mcp@latest\",\"--no-usage-statistics\",\"--slim\",\"--headless\"]": {
       "resolvedBin": "/Users/rubensilvarodriguez/.npm/_npx/15c61037b1978c83/node_modules/chrome-devtools-mcp/build/src/bin/chrome-devtools-mcp.js",
-      "resolvedAt": 1779881187373,
+      "resolvedAt": 1780059194892,
       "packageVersion": "1.0.1",
       "isJs": true
     }

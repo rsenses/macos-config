@@ -1,0 +1,55 @@
+{
+  "session_id": "019e4ed1-e71d-79da-8f20-159c7f34ad05",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-eventosyconferenciasue.com--/2026-05-22T08-33-59-581Z_019e4ed1-e71d-79da-8f20-159c7f34ad05.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/eventosyconferenciasue.com",
+  "start_time": "2026-05-22T08:33:59.581Z",
+  "duration_minutes": 1,
+  "user_message_count": 2,
+  "assistant_message_count": 13,
+  "tool_counts": {
+    "subagent": 2,
+    "create_session_plan": 1,
+    "mcp": 2,
+    "ctx_read": 2,
+    "web_search": 2,
+    "get_search_content": 3,
+    "write": 1
+  },
+  "languages": {
+    "JSON": 1,
+    "Markdown": 2
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 43662,
+  "output_tokens": 6354,
+  "total_cost": 0.0760851,
+  "first_prompt": "En este proyecto ya tenemos una base sólida con la que trabajar, pero aun queda bastante para que yo esté contento, por el momento, vamos a planear la actualización a Laravel 12, debería ser relativamente simple, quiero que busques las guias de upgrade la laravel 10 a 12 y hagamos un plan, usa la sk",
+  "user_interruptions": 0,
+  "user_response_times": [
+    20.783
+  ],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 51,
+  "lines_removed": 0,
+  "files_modified": 1,
+  "message_hours": [
+    10,
+    10
+  ],
+  "user_message_timestamps": [
+    "2026-05-22T08:32:32.230Z",
+    "2026-05-22T08:34:01.758Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 43662,
+      "output_tokens": 6354,
+      "cost": 0.0760851,
+      "message_count": 13
+    }
+  }
+}

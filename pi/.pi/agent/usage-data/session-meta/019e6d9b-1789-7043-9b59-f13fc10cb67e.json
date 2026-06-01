@@ -1,0 +1,48 @@
+{
+  "session_id": "019e6d9b-1789-7043-9b59-f13fc10cb67e",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-contrib-dotfiles--/2026-05-28T08-02-21-193Z_019e6d9b-1789-7043-9b59-f13fc10cb67e.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/contrib/dotfiles",
+  "start_time": "2026-05-28T08:02:21.193Z",
+  "duration_minutes": 1,
+  "user_message_count": 1,
+  "assistant_message_count": 8,
+  "tool_counts": {
+    "ctx_ls": 1,
+    "ctx_read": 1,
+    "ctx_find": 2,
+    "ctx_shell": 7,
+    "add_daily_note": 1
+  },
+  "languages": {},
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 12323,
+  "output_tokens": 850,
+  "total_cost": 0.117067,
+  "first_prompt": "dotfiles on  main [✘!?⇡]\n❯ stow -R pi\nstow dir is /Users/rubensilvarodriguez/dev/contrib/dotfiles\nstow dir path relative to target /Users/rubensilvarodriguez is dev/contrib/dotfiles\nPlanning unstow of: pi ...\nPlanning unstow of package pi...\n    .DS_Store doesn't need to be unstowed\n    .agents did",
+  "user_interruptions": 0,
+  "user_response_times": [],
+  "tool_errors": 3,
+  "tool_error_categories": {
+    "Other": 3
+  },
+  "uses_subagent": false,
+  "uses_mcp": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    10
+  ],
+  "user_message_timestamps": [
+    "2026-05-28T08:02:23.980Z"
+  ],
+  "model_usage": {
+    "gpt-5.5": {
+      "input_tokens": 12323,
+      "output_tokens": 850,
+      "cost": 0.117067,
+      "message_count": 8
+    }
+  }
+}

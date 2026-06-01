@@ -1,0 +1,78 @@
+{
+  "session_id": "019df7fb-8d45-77c4-9914-1126d79d9bcc",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-05T11-52-31-301Z_019df7fb-8d45-77c4-9914-1126d79d9bcc.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-05T11:52:31.301Z",
+  "duration_minutes": 2,
+  "user_message_count": 7,
+  "assistant_message_count": 83,
+  "tool_counts": {
+    "fffind": 6,
+    "bash": 33,
+    "read": 53,
+    "subagent": 3,
+    "mcp": 3,
+    "edit": 4,
+    "write": 1
+  },
+  "languages": {
+    "JavaScript": 2,
+    "Markdown": 2
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 1094687,
+  "output_tokens": 26695,
+  "total_cost": 0.48189630000000006,
+  "first_prompt": "en un comit de hace unos días nos hemos cargado algo necesario, primero, analiza /Users/rubensilvarodriguez/dev/www/gda.metech.es y busca de donde obtiene la info de patrones del desplegable 'Patrón utilizado:'",
+  "user_interruptions": 0,
+  "user_response_times": [
+    1111.468,
+    2062.198,
+    733.896,
+    23.635,
+    7.077,
+    19.955
+  ],
+  "tool_errors": 11,
+  "tool_error_categories": {
+    "Other": 11
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 190,
+  "lines_removed": 66,
+  "files_modified": 4,
+  "message_hours": [
+    12,
+    12,
+    13,
+    13,
+    13,
+    13,
+    13
+  ],
+  "user_message_timestamps": [
+    "2026-05-05T10:40:03.077Z",
+    "2026-05-05T10:59:03.701Z",
+    "2026-05-05T11:36:36.157Z",
+    "2026-05-05T11:49:53.929Z",
+    "2026-05-05T11:50:17.575Z",
+    "2026-05-05T11:50:39.704Z",
+    "2026-05-05T11:52:33.091Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 152396,
+      "output_tokens": 23389,
+      "cost": 0.48189630000000006,
+      "message_count": 70
+    },
+    "minimax-m2.5-free": {
+      "input_tokens": 942291,
+      "output_tokens": 3306,
+      "cost": 0,
+      "message_count": 13
+    }
+  }
+}

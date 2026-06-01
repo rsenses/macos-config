@@ -1,0 +1,73 @@
+{
+  "session_id": "019e5e26-dfae-7e38-8592-0df6f9c12132",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-contrib-dotfiles--/2026-05-25T08-01-06-478Z_019e5e26-dfae-7e38-8592-0df6f9c12132.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/contrib/dotfiles",
+  "start_time": "2026-05-25T08:01:06.478Z",
+  "duration_minutes": 58,
+  "user_message_count": 6,
+  "assistant_message_count": 44,
+  "tool_counts": {
+    "create_session_plan": 1,
+    "ctx_ls": 4,
+    "ctx_find": 6,
+    "ctx_grep": 17,
+    "ctx_read": 31,
+    "edit": 10,
+    "add_daily_note": 4,
+    "subagent": 1,
+    "ask_user_question": 1,
+    "write": 1
+  },
+  "languages": {
+    "Markdown": 36,
+    "TypeScript": 2,
+    "JSON": 5
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 158595,
+  "output_tokens": 16578,
+  "total_cost": 0.28447845000000005,
+  "first_prompt": "quiero que analices la extension pi-subagents que he agregado ahora mismo, me digas que tal la ves, si te gusta y sobre todo, si es simple de descubrir, algo en el sistema te incita a usar subagentes y como mejorar eso",
+  "user_interruptions": 0,
+  "user_response_times": [
+    132.716,
+    21.033,
+    21.437,
+    2292.596,
+    64.953
+  ],
+  "tool_errors": 7,
+  "tool_error_categories": {
+    "Other": 7
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 141,
+  "lines_removed": 119,
+  "files_modified": 6,
+  "message_hours": [
+    10,
+    10,
+    10,
+    10,
+    10,
+    10
+  ],
+  "user_message_timestamps": [
+    "2026-05-25T08:02:09.888Z",
+    "2026-05-25T08:05:34.677Z",
+    "2026-05-25T08:06:06.478Z",
+    "2026-05-25T08:06:32.799Z",
+    "2026-05-25T08:44:51.456Z",
+    "2026-05-25T08:55:41.921Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 158595,
+      "output_tokens": 16578,
+      "cost": 0.28447845000000005,
+      "message_count": 44
+    }
+  }
+}

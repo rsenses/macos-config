@@ -1,0 +1,60 @@
+{
+  "session_id": "019e4080-ba61-74bc-92e3-7bb9ec9f6315",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-contrib-dotfiles--/2026-05-19T13-50-38-689Z_019e4080-ba61-74bc-92e3-7bb9ec9f6315.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/contrib/dotfiles",
+  "start_time": "2026-05-19T13:50:38.689Z",
+  "duration_minutes": 8,
+  "user_message_count": 4,
+  "assistant_message_count": 14,
+  "tool_counts": {
+    "create_session_plan": 1,
+    "bash": 4,
+    "read": 11,
+    "edit": 1,
+    "add_daily_note": 1
+  },
+  "languages": {
+    "Markdown": 5,
+    "JSON": 3,
+    "TypeScript": 4
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 73451,
+  "output_tokens": 4104,
+  "total_cost": 0.10016744999999999,
+  "first_prompt": "revisa tu  propia configuración, la he simplificado mucho, a ver que te parece, me refiero al harness, pi",
+  "user_interruptions": 0,
+  "user_response_times": [
+    313.984,
+    40.595,
+    60.768
+  ],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_subagent": false,
+  "uses_mcp": false,
+  "lines_added": 19,
+  "lines_removed": 9,
+  "files_modified": 1,
+  "message_hours": [
+    15,
+    15,
+    15,
+    15
+  ],
+  "user_message_timestamps": [
+    "2026-05-19T13:51:22.780Z",
+    "2026-05-19T13:57:19.911Z",
+    "2026-05-19T13:58:00.523Z",
+    "2026-05-19T13:59:01.302Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 73451,
+      "output_tokens": 4104,
+      "cost": 0.10016744999999999,
+      "message_count": 14
+    }
+  }
+}

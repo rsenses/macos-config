@@ -1,0 +1,91 @@
+{
+  "session_id": "019e26b4-b9f2-713e-aa40-bb7d1f6ecfc3",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-tracker.wyrko.es--/2026-05-14T13-37-18-835Z_019e26b4-b9f2-713e-aa40-bb7d1f6ecfc3.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/tracker.wyrko.es",
+  "start_time": "2026-05-14T13:37:18.835Z",
+  "duration_minutes": 31,
+  "user_message_count": 12,
+  "assistant_message_count": 148,
+  "tool_counts": {
+    "subagent": 1,
+    "read": 82,
+    "bash": 73,
+    "mcp": 31,
+    "write": 5,
+    "edit": 29,
+    "ask_user_question": 1,
+    "ast_grep": 3,
+    "fetch": 8
+  },
+  "languages": {
+    "Markdown": 38,
+    "JSON": 3,
+    "TypeScript": 11
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 1656915,
+  "output_tokens": 75021,
+  "total_cost": 2.5119031499999993,
+  "first_prompt": "por favor, me ayudas a cambiar la contraseña de mi usuario? quiero que sea *Med1aS*, mi usuario es ruben.silva@metech.es",
+  "user_interruptions": 0,
+  "user_response_times": [
+    46.733,
+    76.919,
+    133.047,
+    69.038,
+    10.667,
+    67.643,
+    127.998,
+    76.218,
+    80.319,
+    62.931,
+    36.239
+  ],
+  "tool_errors": 17,
+  "tool_error_categories": {
+    "Other": 16,
+    "File Not Found": 1
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 384,
+  "lines_removed": 236,
+  "files_modified": 9,
+  "message_hours": [
+    15,
+    15,
+    15,
+    15,
+    15,
+    15,
+    15,
+    15,
+    15,
+    16,
+    16,
+    16
+  ],
+  "user_message_timestamps": [
+    "2026-05-14T13:37:49.886Z",
+    "2026-05-14T13:39:36.429Z",
+    "2026-05-14T13:43:13.096Z",
+    "2026-05-14T13:45:54.144Z",
+    "2026-05-14T13:48:53.680Z",
+    "2026-05-14T13:49:14.374Z",
+    "2026-05-14T13:52:52.117Z",
+    "2026-05-14T13:56:36.620Z",
+    "2026-05-14T13:59:21.435Z",
+    "2026-05-14T14:03:05.062Z",
+    "2026-05-14T14:05:58.238Z",
+    "2026-05-14T14:08:04.262Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 1656915,
+      "output_tokens": 75021,
+      "cost": 2.5119031499999993,
+      "message_count": 148
+    }
+  }
+}

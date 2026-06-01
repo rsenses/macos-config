@@ -1,0 +1,54 @@
+{
+  "session_id": "019e6d97-915f-7a1d-b917-ac7ee7a651fc",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-contrib-dotfiles--/2026-05-28T07-58-30-239Z_019e6d97-915f-7a1d-b917-ac7ee7a651fc.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/contrib/dotfiles",
+  "start_time": "2026-05-28T07:58:30.239Z",
+  "duration_minutes": 2,
+  "user_message_count": 2,
+  "assistant_message_count": 9,
+  "tool_counts": {
+    "ctx_ls": 1,
+    "ctx_find": 5,
+    "ctx_read": 2,
+    "write": 1,
+    "ctx_shell": 1,
+    "add_daily_note": 1
+  },
+  "languages": {},
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 25597,
+  "output_tokens": 983,
+  "total_cost": 0.18077100000000002,
+  "first_prompt": "hago link de estos dotfiles a mi home con stow, pero me da un fallo a veces con los archivos .DS_Store, no tiene una especie de .gitignore donde indicarle que no intente linkar esos archivos?",
+  "user_interruptions": 0,
+  "user_response_times": [
+    18.889
+  ],
+  "tool_errors": 5,
+  "tool_error_categories": {
+    "Other": 4,
+    "File Not Found": 1
+  },
+  "uses_subagent": false,
+  "uses_mcp": false,
+  "lines_added": 8,
+  "lines_removed": 0,
+  "files_modified": 1,
+  "message_hours": [
+    9,
+    10
+  ],
+  "user_message_timestamps": [
+    "2026-05-28T07:59:46.076Z",
+    "2026-05-28T08:00:05.043Z"
+  ],
+  "model_usage": {
+    "gpt-5.5": {
+      "input_tokens": 25597,
+      "output_tokens": 983,
+      "cost": 0.18077100000000002,
+      "message_count": 9
+    }
+  }
+}

@@ -9,14 +9,16 @@ Default rule: for any Medium or Serious task, prefer scout/researcher first befo
 Classify the task before opening context or delegating:
 
 - **Simple**: 1 file/local change, obvious pattern. Solve with minimal inspection.
-- **Medium**: Multiple files, contained scope. Targeted search and pattern confirmation required + subagents.
-- **Serious**: Auth, security, critical data, framework behavior, or risky bugs. Deep investigation + subagents.
-  **Rules**: If in doubt, start with a quick check. Do not assume; do not over-investigate.
+- **Medium**: Multiple files, contained scope. Targeted search and pattern confirmation required.
+- **Serious**: Auth, security, critical data, framework behavior, or risky bugs. Deep investigation.
+  **Rules**: If in doubt, start with a quick check. Do not assume; do not over-investigate, allways use subagents
 
 ## Loop Control
 
 - If a search, diagnosis, or fix produces no new evidence after two passes, change strategy or stop and ask.
 - If the same failure repeats twice, do not keep retrying; summarize the blocker and update the plan.
+- If a route, component, file, or decision is already recorded, refer to the existing section or item instead of restating it.
+- Prefer delta updates over reprinting inventories or plans.
 
 ## Subagents: when to use them
 

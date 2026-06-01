@@ -1,0 +1,50 @@
+{
+  "session_id": "019e177e-fc80-75a6-9245-326dd320e9db",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-contrib-dotfiles--/2026-05-11T14-44-18-693Z_019e177e-fc80-75a6-9245-326dd320e9db.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/contrib/dotfiles",
+  "start_time": "2026-05-11T14:44:18.693Z",
+  "duration_minutes": 2,
+  "user_message_count": 1,
+  "assistant_message_count": 17,
+  "tool_counts": {
+    "project_files": 5,
+    "read": 4,
+    "bash": 2,
+    "write": 1,
+    "edit": 6
+  },
+  "languages": {
+    "Markdown": 9
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 17737,
+  "output_tokens": 3845,
+  "total_cost": 0.04596525000000001,
+  "first_prompt": "en el comando @bin/.local/bin/dev quiero introducir un cambio, me veo constantemente haciendo dev down y dev up al cambiar de worktree, por tanto, quiero un dev reload que haga eso, down y up",
+  "user_interruptions": 0,
+  "user_response_times": [],
+  "tool_errors": 1,
+  "tool_error_categories": {
+    "Other": 1
+  },
+  "uses_subagent": false,
+  "uses_mcp": false,
+  "lines_added": 100,
+  "lines_removed": 51,
+  "files_modified": 4,
+  "message_hours": [
+    16
+  ],
+  "user_message_timestamps": [
+    "2026-05-11T14:45:06.504Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 17737,
+      "output_tokens": 3845,
+      "cost": 0.04596525000000001,
+      "message_count": 17
+    }
+  }
+}

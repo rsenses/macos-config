@@ -1,0 +1,73 @@
+{
+  "session_id": "019e6458-b216-744b-b36f-1a5b83f61011",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-eventosyconferenciasue.com--/2026-05-26T12-53-14-903Z_019e6458-b216-744b-b36f-1a5b83f61011.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/eventosyconferenciasue.com",
+  "start_time": "2026-05-26T12:53:14.903Z",
+  "duration_minutes": 15,
+  "user_message_count": 4,
+  "assistant_message_count": 48,
+  "tool_counts": {
+    "laravel_boost_search-docs": 6,
+    "laravel_boost_application-info": 1,
+    "create_session_plan": 1,
+    "summarize_worktree": 3,
+    "ctx_ls": 5,
+    "lsp_document_symbols": 11,
+    "ctx_read": 34,
+    "subagent": 1,
+    "ctx_grep": 35,
+    "lsp_workspace_symbol": 7,
+    "ctx_find": 2,
+    "write": 7,
+    "ctx_shell": 8,
+    "lsp_hover": 1,
+    "edit": 2,
+    "get_current_plan": 1,
+    "add_daily_note": 1
+  },
+  "languages": {
+    "Markdown": 3
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 229745,
+  "output_tokens": 24915,
+  "total_cost": 0.4794982500000002,
+  "first_prompt": "hemos hecho mucho refactor y me gusta, ahora, una duda, al ser una app sencilla de laravel, conviene y no es muy complejo pasar a la estructura de archivos de Laravel 13 en vez de usar la estructura de laravel 10? ojo, que estamos en laravel 13, pero la estructura sigue siendo legacy",
+  "user_interruptions": 0,
+  "user_response_times": [
+    57.037,
+    122.478,
+    115.218
+  ],
+  "tool_errors": 18,
+  "tool_error_categories": {
+    "File Not Found": 2,
+    "Other": 16
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 289,
+  "lines_removed": 12,
+  "files_modified": 7,
+  "message_hours": [
+    14,
+    14,
+    14,
+    15
+  ],
+  "user_message_timestamps": [
+    "2026-05-26T12:54:37.756Z",
+    "2026-05-26T12:55:34.806Z",
+    "2026-05-26T12:57:52.297Z",
+    "2026-05-26T13:08:05.787Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 229745,
+      "output_tokens": 24915,
+      "cost": 0.4794982500000002,
+      "message_count": 48
+    }
+  }
+}

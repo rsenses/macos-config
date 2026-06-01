@@ -1,18 +1,23 @@
 {
-  "lastChangelogVersion": "0.75.5",
+  "lastChangelogVersion": "0.78.0",
   "defaultProvider": "opencode-go",
-  "defaultModel": "deepseek-v4-flash",
+  "defaultModel": "deepseek-v4-pro",
   "defaultThinkingLevel": "high",
   "theme": "light",
   "packages": [
     "npm:pi-mcp-adapter",
     "npm:pi-lean-ctx",
-    "npm:pi-lsp-bridge"
+    "npm:pi-lsp-bridge",
+    "npm:@observal/pi-insights"
   ],
   "enabledModels": [
     "openai-codex/gpt-5.4-mini",
     "openai-codex/gpt-5.5",
-    "opencode-go/deepseek-v4-flash"
+    "opencode-go/deepseek-v4-flash",
+    "opencode-go/deepseek-v4-pro",
+    "opencode-go/qwen3.7-max",
+    "opencode-go/qwen3.6-plus",
+    "opencode/minimax-m3-free"
   ],
   "enableInstallTelemetry": false
 }

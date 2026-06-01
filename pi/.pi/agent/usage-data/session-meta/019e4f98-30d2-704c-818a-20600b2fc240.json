@@ -1,0 +1,82 @@
+{
+  "session_id": "019e4f98-30d2-704c-818a-20600b2fc240",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-eventosyconferenciasue.com--/2026-05-22T12-10-34-578Z_019e4f98-30d2-704c-818a-20600b2fc240.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/eventosyconferenciasue.com",
+  "start_time": "2026-05-22T12:10:34.578Z",
+  "duration_minutes": 1933,
+  "user_message_count": 9,
+  "assistant_message_count": 97,
+  "tool_counts": {
+    "create_session_plan": 2,
+    "laravel_boost_application-info": 1,
+    "subagent": 4,
+    "ctx_ls": 7,
+    "laravel_boost_search-docs": 1,
+    "ctx_grep": 57,
+    "lsp_document_symbols": 4,
+    "ctx_read": 73,
+    "laravel_boost_database-schema": 6,
+    "ctx_find": 2,
+    "add_daily_note": 3,
+    "write": 6,
+    "ctx_shell": 18,
+    "edit": 11
+  },
+  "languages": {
+    "Markdown": 6
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 1169761,
+  "output_tokens": 81246,
+  "total_cost": 2.07755175,
+  "first_prompt": "Estoy trabajando en una aplicación legacy actualizada a Laravel 13.\n\nYa tengo una primera base de tests con Pest:\n- smoke tests de rutas GET;\n- tests iniciales para InscriptionsController;\n- Laravel Boost instalado;\n- MCP disponible;\n- Pest instalado;\n- el objetivo es avanzar hacia type coverage 100",
+  "user_interruptions": 0,
+  "user_response_times": [
+    17.199,
+    144.423,
+    12.338,
+    192.424,
+    7.536,
+    14.304
+  ],
+  "tool_errors": 24,
+  "tool_error_categories": {
+    "Other": 24
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 1325,
+  "lines_removed": 152,
+  "files_modified": 7,
+  "message_hours": [
+    14,
+    14,
+    14,
+    14,
+    14,
+    14,
+    14,
+    17,
+    22
+  ],
+  "user_message_timestamps": [
+    "2026-05-22T12:10:39.397Z",
+    "2026-05-22T12:23:52.040Z",
+    "2026-05-22T12:32:18.824Z",
+    "2026-05-22T12:34:08.713Z",
+    "2026-05-22T12:47:58.485Z",
+    "2026-05-22T12:49:59.900Z",
+    "2026-05-22T12:52:30.587Z",
+    "2026-05-23T15:48:57.600Z",
+    "2026-05-23T20:23:53.318Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 1169761,
+      "output_tokens": 81246,
+      "cost": 2.07755175,
+      "message_count": 97
+    }
+  }
+}

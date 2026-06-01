@@ -1,0 +1,97 @@
+{
+  "session_id": "019e0652-81d2-7310-9ef4-4d272e471ccd",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-tracker.wyrko.es--/2026-05-08T06-42-11-027Z_019e0652-81d2-7310-9ef4-4d272e471ccd.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/tracker.wyrko.es",
+  "start_time": "2026-05-08T06:42:11.027Z",
+  "duration_minutes": 64,
+  "user_message_count": 15,
+  "assistant_message_count": 114,
+  "tool_counts": {
+    "subagent": 10,
+    "mcp": 3,
+    "read": 70,
+    "bash": 37,
+    "web_search": 2,
+    "write": 4,
+    "edit": 24
+  },
+  "languages": {
+    "TypeScript": 43,
+    "CSS": 1,
+    "Markdown": 3
+  },
+  "git_commits": 1,
+  "git_pushes": 0,
+  "input_tokens": 508271,
+  "output_tokens": 76303,
+  "total_cost": 1.35294435,
+  "first_prompt": "Use the `orchestrator` skill for this task.\n\nPlan the following task without modifying files.\n\nTask:\nVamos a añadir dos propiedades a @app/Models/Tenant.php que van a afectar a la UI, las propiedades son logo y color. Logo es una imagen, el logo de cada tenant, si la propiedad es null usamos el logo",
+  "user_interruptions": 0,
+  "user_response_times": [
+    216.33,
+    71.561,
+    7.542,
+    463.519,
+    61.979,
+    227.021,
+    58.032,
+    22.515,
+    26.796,
+    85.633,
+    33.727,
+    176.735,
+    19.173,
+    17.931
+  ],
+  "tool_errors": 5,
+  "tool_error_categories": {
+    "Other": 5
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 829,
+  "lines_removed": 364,
+  "files_modified": 24,
+  "message_hours": [
+    8,
+    9,
+    9,
+    9,
+    9,
+    9,
+    9,
+    9,
+    9,
+    9,
+    9,
+    9,
+    9,
+    9,
+    9
+  ],
+  "user_message_timestamps": [
+    "2026-05-08T06:54:02.523Z",
+    "2026-05-08T07:00:13.210Z",
+    "2026-05-08T07:01:50.485Z",
+    "2026-05-08T07:02:22.685Z",
+    "2026-05-08T07:21:49.388Z",
+    "2026-05-08T07:23:36.874Z",
+    "2026-05-08T07:29:56.803Z",
+    "2026-05-08T07:31:49.046Z",
+    "2026-05-08T07:32:11.569Z",
+    "2026-05-08T07:32:56.343Z",
+    "2026-05-08T07:36:38.404Z",
+    "2026-05-08T07:41:27.229Z",
+    "2026-05-08T07:44:55.839Z",
+    "2026-05-08T07:45:20.387Z",
+    "2026-05-08T07:46:00.926Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 508271,
+      "output_tokens": 76303,
+      "cost": 1.35294435,
+      "message_count": 114
+    }
+  }
+}

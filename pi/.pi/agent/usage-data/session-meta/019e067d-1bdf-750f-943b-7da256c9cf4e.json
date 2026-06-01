@@ -1,0 +1,69 @@
+{
+  "session_id": "019e067d-1bdf-750f-943b-7da256c9cf4e",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-08T07-28-42-977Z_019e067d-1bdf-750f-943b-7da256c9cf4e.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-08T07:28:42.977Z",
+  "duration_minutes": 3,
+  "user_message_count": 4,
+  "assistant_message_count": 95,
+  "tool_counts": {
+    "mcp": 5,
+    "subagent": 5,
+    "bash": 38,
+    "read": 54,
+    "code_search": 4,
+    "write": 5,
+    "edit": 32,
+    "memory_write": 4,
+    "ask_user_question": 1
+  },
+  "languages": {},
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 374297,
+  "output_tokens": 37557,
+  "total_cost": 0.7041413740000001,
+  "first_prompt": "Tengo un problema en @app/Http/Controllers/Orders/Exports/ExportDownloadController.php , siempre me da un error 403, es decir, falla la signature, el ciclo es el siguiente, generamos una exportación con @app/Exports/ToolsExport.php y la enviamos con @app/Jobs/ExportToolsJob.php el mail es @app/Notif",
+  "user_interruptions": 0,
+  "user_response_times": [
+    254.269,
+    1138.837,
+    9.552
+  ],
+  "tool_errors": 10,
+  "tool_error_categories": {
+    "Other": 9,
+    "Edit Failed": 1
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 472,
+  "lines_removed": 285,
+  "files_modified": 20,
+  "message_hours": [
+    8,
+    9,
+    9,
+    9
+  ],
+  "user_message_timestamps": [
+    "2026-05-08T06:32:13.903Z",
+    "2026-05-08T07:06:35.321Z",
+    "2026-05-08T07:28:05.806Z",
+    "2026-05-08T07:28:44.980Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 288989,
+      "output_tokens": 31744,
+      "cost": 0.6871801500000002,
+      "message_count": 80
+    },
+    "deepseek-v4-flash": {
+      "input_tokens": 85308,
+      "output_tokens": 5813,
+      "cost": 0.016961224000000004,
+      "message_count": 15
+    }
+  }
+}

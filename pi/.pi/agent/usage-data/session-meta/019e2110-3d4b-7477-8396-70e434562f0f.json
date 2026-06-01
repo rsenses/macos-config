@@ -1,0 +1,54 @@
+{
+  "session_id": "019e2110-3d4b-7477-8396-70e434562f0f",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-13T11-19-32-940Z_019e2110-3d4b-7477-8396-70e434562f0f.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-13T11:19:32.940Z",
+  "duration_minutes": 5,
+  "user_message_count": 2,
+  "assistant_message_count": 30,
+  "tool_counts": {
+    "project_files": 4,
+    "read": 2,
+    "project_search": 2,
+    "bash": 14,
+    "write": 1,
+    "edit": 4,
+    "read_window": 2
+  },
+  "languages": {
+    "Markdown": 9
+  },
+  "git_commits": 1,
+  "git_pushes": 1,
+  "input_tokens": 74069,
+  "output_tokens": 12115,
+  "total_cost": 0.17991885,
+  "first_prompt": "Vamos a mejorar algo el changelog, primero, todo lo que esté como unreleased, márcalo como released de la fecha de hoy. Después, quiero el changelog de todo el año, aproximado, no necesita ser perfecto, entonces, todo lo anterior a 2026-03-16 en 2026, hazlo basándote en git, por favor, y como digo, ",
+  "user_interruptions": 0,
+  "user_response_times": [
+    35.153
+  ],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_subagent": false,
+  "uses_mcp": false,
+  "lines_added": 158,
+  "lines_removed": 19,
+  "files_modified": 4,
+  "message_hours": [
+    13,
+    13
+  ],
+  "user_message_timestamps": [
+    "2026-05-13T11:21:37.603Z",
+    "2026-05-13T11:24:01.023Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 74069,
+      "output_tokens": 12115,
+      "cost": 0.17991885,
+      "message_count": 30
+    }
+  }
+}

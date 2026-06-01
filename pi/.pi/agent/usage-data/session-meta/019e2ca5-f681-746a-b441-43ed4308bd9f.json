@@ -1,0 +1,42 @@
+{
+  "session_id": "019e2ca5-f681-746a-b441-43ed4308bd9f",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-contrib-dotfiles--/2026-05-15T17-18-54-595Z_019e2ca5-f681-746a-b441-43ed4308bd9f.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/contrib/dotfiles",
+  "start_time": "2026-05-15T17:18:54.595Z",
+  "duration_minutes": 1,
+  "user_message_count": 1,
+  "assistant_message_count": 2,
+  "tool_counts": {
+    "bash": 1
+  },
+  "languages": {},
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 10450,
+  "output_tokens": 416,
+  "total_cost": 0.0104391,
+  "first_prompt": "haz alguna búsqueda de archivos, a ver si funciona rtk?",
+  "user_interruptions": 0,
+  "user_response_times": [],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_subagent": false,
+  "uses_mcp": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    19
+  ],
+  "user_message_timestamps": [
+    "2026-05-15T17:19:24.536Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 10450,
+      "output_tokens": 416,
+      "cost": 0.0104391,
+      "message_count": 2
+    }
+  }
+}

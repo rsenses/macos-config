@@ -1,0 +1,70 @@
+{
+  "session_id": "019e3a22-a10f-7a47-9e0b-b0c42ac62017",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-18T08-10-08-527Z_019e3a22-a10f-7a47-9e0b-b0c42ac62017.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-18T08:10:08.527Z",
+  "duration_minutes": 18,
+  "user_message_count": 7,
+  "assistant_message_count": 73,
+  "tool_counts": {
+    "bash": 32,
+    "mcp": 4,
+    "read": 30,
+    "write": 5,
+    "edit": 15
+  },
+  "languages": {
+    "Markdown": 20
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 442815,
+  "output_tokens": 27303,
+  "total_cost": 0.75242115,
+  "first_prompt": "En la configuración de órdenes, osea @app/Models/Config.php orders he agregado un nuevo campo obligatorio para la transición, que se resuelve con @app/Support/Orders/OrderTransitionFieldResolver.php pero no funciona, no lo veo, este es el json, la parte relevante:\n\n{\n\"key\":\"budget\",\n\"label\":\"Pt. Apr",
+  "user_interruptions": 0,
+  "user_response_times": [
+    21.065,
+    47.318,
+    122.602,
+    181.297,
+    102.964,
+    2.977
+  ],
+  "tool_errors": 6,
+  "tool_error_categories": {
+    "Other": 4,
+    "File Not Found": 2
+  },
+  "uses_subagent": false,
+  "uses_mcp": false,
+  "lines_added": 375,
+  "lines_removed": 210,
+  "files_modified": 7,
+  "message_hours": [
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10
+  ],
+  "user_message_timestamps": [
+    "2026-05-18T08:12:35.392Z",
+    "2026-05-18T08:15:21.990Z",
+    "2026-05-18T08:16:09.317Z",
+    "2026-05-18T08:19:52.276Z",
+    "2026-05-18T08:22:53.608Z",
+    "2026-05-18T08:25:51.524Z",
+    "2026-05-18T08:26:44.202Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 442815,
+      "output_tokens": 27303,
+      "cost": 0.75242115,
+      "message_count": 73
+    }
+  }
+}

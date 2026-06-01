@@ -1,0 +1,63 @@
+{
+  "session_id": "019df2fd-a5ee-74eb-aa4e-9da60923c750",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-04T12-36-42-606Z_019df2fd-a5ee-74eb-aa4e-9da60923c750.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-04T12:36:42.606Z",
+  "duration_minutes": 0,
+  "user_message_count": 3,
+  "assistant_message_count": 14,
+  "tool_counts": {
+    "read": 4,
+    "mcp": 2,
+    "fffind": 1,
+    "ffgrep": 2,
+    "edit": 1,
+    "bash": 2,
+    "subagent": 2
+  },
+  "languages": {
+    "Markdown": 2
+  },
+  "git_commits": 1,
+  "git_pushes": 0,
+  "input_tokens": 105649,
+  "output_tokens": 2173,
+  "total_cost": 0.06881519999999999,
+  "first_prompt": "vamos a corregir un error sencillo, solo agreguemos un if, por favor, no hagas tests: - **Level:** ERROR\n- **Exception:** Illuminate\\View\\ViewException\n- **Timestamp:** 2026-04-27 14:02:24\n- **Environment:** \n- **Route:** \n- **User:** 22\n\n**Message:** Undefined array key \"comments\" (View: /home/ploi",
+  "user_interruptions": 0,
+  "user_response_times": [
+    23.626,
+    5.57
+  ],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 10,
+  "lines_removed": 8,
+  "files_modified": 1,
+  "message_hours": [
+    14,
+    14,
+    14
+  ],
+  "user_message_timestamps": [
+    "2026-05-04T12:35:26.332Z",
+    "2026-05-04T12:36:29.103Z",
+    "2026-05-04T12:36:44.487Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 45822,
+      "output_tokens": 1955,
+      "cost": 0.06881519999999999,
+      "message_count": 12
+    },
+    "minimax-m2.5-free": {
+      "input_tokens": 59827,
+      "output_tokens": 218,
+      "cost": 0,
+      "message_count": 2
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "session_id": "019e261f-9c81-755d-ae9e-6fae62fe01d1",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-feature-config-simplifications--/2026-05-14T10-54-26-435Z_019e261f-9c81-755d-ae9e-6fae62fe01d1.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/feature-config-simplifications",
+  "start_time": "2026-05-14T10:54:26.435Z",
+  "duration_minutes": 1,
+  "user_message_count": 2,
+  "assistant_message_count": 2,
+  "tool_counts": {},
+  "languages": {},
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 19684,
+  "output_tokens": 39,
+  "total_cost": 0.0163593,
+  "first_prompt": "hola",
+  "user_interruptions": 0,
+  "user_response_times": [
+    27.203
+  ],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_subagent": false,
+  "uses_mcp": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    12,
+    12
+  ],
+  "user_message_timestamps": [
+    "2026-05-14T10:54:31.958Z",
+    "2026-05-14T10:54:59.206Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 19684,
+      "output_tokens": 39,
+      "cost": 0.0163593,
+      "message_count": 2
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "session_id": "019e25b4-15a1-777b-904e-27ddca7f016e",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-14T08-56-59-555Z_019e25b4-15a1-777b-904e-27ddca7f016e.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-14T08:56:59.555Z",
+  "duration_minutes": 12,
+  "user_message_count": 4,
+  "assistant_message_count": 32,
+  "tool_counts": {
+    "subagent": 1,
+    "project_search": 23,
+    "mcp": 7,
+    "read": 15,
+    "project_files": 2,
+    "code_search": 2
+  },
+  "languages": {},
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 122666,
+  "output_tokens": 11147,
+  "total_cost": 0.21823139999999994,
+  "first_prompt": "En @app/Observers/OrderObserver.php hay una función con defer, pero no funciona, he puesto logs, pero nada, no llega a ejecutarla, no se porque, la verdad, en general esa función nunca he conseguido que funcione como debe y no se porque! puedes tratar de explicármelo?",
+  "user_interruptions": 0,
+  "user_response_times": [
+    110.715,
+    204.225,
+    178.398
+  ],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    10,
+    11,
+    11,
+    11
+  ],
+  "user_message_timestamps": [
+    "2026-05-14T08:58:11.897Z",
+    "2026-05-14T09:01:26.681Z",
+    "2026-05-14T09:06:24.129Z",
+    "2026-05-14T09:09:22.562Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 122666,
+      "output_tokens": 11147,
+      "cost": 0.21823139999999994,
+      "message_count": 32
+    }
+  }
+}

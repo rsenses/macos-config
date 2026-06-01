@@ -1,0 +1,93 @@
+{
+  "session_id": "019e0e3e-2e93-77aa-830f-73bb63869950",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-app.datarena.com-.worktrees-development--/2026-05-09T19-36-56-724Z_019e0e3e-2e93-77aa-830f-73bb63869950.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/app.datarena.com/.worktrees/development",
+  "start_time": "2026-05-09T19:36:56.724Z",
+  "duration_minutes": 55,
+  "user_message_count": 13,
+  "assistant_message_count": 252,
+  "tool_counts": {
+    "project_files": 3,
+    "mcp": 5,
+    "project_search": 32,
+    "read_window": 82,
+    "bash": 63,
+    "write": 2,
+    "edit": 48,
+    "subagent": 5,
+    "ask_user_question": 1,
+    "read": 3
+  },
+  "languages": {
+    "Markdown": 17,
+    "JSON": 2
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 979497,
+  "output_tokens": 101499,
+  "total_cost": 3.5513938499999993,
+  "first_prompt": "Hola, te voy a ir pasando tareas relativamente pequeñas para ir haciendo, cualquier duda, me preguntas, primera: Dashboard director deportivo\nCrear widget “Partidos de hoy”\nMostrar partidos de hoy de todos los scouts.\nSi no hay partidos, mostrar estado vacío.",
+  "user_interruptions": 0,
+  "user_response_times": [
+    4.67,
+    6.342,
+    4.06,
+    17.253,
+    72.586,
+    15.847,
+    164.037,
+    2.165,
+    524.94,
+    67.464,
+    11.25,
+    454.491
+  ],
+  "tool_errors": 29,
+  "tool_error_categories": {
+    "Other": 29
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 929,
+  "lines_removed": 672,
+  "files_modified": 11,
+  "message_hours": [
+    21,
+    21,
+    21,
+    21,
+    21,
+    21,
+    21,
+    21,
+    21,
+    22,
+    22,
+    22,
+    22
+  ],
+  "user_message_timestamps": [
+    "2026-05-09T19:37:38.421Z",
+    "2026-05-09T19:46:03.339Z",
+    "2026-05-09T19:49:18.040Z",
+    "2026-05-09T19:49:53.062Z",
+    "2026-05-09T19:50:24.462Z",
+    "2026-05-09T19:51:40.755Z",
+    "2026-05-09T19:54:37.421Z",
+    "2026-05-09T19:58:02.953Z",
+    "2026-05-09T19:58:44.800Z",
+    "2026-05-09T20:11:36.351Z",
+    "2026-05-09T20:12:43.863Z",
+    "2026-05-09T20:12:55.148Z",
+    "2026-05-09T20:20:35.709Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 979497,
+      "output_tokens": 101499,
+      "cost": 3.5513938499999993,
+      "message_count": 252
+    }
+  }
+}

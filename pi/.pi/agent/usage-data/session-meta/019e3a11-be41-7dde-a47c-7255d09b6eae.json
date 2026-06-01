@@ -1,0 +1,66 @@
+{
+  "session_id": "019e3a11-be41-7dde-a47c-7255d09b6eae",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-contrib-dotfiles--/2026-05-18T07-51-41-889Z_019e3a11-be41-7dde-a47c-7255d09b6eae.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/contrib/dotfiles",
+  "start_time": "2026-05-18T07:51:41.889Z",
+  "duration_minutes": 24,
+  "user_message_count": 6,
+  "assistant_message_count": 33,
+  "tool_counts": {
+    "bash": 22,
+    "read": 6,
+    "write": 2,
+    "edit": 5
+  },
+  "languages": {
+    "Markdown": 7
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 48789,
+  "output_tokens": 13122,
+  "total_cost": 0.12939435,
+  "first_prompt": "me ayudas con @bin/.local/bin/dev por favor? ahora mismo no se que pasa, ejecuto dev up y veo:\nOK: https://cobra.wyrko.es.test -> 127.0.0.1:8010 (/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop)\nLog: /tmp/dev-cobra.wyrko.es.log\nmiro los logs y veo:\n[Mon May 18 09:50:33 2026] PHP",
+  "user_interruptions": 0,
+  "user_response_times": [
+    18.556,
+    226.754,
+    30.77,
+    123.455,
+    630.728
+  ],
+  "tool_errors": 4,
+  "tool_error_categories": {
+    "Other": 3,
+    "Edit Failed": 1
+  },
+  "uses_subagent": false,
+  "uses_mcp": false,
+  "lines_added": 79,
+  "lines_removed": 40,
+  "files_modified": 4,
+  "message_hours": [
+    9,
+    9,
+    9,
+    10,
+    10,
+    10
+  ],
+  "user_message_timestamps": [
+    "2026-05-18T07:52:57.677Z",
+    "2026-05-18T07:53:37.960Z",
+    "2026-05-18T07:59:23.229Z",
+    "2026-05-18T08:01:24.267Z",
+    "2026-05-18T08:04:18.630Z",
+    "2026-05-18T08:14:49.393Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 48789,
+      "output_tokens": 13122,
+      "cost": 0.12939435,
+      "message_count": 33
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "session_id": "019e4a07-6057-7260-8e6e-ead7ec48fade",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-eventosyconferenciasue.com--/2026-05-21T10-14-17-943Z_019e4a07-6057-7260-8e6e-ead7ec48fade.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/eventosyconferenciasue.com",
+  "start_time": "2026-05-21T10:14:17.943Z",
+  "duration_minutes": 8,
+  "user_message_count": 2,
+  "assistant_message_count": 16,
+  "tool_counts": {
+    "ctx_shell": 14,
+    "web_search": 1,
+    "ctx_read": 1
+  },
+  "languages": {},
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 52759,
+  "output_tokens": 4504,
+  "total_cost": 0.14284809,
+  "first_prompt": "ayúdame,",
+  "user_interruptions": 0,
+  "user_response_times": [
+    58.326
+  ],
+  "tool_errors": 1,
+  "tool_error_categories": {
+    "Other": 1
+  },
+  "uses_subagent": false,
+  "uses_mcp": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    12,
+    12
+  ],
+  "user_message_timestamps": [
+    "2026-05-21T10:14:27.221Z",
+    "2026-05-21T10:15:25.596Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost": 0,
+      "message_count": 1
+    },
+    "kimi-k2.6": {
+      "input_tokens": 52759,
+      "output_tokens": 4504,
+      "cost": 0.14284809,
+      "message_count": 15
+    }
+  }
+}

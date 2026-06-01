@@ -1,0 +1,56 @@
+{
+  "session_id": "019e5684-214e-7cdc-b0a8-7e38a13c3b9d",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-eventosyconferenciasue.com--/2026-05-23T20-26-00-398Z_019e5684-214e-7cdc-b0a8-7e38a13c3b9d.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/eventosyconferenciasue.com",
+  "start_time": "2026-05-23T20:26:00.398Z",
+  "duration_minutes": 0,
+  "user_message_count": 3,
+  "assistant_message_count": 12,
+  "tool_counts": {
+    "ctx_read": 10,
+    "laravel_boost_search-docs": 1,
+    "ctx_grep": 16,
+    "subagent": 2
+  },
+  "languages": {
+    "Markdown": 1
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 49142,
+  "output_tokens": 2820,
+  "total_cost": 0.0741993,
+  "first_prompt": "Vamos a ejecutar el siguiente plan @.ai/plan/2026-05-22-019e4f98-laravel-13-refactor-audit.md de momento hazme un resumen",
+  "user_interruptions": 0,
+  "user_response_times": [
+    23.915,
+    6.171
+  ],
+  "tool_errors": 5,
+  "tool_error_categories": {
+    "Other": 5
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    22,
+    22,
+    22
+  ],
+  "user_message_timestamps": [
+    "2026-05-23T20:24:47.612Z",
+    "2026-05-23T20:25:14.622Z",
+    "2026-05-23T20:26:02.691Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 49142,
+      "output_tokens": 2820,
+      "cost": 0.0741993,
+      "message_count": 12
+    }
+  }
+}

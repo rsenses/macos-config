@@ -1,0 +1,54 @@
+{
+  "session_id": "019df247-b91d-75c9-a6b5-5a993e6c3942",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-04T09-17-59-966Z_019df247-b91d-75c9-a6b5-5a993e6c3942.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-04T09:17:59.966Z",
+  "duration_minutes": 11,
+  "user_message_count": 2,
+  "assistant_message_count": 31,
+  "tool_counts": {
+    "mcp": 2,
+    "fffind": 4,
+    "read": 8,
+    "ffgrep": 7,
+    "bash": 6,
+    "subagent": 2,
+    "edit": 2
+  },
+  "languages": {
+    "Markdown": 2
+  },
+  "git_commits": 1,
+  "git_pushes": 0,
+  "input_tokens": 76333,
+  "output_tokens": 5908,
+  "total_cost": 0.15775575,
+  "first_prompt": "En @app/Console/Commands/ImportOrderCommand.php haz que tool_build_at sea opcional, por favor, además, si viene como null, que no actualice los datos existentes en la base de datos, por favor",
+  "user_interruptions": 0,
+  "user_response_times": [
+    420.181
+  ],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 31,
+  "lines_removed": 30,
+  "files_modified": 2,
+  "message_hours": [
+    11,
+    11
+  ],
+  "user_message_timestamps": [
+    "2026-05-04T09:18:42.819Z",
+    "2026-05-04T09:28:10.526Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 76333,
+      "output_tokens": 5908,
+      "cost": 0.15775575,
+      "message_count": 31
+    }
+  }
+}

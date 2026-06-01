@@ -1,0 +1,71 @@
+{
+  "session_id": "019e3a64-f0f7-7268-88bc-1a19917e6aea",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-18T09-22-34-359Z_019e3a64-f0f7-7268-88bc-1a19917e6aea.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-18T09:22:34.359Z",
+  "duration_minutes": 18,
+  "user_message_count": 7,
+  "assistant_message_count": 56,
+  "tool_counts": {
+    "bash": 28,
+    "read": 41,
+    "write": 2,
+    "edit": 9,
+    "subagent": 4,
+    "mcp": 2
+  },
+  "languages": {
+    "Markdown": 21
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 116052,
+  "output_tokens": 22366,
+  "total_cost": 0.37907160000000006,
+  "first_prompt": "de momento vamos a analizar algo para que lo entiendas bien, luego te diré lo que quiero. Las exportaciones se hacen con @app/Exports/XlsxExporter.php pero de dos formas distintas, todos tiene descarga directa, por ejemplo, @app/Exports/ProductsExport.php excepto una, @app/Exports/ToolsExport.php qu",
+  "user_interruptions": 0,
+  "user_response_times": [
+    206.463,
+    74.802,
+    60.856,
+    36.114,
+    23.791,
+    3.591
+  ],
+  "tool_errors": 9,
+  "tool_error_categories": {
+    "Other": 8,
+    "Edit Failed": 1
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 251,
+  "lines_removed": 92,
+  "files_modified": 5,
+  "message_hours": [
+    11,
+    11,
+    11,
+    11,
+    11,
+    11,
+    11
+  ],
+  "user_message_timestamps": [
+    "2026-05-18T09:26:38.079Z",
+    "2026-05-18T09:30:42.080Z",
+    "2026-05-18T09:31:56.895Z",
+    "2026-05-18T09:33:15.318Z",
+    "2026-05-18T09:33:51.441Z",
+    "2026-05-18T09:34:15.250Z",
+    "2026-05-18T09:34:57.260Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 116052,
+      "output_tokens": 22366,
+      "cost": 0.37907160000000006,
+      "message_count": 56
+    }
+  }
+}

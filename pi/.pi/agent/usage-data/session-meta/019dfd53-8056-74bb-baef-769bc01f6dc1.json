@@ -1,0 +1,68 @@
+{
+  "session_id": "019dfd53-8056-74bb-baef-769bc01f6dc1",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-06T12-46-41-240Z_019dfd53-8056-74bb-baef-769bc01f6dc1.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-06T12:46:41.240Z",
+  "duration_minutes": 1,
+  "user_message_count": 4,
+  "assistant_message_count": 23,
+  "tool_counts": {
+    "read": 14,
+    "mcp": 2,
+    "subagent": 3,
+    "bash": 1,
+    "memory_write": 1,
+    "grep": 13,
+    "ls": 1,
+    "find": 1,
+    "write": 1
+  },
+  "languages": {
+    "Markdown": 4
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 118750,
+  "output_tokens": 9815,
+  "total_cost": 0.6931771,
+  "first_prompt": "Vamos a analizar y planear, en caso necesario, un issue de github\n Isolate cache warmup from AppServiceProvider boot #247\n\n Problem\n\n AppServiceProvider hace trabajo de “boot” que depende de la base de datos y de\n tablas existentes para precargar cachés. Eso introduce efectos laterales en el\n arranq",
+  "user_interruptions": 0,
+  "user_response_times": [
+    294.856,
+    75.226,
+    8.689
+  ],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 59,
+  "lines_removed": 0,
+  "files_modified": 1,
+  "message_hours": [
+    14,
+    14,
+    14,
+    14
+  ],
+  "user_message_timestamps": [
+    "2026-05-06T12:37:35.951Z",
+    "2026-05-06T12:45:19.670Z",
+    "2026-05-06T12:46:34.907Z",
+    "2026-05-06T12:46:43.604Z"
+  ],
+  "model_usage": {
+    "gpt-5.5": {
+      "input_tokens": 86212,
+      "output_tokens": 2843,
+      "cost": 0.614398,
+      "message_count": 11
+    },
+    "gpt-5.4-mini": {
+      "input_tokens": 32538,
+      "output_tokens": 6972,
+      "cost": 0.0787791,
+      "message_count": 12
+    }
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "session_id": "019e77e8-6044-7b89-bfa2-b15c1d933604",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-contrib-dotfiles--/2026-05-30T08-02-58-244Z_019e77e8-6044-7b89-bfa2-b15c1d933604.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/contrib/dotfiles",
+  "start_time": "2026-05-30T08:02:58.244Z",
+  "duration_minutes": 16,
+  "user_message_count": 5,
+  "assistant_message_count": 23,
+  "tool_counts": {
+    "ctx_find": 3,
+    "ctx_read": 5,
+    "ctx_ls": 1,
+    "ctx_shell": 2,
+    "edit": 2,
+    "ctx_grep": 3
+  },
+  "languages": {
+    "Markdown": 3,
+    "TypeScript": 5
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 20379,
+  "output_tokens": 5831,
+  "total_cost": 0.059081004000000006,
+  "first_prompt": "bueno, quiero que pensemos un poquito en la extensión memory, vale? solo dos cosas, dos dudas, realmente de que sirve el daily y tasks? si siempre inicio pi y le encargo un nuevo plan...",
+  "user_interruptions": 0,
+  "user_response_times": [
+    80.316,
+    554.716,
+    24.06,
+    5.683
+  ],
+  "tool_errors": 3,
+  "tool_error_categories": {
+    "Other": 3
+  },
+  "uses_subagent": false,
+  "uses_mcp": false,
+  "lines_added": 52,
+  "lines_removed": 103,
+  "files_modified": 2,
+  "message_hours": [
+    10,
+    10,
+    10,
+    10,
+    10
+  ],
+  "user_message_timestamps": [
+    "2026-05-30T08:03:47.544Z",
+    "2026-05-30T08:06:44.304Z",
+    "2026-05-30T08:17:06.371Z",
+    "2026-05-30T08:18:26.444Z",
+    "2026-05-30T08:18:32.139Z"
+  ],
+  "model_usage": {
+    "deepseek-v4-pro": {
+      "input_tokens": 20379,
+      "output_tokens": 5831,
+      "cost": 0.059081004000000006,
+      "message_count": 23
+    }
+  }
+}

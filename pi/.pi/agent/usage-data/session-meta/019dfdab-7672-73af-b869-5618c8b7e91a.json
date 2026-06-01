@@ -1,0 +1,76 @@
+{
+  "session_id": "019dfdab-7672-73af-b869-5618c8b7e91a",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-06T14-22-45-877Z_019dfdab-7672-73af-b869-5618c8b7e91a.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-06T14:22:45.877Z",
+  "duration_minutes": 0,
+  "user_message_count": 6,
+  "assistant_message_count": 74,
+  "tool_counts": {
+    "read": 29,
+    "mcp": 6,
+    "bash": 37,
+    "edit": 1,
+    "write": 1,
+    "memory_write": 1,
+    "subagent": 6
+  },
+  "languages": {
+    "Markdown": 4,
+    "JSON": 1
+  },
+  "git_commits": 1,
+  "git_pushes": 0,
+  "input_tokens": 896801,
+  "output_tokens": 14906,
+  "total_cost": 1.1849568315999996,
+  "first_prompt": "En dashboard hay un pequeño bug, si entro como super-admin puedo leer, en el tenant 1, ageweb:\nEquipos totales\n4353 uds.\n\nAhora bien, si entro como responsable, es decir, usuario de un store, veo el\nmimo número de equipos.\n\nCon el mapa de ubicaciones pasa lo mismo, veo todas, solo debería ver las\npr",
+  "user_interruptions": 0,
+  "user_response_times": [
+    108.636,
+    80.626,
+    144.182,
+    58.811,
+    7.614
+  ],
+  "tool_errors": 6,
+  "tool_error_categories": {
+    "Other": 5,
+    "File Not Found": 1
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 72,
+  "lines_removed": 40,
+  "files_modified": 2,
+  "message_hours": [
+    16,
+    16,
+    16,
+    16,
+    16,
+    16
+  ],
+  "user_message_timestamps": [
+    "2026-05-06T14:04:27.511Z",
+    "2026-05-06T14:09:19.771Z",
+    "2026-05-06T14:11:32.581Z",
+    "2026-05-06T14:16:10.951Z",
+    "2026-05-06T14:22:21.073Z",
+    "2026-05-06T14:22:47.918Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 890213,
+      "output_tokens": 14536,
+      "cost": 1.1821213499999996,
+      "message_count": 71
+    },
+    "deepseek-v4-flash": {
+      "input_tokens": 6588,
+      "output_tokens": 370,
+      "cost": 0.0028354815999999997,
+      "message_count": 3
+    }
+  }
+}

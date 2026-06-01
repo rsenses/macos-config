@@ -1,0 +1,83 @@
+{
+  "session_id": "019e2ac3-5ec0-71fe-8451-29b80c6a6835",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-contrib-dotfiles--/2026-05-15T08-31-47-399Z_019e2ac3-5ec0-71fe-8451-29b80c6a6835.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/contrib/dotfiles",
+  "start_time": "2026-05-15T08:31:47.399Z",
+  "duration_minutes": 17,
+  "user_message_count": 11,
+  "assistant_message_count": 49,
+  "tool_counts": {
+    "read": 45,
+    "bash": 17,
+    "edit": 7,
+    "fetch": 2,
+    "write": 2
+  },
+  "languages": {
+    "Markdown": 52,
+    "JSON": 1,
+    "TypeScript": 1
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 173668,
+  "output_tokens": 24637,
+  "total_cost": 0.45001350000000007,
+  "first_prompt": "revisa la config de pi, por favor, skills, prompts... te cuento el problema, a ver como lo optimizamos, quiero que el agente investigue, busque y no de por sentadas las cosas, pero a veces se pasa, intento buscar el equilibrio, por ejemplo, cosas simples como los permisos de un botón, pues no creo q",
+  "user_interruptions": 0,
+  "user_response_times": [
+    158.526,
+    70.168,
+    64.749,
+    33.686,
+    62.388,
+    75.482,
+    69.703,
+    74.885,
+    28.631,
+    3.826
+  ],
+  "tool_errors": 6,
+  "tool_error_categories": {
+    "Other": 6
+  },
+  "uses_subagent": false,
+  "uses_mcp": false,
+  "lines_added": 134,
+  "lines_removed": 36,
+  "files_modified": 4,
+  "message_hours": [
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10
+  ],
+  "user_message_timestamps": [
+    "2026-05-15T08:34:02.497Z",
+    "2026-05-15T08:39:12.683Z",
+    "2026-05-15T08:40:22.868Z",
+    "2026-05-15T08:41:42.923Z",
+    "2026-05-15T08:42:16.621Z",
+    "2026-05-15T08:43:19.023Z",
+    "2026-05-15T08:44:34.527Z",
+    "2026-05-15T08:45:44.242Z",
+    "2026-05-15T08:46:59.151Z",
+    "2026-05-15T08:47:27.801Z",
+    "2026-05-15T08:48:13.925Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 173668,
+      "output_tokens": 24637,
+      "cost": 0.45001350000000007,
+      "message_count": 49
+    }
+  }
+}

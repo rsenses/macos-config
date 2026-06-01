@@ -1,0 +1,55 @@
+{
+  "session_id": "019e6499-c112-7e22-8b50-832bbdceec09",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-contrib-dotfiles--/2026-05-26T14-04-18-578Z_019e6499-c112-7e22-8b50-832bbdceec09.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/contrib/dotfiles",
+  "start_time": "2026-05-26T14:04:18.578Z",
+  "duration_minutes": 5,
+  "user_message_count": 1,
+  "assistant_message_count": 34,
+  "tool_counts": {
+    "ctx_find": 2,
+    "ctx_ls": 5,
+    "ctx_read": 25,
+    "create_session_plan": 1,
+    "edit": 16,
+    "add_daily_note": 3,
+    "ctx_shell": 5,
+    "write": 1
+  },
+  "languages": {
+    "Markdown": 31,
+    "TypeScript": 10,
+    "JSON": 1
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 31693,
+  "output_tokens": 19430,
+  "total_cost": 0,
+  "first_prompt": "Revisa y aplica ajustes pequeños a mi configuración de Pi.\n\nRepositorio:\nhttps://github.com/rsenses/macos-config/tree/main/pi\n\nObjetivo:\nMantener la configuración mínima, estable y barata en tokens. No quiero una reescritura completa ni añadir nuevas capas. Solo aplicar mejoras concretas detectadas ",
+  "user_interruptions": 0,
+  "user_response_times": [],
+  "tool_errors": 10,
+  "tool_error_categories": {
+    "Other": 10
+  },
+  "uses_subagent": false,
+  "uses_mcp": false,
+  "lines_added": 167,
+  "lines_removed": 119,
+  "files_modified": 6,
+  "message_hours": [
+    16
+  ],
+  "user_message_timestamps": [
+    "2026-05-26T14:05:58.563Z"
+  ],
+  "model_usage": {
+    "deepseek-v4-flash-free": {
+      "input_tokens": 31693,
+      "output_tokens": 19430,
+      "cost": 0,
+      "message_count": 34
+    }
+  }
+}

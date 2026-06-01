@@ -1,0 +1,57 @@
+{
+  "session_id": "019e6921-d865-7c15-b2a6-6c56b53d91b7",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-contrib-dotfiles--/2026-05-27T11-11-26-309Z_019e6921-d865-7c15-b2a6-6c56b53d91b7.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/contrib/dotfiles",
+  "start_time": "2026-05-27T11:11:26.309Z",
+  "duration_minutes": 3,
+  "user_message_count": 2,
+  "assistant_message_count": 18,
+  "tool_counts": {
+    "ctx_find": 3,
+    "ctx_ls": 3,
+    "ctx_read": 7,
+    "ctx_shell": 2,
+    "ask_user_question": 1,
+    "edit": 4,
+    "ctx_grep": 2
+  },
+  "languages": {
+    "TypeScript": 2,
+    "Markdown": 9
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 19291,
+  "output_tokens": 6353,
+  "total_cost": 0,
+  "first_prompt": "he",
+  "user_interruptions": 0,
+  "user_response_times": [
+    38.558
+  ],
+  "tool_errors": 4,
+  "tool_error_categories": {
+    "Other": 4
+  },
+  "uses_subagent": false,
+  "uses_mcp": false,
+  "lines_added": 14,
+  "lines_removed": 16,
+  "files_modified": 3,
+  "message_hours": [
+    13,
+    13
+  ],
+  "user_message_timestamps": [
+    "2026-05-27T11:11:51.499Z",
+    "2026-05-27T11:12:30.148Z"
+  ],
+  "model_usage": {
+    "deepseek-v4-flash-free": {
+      "input_tokens": 19291,
+      "output_tokens": 6353,
+      "cost": 0,
+      "message_count": 18
+    }
+  }
+}

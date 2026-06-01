@@ -1,0 +1,7 @@
+# macOS metadata files
+(^|/)\.DS_Store$
+
+# Repo/control files that should not be stowed
+^\.git$
+^\.gitignore$
+^\.stow-local-ignore$

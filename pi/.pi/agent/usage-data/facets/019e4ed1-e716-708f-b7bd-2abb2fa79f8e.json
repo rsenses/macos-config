@@ -1,0 +1,23 @@
+{
+  "underlying_goal": "Planificar la actualización de un proyecto Laravel 10 a Laravel 12 investigando las guías oficiales de upgrade",
+  "goal_categories": {
+    "research": 1,
+    "planning": 1
+  },
+  "outcome": "partially_achieved",
+  "user_satisfaction_counts": {
+    "likely_satisfied": 0
+  },
+  "assistant_helpfulness": "moderately_helpful",
+  "session_type": "single_task",
+  "friction_counts": {
+    "misunderstood_request": 1
+  },
+  "friction_detail": "El asistente devolvió un resumen truncado sin completar el plan concreto que el usuario solicitó; la respuesta se corta antes de mostrar el plan detallado.",
+  "primary_success": "good_explanations",
+  "brief_summary": "El usuario pidió investigar las guías de upgrade de Laravel 10 a 12 y crear un plan usando la skill architect y subagentes; el asistente realizó la investigación pero la respuesta final quedó truncada e incompleta.",
+  "user_instructions_to_assistant": [
+    "usa la skill architect y subagentes para la tarea"
+  ],
+  "session_id": "019e4ed1-e716-708f-b7bd-2abb2fa79f8e"
+}

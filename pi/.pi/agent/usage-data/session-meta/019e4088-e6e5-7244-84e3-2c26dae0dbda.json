@@ -1,0 +1,53 @@
+{
+  "session_id": "019e4088-e6e5-7244-84e3-2c26dae0dbda",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-contrib-dotfiles--/2026-05-19T13-59-34-373Z_019e4088-e6e5-7244-84e3-2c26dae0dbda.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/contrib/dotfiles",
+  "start_time": "2026-05-19T13:59:34.373Z",
+  "duration_minutes": 3,
+  "user_message_count": 5,
+  "assistant_message_count": 5,
+  "tool_counts": {},
+  "languages": {},
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 9997,
+  "output_tokens": 1552,
+  "total_cost": 0.01686255,
+  "first_prompt": "haz un cálculo aproximado de cuantos tokens totales supone este mensaje, input, incluyendo todo el contexto, sistema, todo, no solo mi mensaje",
+  "user_interruptions": 0,
+  "user_response_times": [
+    21.058,
+    42.05,
+    51.629,
+    37.242
+  ],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_subagent": false,
+  "uses_mcp": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    16,
+    16,
+    16,
+    16,
+    16
+  ],
+  "user_message_timestamps": [
+    "2026-05-19T14:00:28.048Z",
+    "2026-05-19T14:00:49.116Z",
+    "2026-05-19T14:01:31.173Z",
+    "2026-05-19T14:02:22.817Z",
+    "2026-05-19T14:03:00.073Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 9997,
+      "output_tokens": 1552,
+      "cost": 0.01686255,
+      "message_count": 5
+    }
+  }
+}

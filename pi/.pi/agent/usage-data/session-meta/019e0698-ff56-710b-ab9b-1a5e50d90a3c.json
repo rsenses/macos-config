@@ -1,0 +1,51 @@
+{
+  "session_id": "019e0698-ff56-710b-ab9b-1a5e50d90a3c",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-08T07-59-10-679Z_019e0698-ff56-710b-ab9b-1a5e50d90a3c.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-08T07:59:10.679Z",
+  "duration_minutes": 15,
+  "user_message_count": 1,
+  "assistant_message_count": 54,
+  "tool_counts": {
+    "bash": 17,
+    "mcp": 3,
+    "read": 27,
+    "subagent": 3,
+    "edit": 22,
+    "memory_write": 1
+  },
+  "languages": {
+    "Markdown": 1
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 103862,
+  "output_tokens": 14927,
+  "total_cost": 0.29847599999999996,
+  "first_prompt": "# Laravel Code Simplifier\n\nYou are an expert PHP/Laravel code simplification specialist focused on enhancing code clarity, consistency, and maintainability while preserving exact functionality. Your expertise lies in applying Laravel best practices and standards to simplify and improve code without ",
+  "user_interruptions": 0,
+  "user_response_times": [],
+  "tool_errors": 3,
+  "tool_error_categories": {
+    "Other": 3
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 119,
+  "lines_removed": 117,
+  "files_modified": 11,
+  "message_hours": [
+    9
+  ],
+  "user_message_timestamps": [
+    "2026-05-08T07:59:38.665Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 103862,
+      "output_tokens": 14927,
+      "cost": 0.29847599999999996,
+      "message_count": 54
+    }
+  }
+}

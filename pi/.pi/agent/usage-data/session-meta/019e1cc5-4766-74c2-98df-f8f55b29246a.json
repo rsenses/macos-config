@@ -1,0 +1,98 @@
+{
+  "session_id": "019e1cc5-4766-74c2-98df-f8f55b29246a",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-12T15-19-11-466Z_019e1cc5-4766-74c2-98df-f8f55b29246a.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-12T15:19:11.466Z",
+  "duration_minutes": 1,
+  "user_message_count": 13,
+  "assistant_message_count": 192,
+  "tool_counts": {
+    "subagent": 8,
+    "project_files": 10,
+    "project_search": 104,
+    "mcp": 7,
+    "read_window": 75,
+    "bash": 44,
+    "write": 12,
+    "edit": 31,
+    "read": 8
+  },
+  "languages": {
+    "Markdown": 16
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 1843458,
+  "output_tokens": 57357,
+  "total_cost": 2.8064154080000003,
+  "first_prompt": "me he cansado de la parte de templates, es poco operativa, primero, vamos a arreglar unos issues: # Illuminate\\View\\ViewException: Undefined array key \"code\" (View: /home/ploi/metech.wyrko.es-deploy/metech.wyrko.es/12052026_095842/resources/views/templates/attach/_search.blade.php) (View: /home/ploi",
+  "user_interruptions": 0,
+  "user_response_times": [
+    352.683,
+    345.61,
+    34.872,
+    201.329,
+    50.753,
+    18.952,
+    4.255,
+    121.77,
+    118.736,
+    204.42,
+    55.258,
+    18.351
+  ],
+  "tool_errors": 18,
+  "tool_error_categories": {
+    "Other": 17,
+    "Edit Failed": 1
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 761,
+  "lines_removed": 258,
+  "files_modified": 15,
+  "message_hours": [
+    16,
+    16,
+    16,
+    16,
+    17,
+    17,
+    17,
+    17,
+    17,
+    17,
+    17,
+    17,
+    17
+  ],
+  "user_message_timestamps": [
+    "2026-05-12T14:22:51.290Z",
+    "2026-05-12T14:31:15.734Z",
+    "2026-05-12T14:42:16.003Z",
+    "2026-05-12T14:50:47.760Z",
+    "2026-05-12T15:00:15.035Z",
+    "2026-05-12T15:01:05.821Z",
+    "2026-05-12T15:01:30.612Z",
+    "2026-05-12T15:03:52.682Z",
+    "2026-05-12T15:06:54.613Z",
+    "2026-05-12T15:10:35.326Z",
+    "2026-05-12T15:15:35.215Z",
+    "2026-05-12T15:17:15.042Z",
+    "2026-05-12T15:19:13.378Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 1671522,
+      "output_tokens": 55113,
+      "cost": 2.7776051999999996,
+      "message_count": 183
+    },
+    "deepseek-v4-flash": {
+      "input_tokens": 171936,
+      "output_tokens": 2244,
+      "cost": 0.028810208,
+      "message_count": 9
+    }
+  }
+}

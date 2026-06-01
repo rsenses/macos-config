@@ -1,0 +1,49 @@
+{
+  "session_id": "019dfd39-26bf-762a-987a-b07b53adf44c",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-06T12-17-54-368Z_019dfd39-26bf-762a-987a-b07b53adf44c.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-06T12:17:54.368Z",
+  "duration_minutes": 1,
+  "user_message_count": 3,
+  "assistant_message_count": 4,
+  "tool_counts": {
+    "memory_read": 4
+  },
+  "languages": {},
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 16979,
+  "output_tokens": 619,
+  "total_cost": 0.01905255,
+  "first_prompt": "tienes bien configurada la memoria? que ves ahora mismo?",
+  "user_interruptions": 0,
+  "user_response_times": [
+    19.356,
+    17.66
+  ],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_subagent": false,
+  "uses_mcp": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    14,
+    14,
+    14
+  ],
+  "user_message_timestamps": [
+    "2026-05-06T12:18:27.922Z",
+    "2026-05-06T12:18:52.303Z",
+    "2026-05-06T12:19:09.970Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 16979,
+      "output_tokens": 619,
+      "cost": 0.01905255,
+      "message_count": 4
+    }
+  }
+}

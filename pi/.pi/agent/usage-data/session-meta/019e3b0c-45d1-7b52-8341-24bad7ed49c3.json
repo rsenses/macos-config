@@ -1,0 +1,55 @@
+{
+  "session_id": "019e3b0c-45d1-7b52-8341-24bad7ed49c3",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-18T12-25-20-593Z_019e3b0c-45d1-7b52-8341-24bad7ed49c3.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-18T12:25:20.593Z",
+  "duration_minutes": 13,
+  "user_message_count": 2,
+  "assistant_message_count": 58,
+  "tool_counts": {
+    "read": 49,
+    "bash": 39,
+    "mcp": 4,
+    "write": 4,
+    "edit": 15,
+    "subagent": 2
+  },
+  "languages": {
+    "Markdown": 24
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 251651,
+  "output_tokens": 29111,
+  "total_cost": 0.5770177499999999,
+  "first_prompt": "en @resources/views/orders/actions/_update-modal.blade.php tenemos que agregar botones de 1 año, 2 años y 6 meses igual que en @resources/views/livewire/action/action-create-page.blade.php , además, hacer obligatorio el campo para type preventive, calibration y test",
+  "user_interruptions": 0,
+  "user_response_times": [
+    19.149
+  ],
+  "tool_errors": 12,
+  "tool_error_categories": {
+    "Other": 12
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 313,
+  "lines_removed": 87,
+  "files_modified": 8,
+  "message_hours": [
+    14,
+    14
+  ],
+  "user_message_timestamps": [
+    "2026-05-18T12:30:28.592Z",
+    "2026-05-18T12:36:51.382Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 251651,
+      "output_tokens": 29111,
+      "cost": 0.5770177499999999,
+      "message_count": 58
+    }
+  }
+}

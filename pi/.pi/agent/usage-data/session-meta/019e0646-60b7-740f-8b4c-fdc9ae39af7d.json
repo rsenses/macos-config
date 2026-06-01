@@ -1,0 +1,71 @@
+{
+  "session_id": "019e0646-60b7-740f-8b4c-fdc9ae39af7d",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-08T06-28-56-121Z_019e0646-60b7-740f-8b4c-fdc9ae39af7d.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-08T06:28:56.121Z",
+  "duration_minutes": 76,
+  "user_message_count": 6,
+  "assistant_message_count": 114,
+  "tool_counts": {
+    "mcp": 5,
+    "subagent": 8,
+    "bash": 63,
+    "read": 50,
+    "code_search": 4,
+    "write": 4,
+    "edit": 20,
+    "memory_write": 6,
+    "ask_user_question": 1
+  },
+  "languages": {
+    "Markdown": 3
+  },
+  "git_commits": 1,
+  "git_pushes": 0,
+  "input_tokens": 592692,
+  "output_tokens": 40469,
+  "total_cost": 1.1397687,
+  "first_prompt": "Tengo un problema en @app/Http/Controllers/Orders/Exports/ExportDownloadController.php , siempre me da un error 403, es decir, falla la signature, el ciclo es el siguiente, generamos una exportación con @app/Exports/ToolsExport.php y la enviamos con @app/Jobs/ExportToolsJob.php el mail es @app/Notif",
+  "user_interruptions": 0,
+  "user_response_times": [
+    254.269,
+    1138.837,
+    185.636,
+    81.115,
+    4.517
+  ],
+  "tool_errors": 12,
+  "tool_error_categories": {
+    "Other": 11,
+    "Edit Failed": 1
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 361,
+  "lines_removed": 197,
+  "files_modified": 14,
+  "message_hours": [
+    8,
+    9,
+    9,
+    9,
+    9,
+    9
+  ],
+  "user_message_timestamps": [
+    "2026-05-08T06:32:13.903Z",
+    "2026-05-08T07:06:35.321Z",
+    "2026-05-08T07:28:05.806Z",
+    "2026-05-08T07:39:44.301Z",
+    "2026-05-08T07:43:37.263Z",
+    "2026-05-08T07:44:28.164Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 592692,
+      "output_tokens": 40469,
+      "cost": 1.1397687,
+      "message_count": 114
+    }
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "session_id": "019e0709-95da-76b9-ad4e-3ba2a6d3f996",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cms.portantos.es--/2026-05-08T10-02-09-245Z_019e0709-95da-76b9-ad4e-3ba2a6d3f996.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cms.portantos.es",
+  "start_time": "2026-05-08T10:02:09.245Z",
+  "duration_minutes": 0,
+  "user_message_count": 4,
+  "assistant_message_count": 67,
+  "tool_counts": {
+    "subagent": 6,
+    "mcp": 3,
+    "read": 21,
+    "bash": 30,
+    "code_search": 2,
+    "edit": 13
+  },
+  "languages": {
+    "Markdown": 4
+  },
+  "git_commits": 1,
+  "git_pushes": 0,
+  "input_tokens": 178453,
+  "output_tokens": 23432,
+  "total_cost": 0.38002536640000006,
+  "first_prompt": "Hola, vamos a agregar una nueva propiedad al modelo @app/Filament/Resources/Dioces/ esta propiedad es 'Carta del obispo' que la llamaremos letter, es un archivo pdf, es exactamente igual que la propiedad pdf, es nullable. Hay que actualizar @app/Filament/Resources/Dioces/ y @app/Http/Controllers/Dio",
+  "user_interruptions": 0,
+  "user_response_times": [
+    506.704,
+    290.134,
+    9.826
+  ],
+  "tool_errors": 11,
+  "tool_error_categories": {
+    "Other": 11
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 271,
+  "lines_removed": 192,
+  "files_modified": 5,
+  "message_hours": [
+    11,
+    11,
+    12,
+    12
+  ],
+  "user_message_timestamps": [
+    "2026-05-08T09:33:27.879Z",
+    "2026-05-08T09:47:26.250Z",
+    "2026-05-08T10:01:52.509Z",
+    "2026-05-08T10:02:11.573Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 160654,
+      "output_tokens": 22906,
+      "cost": 0.3769755000000001,
+      "message_count": 64
+    },
+    "deepseek-v4-flash": {
+      "input_tokens": 17799,
+      "output_tokens": 526,
+      "cost": 0.0030498664,
+      "message_count": 3
+    }
+  }
+}

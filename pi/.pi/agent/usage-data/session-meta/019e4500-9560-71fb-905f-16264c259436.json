@@ -1,0 +1,42 @@
+{
+  "session_id": "019e4500-9560-71fb-905f-16264c259436",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-contrib-dotfiles--/2026-05-20T10-48-46-688Z_019e4500-9560-71fb-905f-16264c259436.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/contrib/dotfiles",
+  "start_time": "2026-05-20T10:48:46.688Z",
+  "duration_minutes": 1,
+  "user_message_count": 1,
+  "assistant_message_count": 2,
+  "tool_counts": {
+    "ctx_grep": 1
+  },
+  "languages": {},
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 10452,
+  "output_tokens": 138,
+  "total_cost": 0.06100800000000001,
+  "first_prompt": "haz una búsqueda simple de este repo para probar si lean-ctx funciona correctamente",
+  "user_interruptions": 0,
+  "user_response_times": [],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_subagent": false,
+  "uses_mcp": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    12
+  ],
+  "user_message_timestamps": [
+    "2026-05-20T10:49:38.068Z"
+  ],
+  "model_usage": {
+    "gpt-5.5": {
+      "input_tokens": 10452,
+      "output_tokens": 138,
+      "cost": 0.06100800000000001,
+      "message_count": 2
+    }
+  }
+}

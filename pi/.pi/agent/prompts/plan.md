@@ -1,15 +1,20 @@
 ---
-description: Plan a task without modifying files
+description: Plan a task and optionally update domain docs
 argument-hint: "<task>"
 ---
 
-Use the `architect` and `ops` skills.
+Use the `architect` skill and the `planner` subagent.
 
 **Goal**: Create a technical plan for the task: "$ARGUMENTS"
+
 **Rules**:
 
-1. Read-only: Do not modify files.
-2. For non-trivial tasks, call `create_session_plan` with a short slug, then write/update the created session plan file. Only skip this for trivial one-line tasks.
-3. Investigate: Use `scout` only when relevant code paths, affected files, or existing patterns are unclear. Use `researcher` only when framework/library behavior or external documentation matters. For obvious or small tasks, plan directly without subagents.
-4. Structure: Follow the `architect` guidelines (Objective, Assumptions, Tasks with vertical slicing).
-5. Output: Present the goal, discovered ctx, assumptions, and proposed tasks.
+1. Planning-first: do not modify implementation files. Writing/updating the session plan file is OK.
+2. The architect must first translate the request into a canonical brief. If the request has domain language or unclear decisions, use `grill-with-docs` before planning.
+3. For non-trivial tasks, call `create_session_plan` with a short slug first to get the plan file path.
+4. Pass the canonical brief, not the raw user wording, to `subagent(agent: "planner", task: "...")`.
+5. Review the planner's output. If the plan has gaps or wrong assumptions, ask the planner to refine a specific section or fix minor issues yourself.
+6. Write the final plan into the session plan file from step 3.
+7. Present a summary to the user: goal, key tasks, files involved, risks, and dependencies.
+
+**Note**: The planner has `scout` and `researcher` subagents. It explores the codebase and external docs as needed, so you do not need to pre-investigate.

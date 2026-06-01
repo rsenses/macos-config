@@ -1,0 +1,113 @@
+{
+  "session_id": "019df8ad-54e2-7130-8d52-8d54354b1e83",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-05T15-06-42-275Z_019df8ad-54e2-7130-8d52-8d54354b1e83.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-05T15:06:42.275Z",
+  "duration_minutes": 0,
+  "user_message_count": 19,
+  "assistant_message_count": 96,
+  "tool_counts": {
+    "read": 41,
+    "subagent": 8,
+    "mcp": 3,
+    "fffind": 4,
+    "ffgrep": 5,
+    "bash": 32,
+    "write": 1,
+    "edit": 6
+  },
+  "languages": {
+    "Markdown": 5
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 328574,
+  "output_tokens": 27779,
+  "total_cost": 0.7299041196000002,
+  "first_prompt": "Plan the following task without modifying files.\n\nTask:\nhe creado un issue en github: Normalize validation placement #245\nVamos a planearlo y trabajar en ello, porque me interesa mucho. Esta es la\ndescipción:\n\n## Problem\n\nLa validación está repartida entre Form Requests, validaciones inline en\nLivew",
+  "user_interruptions": 0,
+  "user_response_times": [
+    413.764,
+    261.273,
+    203.228,
+    31.517,
+    67.153,
+    449.085,
+    107.247,
+    45.849,
+    56.64,
+    151.062,
+    48.49,
+    36.798,
+    80.041,
+    11.225,
+    322.789,
+    17.996,
+    3.351
+  ],
+  "tool_errors": 7,
+  "tool_error_categories": {
+    "Other": 7
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 91,
+  "lines_removed": 31,
+  "files_modified": 4,
+  "message_hours": [
+    16,
+    16,
+    16,
+    16,
+    16,
+    16,
+    16,
+    16,
+    16,
+    16,
+    16,
+    16,
+    16,
+    16,
+    16,
+    16,
+    17,
+    17,
+    17
+  ],
+  "user_message_timestamps": [
+    "2026-05-05T14:10:57.798Z",
+    "2026-05-05T14:21:57.567Z",
+    "2026-05-05T14:26:32.901Z",
+    "2026-05-05T14:29:56.146Z",
+    "2026-05-05T14:30:27.683Z",
+    "2026-05-05T14:32:32.920Z",
+    "2026-05-05T14:43:58.754Z",
+    "2026-05-05T14:45:46.024Z",
+    "2026-05-05T14:46:44.869Z",
+    "2026-05-05T14:50:47.052Z",
+    "2026-05-05T14:54:34.358Z",
+    "2026-05-05T14:55:26.607Z",
+    "2026-05-05T14:56:08.664Z",
+    "2026-05-05T14:58:03.296Z",
+    "2026-05-05T14:59:33.286Z",
+    "2026-05-05T14:59:44.523Z",
+    "2026-05-05T15:06:19.316Z",
+    "2026-05-05T15:06:37.334Z",
+    "2026-05-05T15:06:44.305Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 309525,
+      "output_tokens": 26903,
+      "cost": 0.7263400500000001,
+      "message_count": 93
+    },
+    "deepseek-v4-flash": {
+      "input_tokens": 19049,
+      "output_tokens": 876,
+      "cost": 0.0035640696,
+      "message_count": 3
+    }
+  }
+}

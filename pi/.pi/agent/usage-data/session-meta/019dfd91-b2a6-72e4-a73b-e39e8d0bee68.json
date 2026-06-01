@@ -1,0 +1,113 @@
+{
+  "session_id": "019dfd91-b2a6-72e4-a73b-e39e8d0bee68",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-05-06T13-54-37-355Z_019dfd91-b2a6-72e4-a73b-e39e8d0bee68.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+  "start_time": "2026-05-06T13:54:37.355Z",
+  "duration_minutes": 2,
+  "user_message_count": 17,
+  "assistant_message_count": 143,
+  "tool_counts": {
+    "read": 49,
+    "mcp": 2,
+    "subagent": 7,
+    "bash": 63,
+    "memory_write": 4,
+    "write": 3,
+    "edit": 27
+  },
+  "languages": {
+    "Markdown": 7
+  },
+  "git_commits": 1,
+  "git_pushes": 0,
+  "input_tokens": 461172,
+  "output_tokens": 30431,
+  "total_cost": 4.260072584000007,
+  "first_prompt": "Vamos a analizar y planear, en caso necesario, un issue de github\n Isolate cache warmup from AppServiceProvider boot #247\n\n Problem\n\n AppServiceProvider hace trabajo de “boot” que depende de la base de datos y de\n tablas existentes para precargar cachés. Eso introduce efectos laterales en el\n arranq",
+  "user_interruptions": 0,
+  "user_response_times": [
+    294.856,
+    75.226,
+    2125.138,
+    57.792,
+    30.742,
+    48.72,
+    52.018,
+    25.909,
+    122.415,
+    153.377,
+    63.996,
+    139.298,
+    47.161,
+    107.11,
+    25.719,
+    13.01
+  ],
+  "tool_errors": 8,
+  "tool_error_categories": {
+    "Other": 8
+  },
+  "uses_subagent": true,
+  "uses_mcp": false,
+  "lines_added": 314,
+  "lines_removed": 213,
+  "files_modified": 15,
+  "message_hours": [
+    14,
+    14,
+    14,
+    15,
+    15,
+    15,
+    15,
+    15,
+    15,
+    15,
+    15,
+    15,
+    15,
+    15,
+    15,
+    15,
+    15
+  ],
+  "user_message_timestamps": [
+    "2026-05-06T12:37:35.951Z",
+    "2026-05-06T12:45:19.670Z",
+    "2026-05-06T12:46:34.907Z",
+    "2026-05-06T13:31:46.137Z",
+    "2026-05-06T13:33:42.206Z",
+    "2026-05-06T13:35:18.405Z",
+    "2026-05-06T13:38:23.769Z",
+    "2026-05-06T13:40:31.313Z",
+    "2026-05-06T13:41:28.740Z",
+    "2026-05-06T13:43:39.404Z",
+    "2026-05-06T13:47:21.036Z",
+    "2026-05-06T13:48:41.362Z",
+    "2026-05-06T13:51:26.277Z",
+    "2026-05-06T13:52:13.459Z",
+    "2026-05-06T13:54:00.584Z",
+    "2026-05-06T13:54:26.322Z",
+    "2026-05-06T13:54:39.349Z"
+  ],
+  "model_usage": {
+    "gpt-5.5": {
+      "input_tokens": 264335,
+      "output_tokens": 14203,
+      "cost": 3.890485000000001,
+      "message_count": 90
+    },
+    "gpt-5.4-mini": {
+      "input_tokens": 171784,
+      "output_tokens": 9771,
+      "cost": 0.35981549999999995,
+      "message_count": 35
+    },
+    "deepseek-v4-flash": {
+      "input_tokens": 25053,
+      "output_tokens": 6457,
+      "cost": 0.009772084,
+      "message_count": 18
+    }
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "session_id": "019e4ed1-24e3-71e9-b7af-c3b6472d3611",
+  "session_path": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-premios.tedae.org--/2026-05-22T08-33-09-859Z_019e4ed1-24e3-71e9-b7af-c3b6472d3611.jsonl",
+  "project_path": "/Users/rubensilvarodriguez/dev/www/premios.tedae.org",
+  "start_time": "2026-05-22T08:33:09.859Z",
+  "duration_minutes": 36,
+  "user_message_count": 6,
+  "assistant_message_count": 33,
+  "tool_counts": {
+    "create_session_plan": 1,
+    "ctx_ls": 2,
+    "ctx_grep": 14,
+    "lsp_document_symbols": 1,
+    "ctx_read": 9,
+    "edit": 4,
+    "ctx_shell": 7,
+    "write": 1,
+    "add_daily_note": 1,
+    "mcp": 1,
+    "fetch_content": 1,
+    "ask_user_question": 1
+  },
+  "languages": {
+    "HTML": 23,
+    "Markdown": 4
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 342406,
+  "output_tokens": 15231,
+  "total_cost": 0.5204544000000001,
+  "first_prompt": "te voy a pasar el email que me han mandado para actualizar esta web, hay cosas que no puedes hacer, lo referente al logo e imágenes, pero los textos si, primero, entiende bien el email y las necesidades, realmente es simple. Luego haces los cambios al html y por último, cuando ya tenga todas las imá",
+  "user_interruptions": 0,
+  "user_response_times": [
+    5.41,
+    976.571,
+    282.166,
+    107.592,
+    79.538
+  ],
+  "tool_errors": 3,
+  "tool_error_categories": {
+    "Other": 3
+  },
+  "uses_subagent": false,
+  "uses_mcp": false,
+  "lines_added": 42,
+  "lines_removed": 44,
+  "files_modified": 2,
+  "message_hours": [
+    10,
+    10,
+    10,
+    10,
+    11,
+    11
+  ],
+  "user_message_timestamps": [
+    "2026-05-22T08:35:34.729Z",
+    "2026-05-22T08:35:40.194Z",
+    "2026-05-22T08:54:47.031Z",
+    "2026-05-22T08:59:29.245Z",
+    "2026-05-22T09:07:21.311Z",
+    "2026-05-22T09:08:40.888Z"
+  ],
+  "model_usage": {
+    "gpt-5.4-mini": {
+      "input_tokens": 342406,
+      "output_tokens": 15231,
+      "cost": 0.5204544000000001,
+      "message_count": 33
+    }
+  }
+}
