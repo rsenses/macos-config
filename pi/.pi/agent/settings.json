@@ -1,8 +1,8 @@
 {
   "lastChangelogVersion": "0.78.0",
-  "defaultProvider": "opencode-go",
-  "defaultModel": "deepseek-v4-pro",
-  "defaultThinkingLevel": "high",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.5",
+  "defaultThinkingLevel": "low",
   "theme": "light",
   "packages": [
     "npm:pi-mcp-adapter",

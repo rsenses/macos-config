@@ -331,6 +331,7 @@ Current session plan: \`${planPath}\`
 - **Inspect**: Use \`get_current_plan\` for the active plan and \`summarize_worktree\` for a compact repo snapshot.
 - **Tasks**: Use \`.ai/TASKS.md\` for work that survives sessions. Use wiki-links \`[[.ai/plan/file.md]]\` for complex tasks.
 - **Durable**: Update \`.ai/MEMORY.md\` only for long-term project decisions or stable preferences.
+- **Memory persistence**: For updates to \`.ai/MEMORY.md\`, \`.ai/TASKS.md\`, or \`.ai/plan/*.md\`, the main agent reviews and approves the content first, then always delegates the file-writing/persistence step to the \`memory-keeper\` subagent.
 - **Reference discipline**: When a route, component, file, or decision is already recorded, refer to the existing section or item instead of restating the whole list.
 - **Inventory discipline**: For route/component reports, keep one canonical list and append only new or changed entries.
 - **Delta focus**: In iterative frontend, CSS, or JS work, answer with the smallest useful delta rather than reprinting prior inventories.

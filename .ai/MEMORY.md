@@ -28,6 +28,7 @@ Durable project knowledge, decisions, preferences, and recurring lessons.
 - Global Pi preference: prefer `fd` over `find` for file discovery; use `find` only when `fd` is unavailable or POSIX-specific behavior is required.
 - UI feedback: for post-response warnings based on final context usage, prefer `agent_end` with `ctx.ui.notify(..., "error")` so the message appears after the agent finishes and renders in red.
 - Memory extension note: `pi/.pi/agent/extensions/memory.ts` injects full MEMORY.md/TASKS.md (user-managed); durable persistence still depends on prompt/model flow.
+- Memory persistence workflow: for updates to `.ai/MEMORY.md`, `.ai/TASKS.md`, or `.ai/plan/*.md`, the main agent reviews and approves the content first, then always delegates the file-writing/persistence step to the `memory-keeper` subagent.
 - Context discipline: when the same inventory (routes, components, files, controllers, endpoints) is already recorded, future turns should refer to the canonical section/item and only add deltas.
 - Persistence lesson: prompt wording needs to say "write the file" explicitly; advisory phrasing like "update memory" is easier for the model to narrate than to execute.
 - Extension pitfall: when editing `memory.ts` template literals, escape literal markdown backticks inside the injected prompt; otherwise the extension can fail to parse on load.
