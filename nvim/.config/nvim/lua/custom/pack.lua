@@ -63,10 +63,11 @@ require('conform').setup {
   },
   format_on_save = function(bufnr)
     local disable_filetypes = { c = true, cpp = true }
-    local lsp_format_opt = disable_filetypes[vim.bo[bufnr].filetype] and 'never' or 'fallback'
+    local filetype = vim.bo[bufnr].filetype
+    local lsp_format_opt = disable_filetypes[filetype] and 'never' or 'fallback'
     local bufname = vim.api.nvim_buf_get_name(bufnr)
 
-    if bufname:match '/notifications/email%.blade%.php$' then
+    if filetype == 'http' or bufname:match '/notifications/email%.blade%.php$' then
       return
     end
 
@@ -426,6 +427,7 @@ ts.setup {
   },
   indent = {
     enable = true,
+    disable = { 'http' },
   },
 }
 

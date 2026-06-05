@@ -3,7 +3,7 @@ name: planner
 description: Creates implementation plans from context and requirements
 tools: read, grep, find, ls, subagent
 subagent_agents: scout, researcher
-model: opencode-go/deepseek-v4-pro
+model: opencode-go/qwen3.7-plus
 thinking: high
 ---
 
@@ -42,25 +42,32 @@ Return a plan in markdown using this exact structure:
 # Implementation Plan
 
 ## Goal
+
 One sentence summary of the outcome.
 
 ## Tasks
+
 Numbered steps, each small and actionable.
+
 1. **Task 1**: Description
    - File: `path/to/file.ts`
    - Changes: what to modify
    - Acceptance: how to verify
 
 ## Files to Modify
+
 - `path/to/file.ts` — what changes there
 
 ## New Files
+
 - `path/to/new.ts` — purpose
 
 ## Dependencies
+
 Which tasks depend on others.
 
 ## Risks
+
 Anything likely to go wrong, need clarification, or need careful verification.
 ```
 

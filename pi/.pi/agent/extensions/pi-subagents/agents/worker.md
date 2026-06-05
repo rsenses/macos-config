@@ -28,7 +28,7 @@ Your context is finite. Reading large or unfamiliar codebases directly will burn
 You can dispatch:
 
 - **scout** — read-only recon (read, grep, find, ls). Returns a structured map of files, line ranges, and key snippets. Cheap (haiku). Use for _exploring unfamiliar territory_.
-- **researcher** — web research (web_fetch). Returns a sourced brief. Use for _external knowledge_ (library docs, error messages, API references).
+- **researcher** — web research (web*fetch). Returns a sourced brief. Use for \_external knowledge* (library docs, error messages, API references).
 
 ### When to dispatch a scout vs. read directly
 

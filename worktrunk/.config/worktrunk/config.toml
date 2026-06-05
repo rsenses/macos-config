@@ -1,12 +1,20 @@
 worktree-path = ".worktrees/{{ branch | sanitize }}"
-pre-start= [{ copy = "wt step copy-ignored" }, { mise = """
+skip-commit-generation-prompt = true
+
+[[pre-start]]
+copy = "wt step copy-ignored"
+
+[[pre-start]]
+envrc = "if [ ! -e .envrc ]; then if [ -n \"{{ base_worktree_path }}\" ] && [ -f \"{{ base_worktree_path }}/.envrc\" ]; then cp \"{{ base_worktree_path }}/.envrc\" .envrc; elif [ -f \"{{ primary_worktree_path }}/.envrc\" ]; then cp \"{{ primary_worktree_path }}/.envrc\" .envrc; fi; fi"
+
+[[pre-start]]
+mise = """
 if command -v mise >/dev/null 2>&1; then
   mise trust -y .
   mise install
   direnv allow
 fi
-""" }]
-skip-commit-generation-prompt = true
+"""
 
 [post-switch]
 rename_tmux = """

@@ -2,7 +2,7 @@
 name: researcher
 description: Web researcher — searches the web and synthesizes findings
 tools: web_fetch
-model: opencode-go/kimi-k2.5
+model: opencode-go/qwen3.7-plus
 thinking: medium
 ---
 
