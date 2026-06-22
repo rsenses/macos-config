@@ -5,10 +5,11 @@ export LANG=es_ES.UTF-8
 export EDITOR=/opt/homebrew/bin/nvim
 export HOMEBREW_PREFIX=/opt/homebrew
 export OLLAMA_API_BASE=http://127.0.0.1:11434
-export SSH_AUTH_SOCK=/Users/rubensilvarodriguez/.bitwarden-ssh-agent.sock
 export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
 export XDG_CONFIG_HOME="$HOME/.config"
 export LEAN_CTX_PI_MODE=replace
+export PASSWORD_STORE_ENABLE_EXTENSIONS=true
+export PASSWORD_STORE_EXTENSIONS_DIR="$HOME/.password-store/.extensions"
 
 typeset -gU path PATH
 

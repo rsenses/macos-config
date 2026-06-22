@@ -61,7 +61,11 @@ After the plan is validated, coordinate implementation in small slices:
 - If a worker returns ambiguity, conflicting evidence, or the same failure twice, stop and either re-plan or ask the user.
 - Keep final architectural judgment in the architect; workers do not decide scope.
 
-## 4. Gated Process
+## 4. Changelog Requirement
+
+When drafting or validating a plan, include a finalization task to update `CHANGELOG.md` if it exists at the project root and the job has user-visible impact. The entry must be SemVer-aligned, use Keep a Changelog categories, and describe the actual current-job change.
+
+## 5. Gated Process
 
 1. **Specify**: Human validates requirements and success criteria.
 2. **Plan**: Human validates the technical approach and architecture.

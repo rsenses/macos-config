@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.78.1",
+  "lastChangelogVersion": "0.79.9",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.5",
   "defaultThinkingLevel": "low",
@@ -15,9 +15,7 @@
     "openai-codex/gpt-5.5",
     "opencode-go/deepseek-v4-flash",
     "opencode-go/deepseek-v4-pro",
-    "opencode-go/qwen3.7-plus",
-    "opencode/minimax-m3-free"
+    "opencode-go/qwen3.7-plus"
   ],
   "enableInstallTelemetry": false
 }
-

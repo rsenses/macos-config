@@ -5,15 +5,15 @@
       "src": "https://github.com/stevearc/conform.nvim"
     },
     "kulala.nvim": {
-      "rev": "a82a20a4f065275b91375744fbff9839db1dffd0",
+      "rev": "143966c65767414f8b3d545d44b86902ab0f0843",
       "src": "https://github.com/mistweaverco/kulala.nvim"
     },
     "mini.nvim": {
-      "rev": "11afe78a10570fe1d0c7ed0b6fc2b5b19098cb45",
+      "rev": "bf8169f3e518be8de3f88073ace37d91f576cb04",
       "src": "https://github.com/nvim-mini/mini.nvim"
     },
     "nvim-lspconfig": {
-      "rev": "229b79051b380377664edc4cbd534930154921a1",
+      "rev": "a683e0ddf0cf64c6cd689e18ffb480ade3c162b7",
       "src": "https://github.com/neovim/nvim-lspconfig"
     },
     "nvim-treesitter": {

@@ -316,6 +316,9 @@ export default function (pi: ExtensionAPI) {
 		const { path: planPath } = await sessionPlanPath(cwd, sessionId);
 		const memory = await readFile(paths.memoryFile, "utf8");
 		const tasks = await readFile(paths.tasksFile, "utf8");
+		const changelogPolicy = existsSync(path.join(cwd, "CHANGELOG.md"))
+			? `\n### Changelog Policy\n- This project has a \`CHANGELOG.md\`. Every job producing user-visible changes MUST add or update a SemVer-aligned Keep a Changelog entry before finalizing.\n- If the changelog is missing or stale for the current job, do not report \`ready to ship\`.`
+			: "";
 
 		const memoryContext = `## Project Memory
 
@@ -335,6 +338,7 @@ Current session plan: \`${planPath}\`
 - **Reference discipline**: When a route, component, file, or decision is already recorded, refer to the existing section or item instead of restating the whole list.
 - **Inventory discipline**: For route/component reports, keep one canonical list and append only new or changed entries.
 - **Delta focus**: In iterative frontend, CSS, or JS work, answer with the smallest useful delta rather than reprinting prior inventories.
+${changelogPolicy}
 
 Current \`.ai/MEMORY.md\` contents:
 \`\`\`md

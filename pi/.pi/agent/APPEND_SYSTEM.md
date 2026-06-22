@@ -2,6 +2,12 @@
 
 - **Discovery**: Prefer `fd` over `find`. Use `find` only if `fd` is missing or for POSIX-specific behavior.
 
+## Changelog Policy
+
+- If `CHANGELOG.md` exists at the project root, every job that produces user-visible changes MUST add or update a SemVer-aligned Keep a Changelog entry before finalizing.
+- If `CHANGELOG.md` does not exist, do not create it unless the user or project conventions explicitly ask for one.
+- The changelog entry must describe the actual current-job impact; placeholders or unrelated cleanup entries do not satisfy this policy.
+
 ## Complexity Triage
 
 Default rule: for any Medium or Serious task, prefer scout/researcher first before editing.

@@ -7,10 +7,6 @@ SSH_CONFIG="/Users/rubensilvarodriguez/.ssh/config"
 LOG_DIR="/tmp/ssh-tunnels"
 mkdir -p "$LOG_DIR"
 
-# Si usas Bitwarden agent y quieres hacerlo robusto en launchd,
-# puedes fijar el socket aquí (si no, comenta estas 2 líneas).
-export SSH_AUTH_SOCK="/Users/rubensilvarodriguez/.bitwarden-ssh-agent.sock"
-
 # ==== Helpers ====
 is_listening() {
   local port="$1"
