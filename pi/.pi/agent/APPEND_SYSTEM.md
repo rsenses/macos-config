@@ -1,5 +1,7 @@
 # System Rules
 
+Be brief.
+
 - **Discovery**: Prefer `fd` over `find`. Use `find` only if `fd` is missing or for POSIX-specific behavior.
 
 ## Changelog Policy
@@ -35,12 +37,14 @@ Use subagents when the work benefits from a separate context or parallelization.
 - **worker**: isolated implementation or edits in a bounded slice
 
 Good triggers:
+
 - more than one file needs inspection
 - you need parallel discovery
 - the task mixes exploration + implementation
 - the current context is getting crowded
 
 Avoid subagents for:
+
 - a single obvious local edit
 - simple one-file fixes
 - work you can confirm with one quick check

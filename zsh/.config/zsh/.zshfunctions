@@ -116,12 +116,12 @@ ss() {
   [[ -n "$server" ]] && ssh "$server"
 }
 
-# select notes dir and open in nvim
-notes() {
-  local type
-  type=$(printf "work\npersonal" | fzf) || return
-  nvim "$HOME/data/$type/notes/daily.md"
-}
+# # select notes dir and open in nvim
+# notes() {
+#   local type
+#   type=$(printf "work\npersonal" | fzf) || return
+#   nvim "$HOME/data/$type/notes/daily.md"
+# }
 
 # show last downloaded file
 lastdl() {

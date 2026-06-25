@@ -1,0 +1,6 @@
+2026-06-25T09:45:22.837437Z  INFO herdr::logging: herdr starting event="app.startup" subsystem="client" outcome="started" pid=16850
+2026-06-25T09:45:22.837513Z  INFO herdr::client: connecting to server path=/Users/rubensilvarodriguez/.config/herdr/herdr-client.sock
+2026-06-25T09:45:23.045698Z  INFO herdr::client: handshake succeeded version=14 encoding=SemanticFrame
+2026-06-25T09:57:37.015495Z  INFO herdr::logging: herdr starting event="app.startup" subsystem="client" outcome="started" pid=19993
+2026-06-25T09:57:37.015614Z  INFO herdr::client: connecting to server path=/Users/rubensilvarodriguez/.config/herdr/herdr-client.sock
+2026-06-25T09:57:37.235776Z  INFO herdr::client: handshake succeeded version=14 encoding=SemanticFrame

@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+require() {
+  if ! command -v "$1" >/dev/null 2>&1; then
+    printf 'herdr-sessionizer: missing required command: %s\n' "$1" >&2
+    exit 1
+  fi
+}
+
+require fzf
+require herdr
+require zoxide
+
+project="$(
+  zoxide query -l \
+    | awk '!seen[$0]++' \
+    | fzf \
+        --height=100% \
+        --layout=reverse \
+        --border=none \
+        --prompt='project > ' \
+        --preview='' \
+        --preview-window=hidden
+)" || exit 0
+
+[ -n "${project:-}" ] || exit 0
+
+get_worktrees() {
+  git -C "$1" worktree list --porcelain 2>/dev/null \
+    | awk '
+        /^worktree / {
+          print substr($0, 10)
+        }
+      '
+}
+
+get_extra_worktrees() {
+  local root="$1"
+  get_worktrees "$root" | awk -v root="$root" '$0 != root'
+}
+
+is_git_repo() {
+  git -C "$1" rev-parse --is-inside-work-tree >/dev/null 2>&1
+}
+
+canonical_path() {
+  local path="$1"
+  (cd "$path" 2>/dev/null && pwd -P) || printf '%s\n' "$path"
+}
+
+workspace_label() {
+  basename "$1"
+}
+
+worktrees=""
+
+if is_git_repo "$project"; then
+  worktrees="$(get_extra_worktrees "$project" || true)"
+fi
+
+if [ -n "${worktrees:-}" ]; then
+  dir="$(
+    printf '%s\n' "$worktrees" \
+      | awk -F/ '
+          {
+            n = split($0, parts, "/")
+            print parts[n] "\t" $0
+          }
+        ' \
+      | fzf \
+          --height=100% \
+          --layout=reverse \
+          --border=none \
+          --prompt='worktree > ' \
+          --delimiter=$'\t' \
+          --with-nth=1 \
+          --preview='' \
+          --preview-window=hidden
+  )" || exit 0
+
+  [ -n "${dir:-}" ] || exit 0
+  dir="$(printf '%s\n' "$dir" | cut -f2)"
+else
+  dir="$project"
+fi
+
+dir="$(canonical_path "$dir")"
+label="$(workspace_label "$(canonical_path "$project")")"
+
+exec herdr workspace create \
+  --cwd "$dir" \
+  --label "$label" \
+  --focus

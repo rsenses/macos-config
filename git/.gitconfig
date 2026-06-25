@@ -13,7 +13,7 @@
 
 	editor = nvim
 
-	pager = delta
+	pager = hunk pager
 	hooksPath = /Users/rubensilvarodriguez/.githooks
 [apply]
 

@@ -1,0 +1,5 @@
+#!/usr/bin/env zsh
+
+local type
+type=$(printf "work\npersonal" | fzf) || return
+nvim "$HOME/data/$type/notes/daily.md"

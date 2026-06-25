@@ -1,4 +1,4 @@
-initial-command = /opt/homebrew/bin/zsh -c '/opt/homebrew/bin/tmux'
+initial-command = /opt/homebrew/bin/zsh -c '/opt/homebrew/bin/herdr'
 
 copy-on-select = clipboard
 
