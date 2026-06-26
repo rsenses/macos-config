@@ -15,7 +15,7 @@ name = "rose-pine-dawn"
 
 # Follow host terminal light/dark appearance and switch Herdr UI themes.
 # Existing manual behavior is unchanged unless this is true.
-# auto_switch = false
+auto_switch = true
 dark_name = "rose-pine"
 light_name = "rose-pine-dawn"
 
@@ -27,7 +27,6 @@ light_name = "rose-pine-dawn"
 # red = "#ff6188"
 # green = "#a6e3a1"
 
-auto_switch = false
 [terminal]
 # Executable used for new interactive panes.
 # Empty means $SHELL, then /bin/sh.
@@ -197,7 +196,7 @@ description = "herdr-plus: quick actions"
 
 # Ask for a tab name before creating a new tab.
 # Set false to create tabs immediately with generated names.
-# prompt_new_tab_name = true
+prompt_new_tab_name = false
 
 # Draw borders around split panes.
 # pane_borders = true
@@ -214,7 +213,7 @@ description = "herdr-plus: quick actions"
 
 # Accent color for highlights, borders, and navigation UI.
 # Accepts: hex (#89b4fa), named colors (cyan, blue, magenta), or rgb(r,g,b)
-# accent = "cyan"
+accent = "red"
 
 # Background notification popup delivery
 show_agent_labels_on_pane_borders = true

@@ -14,7 +14,7 @@ name = "pi"                                            # required: the tab label
 command = "pi" # runs on startup
 
 [[tabs.panes]]
-command = "nvim ."
+command = "herdr pane rename \"$HERDR_PANE_ID\" nvim; nvim"
 split = "right"
 
 [[tabs]]
