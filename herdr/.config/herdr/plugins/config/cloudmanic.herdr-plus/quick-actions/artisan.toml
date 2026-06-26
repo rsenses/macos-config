@@ -1,0 +1,43 @@
+# A plain command action: selecting it runs `command` immediately.
+# This is the simplest possible action — just a name, a description, and a
+# command. `type` defaults to "command" when omitted.
+
+name = "Artisan"
+description = "Artisan useful commands"
+type = "select"
+command = "php artisan {{.Value}}"
+
+[[options]]
+label = "Migrate"
+value = "migrate"
+description = "artisan migrate"
+
+[[options]]
+label = "Seed"
+value = "db:seed"
+description = "artisan db:seed"
+
+[[options]]
+label = "Tenants migrate"
+value = "tenants:artisan migrate"
+description = "artisan tenants:artisan migrate"
+
+[[options]]
+label = "Queue"
+value = "queue:work"
+description = "artisan queue:work"
+
+[[options]]
+label = "Tenants queue"
+value = "tenants:artisan queue:work"
+description = "artisan tenants:artisan queue:work"
+
+[[options]]
+label = "Dev"
+value = "dev"
+description = "artisan dev"
+
+[[options]]
+label = "Reverb"
+value = "reverb:start"
+description = "artisan reverb:start"

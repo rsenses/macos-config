@@ -1,0 +1,28 @@
+# A plain command action: selecting it runs `command` immediately.
+# This is the simplest possible action — just a name, a description, and a
+# command. `type` defaults to "command" when omitted.
+
+name = "Dev server"
+description = "Dev server commands"
+type = "select"
+command = "dev {{.Value}}"
+
+[[options]]
+label = "Up"
+value = "up"
+description = "dev up"
+
+[[options]]
+label = "Reload"
+value = "reload"
+description = "dev reload"
+
+[[options]]
+label = "Down"
+value = "down"
+description = "dev down"
+
+[[options]]
+label = "Down all"
+value = "down-all"
+description = "dev down-all"

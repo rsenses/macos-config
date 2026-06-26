@@ -2,44 +2,14 @@
   "version": 3,
   "workspaces": [
     {
-      "id": "w1",
-      "custom_name": null,
-      "identity_cwd": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
-      "public_pane_numbers": {
-        "1": 1
-      },
-      "next_public_pane_number": 4,
-      "public_tab_numbers": [
-        1
-      ],
-      "next_public_tab_number": 3,
-      "tabs": [
-        {
-          "custom_name": null,
-          "layout": {
-            "Pane": 1
-          },
-          "panes": {
-            "1": {
-              "cwd": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop"
-            }
-          },
-          "zoomed": false,
-          "focused": 1,
-          "root_pane": 1
-        }
-      ],
-      "active_tab": 0
-    },
-    {
       "id": "w2",
       "custom_name": null,
       "identity_cwd": "/Users/rubensilvarodriguez/dev/www/meject.odin",
       "public_pane_numbers": {
-        "6": 3,
-        "2": 1
+        "2": 1,
+        "6": 3
       },
-      "next_public_pane_number": 5,
+      "next_public_pane_number": 6,
       "public_tab_numbers": [
         1
       ],
@@ -81,31 +51,222 @@
       "active_tab": 0
     },
     {
-      "id": "w3",
-      "custom_name": null,
-      "identity_cwd": "/Users/rubensilvarodriguez/dev/contrib/dotfiles",
+      "id": "w8",
+      "custom_name": "Wyrko",
+      "identity_cwd": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
       "public_pane_numbers": {
-        "3": 14
+        "49": 5,
+        "48": 4,
+        "45": 1,
+        "46": 2,
+        "47": 3
       },
-      "next_public_pane_number": 20,
+      "next_public_pane_number": 10,
       "public_tab_numbers": [
-        2
+        1,
+        2,
+        3
       ],
-      "next_public_tab_number": 7,
+      "next_public_tab_number": 4,
       "tabs": [
         {
-          "custom_name": null,
+          "custom_name": "pi",
           "layout": {
-            "Pane": 3
+            "Split": {
+              "direction": "Horizontal",
+              "ratio": 0.5,
+              "first": {
+                "Pane": 45
+              },
+              "second": {
+                "Pane": 46
+              }
+            }
           },
           "panes": {
-            "3": {
+            "46": {
+              "cwd": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop"
+            },
+            "45": {
+              "cwd": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop",
+              "agent_session": {
+                "source": "herdr:pi",
+                "agent": "pi",
+                "kind": "path",
+                "value": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-www-cobra.wyrko.es-.worktrees-develop--/2026-06-26T06-42-57-604Z_019f02aa-d3c4-7910-a896-7fd0c46861fb.jsonl"
+              }
+            }
+          },
+          "zoomed": false,
+          "focused": 46,
+          "root_pane": 45
+        },
+        {
+          "custom_name": "hunk",
+          "layout": {
+            "Pane": 47
+          },
+          "panes": {
+            "47": {
+              "cwd": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop"
+            }
+          },
+          "zoomed": false,
+          "focused": 47,
+          "root_pane": 47
+        },
+        {
+          "custom_name": "server",
+          "layout": {
+            "Split": {
+              "direction": "Horizontal",
+              "ratio": 0.5,
+              "first": {
+                "Pane": 48
+              },
+              "second": {
+                "Pane": 49
+              }
+            }
+          },
+          "panes": {
+            "49": {
+              "cwd": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop"
+            },
+            "48": {
+              "cwd": "/Users/rubensilvarodriguez/dev/www/cobra.wyrko.es/.worktrees/develop"
+            }
+          },
+          "zoomed": false,
+          "focused": 49,
+          "root_pane": 48
+        }
+      ],
+      "active_tab": 0
+    },
+    {
+      "id": "wA",
+      "custom_name": "Dotfiles",
+      "identity_cwd": "/Users/rubensilvarodriguez/dev/contrib/dotfiles",
+      "public_pane_numbers": {
+        "67": 4,
+        "64": 1,
+        "65": 2,
+        "66": 3
+      },
+      "next_public_pane_number": 6,
+      "public_tab_numbers": [
+        1,
+        2,
+        3
+      ],
+      "next_public_tab_number": 4,
+      "tabs": [
+        {
+          "custom_name": "pi",
+          "layout": {
+            "Split": {
+              "direction": "Horizontal",
+              "ratio": 0.5,
+              "first": {
+                "Pane": 64
+              },
+              "second": {
+                "Pane": 65
+              }
+            }
+          },
+          "panes": {
+            "65": {
+              "cwd": "/Users/rubensilvarodriguez/dev/contrib/dotfiles"
+            },
+            "64": {
+              "cwd": "/Users/rubensilvarodriguez/dev/contrib/dotfiles",
+              "agent_session": {
+                "source": "herdr:pi",
+                "agent": "pi",
+                "kind": "path",
+                "value": "/Users/rubensilvarodriguez/.pi/agent/sessions/--Users-rubensilvarodriguez-dev-contrib-dotfiles--/2026-06-26T09-28-17-301Z_019f0342-3095-71d9-b301-058edefd4ca2.jsonl"
+              }
+            }
+          },
+          "zoomed": false,
+          "focused": 64,
+          "root_pane": 64
+        },
+        {
+          "custom_name": "hunk",
+          "layout": {
+            "Pane": 66
+          },
+          "panes": {
+            "66": {
               "cwd": "/Users/rubensilvarodriguez/dev/contrib/dotfiles"
             }
           },
           "zoomed": false,
-          "focused": 3,
-          "root_pane": 3
+          "focused": 66,
+          "root_pane": 66
+        },
+        {
+          "custom_name": "shell",
+          "layout": {
+            "Pane": 67
+          },
+          "panes": {
+            "67": {
+              "cwd": "/Users/rubensilvarodriguez/dev/contrib/dotfiles"
+            }
+          },
+          "zoomed": false,
+          "focused": 67,
+          "root_pane": 67
+        }
+      ],
+      "active_tab": 1
+    },
+    {
+      "id": "wB",
+      "custom_name": "Downloads",
+      "identity_cwd": "/Users/rubensilvarodriguez/Downloads",
+      "public_pane_numbers": {
+        "70": 2,
+        "69": 1
+      },
+      "next_public_pane_number": 3,
+      "public_tab_numbers": [
+        1,
+        2
+      ],
+      "next_public_tab_number": 3,
+      "tabs": [
+        {
+          "custom_name": "files",
+          "layout": {
+            "Pane": 69
+          },
+          "panes": {
+            "69": {
+              "cwd": "/Users/rubensilvarodriguez/Downloads"
+            }
+          },
+          "zoomed": false,
+          "focused": 69,
+          "root_pane": 69
+        },
+        {
+          "custom_name": "shell",
+          "layout": {
+            "Pane": 70
+          },
+          "panes": {
+            "70": {
+              "cwd": "/Users/rubensilvarodriguez/Downloads"
+            }
+          },
+          "zoomed": false,
+          "focused": 70,
+          "root_pane": 70
         }
       ],
       "active_tab": 0

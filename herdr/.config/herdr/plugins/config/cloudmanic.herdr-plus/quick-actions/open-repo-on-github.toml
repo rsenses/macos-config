@@ -1,0 +1,5 @@
+# open-repo-on-github.toml
+name = "Open This Repo on GitHub"
+description = "Open the current repo's GitHub page"
+type = "command"
+command = "open \"$(git -C {{.WorkDir}} remote get-url origin | sed -E 's#git@github.com:#https://github.com/#; s#\\.git$##')\""

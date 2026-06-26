@@ -1,0 +1,25 @@
+# Top-level project fields.
+name = "Dotfiles"                                      # required: the workspace label
+description = "Dotfiles repo"             # shown in the browser
+group = "OS"                                       # optional: cluster a client's projects under a heading
+working_dir = "~/dev/contrib/dotfiles"    # ~ and $VARS expand
+
+# Tabs open in file order. The FIRST tab reuses the workspace's root tab; the
+# rest are created behind it so the first tab stays in front.
+
+[[tabs]]
+name = "pi"                                            # required: the tab label
+
+[[tabs.panes]]
+command = "pi" # runs on startup
+
+[[tabs.panes]]
+command = "nvim ."
+split = "right"
+
+[[tabs]]
+name = "hunk"
+command = "hunk diff --watch"
+
+[[tabs]]
+name = "shell"

@@ -1,0 +1,31 @@
+# Top-level project fields.
+name = "Wyrko"                                      # required: the workspace label
+description = "The main wyrko monorepo"             # shown in the browser
+group = "Wyrko"                                       # optional: cluster a client's projects under a heading
+working_dir = "~/dev/www/cobra.wyrko.es/.worktrees/develop"    # ~ and $VARS expand
+
+# Tabs open in file order. The FIRST tab reuses the workspace's root tab; the
+# rest are created behind it so the first tab stays in front.
+
+[[tabs]]
+name = "pi"                                            # required: the tab label
+
+[[tabs.panes]]
+command = "pi" # runs on startup
+
+[[tabs.panes]]
+command = "nvim ."
+split = "right"
+
+[[tabs]]
+name = "hunk"
+command = "hunk diff --watch"
+
+[[tabs]]
+name = "server"
+
+[[tabs.panes]]
+command = "dev reload; composer run dev"
+
+[[tabs.panes]]
+split = "right"

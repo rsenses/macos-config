@@ -1,0 +1,14 @@
+name = "Open notes"
+description = "Open notes"
+type = "select"
+command = "nvim ~/data/{{.Value}}/notes/daily.md"
+
+[[options]]
+label = "Work"
+value = "work"
+description = "Work notes"
+
+[[options]]
+label = "Personal"
+value = "personal"
+description = "Personal notes"

@@ -1,0 +1,15 @@
+# Top-level project fields.
+name = "Downloads"                                      # required: the workspace label
+description = "Downloads folder"             # shown in the browser
+group = "OS"                                       # optional: cluster a client's projects under a heading
+working_dir = "~/Downloads"    # ~ and $VARS expand
+
+# Tabs open in file order. The FIRST tab reuses the workspace's root tab; the
+# rest are created behind it so the first tab stays in front.
+
+[[tabs]]
+name = "files"
+command = "yazi"
+
+[[tabs]]
+name = "shell"

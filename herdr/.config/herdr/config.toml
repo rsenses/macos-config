@@ -71,18 +71,18 @@ settings = "prefix+,"
 # reload_config = "prefix+shift+r"
 # open_notification_target = "prefix+o"
 # workspace_picker = "prefix+w"
-goto = "prefix+s"
+goto = "prefix+space"
 # new_workspace = "prefix+shift+n"
 new_worktree = "prefix+g"
 # open_worktree = ""    # optional, unset by default
 # remove_worktree = ""  # optional, unset by default; opens confirmation
 # rename_workspace = "prefix+shift+w"
 # close_workspace = "prefix+shift+d"
-# previous_workspace = "" # optional, unset by default
-# next_workspace = ""     # optional, unset by default
-# previous_agent = ""     # optional, unset by default
-# next_agent = ""         # optional, unset by default
-focus_agent = "prefix+ctrl+1..9"        # optional indexed binding, e.g. "prefix+alt+1..9"
+previous_workspace = "ctrl+up" # optional, unset by default
+next_workspace = "ctrl+down"     # optional, unset by default
+previous_agent = "ctrl+left"     # optional, unset by default
+next_agent = "ctrl+right"         # optional, unset by default
+# focus_agent = "prefix+alt+1..9"        # optional indexed binding, e.g. "prefix+alt+1..9"
 # remote_image_paste = "ctrl+v" # only active in herdr --remote; empty disables raw-key image paste
 # new_tab = "prefix+c"
 # rename_tab = "prefix+shift+t"
@@ -138,6 +138,18 @@ command = "notes"
 key = "prefix+shift+f"
 type = "pane"
 command = "herdr-sessionizer"
+
+[[keys.command]]
+key = "prefix+up"
+type = "plugin_action"
+command = "cloudmanic.herdr-plus.projects"
+description = "herdr-plus: projects"
+
+[[keys.command]]
+key = "prefix+down"
+type = "plugin_action"
+command = "cloudmanic.herdr-plus.quick-actions"
+description = "herdr-plus: quick actions"
 
 # Legacy indexed shortcut config is still parsed for compatibility.
 # Prefer switch_tab, switch_workspace, and focus_agent for new configs.
@@ -206,6 +218,7 @@ command = "herdr-sessionizer"
 
 # Background notification popup delivery
 show_agent_labels_on_pane_borders = true
+agent_panel_sort = "spaces"
 [ui.toast]
 # off = disable pop-up notifications
 # herdr = show in-app toasts

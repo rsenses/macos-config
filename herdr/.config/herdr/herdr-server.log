@@ -228,3 +228,738 @@
 2026-06-25T11:46:41.615559Z  INFO herdr::pane: pane session terminated pane=8 pid=34579 signal=Hangup
 2026-06-25T11:46:46.625648Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
 2026-06-25T11:57:36.799448Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-25T12:27:36.780683Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-25T12:38:05.839291Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-25T12:38:46.068435Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w2"
+2026-06-25T12:38:46.069884Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w2" tab_id="w2:t1"
+2026-06-25T12:38:49.693929Z  INFO herdr::app::worktrees: opening worktree dialog ws_idx=1 repo_root=/Users/rubensilvarodriguez/dev/www/meject.odin branch="worktree/lucky-field-dd14" checkout_path=/Users/rubensilvarodriguez/.herdr/worktrees/meject.odin/worktree-lucky-field-dd14
+2026-06-25T12:38:51.080787Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-25T12:38:56.557691Z  INFO herdr::app::worktrees: opening worktree dialog ws_idx=1 repo_root=/Users/rubensilvarodriguez/dev/www/meject.odin branch="worktree/brave-stone-9a70" checkout_path=/Users/rubensilvarodriguez/.herdr/worktrees/meject.odin/worktree-brave-stone-9a70
+2026-06-25T12:39:05.604290Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w3"
+2026-06-25T12:39:05.604729Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t2"
+2026-06-25T12:39:10.617425Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-25T12:41:19.931417Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w2"
+2026-06-25T12:41:19.932424Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w2" tab_id="w2:t1"
+2026-06-25T12:41:23.094925Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w3"
+2026-06-25T12:41:23.094958Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t2"
+2026-06-25T12:41:28.103638Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-25T12:45:25.690959Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t2"
+2026-06-25T12:45:30.703423Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-25T12:51:25.497960Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w2"
+2026-06-25T12:51:25.499516Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w2" tab_id="w2:t1"
+2026-06-25T12:51:30.514607Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-25T12:51:36.528642Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w3"
+2026-06-25T12:51:36.529107Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t2"
+2026-06-25T12:51:41.545675Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-25T12:51:42.422029Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w2"
+2026-06-25T12:51:42.422481Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w2" tab_id="w2:t1"
+2026-06-25T12:51:43.073456Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w3"
+2026-06-25T12:51:43.073563Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t2"
+2026-06-25T12:51:43.607159Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w2"
+2026-06-25T12:51:43.607295Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w2" tab_id="w2:t1"
+2026-06-25T12:51:43.810214Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w1"
+2026-06-25T12:51:43.810332Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w1" tab_id="w1:t1"
+2026-06-25T12:51:44.251474Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w2"
+2026-06-25T12:51:44.251529Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w2" tab_id="w2:t1"
+2026-06-25T12:51:44.415812Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w3"
+2026-06-25T12:51:44.415903Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t2"
+2026-06-25T12:51:46.254124Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w2"
+2026-06-25T12:51:46.254291Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w2" tab_id="w2:t1"
+2026-06-25T12:51:46.488692Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w1"
+2026-06-25T12:51:46.488802Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w1" tab_id="w1:t1"
+2026-06-25T12:51:47.569735Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w2"
+2026-06-25T12:51:47.569850Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w2" tab_id="w2:t1"
+2026-06-25T12:51:47.928628Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w3"
+2026-06-25T12:51:47.928756Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t2"
+2026-06-25T12:51:52.939342Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-25T12:53:33.800437Z  INFO herdr::app::worktrees: opening worktree dialog ws_idx=2 repo_root=/Users/rubensilvarodriguez/dev/contrib/dotfiles branch="worktree/lucky-river-4084" checkout_path=/Users/rubensilvarodriguez/.herdr/worktrees/dotfiles/worktree-lucky-river-4084
+2026-06-25T12:53:36.565050Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=9 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-25T12:53:36.575791Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=9 pid=45807
+2026-06-25T12:53:45.231863Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=9 status="ExitStatus { code: 0, signal: None }"
+2026-06-25T12:53:45.234947Z  INFO herdr::pane: pane session terminated pane=9 pid=45807 signal=Hangup
+2026-06-25T12:53:50.239726Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-25T12:53:51.714193Z  INFO herdr::app::worktrees: opening worktree dialog ws_idx=2 repo_root=/Users/rubensilvarodriguez/dev/contrib/dotfiles branch="worktree/quiet-river-9b85" checkout_path=/Users/rubensilvarodriguez/.herdr/worktrees/dotfiles/worktree-quiet-river-9b85
+2026-06-25T12:53:54.587036Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=10 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-25T12:53:54.592794Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=10 pid=46044
+2026-06-25T12:54:01.295486Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=10 status="ExitStatus { code: 0, signal: None }"
+2026-06-25T12:54:01.298939Z  INFO herdr::pane: pane session terminated pane=10 pid=46044 signal=Hangup
+2026-06-25T12:54:06.305193Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-25T12:54:21.439294Z  INFO herdr::app::worktrees: opening worktree dialog ws_idx=2 repo_root=/Users/rubensilvarodriguez/dev/contrib/dotfiles branch="worktree/rapid-meadow-2d2e" checkout_path=/Users/rubensilvarodriguez/.herdr/worktrees/dotfiles/worktree-rapid-meadow-2d2e
+2026-06-25T12:54:23.126881Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=11 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-25T12:54:23.133774Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=11 pid=46124
+2026-06-25T12:54:25.222596Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=11 status="ExitStatus { code: 0, signal: None }"
+2026-06-25T12:54:25.224030Z  INFO herdr::pane: pane session terminated pane=11 pid=46124 signal=Hangup
+2026-06-25T12:54:30.229360Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-25T12:54:32.994941Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=12 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-25T12:54:32.999863Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=12 pid=46186
+2026-06-25T12:54:41.131877Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=12 status="ExitStatus { code: 0, signal: None }"
+2026-06-25T12:54:41.133482Z  INFO herdr::pane: pane session terminated pane=12 pid=46186 signal=Hangup
+2026-06-25T12:54:46.139293Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-25T12:57:36.658291Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-25T13:27:36.675772Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-25T13:57:36.641831Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-25T14:27:36.625808Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-25T14:57:36.561291Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-25T15:27:36.542859Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-25T15:57:36.475879Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-25T16:27:36.451329Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-25T16:57:36.358237Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-25T17:27:36.373976Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-25T17:57:36.375803Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-25T18:27:36.370491Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-25T18:57:36.337309Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-25T19:27:36.299655Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-25T19:57:36.262852Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-25T20:27:36.225915Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-25T20:57:36.149803Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-25T21:27:36.122742Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-25T21:57:36.104258Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-25T22:27:36.054730Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-25T22:57:36.007283Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-25T23:27:35.995741Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-25T23:57:35.931674Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-26T00:27:35.898135Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-26T00:57:35.891706Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-26T01:27:35.863502Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-26T01:57:35.814177Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-26T02:27:35.771459Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-26T02:57:35.729233Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-26T03:27:35.679018Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-26T03:57:35.674770Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-26T04:27:35.677247Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-26T04:57:35.613693Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-26T05:27:35.576786Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-26T05:57:35.509801Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-26T06:18:15.206746Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=13 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:18:15.217086Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=13 pid=28175
+2026-06-26T06:18:15.218064Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t7"
+2026-06-26T06:18:15.218098Z  INFO herdr::logging: tab created event="tab.create" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t7" pane_id=13
+2026-06-26T06:18:20.229099Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:19:42.437582Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t2"
+2026-06-26T06:19:47.446988Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:19:49.890142Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="cli:plugin" method="plugin.pane.open" changes_ui=true
+2026-06-26T06:19:49.891076Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=14 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:19:49.896435Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=14 pid=28675
+2026-06-26T06:19:49.897000Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t2"
+2026-06-26T06:19:49.897842Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="cli:plugin" method="plugin.pane.open"
+2026-06-26T06:19:54.901695Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:19:58.631189Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=14 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T06:19:58.631544Z  INFO herdr::pane: pane session terminated pane=14 pid=28675 signal=Hangup
+2026-06-26T06:20:03.641930Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:20:11.054671Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="cli:plugin" method="plugin.pane.open" changes_ui=true
+2026-06-26T06:20:11.056077Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=15 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:20:11.059197Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=15 pid=28703
+2026-06-26T06:20:11.059390Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t2"
+2026-06-26T06:20:11.060563Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="cli:plugin" method="plugin.pane.open"
+2026-06-26T06:20:16.068655Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:20:33.136134Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=15 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T06:20:33.136464Z  INFO herdr::pane: pane session terminated pane=15 pid=28703 signal=Hangup
+2026-06-26T06:20:38.144404Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:21:22.602140Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="cli:plugin" method="plugin.pane.open" changes_ui=true
+2026-06-26T06:21:22.604127Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=16 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:21:22.608916Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=16 pid=28759
+2026-06-26T06:21:22.609456Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t2"
+2026-06-26T06:21:22.611481Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="cli:plugin" method="plugin.pane.open"
+2026-06-26T06:21:27.618060Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:21:30.042051Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=16 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T06:21:30.042244Z  INFO herdr::pane: pane session terminated pane=16 pid=28759 signal=Hangup
+2026-06-26T06:21:35.044323Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:21:45.819134Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=3 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T06:21:45.819199Z  INFO herdr::pane: pane session terminated pane=3 pid=20012 signal=Hangup
+2026-06-26T06:21:50.826784Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:22:44.964436Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="cli:plugin" method="plugin.pane.open" changes_ui=true
+2026-06-26T06:22:44.965080Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=17 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:22:44.967949Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=17 pid=28867
+2026-06-26T06:22:44.968130Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t7"
+2026-06-26T06:22:44.968366Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="cli:plugin" method="plugin.pane.open"
+2026-06-26T06:22:47.736166Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=17 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T06:22:47.736226Z  INFO herdr::pane: pane session terminated pane=17 pid=28867 signal=Hangup
+2026-06-26T06:22:52.742546Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:23:18.425256Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="cli:plugin" method="plugin.pane.open" changes_ui=true
+2026-06-26T06:23:18.425811Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=18 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:23:18.430124Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=18 pid=28896
+2026-06-26T06:23:18.430234Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t7"
+2026-06-26T06:23:18.430385Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="cli:plugin" method="plugin.pane.open"
+2026-06-26T06:23:19.825638Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=18 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T06:23:19.826097Z  INFO herdr::pane: pane session terminated pane=18 pid=28896 signal=Hangup
+2026-06-26T06:23:24.834468Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:23:36.167528Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=19 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:23:36.174300Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=19 pid=28914
+2026-06-26T06:23:36.174525Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t8"
+2026-06-26T06:23:36.174543Z  INFO herdr::logging: tab created event="tab.create" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t8" pane_id=19
+2026-06-26T06:23:38.246311Z  INFO herdr::pane: agent changed pane=19 previous_agent=None agent=Some(Pi) process=pi pgid=Some(28965)
+2026-06-26T06:23:40.789753Z  INFO herdr::pane: agent changed pane=19 previous_agent=None agent=Some(Pi) process=pi pgid=Some(28965)
+2026-06-26T06:23:43.144181Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t7"
+2026-06-26T06:23:48.150245Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:24:00.200828Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t8"
+2026-06-26T06:24:05.209949Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:24:41.846245Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=20 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:24:41.851165Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=20 pid=29225
+2026-06-26T06:24:41.851374Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t9"
+2026-06-26T06:24:41.851391Z  INFO herdr::logging: tab created event="tab.create" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t9" pane_id=20
+2026-06-26T06:24:46.860379Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:24:52.708001Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t7"
+2026-06-26T06:24:57.714724Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:25:04.470388Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t9"
+2026-06-26T06:25:07.285357Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t8"
+2026-06-26T06:25:12.293294Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:25:20.094017Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t7"
+2026-06-26T06:25:25.097093Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:25:38.150061Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w2"
+2026-06-26T06:25:38.150121Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w2" tab_id="w2:t1"
+2026-06-26T06:25:38.601941Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w3"
+2026-06-26T06:25:38.602036Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t7"
+2026-06-26T06:25:40.750379Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t9"
+2026-06-26T06:25:44.219020Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=20 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T06:25:44.219134Z  INFO herdr::pane: pane session terminated pane=20 pid=29225 signal=Hangup
+2026-06-26T06:25:49.227449Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:25:49.345425Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=21 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:25:49.353016Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=21 pid=29447
+2026-06-26T06:25:49.353423Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:tA"
+2026-06-26T06:25:49.353523Z  INFO herdr::logging: tab created event="tab.create" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:tA" pane_id=21
+2026-06-26T06:25:54.360767Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:26:00.280684Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t8"
+2026-06-26T06:26:05.289199Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:26:07.932288Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:tA"
+2026-06-26T06:26:12.939489Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:26:52.589884Z  INFO herdr::app::actions: copied selection to clipboard
+2026-06-26T06:26:54.021601Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t7"
+2026-06-26T06:26:59.026822Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:27:27.398801Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t8"
+2026-06-26T06:27:32.408696Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:27:35.484399Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-26T06:27:54.048104Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:tA"
+2026-06-26T06:27:59.071509Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:28:02.486494Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t7"
+2026-06-26T06:28:07.489981Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:28:21.713288Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:tA"
+2026-06-26T06:28:26.716644Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:28:46.275287Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="cli:plugin" method="plugin.pane.open" changes_ui=true
+2026-06-26T06:28:46.277558Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=22 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:28:46.285026Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=22 pid=30111
+2026-06-26T06:28:46.285304Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:tA"
+2026-06-26T06:28:46.285977Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="cli:plugin" method="plugin.pane.open"
+2026-06-26T06:28:47.826958Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=22 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T06:28:47.827027Z  INFO herdr::pane: pane session terminated pane=22 pid=30111 signal=Hangup
+2026-06-26T06:28:52.834168Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:29:20.444039Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t7"
+2026-06-26T06:29:25.452286Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:30:24.509330Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w2"
+2026-06-26T06:30:24.510673Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w2" tab_id="w2:t1"
+2026-06-26T06:30:26.023408Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w1"
+2026-06-26T06:30:26.023517Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w1" tab_id="w1:t1"
+2026-06-26T06:30:31.034959Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:30:32.108242Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="cli:plugin" method="plugin.pane.open" changes_ui=true
+2026-06-26T06:30:32.109088Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=23 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:30:32.112630Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=23 pid=30266
+2026-06-26T06:30:32.112739Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w1" tab_id="w1:t1"
+2026-06-26T06:30:32.113503Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="cli:plugin" method="plugin.pane.open"
+2026-06-26T06:30:37.117124Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:31:05.409620Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=23 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T06:31:05.411011Z  INFO herdr::pane: pane session terminated pane=23 pid=30266 signal=Hangup
+2026-06-26T06:31:10.418046Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:31:19.792542Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w2"
+2026-06-26T06:31:19.792585Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w2" tab_id="w2:t1"
+2026-06-26T06:31:20.234608Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w3"
+2026-06-26T06:31:20.234744Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t7"
+2026-06-26T06:31:25.249629Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:32:12.602326Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="cli:plugin" method="plugin.pane.open" changes_ui=true
+2026-06-26T06:32:12.603281Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=24 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:32:12.607479Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=24 pid=30593
+2026-06-26T06:32:12.607609Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t7"
+2026-06-26T06:32:12.608420Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="cli:plugin" method="plugin.pane.open"
+2026-06-26T06:32:14.475790Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=24 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T06:32:14.475843Z  INFO herdr::pane: pane session terminated pane=24 pid=30593 signal=Hangup
+2026-06-26T06:32:19.482773Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:32:24.645664Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="cli:plugin" method="plugin.pane.open" changes_ui=true
+2026-06-26T06:32:24.645997Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=25 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:32:24.648416Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=25 pid=30602
+2026-06-26T06:32:24.648549Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t7"
+2026-06-26T06:32:24.648703Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="cli:plugin" method="plugin.pane.open"
+2026-06-26T06:32:28.301902Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=25 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T06:32:28.302002Z  INFO herdr::pane: pane session terminated pane=25 pid=30602 signal=Hangup
+2026-06-26T06:32:33.307510Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:32:38.695893Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:tA"
+2026-06-26T06:32:43.699121Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:32:44.494632Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t8"
+2026-06-26T06:32:49.502062Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:32:55.853524Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t7"
+2026-06-26T06:33:00.862433Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:33:51.785841Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="cli:plugin" method="plugin.pane.open" changes_ui=true
+2026-06-26T06:33:51.786439Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=26 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:33:51.789584Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=26 pid=34119
+2026-06-26T06:33:51.789771Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t7"
+2026-06-26T06:33:51.789952Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="cli:plugin" method="plugin.pane.open"
+2026-06-26T06:33:56.791902Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:33:58.105082Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t8"
+2026-06-26T06:34:00.872700Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:tA"
+2026-06-26T06:34:05.875602Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:34:07.208138Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=21 status="ExitStatus { code: 130, signal: None }"
+2026-06-26T06:34:07.208184Z  INFO herdr::pane: pane session terminated pane=21 pid=29447 signal=Hangup
+2026-06-26T06:34:08.671545Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t7"
+2026-06-26T06:34:13.675269Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:34:17.888740Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=27 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:34:17.892701Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=27 pid=36399
+2026-06-26T06:34:17.892830Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:tB"
+2026-06-26T06:34:17.892840Z  INFO herdr::logging: tab created event="tab.create" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:tB" pane_id=27
+2026-06-26T06:34:22.900392Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:34:37.054585Z  INFO herdr::app::actions: copied selection to clipboard
+2026-06-26T06:34:59.638152Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t7"
+2026-06-26T06:35:03.763442Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:tB"
+2026-06-26T06:35:08.770720Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:35:09.642129Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t7"
+2026-06-26T06:35:14.646230Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:35:38.382140Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:tB"
+2026-06-26T06:35:43.388495Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:35:47.939704Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=27 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T06:35:47.940610Z  INFO herdr::pane: pane session terminated pane=27 pid=36399 signal=Hangup
+2026-06-26T06:35:50.329298Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t7"
+2026-06-26T06:35:55.337381Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:35:55.608034Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t8"
+2026-06-26T06:35:59.946784Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=28 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:35:59.951430Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=28 pid=38675
+2026-06-26T06:35:59.952082Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:tC"
+2026-06-26T06:35:59.952101Z  INFO herdr::logging: tab created event="tab.create" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:tC" pane_id=28
+2026-06-26T06:36:00.512770Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=19 status="ExitStatus { code: 1, signal: None }"
+2026-06-26T06:36:00.649616Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="herdr:pi:release:1782455760539:8rscqkh4wr" method="pane.release_agent" changes_ui=true
+2026-06-26T06:36:00.852105Z  INFO herdr::pane: pane session terminated pane=19 pid=28914 signal=Terminate
+2026-06-26T06:36:00.853135Z  WARN herdr::app::actions: PaneDied for unknown pane pane=19
+2026-06-26T06:36:00.855173Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="error" request_id="herdr:pi:release:1782455760539:8rscqkh4wr" method="pane.release_agent"
+2026-06-26T06:36:02.655154Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=28 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T06:36:02.655641Z  INFO herdr::pane: pane session terminated pane=28 pid=38675 signal=Hangup
+2026-06-26T06:36:07.660495Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:36:33.074501Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=29 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:36:33.080160Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=29 pid=38948
+2026-06-26T06:36:33.081031Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:tD"
+2026-06-26T06:36:33.081045Z  INFO herdr::logging: tab created event="tab.create" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:tD" pane_id=29
+2026-06-26T06:36:38.093143Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:38:01.153243Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="cli:plugin" method="plugin.pane.open" changes_ui=true
+2026-06-26T06:38:01.155673Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=30 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:38:01.161302Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=30 pid=41607
+2026-06-26T06:38:01.161771Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:tD"
+2026-06-26T06:38:01.162423Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="cli:plugin" method="plugin.pane.open"
+2026-06-26T06:38:03.146336Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="herdr-plus" method="workspace.create" changes_ui=true
+2026-06-26T06:38:03.146677Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=31 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:38:03.153320Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=31 pid=41618
+2026-06-26T06:38:03.154415Z  INFO herdr::logging: workspace created event="workspace.create" subsystem="workspace" outcome="ok" workspace_id="w5" pane_id=31
+2026-06-26T06:38:03.154435Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w5"
+2026-06-26T06:38:03.154449Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w5" tab_id="w5:t1"
+2026-06-26T06:38:03.154466Z  INFO herdr::logging: workspace renamed event="workspace.rename" subsystem="workspace" outcome="ok" workspace_id="w5"
+2026-06-26T06:38:03.154886Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="herdr-plus" method="workspace.create"
+2026-06-26T06:38:03.155570Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="herdr-plus" method="tab.rename" changes_ui=true
+2026-06-26T06:38:03.163333Z  INFO herdr::logging: tab renamed event="tab.rename" subsystem="tab" outcome="ok" workspace_id="w5" tab_id="w5:t1"
+2026-06-26T06:38:03.163405Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="herdr-plus" method="tab.rename"
+2026-06-26T06:38:03.164132Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="herdr-plus" method="tab.create" changes_ui=true
+2026-06-26T06:38:03.164240Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=32 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:38:03.168431Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=32 pid=41619
+2026-06-26T06:38:03.168663Z  INFO herdr::logging: tab renamed event="tab.rename" subsystem="tab" outcome="ok" workspace_id="w5" tab_id="w5:t2"
+2026-06-26T06:38:03.169046Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="herdr-plus" method="tab.create"
+2026-06-26T06:38:03.169354Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="herdr-plus" method="tab.create" changes_ui=true
+2026-06-26T06:38:03.169458Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=33 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:38:03.172404Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=33 pid=41620
+2026-06-26T06:38:03.172569Z  INFO herdr::logging: tab renamed event="tab.rename" subsystem="tab" outcome="ok" workspace_id="w5" tab_id="w5:t3"
+2026-06-26T06:38:03.172923Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="herdr-plus" method="tab.create"
+2026-06-26T06:38:04.020354Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=30 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T06:38:04.020420Z  INFO herdr::pane: pane session terminated pane=30 pid=41607 signal=Hangup
+2026-06-26T06:38:04.218045Z  INFO herdr::pane: agent changed pane=31 previous_agent=None agent=Some(Pi) process=pi pgid=Some(41772)
+2026-06-26T06:38:09.027776Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=4
+2026-06-26T06:38:14.240095Z  INFO herdr::pane: agent changed pane=31 previous_agent=None agent=Some(Pi) process=pi pgid=Some(41772)
+2026-06-26T06:38:19.242083Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=4
+2026-06-26T06:38:21.829376Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="herdr:pi:release:1782455901727:h9x9n2r6f0c" method="pane.release_agent" changes_ui=true
+2026-06-26T06:38:21.829684Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="herdr:pi:release:1782455901727:h9x9n2r6f0c" method="pane.release_agent"
+2026-06-26T06:38:26.832928Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=4
+2026-06-26T06:38:29.462409Z  INFO herdr::pane: agent changed pane=31 previous_agent=None agent=Some(Pi) process=pi pgid=Some(42037)
+2026-06-26T06:38:31.398816Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w5" tab_id="w5:t2"
+2026-06-26T06:38:35.460472Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=32 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T06:38:35.460917Z  INFO herdr::pane: pane session terminated pane=32 pid=41619 signal=Hangup
+2026-06-26T06:38:38.909600Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w5" tab_id="w5:t3"
+2026-06-26T06:38:40.909958Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=33 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T06:38:40.910213Z  INFO herdr::pane: pane session terminated pane=33 pid=41620 signal=Hangup
+2026-06-26T06:38:45.913658Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=4
+2026-06-26T06:38:51.018322Z  INFO herdr::pane: agent changed pane=31 previous_agent=Some(Pi) agent=None pgid=Some(41618)
+2026-06-26T06:38:51.995639Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w3"
+2026-06-26T06:38:51.995661Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:tD"
+2026-06-26T06:38:55.587221Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=26 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T06:38:55.587302Z  INFO herdr::pane: pane session terminated pane=26 pid=34119 signal=Hangup
+2026-06-26T06:39:00.593787Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=4
+2026-06-26T06:39:16.451534Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="cli:plugin" method="plugin.pane.open" changes_ui=true
+2026-06-26T06:39:16.452435Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=34 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:39:16.455980Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=34 pid=42341
+2026-06-26T06:39:16.456121Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:tD"
+2026-06-26T06:39:16.457257Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="cli:plugin" method="plugin.pane.open"
+2026-06-26T06:39:17.731007Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="herdr-plus" method="workspace.create" changes_ui=true
+2026-06-26T06:39:17.731284Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=35 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:39:17.738692Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=35 pid=42343
+2026-06-26T06:39:17.739298Z  INFO herdr::logging: workspace created event="workspace.create" subsystem="workspace" outcome="ok" workspace_id="w6" pane_id=35
+2026-06-26T06:39:17.739320Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w6"
+2026-06-26T06:39:17.739339Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w6" tab_id="w6:t1"
+2026-06-26T06:39:17.739348Z  INFO herdr::logging: workspace renamed event="workspace.rename" subsystem="workspace" outcome="ok" workspace_id="w6"
+2026-06-26T06:39:17.739679Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="herdr-plus" method="workspace.create"
+2026-06-26T06:39:17.739942Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="herdr-plus" method="tab.rename" changes_ui=true
+2026-06-26T06:39:17.743872Z  INFO herdr::logging: tab renamed event="tab.rename" subsystem="tab" outcome="ok" workspace_id="w6" tab_id="w6:t1"
+2026-06-26T06:39:17.743909Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="herdr-plus" method="tab.rename"
+2026-06-26T06:39:17.744539Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="herdr-plus" method="tab.create" changes_ui=true
+2026-06-26T06:39:17.744658Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=36 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:39:17.747534Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=36 pid=42344
+2026-06-26T06:39:17.747674Z  INFO herdr::logging: tab renamed event="tab.rename" subsystem="tab" outcome="ok" workspace_id="w6" tab_id="w6:t2"
+2026-06-26T06:39:17.748127Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="herdr-plus" method="tab.create"
+2026-06-26T06:39:17.748256Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="herdr-plus" method="tab.create" changes_ui=true
+2026-06-26T06:39:17.748377Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=37 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:39:17.751283Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=37 pid=42345
+2026-06-26T06:39:17.751521Z  INFO herdr::logging: tab renamed event="tab.rename" subsystem="tab" outcome="ok" workspace_id="w6" tab_id="w6:t3"
+2026-06-26T06:39:17.751831Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="herdr-plus" method="tab.create"
+2026-06-26T06:39:18.437145Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=34 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T06:39:18.437680Z  INFO herdr::pane: pane session terminated pane=34 pid=42341 signal=Hangup
+2026-06-26T06:39:18.802000Z  INFO herdr::pane: agent changed pane=35 previous_agent=None agent=Some(Pi) process=pi pgid=Some(42495)
+2026-06-26T06:39:20.547081Z  INFO herdr::pane: agent changed pane=35 previous_agent=None agent=Some(Pi) process=pi pgid=Some(42495)
+2026-06-26T06:39:25.545487Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=5
+2026-06-26T06:39:32.230847Z  INFO herdr::logging: workspace closed event="workspace.close" subsystem="workspace" outcome="ok" workspace_id="w6"
+2026-06-26T06:39:35.151771Z  INFO herdr::logging: workspace closed event="workspace.close" subsystem="workspace" outcome="ok" workspace_id="w5"
+2026-06-26T06:39:40.159888Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:39:48.350974Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=38 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:39:48.355021Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=38 pid=42737
+2026-06-26T06:39:48.355837Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:tE"
+2026-06-26T06:39:48.355855Z  INFO herdr::logging: tab created event="tab.create" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:tE" pane_id=38
+2026-06-26T06:39:48.913100Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=35 status="ExitStatus { code: 1, signal: None }"
+2026-06-26T06:39:49.022663Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="herdr:pi:release:1782455988916:t3ghp97ogb" method="pane.release_agent" changes_ui=true
+2026-06-26T06:39:49.208087Z  INFO herdr::pane: pane session terminated pane=35 pid=42343 signal=Terminate
+2026-06-26T06:39:49.209783Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=36 status="ExitStatus { code: 1, signal: None }"
+2026-06-26T06:39:49.229672Z  INFO herdr::pane: pane session terminated pane=36 pid=42344 signal=Hangup
+2026-06-26T06:39:49.230900Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=37 status="ExitStatus { code: 1, signal: None }"
+2026-06-26T06:39:49.250583Z  INFO herdr::pane: pane session terminated pane=37 pid=42345 signal=Hangup
+2026-06-26T06:39:49.251835Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=31 status="ExitStatus { code: 1, signal: None }"
+2026-06-26T06:39:49.275878Z  INFO herdr::pane: pane session terminated pane=31 pid=41618 signal=Hangup
+2026-06-26T06:39:49.276055Z  WARN herdr::app::actions: PaneDied for unknown pane pane=35
+2026-06-26T06:39:49.276080Z  WARN herdr::app::actions: PaneDied for unknown pane pane=36
+2026-06-26T06:39:49.276094Z  WARN herdr::app::actions: PaneDied for unknown pane pane=37
+2026-06-26T06:39:49.276109Z  WARN herdr::app::actions: PaneDied for unknown pane pane=31
+2026-06-26T06:39:49.276233Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="error" request_id="herdr:pi:release:1782455988916:t3ghp97ogb" method="pane.release_agent"
+2026-06-26T06:39:53.369596Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:40:10.381203Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=38 status="ExitStatus { code: 127, signal: None }"
+2026-06-26T06:40:10.381284Z  INFO herdr::pane: pane session terminated pane=38 pid=42737 signal=Hangup
+2026-06-26T06:40:15.388874Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:41:32.406602Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="cli:plugin" method="plugin.pane.open" changes_ui=true
+2026-06-26T06:41:32.410887Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=39 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:41:32.414824Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=39 pid=42929
+2026-06-26T06:41:32.415271Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:tD"
+2026-06-26T06:41:32.416410Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="cli:plugin" method="plugin.pane.open"
+2026-06-26T06:41:33.653329Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="herdr-plus" method="workspace.create" changes_ui=true
+2026-06-26T06:41:33.653538Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=40 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:41:33.659828Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=40 pid=42930
+2026-06-26T06:41:33.660491Z  INFO herdr::logging: workspace created event="workspace.create" subsystem="workspace" outcome="ok" workspace_id="w7" pane_id=40
+2026-06-26T06:41:33.660521Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w7"
+2026-06-26T06:41:33.660540Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w7" tab_id="w7:t1"
+2026-06-26T06:41:33.660566Z  INFO herdr::logging: workspace renamed event="workspace.rename" subsystem="workspace" outcome="ok" workspace_id="w7"
+2026-06-26T06:41:33.661071Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="herdr-plus" method="workspace.create"
+2026-06-26T06:41:33.661731Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="herdr-plus" method="tab.rename" changes_ui=true
+2026-06-26T06:41:33.665455Z  INFO herdr::logging: tab renamed event="tab.rename" subsystem="tab" outcome="ok" workspace_id="w7" tab_id="w7:t1"
+2026-06-26T06:41:33.665520Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="herdr-plus" method="tab.rename"
+2026-06-26T06:41:33.666298Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="herdr-plus" method="pane.split" changes_ui=true
+2026-06-26T06:41:33.666593Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=41 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:41:33.670130Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=41 pid=42931
+2026-06-26T06:41:33.670679Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="herdr-plus" method="pane.split"
+2026-06-26T06:41:33.671487Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="herdr-plus" method="tab.create" changes_ui=true
+2026-06-26T06:41:33.671661Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=42 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:41:33.676935Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=42 pid=42932
+2026-06-26T06:41:33.677051Z  INFO herdr::logging: tab renamed event="tab.rename" subsystem="tab" outcome="ok" workspace_id="w7" tab_id="w7:t2"
+2026-06-26T06:41:33.677346Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="herdr-plus" method="tab.create"
+2026-06-26T06:41:33.677802Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="herdr-plus" method="tab.create" changes_ui=true
+2026-06-26T06:41:33.685993Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=43 rows=65 cols=137 scrollback_limit_bytes=10000000
+2026-06-26T06:41:33.690599Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=43 pid=42935
+2026-06-26T06:41:33.691288Z  INFO herdr::logging: tab renamed event="tab.rename" subsystem="tab" outcome="ok" workspace_id="w7" tab_id="w7:t3"
+2026-06-26T06:41:33.692380Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="herdr-plus" method="tab.create"
+2026-06-26T06:41:34.704708Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=39 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T06:41:34.704804Z  INFO herdr::pane: pane session terminated pane=39 pid=42929 signal=Hangup
+2026-06-26T06:41:34.720033Z  INFO herdr::pane: agent changed pane=40 previous_agent=None agent=Some(Pi) process=pi pgid=Some(43130)
+2026-06-26T06:41:36.677166Z  INFO herdr::pane: agent changed pane=40 previous_agent=None agent=Some(Pi) process=pi pgid=Some(43130)
+2026-06-26T06:41:39.983026Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w7" tab_id="w7:t2"
+2026-06-26T06:41:43.513280Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w7" tab_id="w7:t3"
+2026-06-26T06:41:48.517852Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=4
+2026-06-26T06:41:48.995842Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w7" tab_id="w7:t1"
+2026-06-26T06:42:00.567322Z  INFO herdr::logging: workspace closed event="workspace.close" subsystem="workspace" outcome="ok" workspace_id="w7"
+2026-06-26T06:42:05.573007Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:42:54.527118Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="cli:plugin" method="plugin.pane.open" changes_ui=true
+2026-06-26T06:42:54.529060Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=44 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:42:54.532772Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=44 pid=46330
+2026-06-26T06:42:54.532929Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:tD"
+2026-06-26T06:42:54.534492Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="cli:plugin" method="plugin.pane.open"
+2026-06-26T06:42:55.092579Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=40 status="ExitStatus { code: 1, signal: None }"
+2026-06-26T06:42:55.201397Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="herdr:pi:release:1782456175095:yn7pzl8t0h" method="pane.release_agent" changes_ui=true
+2026-06-26T06:42:55.378629Z  INFO herdr::pane: pane session terminated pane=40 pid=42930 signal=Terminate
+2026-06-26T06:42:55.380416Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=41 status="ExitStatus { code: 1, signal: None }"
+2026-06-26T06:42:55.403536Z  INFO herdr::pane: pane session terminated pane=41 pid=42931 signal=Hangup
+2026-06-26T06:42:55.404630Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=42 status="ExitStatus { code: 1, signal: None }"
+2026-06-26T06:42:55.449064Z  INFO herdr::pane: pane session terminated pane=42 pid=42932 signal=Hangup
+2026-06-26T06:42:55.450175Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=43 status="ExitStatus { code: 1, signal: None }"
+2026-06-26T06:42:55.471413Z  INFO herdr::pane: pane session terminated pane=43 pid=42935 signal=Hangup
+2026-06-26T06:42:55.471478Z  WARN herdr::app::actions: PaneDied for unknown pane pane=40
+2026-06-26T06:42:55.471488Z  WARN herdr::app::actions: PaneDied for unknown pane pane=41
+2026-06-26T06:42:55.471492Z  WARN herdr::app::actions: PaneDied for unknown pane pane=42
+2026-06-26T06:42:55.471497Z  WARN herdr::app::actions: PaneDied for unknown pane pane=43
+2026-06-26T06:42:55.471759Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="error" request_id="herdr:pi:release:1782456175095:yn7pzl8t0h" method="pane.release_agent"
+2026-06-26T06:42:55.738093Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="herdr-plus" method="workspace.create" changes_ui=true
+2026-06-26T06:42:55.738423Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=45 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:42:55.745101Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=45 pid=46343
+2026-06-26T06:42:55.745832Z  INFO herdr::logging: workspace created event="workspace.create" subsystem="workspace" outcome="ok" workspace_id="w8" pane_id=45
+2026-06-26T06:42:55.745855Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w8"
+2026-06-26T06:42:55.745866Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w8" tab_id="w8:t1"
+2026-06-26T06:42:55.745874Z  INFO herdr::logging: workspace renamed event="workspace.rename" subsystem="workspace" outcome="ok" workspace_id="w8"
+2026-06-26T06:42:55.746203Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="herdr-plus" method="workspace.create"
+2026-06-26T06:42:55.746413Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="herdr-plus" method="tab.rename" changes_ui=true
+2026-06-26T06:42:55.750598Z  INFO herdr::logging: tab renamed event="tab.rename" subsystem="tab" outcome="ok" workspace_id="w8" tab_id="w8:t1"
+2026-06-26T06:42:55.750637Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="herdr-plus" method="tab.rename"
+2026-06-26T06:42:55.751127Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="herdr-plus" method="pane.split" changes_ui=true
+2026-06-26T06:42:55.751234Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=46 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:42:55.754733Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=46 pid=46344
+2026-06-26T06:42:55.755169Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="herdr-plus" method="pane.split"
+2026-06-26T06:42:55.755724Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="herdr-plus" method="tab.create" changes_ui=true
+2026-06-26T06:42:55.755871Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=47 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:42:55.758439Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=47 pid=46345
+2026-06-26T06:42:55.758591Z  INFO herdr::logging: tab renamed event="tab.rename" subsystem="tab" outcome="ok" workspace_id="w8" tab_id="w8:t2"
+2026-06-26T06:42:55.759094Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="herdr-plus" method="tab.create"
+2026-06-26T06:42:55.759249Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="herdr-plus" method="tab.create" changes_ui=true
+2026-06-26T06:42:55.759468Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=48 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T06:42:55.762324Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=48 pid=46347
+2026-06-26T06:42:55.762513Z  INFO herdr::logging: tab renamed event="tab.rename" subsystem="tab" outcome="ok" workspace_id="w8" tab_id="w8:t3"
+2026-06-26T06:42:55.762896Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="herdr-plus" method="tab.create"
+2026-06-26T06:42:55.763185Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="herdr-plus" method="pane.split" changes_ui=true
+2026-06-26T06:42:55.770274Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=49 rows=65 cols=137 scrollback_limit_bytes=10000000
+2026-06-26T06:42:55.775115Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=49 pid=46361
+2026-06-26T06:42:55.775678Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="herdr-plus" method="pane.split"
+2026-06-26T06:42:56.676061Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=44 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T06:42:56.676922Z  INFO herdr::pane: pane session terminated pane=44 pid=46330 signal=Hangup
+2026-06-26T06:42:56.801895Z  INFO herdr::pane: agent changed pane=45 previous_agent=None agent=Some(Pi) process=pi pgid=Some(46593)
+2026-06-26T06:42:58.534543Z  INFO herdr::pane: agent changed pane=45 previous_agent=None agent=Some(Pi) process=pi pgid=Some(46593)
+2026-06-26T06:42:59.565276Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w8" tab_id="w8:t2"
+2026-06-26T06:43:01.208490Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w8" tab_id="w8:t3"
+2026-06-26T06:43:05.216532Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w8" tab_id="w8:t3"
+2026-06-26T06:43:07.604372Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w8" tab_id="w8:t1"
+2026-06-26T06:43:12.613431Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=4
+2026-06-26T06:43:15.241332Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w1"
+2026-06-26T06:43:15.241372Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w1" tab_id="w1:t1"
+2026-06-26T06:43:17.502460Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=1 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T06:43:17.502912Z  INFO herdr::pane: pane session terminated pane=1 pid=20010 signal=Hangup
+2026-06-26T06:43:22.510059Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:43:31.917592Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w3"
+2026-06-26T06:43:31.917931Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:tD"
+2026-06-26T06:43:35.175649Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w2"
+2026-06-26T06:43:35.175688Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w2" tab_id="w2:t1"
+2026-06-26T06:43:35.597076Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w3"
+2026-06-26T06:43:35.597124Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:tD"
+2026-06-26T06:43:40.603015Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:43:41.916338Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=29 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T06:43:41.916429Z  INFO herdr::pane: pane session terminated pane=29 pid=38948 signal=Hangup
+2026-06-26T06:43:46.918171Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T06:57:35.466502Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-26T07:27:35.446108Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-26T07:57:35.455771Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-26T08:02:52.899812Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="cli:plugin" method="plugin.pane.open" changes_ui=true
+2026-06-26T08:02:52.901651Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=50 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T08:02:52.907618Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=50 pid=64543
+2026-06-26T08:02:52.908216Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t7"
+2026-06-26T08:02:52.909864Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="cli:plugin" method="plugin.pane.open"
+2026-06-26T08:02:57.913367Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T08:02:59.017449Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=50 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T08:02:59.017792Z  INFO herdr::pane: pane session terminated pane=50 pid=64543 signal=Hangup
+2026-06-26T08:03:04.026453Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T08:05:06.121636Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="cli:plugin" method="plugin.pane.open" changes_ui=true
+2026-06-26T08:05:06.123386Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=51 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T08:05:06.126506Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=51 pid=66265
+2026-06-26T08:05:06.126967Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t7"
+2026-06-26T08:05:06.127790Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="cli:plugin" method="plugin.pane.open"
+2026-06-26T08:05:11.133404Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T08:05:16.904159Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=51 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T08:05:16.904519Z  INFO herdr::pane: pane session terminated pane=51 pid=66265 signal=Hangup
+2026-06-26T08:05:21.912360Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T08:07:25.077736Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=52 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T08:07:25.084727Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=52 pid=68462
+2026-06-26T08:07:25.085475Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:tF"
+2026-06-26T08:07:25.085491Z  INFO herdr::logging: tab created event="tab.create" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:tF" pane_id=52
+2026-06-26T08:07:30.096350Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T08:07:39.915764Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=52 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T08:07:39.915905Z  INFO herdr::pane: pane session terminated pane=52 pid=68462 signal=Hangup
+2026-06-26T08:07:44.921948Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T08:08:33.774771Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="cli:plugin" method="plugin.pane.open" changes_ui=true
+2026-06-26T08:08:33.775823Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=53 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T08:08:33.778909Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=53 pid=69399
+2026-06-26T08:08:33.779044Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t7"
+2026-06-26T08:08:33.779780Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="cli:plugin" method="plugin.pane.open"
+2026-06-26T08:08:38.787128Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T08:08:41.582764Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=53 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T08:08:41.583077Z  INFO herdr::pane: pane session terminated pane=53 pid=69399 signal=Hangup
+2026-06-26T08:08:46.588118Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T08:09:09.246475Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="cli:plugin" method="plugin.pane.open" changes_ui=true
+2026-06-26T08:09:09.247465Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=54 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T08:09:09.250545Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=54 pid=69952
+2026-06-26T08:09:09.250663Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t7"
+2026-06-26T08:09:09.251672Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="cli:plugin" method="plugin.pane.open"
+2026-06-26T08:09:14.253647Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T08:09:25.223671Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=54 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T08:09:25.223980Z  INFO herdr::pane: pane session terminated pane=54 pid=69952 signal=Hangup
+2026-06-26T08:09:30.230054Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T08:12:00.412104Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w8"
+2026-06-26T08:12:00.413409Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w8" tab_id="w8:t1"
+2026-06-26T08:12:05.423140Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T08:12:07.815739Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="cli:plugin" method="plugin.pane.open" changes_ui=true
+2026-06-26T08:12:07.816448Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=55 rows=65 cols=137 scrollback_limit_bytes=10000000
+2026-06-26T08:12:07.819376Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=55 pid=72335
+2026-06-26T08:12:07.819477Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w8" tab_id="w8:t1"
+2026-06-26T08:12:07.819877Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="cli:plugin" method="plugin.pane.open"
+2026-06-26T08:12:11.389886Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=55 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T08:12:11.390128Z  INFO herdr::pane: pane session terminated pane=55 pid=72335 signal=Hangup
+2026-06-26T08:12:16.392728Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T08:12:16.519713Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w3"
+2026-06-26T08:12:16.519808Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t7"
+2026-06-26T08:12:21.523935Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T08:12:48.051558Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w8"
+2026-06-26T08:12:48.052451Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w8" tab_id="w8:t1"
+2026-06-26T08:12:51.625342Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="cli:plugin" method="plugin.pane.open" changes_ui=true
+2026-06-26T08:12:51.625809Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=56 rows=65 cols=137 scrollback_limit_bytes=10000000
+2026-06-26T08:12:51.628573Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=56 pid=72883
+2026-06-26T08:12:51.628740Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w8" tab_id="w8:t1"
+2026-06-26T08:12:51.629155Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="cli:plugin" method="plugin.pane.open"
+2026-06-26T08:12:56.637535Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T08:13:06.212650Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=56 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T08:13:06.214561Z  INFO herdr::pane: pane session terminated pane=56 pid=72883 signal=Hangup
+2026-06-26T08:13:11.222893Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T08:13:12.507562Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w8" tab_id="w8:t2"
+2026-06-26T08:13:15.800453Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w8" tab_id="w8:t3"
+2026-06-26T08:13:19.739699Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w8" tab_id="w8:t1"
+2026-06-26T08:13:24.744635Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T08:13:27.227392Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w3"
+2026-06-26T08:13:27.227425Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t7"
+2026-06-26T08:13:32.231245Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T08:15:06.061354Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w2"
+2026-06-26T08:15:06.061883Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w2" tab_id="w2:t1"
+2026-06-26T08:15:09.951799Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="cli:plugin" method="plugin.pane.open" changes_ui=true
+2026-06-26T08:15:09.952862Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=57 rows=65 cols=137 scrollback_limit_bytes=10000000
+2026-06-26T08:15:09.956267Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=57 pid=74763
+2026-06-26T08:15:09.956451Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w2" tab_id="w2:t1"
+2026-06-26T08:15:09.957377Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="cli:plugin" method="plugin.pane.open"
+2026-06-26T08:15:14.231655Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=57 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T08:15:14.231874Z  INFO herdr::pane: pane session terminated pane=57 pid=74763 signal=Hangup
+2026-06-26T08:15:19.237603Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T08:15:44.656832Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w3"
+2026-06-26T08:15:44.657738Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t7"
+2026-06-26T08:15:44.831418Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w8"
+2026-06-26T08:15:44.831449Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w8" tab_id="w8:t1"
+2026-06-26T08:15:46.789446Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w3"
+2026-06-26T08:15:46.789477Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t7"
+2026-06-26T08:15:51.796104Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T08:16:35.248388Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=58 rows=32 cols=137 scrollback_limit_bytes=10000000
+2026-06-26T08:16:35.252267Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=58 pid=75894
+2026-06-26T08:16:40.256266Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T08:16:54.565904Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t7"
+2026-06-26T08:16:59.569983Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T08:20:14.695390Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t7"
+2026-06-26T08:20:18.230550Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=58 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T08:20:18.231450Z  INFO herdr::pane: pane session terminated pane=58 pid=75894 signal=Hangup
+2026-06-26T08:20:23.239829Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T08:27:35.463438Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-26T08:41:26.934068Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=59 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T08:41:26.946295Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=59 pid=96005
+2026-06-26T08:41:26.947245Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:tG"
+2026-06-26T08:41:26.947262Z  INFO herdr::logging: tab created event="tab.create" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:tG" pane_id=59
+2026-06-26T08:41:31.960527Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T08:57:35.490705Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-26T09:24:47.566641Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=59 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T09:24:47.569215Z  INFO herdr::pane: pane session terminated pane=59 pid=96005 signal=Hangup
+2026-06-26T09:24:52.579233Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T09:25:01.351316Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=60 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T09:25:01.366932Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=60 pid=30226
+2026-06-26T09:25:04.945902Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="cli:workspace:create" method="workspace.create" changes_ui=true
+2026-06-26T09:25:04.946251Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=61 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T09:25:04.950169Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=61 pid=30289
+2026-06-26T09:25:04.950547Z  INFO herdr::logging: workspace created event="workspace.create" subsystem="workspace" outcome="ok" workspace_id="w9" pane_id=61
+2026-06-26T09:25:04.950556Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w9"
+2026-06-26T09:25:04.950563Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w9" tab_id="w9:t1"
+2026-06-26T09:25:04.950572Z  INFO herdr::logging: workspace renamed event="workspace.rename" subsystem="workspace" outcome="ok" workspace_id="w9"
+2026-06-26T09:25:04.951170Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="cli:workspace:create" method="workspace.create"
+2026-06-26T09:25:04.951704Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=60 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T09:25:04.956243Z  INFO herdr::pane: pane session terminated pane=60 pid=30226 signal=Hangup
+2026-06-26T09:25:09.959573Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=4
+2026-06-26T09:25:17.983166Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=61 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T09:25:17.983442Z  INFO herdr::pane: pane session terminated pane=61 pid=30289 signal=Hangup
+2026-06-26T09:25:21.688299Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w3"
+2026-06-26T09:25:21.688358Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t7"
+2026-06-26T09:25:26.692451Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T09:27:35.439278Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-06-26T09:28:04.691433Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=13 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T09:28:04.691820Z  INFO herdr::pane: pane session terminated pane=13 pid=28175 signal=Hangup
+2026-06-26T09:28:07.259800Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="cli:plugin" method="plugin.pane.open" changes_ui=true
+2026-06-26T09:28:07.260892Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=62 rows=65 cols=137 scrollback_limit_bytes=10000000
+2026-06-26T09:28:07.265707Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=62 pid=32906
+2026-06-26T09:28:07.266042Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w8" tab_id="w8:t1"
+2026-06-26T09:28:07.267099Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="cli:plugin" method="plugin.pane.open"
+2026-06-26T09:28:10.135647Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=62 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T09:28:10.135768Z  INFO herdr::pane: pane session terminated pane=62 pid=32906 signal=Hangup
+2026-06-26T09:28:11.655654Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="cli:plugin" method="plugin.pane.open" changes_ui=true
+2026-06-26T09:28:11.655965Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=63 rows=65 cols=137 scrollback_limit_bytes=10000000
+2026-06-26T09:28:11.659443Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=63 pid=32961
+2026-06-26T09:28:11.659553Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w8" tab_id="w8:t1"
+2026-06-26T09:28:11.659783Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="cli:plugin" method="plugin.pane.open"
+2026-06-26T09:28:15.305845Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="herdr-plus" method="workspace.create" changes_ui=true
+2026-06-26T09:28:15.305976Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=64 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T09:28:15.310384Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=64 pid=33008
+2026-06-26T09:28:15.311020Z  INFO herdr::logging: workspace created event="workspace.create" subsystem="workspace" outcome="ok" workspace_id="wA" pane_id=64
+2026-06-26T09:28:15.311032Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="wA"
+2026-06-26T09:28:15.311042Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="wA" tab_id="wA:t1"
+2026-06-26T09:28:15.311049Z  INFO herdr::logging: workspace renamed event="workspace.rename" subsystem="workspace" outcome="ok" workspace_id="wA"
+2026-06-26T09:28:15.311361Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="herdr-plus" method="workspace.create"
+2026-06-26T09:28:15.311619Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="herdr-plus" method="tab.rename" changes_ui=true
+2026-06-26T09:28:15.316744Z  INFO herdr::logging: tab renamed event="tab.rename" subsystem="tab" outcome="ok" workspace_id="wA" tab_id="wA:t1"
+2026-06-26T09:28:15.316795Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="herdr-plus" method="tab.rename"
+2026-06-26T09:28:15.317361Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="herdr-plus" method="pane.split" changes_ui=true
+2026-06-26T09:28:15.317451Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=65 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T09:28:15.320771Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=65 pid=33009
+2026-06-26T09:28:15.321067Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="herdr-plus" method="pane.split"
+2026-06-26T09:28:15.321411Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="herdr-plus" method="tab.create" changes_ui=true
+2026-06-26T09:28:15.321494Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=66 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T09:28:15.324331Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=66 pid=33011
+2026-06-26T09:28:15.324448Z  INFO herdr::logging: tab renamed event="tab.rename" subsystem="tab" outcome="ok" workspace_id="wA" tab_id="wA:t2"
+2026-06-26T09:28:15.324774Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="herdr-plus" method="tab.create"
+2026-06-26T09:28:15.325012Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="herdr-plus" method="tab.create" changes_ui=true
+2026-06-26T09:28:15.325096Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=67 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T09:28:15.328871Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=67 pid=33014
+2026-06-26T09:28:15.329101Z  INFO herdr::logging: tab renamed event="tab.rename" subsystem="tab" outcome="ok" workspace_id="wA" tab_id="wA:t3"
+2026-06-26T09:28:15.329871Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="herdr-plus" method="tab.create"
+2026-06-26T09:28:16.122715Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=63 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T09:28:16.122820Z  INFO herdr::pane: pane session terminated pane=63 pid=32961 signal=Hangup
+2026-06-26T09:28:16.369396Z  INFO herdr::pane: agent changed pane=64 previous_agent=None agent=Some(Pi) process=pi pgid=Some(33209)
+2026-06-26T09:28:18.317139Z  INFO herdr::pane: agent changed pane=64 previous_agent=None agent=Some(Pi) process=pi pgid=Some(33209)
+2026-06-26T09:28:22.903558Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="wA" tab_id="wA:t1"
+2026-06-26T09:28:27.911834Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=3
+2026-06-26T09:28:39.800312Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="cli:plugin" method="plugin.pane.open" changes_ui=true
+2026-06-26T09:28:39.801289Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=68 rows=65 cols=137 scrollback_limit_bytes=10000000
+2026-06-26T09:28:39.804866Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=68 pid=35401
+2026-06-26T09:28:39.804993Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="wA" tab_id="wA:t1"
+2026-06-26T09:28:39.805379Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="cli:plugin" method="plugin.pane.open"
+2026-06-26T09:28:41.719540Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="herdr-plus" method="workspace.create" changes_ui=true
+2026-06-26T09:28:41.719704Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=69 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T09:28:41.722783Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=69 pid=35580
+2026-06-26T09:28:41.722955Z  INFO herdr::logging: workspace created event="workspace.create" subsystem="workspace" outcome="ok" workspace_id="wB" pane_id=69
+2026-06-26T09:28:41.722963Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="wB"
+2026-06-26T09:28:41.722972Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="wB" tab_id="wB:t1"
+2026-06-26T09:28:41.722982Z  INFO herdr::logging: workspace renamed event="workspace.rename" subsystem="workspace" outcome="ok" workspace_id="wB"
+2026-06-26T09:28:41.723308Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="herdr-plus" method="workspace.create"
+2026-06-26T09:28:41.723571Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="herdr-plus" method="tab.rename" changes_ui=true
+2026-06-26T09:28:41.728289Z  INFO herdr::logging: tab renamed event="tab.rename" subsystem="tab" outcome="ok" workspace_id="wB" tab_id="wB:t1"
+2026-06-26T09:28:41.728344Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="herdr-plus" method="tab.rename"
+2026-06-26T09:28:41.728762Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="herdr-plus" method="tab.create" changes_ui=true
+2026-06-26T09:28:41.728833Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=70 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T09:28:41.731989Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=70 pid=35581
+2026-06-26T09:28:41.732177Z  INFO herdr::logging: tab renamed event="tab.rename" subsystem="tab" outcome="ok" workspace_id="wB" tab_id="wB:t2"
+2026-06-26T09:28:41.732495Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="herdr-plus" method="tab.create"
+2026-06-26T09:28:42.254770Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=68 status="ExitStatus { code: 0, signal: None }"
+2026-06-26T09:28:42.254868Z  INFO herdr::pane: pane session terminated pane=68 pid=35401 signal=Hangup
+2026-06-26T09:28:47.256524Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=4
+2026-06-26T09:28:56.838581Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="wA"
+2026-06-26T09:28:56.838620Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="wA" tab_id="wA:t1"
+2026-06-26T09:29:01.841618Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=4
+2026-06-26T09:29:02.361086Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="wA" tab_id="wA:t1"
+2026-06-26T09:29:07.367985Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=4
+2026-06-26T09:31:56.991223Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="wA" tab_id="wA:t2"
+2026-06-26T09:32:01.999627Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/rubensilvarodriguez/.config/herdr/session.json workspaces=4
+2026-06-26T09:32:03.519509Z  INFO herdr::app::worktrees: opening worktree dialog ws_idx=2 repo_root=/Users/rubensilvarodriguez/dev/contrib/dotfiles branch="worktree/brave-field-9810" checkout_path=/Users/rubensilvarodriguez/.herdr/worktrees/dotfiles/worktree-brave-field-9810
+2026-06-26T09:32:06.983227Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=71 rows=65 cols=274 scrollback_limit_bytes=10000000
+2026-06-26T09:32:06.988063Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=71 pid=52513
