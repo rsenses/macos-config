@@ -86,3 +86,5 @@ export CLICOLOR=1  # macOS ls colors
 # bindkey '^y' autosuggest-accept
 bindkey "^H" backward-delete-char
 bindkey "^?" backward-delete-char
+
+

@@ -3,18 +3,23 @@ set -euo pipefail
 
 SITES_DIR="$HOME/dev/caddy-sites"
 CADDYFILE="/opt/homebrew/etc/Caddyfile"
+STATE_PREFIX="/tmp/dev"
+PORT_START=8000
+PORT_END=8999
 
 PROJECT_DIR=""
+PROJECT_ID=""
 REPO_NAME=""
 DOMAIN=""
 SNIPPET=""
 CONFIG_FILE=""
 WEB_ROOT=""
 PORT=""
-CONFIG_PORT=""
 PHP_LOG_FILE=""
-PHP_PID_FILE=""
+PHP_STATE_FILE=""
 declare -a ALIASES=()
+declare -a HOSTS=()
+declare -a DOMAIN_CONFLICTS=()
 
 usage() {
   echo "Uso:"
@@ -41,6 +46,34 @@ port_is_listening() {
   lsof -nP -iTCP:"$p" -sTCP:LISTEN >/dev/null 2>&1
 }
 
+find_free_port() {
+  local candidate="$PORT_START"
+
+  while (( candidate <= PORT_END )); do
+    if ! port_is_listening "$candidate"; then
+      printf '%s\n' "$candidate"
+      return 0
+    fi
+    candidate=$((candidate + 1))
+  done
+
+  echo "Error: no hay puertos libres entre $PORT_START y $PORT_END." >&2
+  return 1
+}
+
+hash_path() {
+  local path="$1"
+
+  if command -v shasum >/dev/null 2>&1; then
+    printf '%s' "$path" | shasum -a 256 | awk '{print $1}'
+  elif command -v sha256sum >/dev/null 2>&1; then
+    printf '%s' "$path" | sha256sum | awk '{print $1}'
+  else
+    echo "Error: necesito shasum o sha256sum para identificar el proyecto." >&2
+    return 1
+  fi
+}
+
 wait_for_port() {
   local p="$1"
   local timeout_sec="${2:-8}"
@@ -64,13 +97,13 @@ resolve_project() {
     if [[ -d "$HOME/dev/www/$name" ]]; then
       target_dir="$HOME/dev/www/$name"
     elif [[ -d "$name" ]]; then
-      target_dir="$(cd "$name" && pwd)"
+      target_dir="$(cd "$name" && pwd -P)"
     else
       echo "Error: no existe el proyecto '$name'" >&2
       exit 1
     fi
   else
-    target_dir="$PWD"
+    target_dir="$(pwd -P)"
   fi
 
   if git -C "$target_dir" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
@@ -78,6 +111,7 @@ resolve_project() {
     local git_common
 
     repo_root="$(git -C "$target_dir" rev-parse --show-toplevel)"
+    repo_root="$(cd "$repo_root" && pwd -P)"
     git_common="$(git -C "$target_dir" rev-parse --git-common-dir)"
 
     if [[ "$git_common" != /* ]]; then
@@ -97,11 +131,14 @@ resolve_project() {
   SNIPPET="$SITES_DIR/${REPO_NAME}.caddy"
   CONFIG_FILE="$PROJECT_DIR/.config/caddy"
   WEB_ROOT="$PROJECT_DIR"
-  PHP_LOG_FILE="/tmp/dev-${REPO_NAME}.log"
-  PHP_PID_FILE="/tmp/dev-${REPO_NAME}.pid"
+  PROJECT_ID="$(hash_path "$PROJECT_DIR")"
+  PHP_STATE_FILE="${STATE_PREFIX}-${PROJECT_ID}.state"
+  PHP_LOG_FILE="${STATE_PREFIX}-${PROJECT_ID}.log"
 
   if [[ -d "$PROJECT_DIR/public" ]]; then
     WEB_ROOT="$PROJECT_DIR/public"
+  elif [[ -d "$PROJECT_DIR/web" ]]; then
+    WEB_ROOT="$PROJECT_DIR/web"
   fi
 }
 
@@ -150,68 +187,51 @@ load_alias_values() {
 }
 
 load_project_config() {
-  CONFIG_PORT=""
   ALIASES=()
 
-  [[ -f "$CONFIG_FILE" ]] || return 0
+  if [[ -f "$CONFIG_FILE" ]]; then
+    while IFS= read -r raw; do
+      local line
+      local value
 
-  while IFS= read -r raw; do
-    local line
-    local value
+      line="$(trim "${raw%%#*}")"
+      [[ -z "$line" ]] && continue
 
-    line="$(trim "${raw%%#*}")"
-    [[ -z "$line" ]] && continue
+      case "$line" in
+        [Aa][Ll][Ii][Aa][Ss][Ee][Ss]=*)
+          value="${line#*=}"
+          load_alias_values "$value"
+          ;;
+      esac
+    done < "$CONFIG_FILE"
+  fi
 
-    case "$line" in
-      [Pp][Oo][Rr][Tt]=*)
-        value="$(trim "${line#*=}")"
-        case "$value" in
-          '"'*) value="${value#\"}"; value="${value%\"}" ;;
-          "'"*) value="${value#\'}"; value="${value%\'}" ;;
-        esac
-        CONFIG_PORT="$value"
-        ;;
-      [Aa][Ll][Ii][Aa][Ss][Ee][Ss]=*)
-        value="${line#*=}"
-        load_alias_values "$value"
-        ;;
-    esac
-  done < "$CONFIG_FILE"
+  HOSTS=("$DOMAIN")
+  local alias
+  for alias in "${ALIASES[@]-}"; do
+    [[ -z "$alias" ]] || HOSTS+=("$alias")
+  done
 }
 
 pick_port() {
-  if [[ -z "$CONFIG_PORT" ]]; then
-    echo "Error: falta PORT en $CONFIG_FILE" >&2
-    exit 1
-  fi
-
-  if [[ ! "$CONFIG_PORT" =~ ^[0-9]+$ ]]; then
-    echo "Error: PORT inválido en $CONFIG_FILE" >&2
-    exit 1
-  fi
-
-  PORT="$CONFIG_PORT"
+  PORT="$(find_free_port)"
 }
 
 write_snippet() {
   mkdir -p "$SITES_DIR"
 
-  local hosts=("${DOMAIN}")
-  local h
-
-  for h in "${ALIASES[@]-}"; do
-    [[ -z "$h" ]] && continue
-    hosts+=("$h")
-  done
-
   # Une hosts con espacios (site labels múltiples)
   local host_line
-  host_line="$(printf "%s " "${hosts[@]}")"
+  host_line="$(printf "%s " "${HOSTS[@]}")"
   host_line="${host_line% }"
 
   cat > "$SNIPPET" <<SNIP
 ${host_line} {
-  tls internal
+  tls {
+    issuer internal {
+      lifetime 7d
+    }
+  }
 reverse_proxy 127.0.0.1:${PORT} {
   header_up Host {host}
   header_up X-Forwarded-Proto https
@@ -248,19 +268,64 @@ reload_caddy() {
     fi
   fi
 
-  run_caddy reload --config "$CADDYFILE" --adapter caddyfile
+  run_caddy reload --force --config "$CADDYFILE" --adapter caddyfile
+}
+
+read_state_value() {
+  local key="$1"
+  local state_file="$2"
+  local line
+
+  [[ -f "$state_file" ]] || return 1
+
+  while IFS= read -r line; do
+    case "$line" in
+      "${key}="*)
+        printf '%s\n' "${line#*=}"
+        return 0
+        ;;
+    esac
+  done < "$state_file"
+
+  return 1
+}
+
+write_php_state() {
+  local pid="$1"
+  local hosts_line
+  local temp_file="${PHP_STATE_FILE}.tmp.$$"
+
+  hosts_line="$(printf "%s " "${HOSTS[@]}")"
+  hosts_line="${hosts_line% }"
+
+  {
+    printf 'PROJECT_DIR=%s\n' "$PROJECT_DIR"
+    printf 'DOMAIN=%s\n' "$DOMAIN"
+    printf 'HOSTS=%s\n' "$hosts_line"
+    printf 'PORT=%s\n' "$PORT"
+    printf 'PID=%s\n' "$pid"
+  } > "$temp_file"
+
+  mv -f "$temp_file" "$PHP_STATE_FILE"
 }
 
 start_php_server() {
   mkdir -p "$(dirname "$PHP_LOG_FILE")"
   : > "$PHP_LOG_FILE"
 
-  mkdir -p "$(dirname "$PHP_PID_FILE")"
+  mkdir -p "$(dirname "$PHP_STATE_FILE")"
 
   (
     cd "$PROJECT_DIR"
-    nohup php -S "127.0.0.1:${PORT}" -t "$WEB_ROOT" >"$PHP_LOG_FILE" 2>&1 < /dev/null &
-    printf '%s\n' "$!" > "$PHP_PID_FILE"
+
+    # direnv u otras herramientas pueden exportar el placeholder sin resolver.
+    # Laravel no sobreescribe una APP_URL heredada y Symfony la rechaza.
+    case "${APP_URL:-}" in
+      *\$*) unset APP_URL ;;
+    esac
+
+    nohup php artisan serve --host=127.0.0.1 --port="${PORT}" >"$PHP_LOG_FILE" 2>&1 < /dev/null &
+    write_php_state "$!"
   )
 }
 
@@ -272,11 +337,24 @@ show_php_log() {
   fi
 }
 
+load_php_state() {
+  local state_project
+  local state_port
+
+  state_project="$(read_state_value PROJECT_DIR "$PHP_STATE_FILE" 2>/dev/null)" || return 1
+  [[ "$state_project" == "$PROJECT_DIR" ]] || return 1
+
+  state_port="$(read_state_value PORT "$PHP_STATE_FILE" 2>/dev/null)" || return 1
+  [[ "$state_port" =~ ^[0-9]+$ ]] || return 1
+  (( state_port >= 1 && state_port <= 65535 )) || return 1
+
+  PORT="$state_port"
+}
+
 read_php_pid() {
   local pid=""
 
-  [[ -f "$PHP_PID_FILE" ]] || return 1
-  pid="$(trim "$(<"$PHP_PID_FILE")")"
+  pid="$(read_state_value PID "$PHP_STATE_FILE" 2>/dev/null)" || return 1
   [[ -n "$pid" && "$pid" =~ ^[0-9]+$ ]] || return 1
   printf '%s\n' "$pid"
 }
@@ -288,22 +366,128 @@ php_pid_is_running() {
   kill -0 "$pid" >/dev/null 2>&1
 }
 
+stop_process() {
+  local pid="$1"
+
+  if php_pid_is_running "$pid"; then
+    kill "$pid" >/dev/null 2>&1 || true
+    sleep 0.2
+    if php_pid_is_running "$pid"; then
+      kill -9 "$pid" >/dev/null 2>&1 || true
+    fi
+  fi
+}
+
+stop_state_file() {
+  local state_file="$1"
+  local pid=""
+
+  if pid="$(read_state_value PID "$state_file" 2>/dev/null)" && [[ "$pid" =~ ^[0-9]+$ ]]; then
+    stop_process "$pid"
+  fi
+
+  rm -f "$state_file"
+}
+
 stop_php_server() {
   local pid=""
 
-  if pid="$(read_php_pid 2>/dev/null)"; then
-    if php_pid_is_running "$pid"; then
-      kill "$pid" >/dev/null 2>&1 || true
-      sleep 0.2
-      if php_pid_is_running "$pid"; then
-        kill -9 "$pid" >/dev/null 2>&1 || true
-      fi
-    fi
-    rm -f "$PHP_PID_FILE"
-    return 0
+  if load_php_state >/dev/null 2>&1 && pid="$(read_php_pid 2>/dev/null)"; then
+    stop_process "$pid"
   fi
 
+  rm -f "$PHP_STATE_FILE"
+}
+
+hosts_overlap() {
+  local other_hosts="$1"
+  local current_host
+  local other_host
+
+  for current_host in "${HOSTS[@]-}"; do
+    for other_host in $other_hosts; do
+      if [[ "$current_host" == "$other_host" ]]; then
+        return 0
+      fi
+    done
+  done
+
   return 1
+}
+
+find_domain_conflicts() {
+  DOMAIN_CONFLICTS=()
+
+  local state_file
+  local other_pid
+  local other_hosts
+
+  for state_file in "${STATE_PREFIX}"-*.state; do
+    [[ -f "$state_file" ]] || continue
+    [[ "$state_file" == "$PHP_STATE_FILE" ]] && continue
+
+    if ! other_pid="$(read_state_value PID "$state_file" 2>/dev/null)"; then
+      continue
+    fi
+    [[ "$other_pid" =~ ^[0-9]+$ ]] || continue
+
+    if ! php_pid_is_running "$other_pid"; then
+      rm -f "$state_file"
+      continue
+    fi
+
+    if ! other_hosts="$(read_state_value HOSTS "$state_file" 2>/dev/null)"; then
+      other_hosts="$(read_state_value DOMAIN "$state_file" 2>/dev/null)" || continue
+    fi
+
+    if hosts_overlap "$other_hosts"; then
+      DOMAIN_CONFLICTS+=("$state_file")
+    fi
+  done
+}
+
+show_domain_conflicts() {
+  local state_file
+  local other_project
+  local other_port
+  local other_pid
+  local value
+
+  echo "Ya hay una instancia activa para un dominio de ${DOMAIN}:" >&2
+  for state_file in "${DOMAIN_CONFLICTS[@]}"; do
+    other_project="(desconocido)"
+    other_port="(desconocido)"
+    other_pid="(desconocido)"
+
+    if value="$(read_state_value PROJECT_DIR "$state_file" 2>/dev/null)"; then
+      other_project="$value"
+    fi
+    if value="$(read_state_value PORT "$state_file" 2>/dev/null)"; then
+      other_port="$value"
+    fi
+    if value="$(read_state_value PID "$state_file" 2>/dev/null)"; then
+      other_pid="$value"
+    fi
+
+    printf '  Proyecto: %s\n' "$other_project" >&2
+    printf '  Puerto: %s (PID %s)\n' "$other_port" "$other_pid" >&2
+  done
+}
+
+confirm_domain_replacement() {
+  local answer=""
+
+  printf '¿Quieres detener la instancia anterior y lanzar esta? [s/N] ' >&2
+  IFS= read -r answer || return 1
+
+  case "$answer" in
+    s|S|si|Si|SI|sí|Sí|SÍ|y|Y|yes|Yes|YES)
+      return 0
+      ;;
+    *)
+      return 1
+      ;;
+  esac
 }
 
 case "${cmd}" in
@@ -311,8 +495,20 @@ case "${cmd}" in
     resolve_project
     load_project_config
 
-    stop_php_server || true
+    find_domain_conflicts
+    if (( ${#DOMAIN_CONFLICTS[@]} > 0 )); then
+      show_domain_conflicts
+      if ! confirm_domain_replacement; then
+        echo "Cancelado: se mantiene la instancia anterior." >&2
+        exit 1
+      fi
 
+      for state_file in "${DOMAIN_CONFLICTS[@]}"; do
+        stop_state_file "$state_file"
+      done
+    fi
+
+    stop_php_server || true
     pick_port
 
     if port_is_listening "$PORT"; then
@@ -321,16 +517,20 @@ case "${cmd}" in
       exit 1
     fi
 
-    if [[ ! -f "$SNIPPET" ]]; then
-      write_snippet
-    fi
-
-    reload_caddy yes
-
+    # Arranca PHP antes de publicar el nuevo upstream para que Caddy no
+    # pueda enviar peticiones a un puerto todavía vacío.
     start_php_server
     if ! wait_for_port "$PORT" 10; then
+      stop_php_server || true
       echo "Error: PHP no quedó escuchando en el puerto $PORT para ${DOMAIN}." >&2
       show_php_log
+      exit 1
+    fi
+
+    write_snippet
+    if ! reload_caddy yes; then
+      stop_php_server || true
+      echo "Error: no pude recargar Caddy para ${DOMAIN}." >&2
       exit 1
     fi
 
@@ -363,32 +563,29 @@ case "${cmd}" in
       echo "Config: (sin .config/caddy)"
     fi
 
-    if [[ -n "$CONFIG_PORT" ]]; then
-      PORT="$CONFIG_PORT"
-      echo "Puerto fijo (config): $CONFIG_PORT"
+    if load_php_state; then
+      echo "Puerto: $PORT"
+      if pid="$(read_php_pid 2>/dev/null)" && php_pid_is_running "$pid"; then
+        echo "Servidor PHP: activo en 127.0.0.1:$PORT"
+      else
+        echo "Servidor PHP: inactivo"
+      fi
     else
       PORT=""
       echo "Puerto: (sin asignar)"
-    fi
-
-    if pid="$(read_php_pid 2>/dev/null)" && php_pid_is_running "$pid"; then
-      echo "Servidor PHP: activo en 127.0.0.1:$PORT"
-      echo "Log: $PHP_LOG_FILE"
-    else
       echo "Servidor PHP: inactivo"
-      echo "Log: $PHP_LOG_FILE"
     fi
 
+    echo "Log: $PHP_LOG_FILE"
     show_php_log
     ;;
 
   down-all)
     echo "Parando todos los proyectos..."
 
-    for pidfile in /tmp/dev-*.pid; do
-      [[ -f "$pidfile" ]] || continue
-      PHP_PID_FILE="$pidfile"
-      stop_php_server
+    for state_file in "${STATE_PREFIX}"-*.state; do
+      [[ -f "$state_file" ]] || continue
+      stop_state_file "$state_file"
     done
 
     echo "OK: todos los servidores PHP detenidos"

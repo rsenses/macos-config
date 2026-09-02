@@ -17,6 +17,12 @@ if [ -x /opt/homebrew/bin/brew ]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
+# Homebrew upgrades can leave FPATH pointing at an old zsh Cellar directory.
+if [[ -d /opt/homebrew/opt/zsh/share/zsh/functions ]]; then
+  typeset -U fpath
+  fpath=(/opt/homebrew/opt/zsh/share/zsh/functions $fpath)
+fi
+
 if command -v mise >/dev/null 2>&1; then
   eval "$(mise activate zsh)"
 fi

@@ -109,7 +109,7 @@ git() {
 
 # git aliases
 alias g='command git'
-alias gs='command git status -sb'
+alias gst='command git status -sb'
 alias gd='command git diff'
 alias glg='command git lg'
 alias ga='command git add'

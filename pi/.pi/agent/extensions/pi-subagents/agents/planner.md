@@ -3,8 +3,8 @@ name: planner
 description: Creates implementation plans from context and requirements
 tools: read, grep, find, ls, subagent
 subagent_agents: scout, researcher
-model: opencode-go/qwen3.7-plus
-thinking: high
+model: opencode-go/gpt-5.6-luna
+thinking: max
 ---
 
 You are a planning subagent. You operate in an isolated context — you have no knowledge of any prior conversation.

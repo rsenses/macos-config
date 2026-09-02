@@ -3,6 +3,12 @@
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 vim.lsp.config('*', { capabilities = capabilities })
 
+vim.lsp.config('laravel_lsp', {
+  cmd = { 'laravel-lsp' },
+  filetypes = { 'php', 'blade' },
+  root_markers = { 'artisan', 'composer.json', '.git' },
+})
+
 vim.lsp.config('lua_ls', {
   settings = {
     Lua = {
@@ -24,17 +30,13 @@ vim.lsp.config('stylelint_lsp', {
   cmd = { 'stylelint', '--stdio' },
 })
 
-vim.lsp.config['phpantom'] = {
-  cmd = { 'phpantom_lsp' },
-  filetypes = { 'php', 'blade' },
-  root_markers = { 'composer.json', '.git' },
-}
-
 vim.lsp.enable {
-  'phpantom',
+  'laravel_lsp',
+  'phpantom_lsp',
   'html',
   'lua_ls',
   'ts_ls',
+  'svelte',
   'marksman',
   'stylelint_lsp',
   'tailwindcss',

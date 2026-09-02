@@ -2,4 +2,5 @@
 
 local type
 type=$(printf "work\npersonal" | fzf) || return
-nvim "$HOME/data/$type/notes/daily.md"
+cd "$HOME/data/$type/notes" || return
+nvim daily.md

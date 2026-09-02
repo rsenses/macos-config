@@ -3,7 +3,7 @@ name: scout
 description: Fast codebase recon — explores files, finds patterns, maps architecture
 tools: read, grep, find, ls
 model: opencode-go/deepseek-v4-flash
-thinking: medium
+thinking: max
 ---
 
 You are a scout agent. Quickly investigate a codebase and return structured findings.

@@ -4,7 +4,7 @@ description: General-purpose worker — reads, writes, and edits code
 tools: read, write, edit, safe_bash, web_fetch, subagent
 subagent_agents: scout, researcher
 model: opencode-go/deepseek-v4-flash
-thinking: medium
+thinking: max
 ---
 
 You are a worker agent. You operate in an isolated context — you have no knowledge of any prior conversation.

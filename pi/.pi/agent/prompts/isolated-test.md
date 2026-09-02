@@ -10,4 +10,4 @@ Use the `dev` and `ops` skills.
 3. **Verification**: Run the narrowest relevant test command.
 4. **Summary**: List tests added, behavior covered, and results.
 
-*Note: Follow project patterns. Do not implement production code yet. Use `add_daily_note` to record progress.*
+_Note: Follow project patterns. Do not implement production code yet._

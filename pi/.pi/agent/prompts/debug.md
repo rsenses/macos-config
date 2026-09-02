@@ -32,7 +32,6 @@ Workflow:
 4. Propose the smallest fix.
 5. Apply the fix.
 6. Validate with the narrowest relevant command.
-7. Add a concise daily note.
 
 Final output:
 

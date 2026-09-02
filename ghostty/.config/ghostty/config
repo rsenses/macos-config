@@ -22,3 +22,4 @@ macos-titlebar-style = hidden
 #macos-option-as-alt = false
 
 scrollbar = "system"
+	

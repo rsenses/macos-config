@@ -82,6 +82,7 @@ require('conform').setup {
     typescript = { 'prettierd' },
     typescriptreact = { 'prettierd' },
     vue = { 'prettierd' },
+    svelte = { 'prettierd' },
     css = { 'prettierd' },
     scss = { 'prettierd' },
     less = { 'prettierd' },
@@ -108,6 +109,9 @@ require('kulala').setup {
   global_keymaps = true,
   global_keymaps_prefix = '<leader>r',
   kulala_keymaps_prefix = '',
+  treesitter = {
+    enable = false,
+  },
 }
 -- END KULALA
 
@@ -411,6 +415,7 @@ local ensure_installed = {
   'php',
   -- 'phpdoc',
   'scss',
+  'svelte',
   -- 'vim',
   -- 'vimdoc',
   'vue',

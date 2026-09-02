@@ -1,21 +1,19 @@
 {
-  "lastChangelogVersion": "0.80.2",
+  "lastChangelogVersion": "0.84.4",
   "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.5",
-  "defaultThinkingLevel": "low",
+  "defaultModel": "gpt-5.6-luna",
+  "defaultThinkingLevel": "max",
   "theme": "light",
   "packages": [
     "npm:pi-mcp-adapter",
-    "npm:pi-lean-ctx",
     "npm:pi-lsp-bridge",
-    "npm:@observal/pi-insights"
+    "npm:pi-gpt-search",
+    "npm:@plannotator/pi-extension"
   ],
   "enabledModels": [
-    "openai-codex/gpt-5.4-mini",
-    "openai-codex/gpt-5.5",
     "opencode-go/deepseek-v4-flash",
-    "opencode-go/deepseek-v4-pro",
-    "opencode-go/qwen3.7-plus"
+    "openai-codex/gpt-5.6-luna",
+    "opencode-go/gpt-5.6-luna"
   ],
   "enableInstallTelemetry": false
 }

@@ -9,4 +9,4 @@ Use the `ops` and `dev` skills.
 3. **Group**: Propose clean commit groupings and which files belong to each.
 4. **Messages**: Suggest 2-3 precise Conventional Commit messages based on the goal.
 
-*Note: Be strict about logical separation. Do not modify files or memory.*
+*Note: Be strict about logical separation. Do not modify files.*

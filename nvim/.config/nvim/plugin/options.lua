@@ -69,8 +69,9 @@ opt.splitright = true -- Prefer windows splitting to the right
 opt.splitbelow = true -- Prefer windows splitting to the bottom
 
 -- File Handling
+opt.autoread = true -- Automatically read file changes
 opt.confirm = true
--- opt.updatetime = 300 -- Time in ms to trigger CursorHold
+opt.updatetime = 300 -- Time in ms to trigger CursorHold
 -- opt.timeoutlen = 500 -- Time in ms to wait for mapped sequence
 opt.ttimeoutlen = 0 -- No wait for key code sequences
 
@@ -110,8 +111,8 @@ vim.opt.wildignore = {
 
 -- Foldings
 opt.foldlevel = 99
--- vim.o.foldmethod = 'expr'
--- vim.o.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
-opt.foldmethod = 'indent'
+vim.o.foldmethod = 'expr'
+vim.o.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+-- opt.foldmethod = 'indent'
 opt.foldcolumn = '0'
 -- opt.fillchars:append { fold = ' ' }

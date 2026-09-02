@@ -5,30 +5,6 @@ import { spawn } from "node:child_process";
 import path from "node:path";
 import { Type } from "typebox";
 
-const MEMORY_TEMPLATE = `# Project Memory
-
-Durable project knowledge, decisions, preferences, and recurring lessons.
-
-## Stable Preferences
-
-- Prefer simple, direct implementations.
-- Prefer framework-native and project-native solutions.
-- Avoid unnecessary abstractions.
-- Do not duplicate framework guarantees.
-
-## Project Decisions
-
-<!-- Durable technical or product decisions. -->
-
-## Known Pitfalls
-
-<!-- Recurring problems, fragile flows, or common agent mistakes. -->
-
-## Agent Lessons
-
-<!-- Lessons that help future agents work better in this project. -->
-`;
-
 const TASKS_TEMPLATE = `# Project Tasks
 
 Pending project work that should survive across sessions.
@@ -63,23 +39,17 @@ const PLAN_TEMPLATE = (slug: string, sessionId: string) => `# Plan: ${slug}
 ## Validation
 `;
 
-function projectMemoryPaths(cwd: string) {
+function projectPaths(cwd: string) {
 	const aiDir = path.join(cwd, ".ai");
 	return {
-		aiDir,
 		planDir: path.join(aiDir, "plan"),
-		memoryFile: path.join(aiDir, "MEMORY.md"),
 		tasksFile: path.join(aiDir, "TASKS.md"),
 	};
 }
 
-async function ensureProjectMemory(cwd: string) {
-	const paths = projectMemoryPaths(cwd);
+async function ensureProjectFiles(cwd: string) {
+	const paths = projectPaths(cwd);
 	await mkdir(paths.planDir, { recursive: true });
-
-	if (!existsSync(paths.memoryFile)) {
-		await writeFile(paths.memoryFile, MEMORY_TEMPLATE, "utf8");
-	}
 
 	if (!existsSync(paths.tasksFile)) {
 		await writeFile(paths.tasksFile, TASKS_TEMPLATE, "utf8");
@@ -152,7 +122,7 @@ async function runCommand(cwd: string, command: string, args: string[]): Promise
 }
 
 async function latestPlanPath(cwd: string): Promise<string | undefined> {
-	const paths = projectMemoryPaths(cwd);
+	const paths = projectPaths(cwd);
 	try {
 		const entries = (await readdir(paths.planDir)).filter((file) => file.endsWith(".md"));
 		const files = await Promise.all(entries.map(async (file) => ({
@@ -177,7 +147,7 @@ function shortSessionId(ctx: any): string {
 }
 
 async function sessionPlanPath(cwd: string, sessionId: string): Promise<{ path: string; exists: boolean }> {
-	const paths = projectMemoryPaths(cwd);
+	const paths = projectPaths(cwd);
 	const prefix = `${localDate()}-${sessionId}-`;
 
 	try {
@@ -223,7 +193,7 @@ export default function (pi: ExtensionAPI) {
 		parameters: Type.Object({}),
 		async execute(_id, _params, _signal, _update, ctx) {
 			const cwd = ctx.cwd;
-			await ensureProjectMemory(cwd);
+			await ensureProjectFiles(cwd);
 			const sessionId = shortSessionId(ctx);
 			const current = await sessionPlanPath(cwd, sessionId);
 			const fallbackPath = current.exists ? current.path : await latestPlanPath(cwd);
@@ -254,7 +224,7 @@ export default function (pi: ExtensionAPI) {
 		parameters: Type.Object({}),
 		async execute(_id, _params, _signal, _update, ctx) {
 			const cwd = ctx.cwd;
-			const paths = await ensureProjectMemory(cwd);
+			const paths = await ensureProjectFiles(cwd);
 			const status = await runCommand(cwd, "git", ["status", "--short", "--branch", "--untracked-files=normal"]);
 			if (status.code !== 0) {
 				const message = status.stderr.trim() || "git status failed";
@@ -310,40 +280,31 @@ export default function (pi: ExtensionAPI) {
 
 	pi.on("before_agent_start", async (event, ctx) => {
 		const cwd = event.systemPromptOptions?.cwd ?? ctx.cwd;
-		const paths = await ensureProjectMemory(cwd);
+		const paths = await ensureProjectFiles(cwd);
 
 		const sessionId = shortSessionId(ctx);
 		const { path: planPath } = await sessionPlanPath(cwd, sessionId);
-		const memory = await readFile(paths.memoryFile, "utf8");
 		const tasks = await readFile(paths.tasksFile, "utf8");
 		const changelogPolicy = existsSync(path.join(cwd, "CHANGELOG.md"))
 			? `\n### Changelog Policy\n- This project has a \`CHANGELOG.md\`. Every job producing user-visible changes MUST add or update a SemVer-aligned Keep a Changelog entry before finalizing.\n- If the changelog is missing or stale for the current job, do not report \`ready to ship\`.`
 			: "";
 
-		const memoryContext = `## Project Memory
+		const workflowContext = `## Project Workflow
 
-The current project uses local AI memory files:
-- \`.ai/MEMORY.md\` — durable context and decisions.
+The current project uses local task and plan files:
 - \`.ai/TASKS.md\` — pending project work.
 - \`.ai/plan/\` — task-specific implementation plans.
 
 Current session plan: \`${planPath}\`
 
-### Memory Policy
+### Workflow Policy
 - **Planning**: Use \`create_session_plan\` at the start of non-trivial tasks. Update the plan file directly.
 - **Inspect**: Use \`get_current_plan\` for the active plan and \`summarize_worktree\` for a compact repo snapshot.
 - **Tasks**: Use \`.ai/TASKS.md\` for work that survives sessions. Use wiki-links \`[[.ai/plan/file.md]]\` for complex tasks.
-- **Durable**: Update \`.ai/MEMORY.md\` only for long-term project decisions or stable preferences.
-- **Memory persistence**: For updates to \`.ai/MEMORY.md\`, \`.ai/TASKS.md\`, or \`.ai/plan/*.md\`, the main agent reviews and approves the content first, then always delegates the file-writing/persistence step to the \`memory-keeper\` subagent.
 - **Reference discipline**: When a route, component, file, or decision is already recorded, refer to the existing section or item instead of restating the whole list.
 - **Inventory discipline**: For route/component reports, keep one canonical list and append only new or changed entries.
 - **Delta focus**: In iterative frontend, CSS, or JS work, answer with the smallest useful delta rather than reprinting prior inventories.
 ${changelogPolicy}
-
-Current \`.ai/MEMORY.md\` contents:
-\`\`\`md
-${memory.trim() || "# Project Memory\n\n_No durable project memory recorded yet._"}
-\`\`\`
 
 Current \`.ai/TASKS.md\` contents:
 \`\`\`md
@@ -351,7 +312,7 @@ ${tasks.trim() || "# Project Tasks\n\n_No pending project tasks recorded yet._"}
 \`\`\``;
 
 		return {
-			systemPrompt: `${event.systemPrompt}\n\n${memoryContext}`,
+			systemPrompt: `${event.systemPrompt}\n\n${workflowContext}`,
 		};
 	});
 
