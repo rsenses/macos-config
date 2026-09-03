@@ -315,16 +315,36 @@ start_php_server() {
 
   mkdir -p "$(dirname "$PHP_STATE_FILE")"
 
+  local -a server_command
+  local server_workdir="$PROJECT_DIR"
+  if [[ -f "$PROJECT_DIR/artisan" ]]; then
+    server_command=(php artisan serve --host=127.0.0.1 --port="${PORT}")
+  elif [[ -f "$WEB_ROOT/index.php" ]]; then
+    # Drupal resuelve algunos servicios con rutas relativas a su docroot.
+    # El servidor debe arrancar desde web/ para que core/core.services.yml
+    # apunte a web/core/core.services.yml.
+    server_workdir="$WEB_ROOT"
+    server_command=(php -S "127.0.0.1:${PORT}" -t "$WEB_ROOT")
+    if [[ -f "$WEB_ROOT/.ht.router.php" ]]; then
+      server_command+=("$WEB_ROOT/.ht.router.php")
+    fi
+  else
+    echo "Error: no encuentro un entrypoint PHP (artisan o index.php) en ${PROJECT_DIR}." >&2
+    return 1
+  fi
+
   (
-    cd "$PROJECT_DIR"
+    cd "$server_workdir"
 
-    # direnv u otras herramientas pueden exportar el placeholder sin resolver.
-    # Laravel no sobreescribe una APP_URL heredada y Symfony la rechaza.
-    case "${APP_URL:-}" in
-      *\$*) unset APP_URL ;;
-    esac
+    if [[ -f "$PROJECT_DIR/artisan" ]]; then
+      # direnv u otras herramientas pueden exportar el placeholder sin resolver.
+      # Laravel no sobreescribe una APP_URL heredada y Symfony la rechaza.
+      case "${APP_URL:-}" in
+        *\$*) unset APP_URL ;;
+      esac
+    fi
 
-    nohup php artisan serve --host=127.0.0.1 --port="${PORT}" >"$PHP_LOG_FILE" 2>&1 < /dev/null &
+    nohup "${server_command[@]}" >"$PHP_LOG_FILE" 2>&1 < /dev/null &
     write_php_state "$!"
   )
 }

@@ -726,7 +726,7 @@
         }
       }
     ],
-    "checkedAt": 1788329589916,
+    "checkedAt": 1788421362716,
     "lastModified": 1788179954000,
     "etag": "W/\"c4b6fef889a423288047c3526fe8eb47\""
   },
@@ -978,7 +978,7 @@
         }
       }
     ],
-    "checkedAt": 1788329589903,
+    "checkedAt": 1788421362715,
     "lastModified": 1786710729000,
     "etag": "W/\"7572a78e60b78526600ed2a9b74b579d\""
   },
@@ -1023,6 +1023,34 @@
           "input": 10,
           "output": 50,
           "cacheRead": 1,
+          "cacheWrite": 12.5
+        },
+        "contextWindow": 1000000,
+        "maxTokens": 128000,
+        "thinkingLevelMap": {
+          "off": null,
+          "xhigh": "xhigh",
+          "max": "max"
+        },
+        "compat": {
+          "forceAdaptiveThinking": true
+        }
+      },
+      {
+        "id": "claude-fable-5-1",
+        "name": "Claude Fable 5.1",
+        "api": "anthropic-messages",
+        "provider": "opencode",
+        "baseUrl": "https://opencode.ai/zen",
+        "reasoning": true,
+        "input": [
+          "text",
+          "image"
+        ],
+        "cost": {
+          "input": 10,
+          "output": 50,
+          "cacheRead": 0.25,
           "cacheWrite": 12.5
         },
         "contextWindow": 1000000,
@@ -2682,8 +2710,8 @@
         "maxTokens": 65536
       }
     ],
-    "checkedAt": 1788329589904,
-    "lastModified": 1788179952000,
-    "etag": "W/\"6d322f7cf8b47ef80e56f8bf65f2786f\""
+    "checkedAt": 1788421362874,
+    "lastModified": 1788352806000,
+    "etag": "W/\"ac434bcbda9ca4cacff33769bd16e910\""
   }
 }
