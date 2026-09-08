@@ -8,6 +8,24 @@ import { spawn } from "node:child_process";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
+import type { Usage } from "@earendil-works/pi-ai";
+import { getSupportedThinkingLevels } from "@earendil-works/pi-ai/compat";
+import {
+  AbortableSemaphore,
+  classifyLifecycleStatus,
+  combineSignals,
+  createChildEventState,
+  consumeChildEvent,
+  createDeadline,
+  emptyUsage,
+  isAbortError,
+  isTimeoutSignal,
+  JsonLineParser,
+  terminateProcessTree,
+  throwIfAborted,
+  truncateUtf8Head,
+  writeRecoverableArtifact,
+} from "./helpers.ts";
 import type {
   ExtensionAPI,
   ExtensionContext,
@@ -15,7 +33,6 @@ import type {
 import {
   getMarkdownTheme,
   parseFrontmatter,
-  truncateHead,
   withFileMutationQueue,
   DEFAULT_MAX_BYTES,
   DEFAULT_MAX_LINES,
@@ -71,9 +88,19 @@ interface ToolEvent {
   children?: AgentResult[];
 }
 
+type AgentStatus =
+  | "pending"
+  | "running"
+  | "complete"
+  | "partial"
+  | "failed"
+  | "cancelled"
+  | "timed_out"
+  | "blocked";
+
 interface AgentProgress {
   agent: string;
-  status: "pending" | "running" | "completed" | "failed";
+  status: AgentStatus;
   task: string;
   /**
    * Chronological log of tool calls — running and done interleaved. The
@@ -90,46 +117,94 @@ interface AgentProgress {
 interface AgentResult {
   agent: string;
   task: string;
+  status: AgentStatus;
   output: string;
   exitCode: number;
   progress: AgentProgress;
+  /** Requested model, retained for diagnosing selection/fallback. */
+  requestedModel?: string;
+  thinking?: string;
+  totalDurationMs?: number;
+  queueDurationMs?: number;
+  /** Effective provider/model reported by the child response. */
   model?: string;
   contextWindow?: number;
+  artifact?: string;
   usage: {
     input: number;
     output: number;
     cacheRead: number;
     cacheWrite: number;
-    cost: number;
+    cacheWrite1h?: number;
+    reasoning?: number;
+    totalTokens: number;
+    cost: Usage["cost"];
     turns: number;
   };
 }
 
 interface Details {
+  status: AgentStatus;
   results: AgentResult[];
+  /** Complete nested usage, including tool-result and compaction usage. */
+  usage?: Usage;
+  artifact?: string;
 }
 
 // ── Config ─────────────────────────────────────────────────────────────
 
 interface ExtensionConfig {
   maxConcurrency?: number;
+  timeoutMs?: number;
+  maxOutputBytes?: number;
+  maxOutputLines?: number;
 }
 
 const EXT_DIR = path.dirname(new URL(import.meta.url).pathname);
 const AGENTS_DIR = path.join(EXT_DIR, "agents");
 const TOOLS_DIR = path.join(EXT_DIR, "tools");
 const CONFIG_PATH = path.join(EXT_DIR, "config.json");
-const DEFAULT_MAX_CONCURRENCY = 4;
+const DEFAULT_MAX_CONCURRENCY = 2;
+const DEFAULT_TIMEOUT_MS = 10 * 60 * 1000;
+const DEFAULT_OUTPUT_BYTES = Math.min(DEFAULT_MAX_BYTES, 16 * 1024);
+const DEFAULT_OUTPUT_LINES = Math.min(DEFAULT_MAX_LINES, 200);
+// Complete JSON events may legitimately exceed 256 KiB (for example a read
+// result). Only an unterminated/broken line is bounded; valid complete lines
+// are parsed regardless of size.
+const MAX_UNTERMINATED_EVENT_BYTES = 16 * 1024 * 1024;
+const MAX_STDERR_BYTES = 64 * 1024;
+const MAX_CAPTURED_OUTPUT_BYTES = 1024 * 1024;
+const MAX_RECENT_TOOLS = 100;
 
 function loadConfig(): ExtensionConfig {
   try {
     if (fs.existsSync(CONFIG_PATH)) {
-      return JSON.parse(
-        fs.readFileSync(CONFIG_PATH, "utf-8"),
-      ) as ExtensionConfig;
+      return JSON.parse(fs.readFileSync(CONFIG_PATH, "utf-8")) as ExtensionConfig;
     }
-  } catch {}
+  } catch (error) {
+    throw new Error(`Cannot load pi-subagents config: ${String(error)}`);
+  }
   return {};
+}
+
+function validateConfig(config: ExtensionConfig): Required<ExtensionConfig> {
+  const maxConcurrency = config.maxConcurrency ?? DEFAULT_MAX_CONCURRENCY;
+  const timeoutMs = config.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+  const maxOutputBytes = config.maxOutputBytes ?? DEFAULT_OUTPUT_BYTES;
+  const maxOutputLines = config.maxOutputLines ?? DEFAULT_OUTPUT_LINES;
+  if (!Number.isInteger(maxConcurrency) || maxConcurrency < 1) {
+    throw new Error(`Invalid pi-subagents maxConcurrency: ${maxConcurrency}`);
+  }
+  if (!Number.isFinite(timeoutMs) || timeoutMs < 1) {
+    throw new Error(`Invalid pi-subagents timeoutMs: ${timeoutMs}`);
+  }
+  if (!Number.isInteger(maxOutputBytes) || maxOutputBytes < 1) {
+    throw new Error(`Invalid pi-subagents maxOutputBytes: ${maxOutputBytes}`);
+  }
+  if (!Number.isInteger(maxOutputLines) || maxOutputLines < 1) {
+    throw new Error(`Invalid pi-subagents maxOutputLines: ${maxOutputLines}`);
+  }
+  return { maxConcurrency, timeoutMs, maxOutputBytes, maxOutputLines };
 }
 
 // Built-in tools that pi provides natively (no extension needed)
@@ -144,15 +219,14 @@ const BUILTIN_TOOLS = new Set([
 ]);
 
 // Custom tools that require loading an extension into the subagent process
-const EXT_BASE = path.join(
-  process.env.HOME || "~",
-  ".pi",
-  "agent",
-  "extensions",
-);
+const EXT_BASE = path.dirname(EXT_DIR);
+const SEARCH_EXTENSION = path.join(os.homedir(), ".pi", "agent", "npm", "node_modules", "pi-gpt-search", "src", "index.ts");
 const CUSTOM_TOOL_EXTENSIONS: Record<string, string> = {
   web_fetch: path.join(EXT_BASE, "web-fetch", "index.ts"),
   safe_bash: path.join(TOOLS_DIR, "safe-bash.ts"),
+  ast_grep: path.join(EXT_BASE, "ast-grep.ts"),
+  "codex-research": SEARCH_EXTENSION,
+  "codex-search": SEARCH_EXTENSION,
   // `subagent` is the tool this very extension registers. Listing it here lets
   // a parent agent grant it to a child agent — the child pi process loads this
   // same index.ts via `--extension`, sees its own subagent tool, and (if
@@ -219,7 +293,7 @@ function loadAgents(): AgentConfig[] {
       name: frontmatter.name,
       description: frontmatter.description || "",
       tools,
-      model: frontmatter.model || "anthropic/claude-sonnet-4-6",
+      model: frontmatter.model || "",
       thinking: frontmatter.thinking || "medium",
       systemPrompt: body,
       filePath,
@@ -237,7 +311,7 @@ function resolvePiBinary(): { command: string; baseArgs: string[] } {
   if (entry) {
     try {
       const realEntry = fs.realpathSync(entry);
-      if (/\.(?:mjs|cjs|js)$/i.test(realEntry)) {
+      if (/[\\/]pi-coding-agent[\\/].*[\\/]cli\.js$/i.test(realEntry)) {
         return { command: process.execPath, baseArgs: [realEntry] };
       }
     } catch {}
@@ -343,11 +417,24 @@ async function buildPiArgs(
 ): Promise<{
   args: string[];
   tempDir: string;
-  childEnv: NodeJS.ProcessEnv | undefined;
+  childEnv: NodeJS.ProcessEnv;
 }> {
+  const modelSeparator = agent.model?.indexOf("/") ?? -1;
+  if (!agent.model || modelSeparator <= 0 || modelSeparator === agent.model.length - 1) {
+    throw new Error(`Agent ${agent.name} has no explicit provider/model selection`);
+  }
+  // Fail before allocating temporary resources, never silently drop tools.
+  if (!/^[a-zA-Z0-9_-]+$/.test(agent.name)) throw new Error(`Invalid agent name: ${agent.name}`);
+  for (const tool of agent.tools) {
+    if (tool === "subagent") throw new Error("Nested delegation is disabled; ask the principal to coordinate");
+    if (BUILTIN_TOOLS.has(tool)) continue;
+    const extension = CUSTOM_TOOL_EXTENSIONS[tool];
+    if (!extension || !fs.existsSync(extension)) throw new Error(`Unavailable tool ${tool} for ${agent.name}${extension ? `: ${extension}` : ""}`);
+  }
   const piBin = resolvePiBinary();
   const tempDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "pi-sub-"));
 
+  try {
   // Write system prompt to temp file
   const promptPath = path.join(tempDir, `${agent.name}.md`);
   await withFileMutationQueue(promptPath, async () => {
@@ -372,6 +459,10 @@ async function buildPiArgs(
   const extensionPaths = new Set<string>();
 
   for (const tool of agent.tools) {
+    // Nested delegation is intentionally disabled at this boundary. It creates
+    // an unbounded per-process tree and makes the configured concurrency cap
+    // misleading; a worker reports `blocked` and the parent can decide.
+    if (tool === "subagent") continue;
     if (BUILTIN_TOOLS.has(tool)) {
       allowlist.push(tool);
     } else if (CUSTOM_TOOL_EXTENSIONS[tool]) {
@@ -395,8 +486,14 @@ async function buildPiArgs(
     args.push("--extension", extPath);
   }
 
-  args.push("--models", agent.model);
+  // Explicit selection; the parent verifies the exact provider/model first.
+  args.push("--model", agent.model);
   args.push("--thinking", agent.thinking);
+  args.push("--no-prompt-templates", "--no-themes");
+  // Replace only Pi's generic default, never an explicitly configured SYSTEM.md.
+  // Pi still appends AGENTS.md/CLAUDE.md context files to this lean prompt.
+  const hasCustomSystem = [path.join(cwd, ".pi", "SYSTEM.md"), path.join(os.homedir(), ".pi", "agent", "SYSTEM.md")].some(file => fs.existsSync(file));
+  if (!hasCustomSystem) args.push("--system-prompt", path.join(EXT_DIR, "SYSTEM.md"));
   args.push("--append-system-prompt", promptPath);
 
   // Handle long tasks by writing to file
@@ -414,24 +511,17 @@ async function buildPiArgs(
     args.push(`Task: ${task}`);
   }
 
-  // If this agent is allowed to spawn subagents AND we want to restrict which
-  // ones, pass the allowlist down via env. The child pi process loads this
-  // extension and filters its agent registry before exposing tool descriptions
-  // to the LLM — so the child literally cannot request an agent outside the
-  // allowlist (the name isn't in its prompt).
-  let childEnv: NodeJS.ProcessEnv | undefined;
-  if (
-    agent.tools.includes("subagent") &&
-    agent.subagentAgents &&
-    agent.subagentAgents.length > 0
-  ) {
-    childEnv = {
-      ...process.env,
-      PI_SUBAGENT_ALLOWED: agent.subagentAgents.join(","),
-    };
-  }
+  // Keep the environment explicit so a child cannot inherit a stale nested
+  // delegation allowlist from a grandparent process. Nested delegation is
+  // disabled in the tool allowlist above, regardless of agent frontmatter.
+  const childEnv: NodeJS.ProcessEnv = { ...process.env };
+  delete childEnv.PI_SUBAGENT_ALLOWED;
 
   return { args: [piBin.command, ...args], tempDir, childEnv };
+  } catch (error) {
+    await fs.promises.rm(tempDir, { recursive: true, force: true });
+    throw error;
+  }
 }
 
 function extractTextFromContent(content: unknown): string {
@@ -450,6 +540,17 @@ function extractTextFromContent(content: unknown): string {
  *  keep tool-arg previews to one renderable line in collapsed view. */
 function flatten(s: string): string {
   return s.replace(/\s+/g, " ").trim();
+}
+
+function toPiUsage(usage: AgentResult["usage"]): Usage {
+  const { turns: _turns, ...result } = usage;
+  return result as Usage;
+}
+
+function renderCompactResult(result: AgentResult): string {
+  const output = result.output || "(no output)";
+  const error = result.progress.error ? `\nError: ${result.progress.error}` : "";
+  return `[execution=${result.status}]${error}\n${output}`;
 }
 
 // Per-event hard cap on stored arg previews. Even in expanded view we don't
@@ -484,25 +585,28 @@ async function runSubagent(
   cwd: string,
   signal: AbortSignal | undefined,
   onUpdate?: (progress: AgentProgress, usage: AgentResult["usage"]) => void,
+  outputLimits: { maxBytes: number; maxLines: number } = {
+    maxBytes: DEFAULT_OUTPUT_BYTES,
+    maxLines: DEFAULT_OUTPUT_LINES,
+  },
 ): Promise<AgentResult> {
+  throwIfAborted(signal);
   const { args, tempDir, childEnv } = await buildPiArgs(agent, task, cwd);
   const command = args[0];
   const spawnArgs = args.slice(1);
 
+  const eventState = createChildEventState();
+  const usage = eventState.usage;
+  let termination: "cancelled" | "timed_out" | undefined;
   const result: AgentResult = {
     agent: agent.name,
     task,
+    status: "running",
     output: "",
     exitCode: 0,
+    requestedModel: agent.model,
     model: agent.model,
-    usage: {
-      input: 0,
-      output: 0,
-      cacheRead: 0,
-      cacheWrite: 0,
-      cost: 0,
-      turns: 0,
-    },
+    usage: usage.totals,
     progress: {
       agent: agent.name,
       status: "running",
@@ -523,15 +627,21 @@ async function runSubagent(
     onUpdate?.(progress, result.usage);
   }, 150);
 
-  const exitCode = await new Promise<number>((resolve) => {
+  let exitCode: number;
+  try {
+  exitCode = await new Promise<number>((resolve) => {
     const proc = spawn(command, spawnArgs, {
       cwd,
       stdio: ["ignore", "pipe", "pipe"],
-      ...(childEnv ? { env: childEnv } : {}),
+      detached: process.platform !== "win32",
+      env: childEnv,
     });
 
-    let buf = "";
     let stderrBuf = "";
+    let protocolError: string | undefined;
+    let abortHandler: (() => void) | undefined;
+    let terminationPromise: Promise<void> | undefined;
+    let settled = false;
 
     const processLine = (line: string) => {
       if (!line.trim()) return;
@@ -549,6 +659,9 @@ async function runSubagent(
             toolCallId: evt.toolCallId,
             status: "running",
           });
+          if (progress.recentTools.length > MAX_RECENT_TOOLS) {
+            progress.recentTools.splice(0, progress.recentTools.length - MAX_RECENT_TOOLS);
+          }
           fireUpdate();
         }
 
@@ -593,45 +706,19 @@ async function runSubagent(
               hit.children = finalChildren as AgentResult[];
             }
           }
-          fireUpdate();
-        }
-
-        if (evt.type === "tool_result_end") {
+          consumeChildEvent(eventState, evt);
           fireUpdate();
         }
 
         if (evt.type === "message_end" && evt.message) {
           if (evt.message.role === "assistant") {
-            result.usage.turns++;
-            const u = evt.message.usage;
-            if (u) {
-              result.usage.input += u.input || 0;
-              result.usage.output += u.output || 0;
-              result.usage.cacheRead += u.cacheRead || 0;
-              result.usage.cacheWrite += u.cacheWrite || 0;
-              result.usage.cost += u.cost?.total || 0;
-              // Context-window gauge: snapshot of the LATEST assistant turn's usage,
-              // NOT a cumulative sum across turns. Each turn re-sends the whole
-              // conversation as input + cacheRead, so one assistant message already
-              // represents the current context size. Summing across N turns would
-              // inflate the displayed % by roughly Nx (the bug this replaced).
-              // Matches pi's `calculateContextTokens` in core/compaction/compaction.js:
-              // prefer the provider-reported totalTokens, fall back to the 4-component sum.
-              progress.tokens =
-                (u as { totalTokens?: number }).totalTokens ||
-                (u.input || 0) +
-                  (u.output || 0) +
-                  (u.cacheRead || 0) +
-                  (u.cacheWrite || 0);
-            }
-            if (evt.message.model) result.model = evt.message.model;
-            if (evt.message.errorMessage)
-              progress.error = evt.message.errorMessage;
-
+            consumeChildEvent(eventState, evt);
+            progress.error = eventState.error || protocolError;
+            progress.tokens = eventState.tokens;
+            result.model = eventState.model;
             const text = extractTextFromContent(evt.message.content);
             if (text) {
-              result.output = text;
-              // Extract just the prose "thinking" text — skip code blocks
+              // Extract just the prose "thinking" text — skip code blocks.
               const proseLines: string[] = [];
               let inCodeBlock = false;
               for (const line of text.split("\n")) {
@@ -639,16 +726,18 @@ async function runSubagent(
                   inCodeBlock = !inCodeBlock;
                   continue;
                 }
-                if (!inCodeBlock && line.trim()) {
-                  proseLines.push(line.trim());
-                }
+                if (!inCodeBlock && line.trim()) proseLines.push(line.trim());
               }
-              if (proseLines.length > 0) {
-                progress.lastMessage = proseLines.slice(0, 3).join(" ");
-              }
+              if (proseLines.length > 0) progress.lastMessage = proseLines.slice(0, 3).join(" ").slice(0, 1000);
             }
           }
+          fireUpdate();
+        }
 
+        // Pi's JSON stream has no tool_result_end event. Tool-result usage is
+        // carried by tool_execution_end.result and is accounted above.
+        if (evt.type === "compaction_end") {
+          consumeChildEvent(eventState, evt);
           fireUpdate();
         }
       } catch {
@@ -656,58 +745,94 @@ async function runSubagent(
       }
     };
 
-    proc.stdout.on("data", (d: Buffer) => {
-      buf += d.toString();
-      const lines = buf.split("\n");
-      buf = lines.pop() || "";
-      lines.forEach(processLine);
-    });
+    const lineParser = new JsonLineParser(
+      processLine,
+      (message) => {
+        protocolError ||= message;
+        progress.error ||= message;
+      },
+      MAX_UNTERMINATED_EVENT_BYTES,
+    );
+    proc.stdout.on("data", (d: Buffer) => lineParser.push(d));
 
     proc.stderr.on("data", (d: Buffer) => {
-      stderrBuf += d.toString();
+      const next = `${stderrBuf}${d.toString("utf8")}`;
+      const bytes = Buffer.from(next, "utf8");
+      stderrBuf = bytes.length > MAX_STDERR_BYTES
+        ? bytes.subarray(bytes.length - MAX_STDERR_BYTES).toString("utf8")
+        : next;
     });
 
     proc.on("close", (code) => {
-      if (buf.trim()) processLine(buf);
-      if (code !== 0 && stderrBuf.trim() && !progress.error) {
-        progress.error = stderrBuf.trim();
-      }
-      resolve(code ?? 1);
+      if (settled) return;
+      settled = true;
+      void (async () => {
+        // The parent pipe can close before descendants in its process group.
+        // Do not resolve runSubagent until terminateProcessTree has completed.
+        await terminationPromise;
+        if (abortHandler && signal) signal.removeEventListener("abort", abortHandler);
+        lineParser.end();
+        if (code !== 0 && stderrBuf.trim() && !progress.error) {
+          progress.error = stderrBuf.trim();
+        }
+        resolve(code ?? 1);
+      })();
     });
 
-    proc.on("error", () => resolve(1));
+    proc.on("error", (error) => {
+      // ChildProcess emits close after error. Let that single path settle the
+      // promise so an in-flight process-tree termination is still awaited.
+      progress.error ||= error.message;
+    });
 
     if (signal) {
       const kill = () => {
-        proc.kill("SIGTERM");
-        setTimeout(() => !proc.killed && proc.kill("SIGKILL"), 3000);
+        termination = isTimeoutSignal(signal) ? "timed_out" : "cancelled";
+        terminationPromise ??= terminateProcessTree(proc, 3000).catch(error => {
+          progress.error = `Process cleanup failed: ${String(error)}`;
+        });
       };
+      abortHandler = kill;
       if (signal.aborted) kill();
       else signal.addEventListener("abort", kill, { once: true });
     }
   });
 
-  // Cleanup temp dir
-  try {
-    fs.rmSync(tempDir, { recursive: true, force: true });
-  } catch {}
+  } finally {
+    fireUpdate.cancel();
+    try { fs.rmSync(tempDir, { recursive: true, force: true }); } catch {}
+  }
 
   result.exitCode = exitCode;
-  progress.status = exitCode === 0 && !progress.error ? "completed" : "failed";
+  result.output = eventState.finalOutput || eventState.partialOutput;
+  result.status = classifyLifecycleStatus({
+    exitCode,
+    error: progress.error,
+    hasFinalResponse: eventState.hasFinalResponse,
+    termination,
+  });
+  progress.status = result.status;
   progress.durationMs = Date.now() - startTime;
-  if (progress.error)
-    result.output = result.output || `Error: ${progress.error}`;
+  if (progress.error && !result.output) result.output = `Error: ${progress.error}`;
 
-  // Truncate output if very large
-  if (result.output.length > DEFAULT_MAX_BYTES) {
-    const trunc = truncateHead(result.output, {
-      maxLines: DEFAULT_MAX_LINES,
-      maxBytes: DEFAULT_MAX_BYTES,
-    });
-    result.output = trunc.content;
-    if (trunc.truncated) {
-      result.output += "\n\n[Output truncated]";
+  // Preserve the captured output before clipping it for the model/UI. The
+  // artifact intentionally survives temp-dir cleanup and is mode 0600.
+  const captured = result.output;
+  const trunc = truncateUtf8Head(
+    captured,
+    Math.min(outputLimits.maxBytes, MAX_CAPTURED_OUTPUT_BYTES),
+    outputLimits.maxLines,
+  );
+  if (trunc.truncated) {
+    try {
+      result.artifact = await writeRecoverableArtifact(captured);
+    } catch (error) {
+      progress.error ||= `Could not write output artifact: ${String(error)}`;
     }
+    const artifactNote = result.artifact ? ` Full output: ${result.artifact}` : "";
+    result.output = `${trunc.content}\n\n[Output truncated: ${trunc.outputBytes}/${trunc.totalBytes} bytes, ${trunc.outputLines}/${trunc.totalLines} lines.]${artifactNote}`;
+  } else {
+    result.output = trunc.content;
   }
 
   return result;
@@ -715,10 +840,10 @@ async function runSubagent(
 
 // ── Throttle ──────────────────────────────────────────────────────────
 
-function throttle<T extends (...args: any[]) => void>(fn: T, ms: number): T {
+function throttle<T extends (...args: any[]) => void>(fn: T, ms: number): T & { cancel(): void } {
   let lastCall = 0;
   let timer: ReturnType<typeof setTimeout> | undefined;
-  return ((...args: any[]) => {
+  const throttled = ((...args: any[]) => {
     const now = Date.now();
     const remaining = ms - (now - lastCall);
     if (remaining <= 0) {
@@ -736,36 +861,13 @@ function throttle<T extends (...args: any[]) => void>(fn: T, ms: number): T {
       }, remaining);
     }
   }) as T;
+  return Object.assign(throttled, { cancel() { if (timer) clearTimeout(timer); timer = undefined; } });
 }
 
 // ── Parallel Execution with Concurrency Limit ─────────────────────────
 
-/**
- * Process-wide cap on simultaneous `runSubagent` calls. Each `execute()` of the
- * `subagent` tool is independent (pi runs LLM tool calls via `Promise.all`), so
- * we serialize at the `runSubagent` boundary. Per-process scope only — nested
- * subagent processes have their own semaphore, so the cap applies to direct
- * children, not the whole tree (which keeps things deadlock-free).
- */
-class Semaphore {
-  private inFlight = 0;
-  private readonly waiters: Array<() => void> = [];
-  constructor(private readonly max: number) {}
-  async run<T>(fn: () => Promise<T>): Promise<T> {
-    if (this.inFlight >= this.max) {
-      await new Promise<void>((r) => this.waiters.push(r));
-    }
-    this.inFlight++;
-    try {
-      return await fn();
-    } finally {
-      this.inFlight--;
-      const next = this.waiters.shift();
-      if (next) next();
-    }
-  }
-}
-
+// AbortableSemaphore is shared with deterministic tests in helpers.ts. The
+// default is intentionally two direct children; nested delegation is disabled.
 // ── Rendering ─────────────────────────────────────────────────────────
 
 type Theme = ExtensionContext["ui"]["theme"];
@@ -814,9 +916,11 @@ function renderAgentProgress(
     ? theme.fg("warning", "⟳")
     : isPending
       ? theme.fg("dim", "○")
-      : r.exitCode === 0
+      : prog.status === "complete"
         ? theme.fg("success", "✓")
-        : theme.fg("error", "✗");
+        : prog.status === "partial"
+          ? theme.fg("warning", "◐")
+          : theme.fg("error", "✗");
   const stats = `${prog.toolCount} tools · ${formatDuration(prog.durationMs)}`;
   const modelStr = r.model ? theme.fg("dim", ` (${r.model})`) : "";
   addLine(
@@ -890,8 +994,8 @@ function renderAgentProgress(
     usageParts.push(theme.fg("dim", `R${formatTokens(r.usage.cacheRead)}`));
   if (r.usage.cacheWrite)
     usageParts.push(theme.fg("dim", `W${formatTokens(r.usage.cacheWrite)}`));
-  if (r.usage.cost)
-    usageParts.push(theme.fg("dim", `$${r.usage.cost.toFixed(3)}`));
+  if (r.usage.cost.total)
+    usageParts.push(theme.fg("dim", `$${r.usage.cost.total.toFixed(3)}`));
   if (prog.tokens > 0) {
     const ctxStr = formatContextUsage(prog.tokens, r.contextWindow);
     const pct = r.contextWindow ? (prog.tokens / r.contextWindow) * 100 : 0;
@@ -918,10 +1022,8 @@ function renderAgentProgress(
 // ── Extension ─────────────────────────────────────────────────────────
 
 export default function (pi: ExtensionAPI) {
-  const config = loadConfig();
-  const semaphore = new Semaphore(
-    config.maxConcurrency ?? DEFAULT_MAX_CONCURRENCY,
-  );
+  const config = validateConfig(loadConfig());
+  const semaphore = new AbortableSemaphore(config.maxConcurrency);
   agents = loadAgents();
 
   // If spawned as a child by a parent subagent process, PI_SUBAGENT_ALLOWED
@@ -932,21 +1034,33 @@ export default function (pi: ExtensionAPI) {
     agents = agents.filter((a) => SUBAGENT_ALLOWLIST.includes(a.name));
   }
 
+  // execute() returns evidence and usage normally; this hook is the host-level
+  // error signal required by Pi 0.85.1. Returning isError from execute() is not
+  // interpreted by the executor.
+  pi.on("tool_result", (event) => {
+    if (event.toolName !== "subagent") return;
+    const details = event.details as Details | undefined;
+    if (["failed", "cancelled", "timed_out", "blocked"].includes(details?.status || "")) {
+      return { isError: true };
+    }
+  });
+
   pi.registerTool({
     name: "subagent",
     label: "Subagent",
     description:
-      "Run a subagent to complete a task. Subagents have NO context from the current conversation — include all necessary context in the task description.",
+      `Delegate bounded work; no conversation is inherited. Available: ${agents.map(a => `${a.name} (${a.description})`).join("; ")}. Include goal, known evidence, constraints, acceptance, checks and stop condition.`,
     promptSnippet: "Run subagents for delegated tasks",
     promptGuidelines: [
       "Parallel tool calls are your primary parallelism mechanism — put multiple independent read/fetch calls in one function_calls block. Don't use subagents to parallelize simple I/O.",
-      "Use subagent to delegate *reasoning and decisions*: codebase exploration (scout), web research (researcher), or isolated code changes (worker)",
+      "Delegate only when isolation or independent work outweighs handoff and verification. Normally 0–1 subagents, up to 2 disjoint tasks. Planner is optional. Never rediscover known evidence.",
       "For multiple independent subagent tasks, emit multiple `subagent` tool calls in the same turn — they run in parallel automatically.",
       "Subagents have NO context from the current conversation — include ALL necessary context in the task description",
     ],
     parameters: Type.Object({
       agent: Type.String({ description: "Name of the agent to invoke" }),
-      task: Type.String({ description: "Task description" }),
+      task: Type.String({ description: "Goal, known evidence, constraints, acceptance, checks, stop condition; do not paste the whole conversation" }),
+      thinking: Type.Optional(Type.Union([Type.Literal("low"), Type.Literal("medium"), Type.Literal("high"), Type.Literal("max")], { description: "Override this invocation only; use high for difficult/risky work, not routine lookups" })),
       cwd: Type.Optional(
         Type.String({ description: "Working directory for the agent process" }),
       ),
@@ -961,34 +1075,35 @@ export default function (pi: ExtensionAPI) {
         );
       }
 
-      const agent = agents.find((a) => a.name === params.agent);
-      if (!agent) {
+      const configuredAgent = agents.find((a) => a.name === params.agent);
+      if (!configuredAgent) {
         const available = agents.map((a) => a.name).join(", ") || "none";
         throw new Error(
           `Unknown agent: ${params.agent}. Available agents: ${available}`,
         );
       }
 
-      const [provider, modelId] = (agent.model || "").split("/");
-      const contextWindow =
-        provider && modelId
-          ? ctx.modelRegistry.find(provider, modelId)?.contextWindow
-          : undefined;
+      const invocationStart = Date.now();
+      const agent = { ...configuredAgent, thinking: params.thinking ?? configuredAgent.thinking };
+      const modelSeparator = agent.model.indexOf("/");
+      const provider = agent.model.slice(0, modelSeparator);
+      const modelId = agent.model.slice(modelSeparator + 1);
+      const selectedModel = ctx.modelRegistry.find(provider, modelId);
+      if (!selectedModel) throw new Error(`Configured model unavailable: ${agent.model}; no implicit fallback`);
+      const supported = getSupportedThinkingLevels(selectedModel);
+      if (!supported.includes(agent.thinking as any)) throw new Error(`Unsupported thinking ${agent.thinking} for ${agent.model}; supported: ${supported.join(", ")}`);
+      const contextWindow = selectedModel.contextWindow;
+      let queueDurationMs = 0;
       const liveResult: AgentResult = {
         agent: params.agent,
         task: params.task,
+        status: "running",
         output: "",
         exitCode: -1,
+        requestedModel: agent.model,
         model: agent.model,
         contextWindow,
-        usage: {
-          input: 0,
-          output: 0,
-          cacheRead: 0,
-          cacheWrite: 0,
-          cost: 0,
-          turns: 0,
-        },
+        usage: emptyUsage(),
         progress: {
           agent: params.agent,
           status: "running" as const,
@@ -1001,29 +1116,61 @@ export default function (pi: ExtensionAPI) {
         },
       };
 
-      const result = await semaphore.run(() =>
-        runSubagent(
-          agent,
-          params.task!,
-          params.cwd ?? cwd,
-          signal,
-          (progress, usage) => {
-            liveResult.progress = progress;
-            liveResult.usage = { ...usage };
-            onUpdate?.({
-              content: [{ type: "text", text: "(running...)" }],
-              details: { results: [liveResult] },
-            });
+      const deadline = createDeadline(config.timeoutMs);
+      const childSignal = combineSignals([signal, deadline.signal]);
+      let result: AgentResult;
+      try {
+        result = await semaphore.run(
+          () => {
+            queueDurationMs = Date.now() - invocationStart;
+            return runSubagent(
+              agent,
+              params.task!,
+              params.cwd ?? cwd,
+              childSignal,
+              (progress, usage) => {
+                liveResult.progress = progress;
+                liveResult.usage = { ...usage, cost: { ...usage.cost } };
+                onUpdate?.({
+                  content: [{ type: "text", text: "(running...)" }],
+                  details: { status: "running", results: [liveResult] },
+                  usage: toPiUsage(liveResult.usage),
+                });
+              },
+              { maxBytes: config.maxOutputBytes, maxLines: config.maxOutputLines },
+            );
           },
-        ),
-      );
+          childSignal,
+        );
+      } catch (error) {
+        if (!isAbortError(error)) throw error;
+        const timedOut = isTimeoutSignal(childSignal);
+        result = {
+          ...liveResult,
+          status: timedOut ? "timed_out" : "cancelled",
+          exitCode: -1,
+          progress: { ...liveResult.progress, status: timedOut ? "timed_out" : "cancelled" },
+          output: timedOut ? "Subagent timed out before it could start" : "Subagent cancelled before it could start",
+        };
+      } finally {
+        deadline.cancel();
+      }
 
       result.contextWindow = contextWindow;
-      const isError = result.exitCode !== 0 || !!result.progress.error;
+      result.thinking = agent.thinking;
+      result.totalDurationMs = Date.now() - invocationStart;
+      result.queueDurationMs = queueDurationMs;
+      const aggregate = toPiUsage(result.usage);
+      const details: Details = {
+        status: result.status,
+        results: [result],
+        usage: aggregate,
+        artifact: result.artifact,
+      };
       return {
-        content: [{ type: "text", text: result.output || "(no output)" }],
-        details: { results: [result] },
-        ...(isError ? { isError: true } : {}),
+        content: [{ type: "text", text: renderCompactResult(result) }],
+        details,
+        usage: aggregate,
       };
     },
 

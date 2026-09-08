@@ -1,6 +1,22 @@
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import { Type } from "typebox";
 import { Text } from "@mariozechner/pi-tui";
+import { mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { randomUUID } from "node:crypto";
+import { tmpdir } from "node:os";
+import path from "node:path";
+import {
+  BodyLimitError,
+  FetchAbortError,
+  FetchTimeoutError,
+  SessionCache,
+  isJinaSafeUrl,
+  publicCacheKey,
+  readResponseBody,
+  responseCacheKey,
+  sliceOutput,
+  withTimeout,
+} from "./helpers.ts";
 import { Readability } from "@mozilla/readability";
 import { parseHTML } from "linkedom";
 import TurndownService from "turndown";
@@ -12,7 +28,14 @@ const MAX_RESPONSE_SIZE = 5 * 1024 * 1024;
 const MAX_PDF_SIZE = 20 * 1024 * 1024;
 const MIN_USEFUL_CONTENT = 500;
 const JINA_READER_BASE = "https://r.jina.ai/";
-const JINA_TIMEOUT_MS = 30000;
+const JINA_TIMEOUT_MS = DEFAULT_TIMEOUT_MS;
+const DEFAULT_OUTPUT_CHARS = 12000;
+const MAX_OUTPUT_CHARS = 40000;
+const DEFAULT_OUTPUT_LINES = 200;
+const MAX_OUTPUT_LINES = 1000;
+const CACHE_TTL_MS = 5 * 60 * 1000;
+const CACHE_MAX_ENTRIES = 6;
+const CACHE_MAX_CHARS = 3 * 1024 * 1024;
 
 const turndown = new TurndownService({
   headingStyle: "atx",
@@ -21,11 +44,34 @@ const turndown = new TurndownService({
 
 // ── Types ────────────────────────────────────────────────────────────
 
-interface FetchResult {
+export interface FetchResult {
   url: string;
   title: string;
   content: string;
   error: string | null;
+}
+
+interface StoredFetchResult extends FetchResult {
+  artifact: string;
+}
+
+interface FetchOptions {
+  offset?: number;
+  maxChars?: number;
+  maxLines?: number;
+  refresh?: boolean;
+  artifact?: string;
+}
+
+interface FetchContext {
+  cache: SessionCache<StoredFetchResult>;
+  artifactDirectory?: Promise<string>;
+  artifacts: Map<string, string>;
+}
+
+interface HttpExtraction {
+  result: FetchResult;
+  cacheKey: string | null;
 }
 
 // ── PDF Extraction ───────────────────────────────────────────────────
@@ -40,9 +86,11 @@ function isPDF(url: string, contentType?: string): boolean {
 }
 
 async function extractPDF(
-  buffer: ArrayBuffer,
+  buffer: Uint8Array,
   url: string,
+  signal?: AbortSignal,
 ): Promise<FetchResult> {
+  if (signal?.aborted) throw new FetchAbortError();
   const { getDocumentProxy } = await import("unpdf");
   const pdf = await getDocumentProxy(new Uint8Array(buffer));
 
@@ -71,6 +119,7 @@ async function extractPDF(
   const maxPages = Math.min(pdf.numPages, 100);
   const pages: string[] = [];
   for (let i = 1; i <= maxPages; i++) {
+    if (signal?.aborted) throw new FetchAbortError();
     const page = await pdf.getPage(i);
     const textContent = await page.getTextContent();
     const pageText = textContent.items
@@ -356,35 +405,36 @@ async function extractWithJinaReader(
   url: string,
   signal?: AbortSignal,
 ): Promise<FetchResult | null> {
+  if (!isJinaSafeUrl(url)) return null;
   try {
-    const res = await fetch(JINA_READER_BASE + url, {
-      headers: { Accept: "text/markdown", "X-No-Cache": "true" },
-      signal: AbortSignal.any([
-        AbortSignal.timeout(JINA_TIMEOUT_MS),
-        ...(signal ? [signal] : []),
-      ]),
+    return await withTimeout(JINA_TIMEOUT_MS, signal, async (requestSignal) => {
+      const res = await fetch(JINA_READER_BASE + url, {
+        headers: { Accept: "text/markdown", "X-No-Cache": "true" },
+        signal: requestSignal,
+      });
+      if (!res.ok) return null;
+
+      // Jina is also streamed and bounded; response.text() could otherwise bypass our limit.
+      const bytes = await readResponseBody(res.body, MAX_RESPONSE_SIZE, requestSignal);
+      const content = new TextDecoder().decode(bytes);
+      const contentStart = content.indexOf("Markdown Content:");
+      if (contentStart < 0) return null;
+
+      const markdownPart = content.slice(contentStart + 17).trim();
+      if (
+        markdownPart.length < 100 ||
+        markdownPart.startsWith("Loading...") ||
+        markdownPart.startsWith("Please enable JavaScript")
+      ) return null;
+
+      const title =
+        extractHeadingTitle(markdownPart) ??
+        new URL(url).pathname.split("/").pop() ??
+        url;
+      return { url, title, content: markdownPart, error: null };
     });
-    if (!res.ok) return null;
-
-    const content = await res.text();
-    const contentStart = content.indexOf("Markdown Content:");
-    if (contentStart < 0) return null;
-
-    const markdownPart = content.slice(contentStart + 17).trim();
-    if (
-      markdownPart.length < 100 ||
-      markdownPart.startsWith("Loading...") ||
-      markdownPart.startsWith("Please enable JavaScript")
-    ) {
-      return null;
-    }
-
-    const title =
-      extractHeadingTitle(markdownPart) ??
-      new URL(url).pathname.split("/").pop() ??
-      url;
-    return { url, title, content: markdownPart, error: null };
-  } catch {
+  } catch (error) {
+    if (error instanceof FetchAbortError || error instanceof FetchTimeoutError || error instanceof BodyLimitError) throw error;
     return null;
   }
 }
@@ -394,175 +444,240 @@ async function extractWithJinaReader(
 async function extractViaHttp(
   url: string,
   signal?: AbortSignal,
-): Promise<FetchResult> {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), DEFAULT_TIMEOUT_MS);
-  const onAbort = () => controller.abort();
-  signal?.addEventListener("abort", onAbort);
-
+): Promise<HttpExtraction> {
+  let responseForCache: Response | undefined;
   try {
-    const response = await fetch(url, {
-      signal: controller.signal,
-      headers: {
-        "User-Agent": USER_AGENT,
-        Accept:
-          "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-        "Accept-Language": "en-US,en;q=0.9",
-        "Cache-Control": "no-cache",
-        "Sec-Fetch-Dest": "document",
-        "Sec-Fetch-Mode": "navigate",
-        "Sec-Fetch-Site": "none",
-        "Sec-Fetch-User": "?1",
-        "Upgrade-Insecure-Requests": "1",
-      },
-    });
+    const result = await withTimeout(DEFAULT_TIMEOUT_MS, signal, async (requestSignal) => {
+      const response = await fetch(url, {
+        signal: requestSignal,
+        headers: {
+          "User-Agent": USER_AGENT,
+          Accept:
+            "text/html,application/xhtml+xml,application/pdf,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Language": "en-US,en;q=0.9",
+          "Cache-Control": "no-cache",
+          "Sec-Fetch-Dest": "document",
+          "Sec-Fetch-Mode": "navigate",
+          "Sec-Fetch-Site": "none",
+          "Sec-Fetch-User": "?1",
+          "Upgrade-Insecure-Requests": "1",
+        },
+      });
+      responseForCache = response;
 
-    if (!response.ok) {
-      return {
-        url,
-        title: "",
-        content: "",
-        error: `HTTP ${response.status}: ${response.statusText}`,
-      };
-    }
-
-    const contentType = response.headers.get("content-type") || "";
-    const contentLengthHeader = response.headers.get("content-length");
-    const isPDFContent = isPDF(url, contentType);
-    const maxSize = isPDFContent ? MAX_PDF_SIZE : MAX_RESPONSE_SIZE;
-
-    if (contentLengthHeader) {
-      const contentLength = parseInt(contentLengthHeader, 10);
-      if (contentLength > maxSize) {
+      if (!response.ok) {
         return {
           url,
           title: "",
           content: "",
-          error: `Response too large (${Math.round(contentLength / 1024 / 1024)}MB)`,
+          error: `HTTP ${response.status}: ${response.statusText}`,
         };
       }
-    }
 
-    if (isPDFContent) {
-      const buffer = await response.arrayBuffer();
-      return await extractPDF(buffer, url);
-    }
+      const contentType = response.headers.get("content-type") || "";
+      const contentLengthHeader = response.headers.get("content-length");
+      const isPDFContent = isPDF(url, contentType);
+      const maxSize = isPDFContent ? MAX_PDF_SIZE : MAX_RESPONSE_SIZE;
 
-    if (
-      contentType.includes("application/octet-stream") ||
-      contentType.includes("image/") ||
-      contentType.includes("audio/") ||
-      contentType.includes("video/") ||
-      contentType.includes("application/zip")
-    ) {
-      return {
-        url,
-        title: "",
-        content: "",
-        error: `Unsupported content type: ${contentType.split(";")[0]}`,
-      };
-    }
+      if (contentLengthHeader) {
+        const contentLength = parseInt(contentLengthHeader, 10);
+        if (Number.isFinite(contentLength) && contentLength > maxSize) {
+          return {
+            url,
+            title: "",
+            content: "",
+            error: `Response too large (${Math.round(contentLength / 1024 / 1024)}MB)`,
+          };
+        }
+      }
 
-    const text = await response.text();
-    const isHTML =
-      contentType.includes("text/html") ||
-      contentType.includes("application/xhtml+xml");
-
-    if (!isHTML) {
-      const title =
-        extractHeadingTitle(text) ??
-        new URL(url).pathname.split("/").pop() ??
-        url;
-      return { url, title, content: text, error: null };
-    }
-
-    const { document } = parseHTML(text);
-    const reader = new Readability(document as unknown as Document);
-    const article = reader.parse();
-
-    if (!article) {
-      const rscResult = extractRSCContent(text);
-      if (rscResult) {
+      if (
+        contentType.includes("application/octet-stream") ||
+        contentType.includes("image/") ||
+        contentType.includes("audio/") ||
+        contentType.includes("video/") ||
+        contentType.includes("application/zip")
+      ) {
         return {
           url,
-          title: rscResult.title,
-          content: rscResult.content,
-          error: null,
+          title: "",
+          content: "",
+          error: `Unsupported content type: ${contentType.split(";")[0]}`,
         };
       }
 
-      const jsRendered = isLikelyJSRendered(text);
-      return {
-        url,
-        title: "",
-        content: "",
-        error: jsRendered
-          ? "Page appears to be JavaScript-rendered (content loads dynamically)"
-          : "Could not extract readable content from HTML structure",
-      };
-    }
+      // Read the network body once, with a hard byte limit, before parsing it.
+      const bytes = await readResponseBody(response.body, maxSize, requestSignal);
+      if (isPDFContent) return await extractPDF(bytes, url, requestSignal);
 
-    const markdown = turndown.turndown(article.content);
+      const text = new TextDecoder().decode(bytes);
+      const isHTML =
+        contentType.includes("text/html") ||
+        contentType.includes("application/xhtml+xml");
 
-    if (markdown.length < MIN_USEFUL_CONTENT) {
-      return {
-        url,
-        title: article.title || "",
-        content: markdown,
-        error: isLikelyJSRendered(text)
-          ? "Page appears to be JavaScript-rendered (content loads dynamically)"
-          : "Extracted content appears incomplete",
-      };
-    }
+      if (!isHTML) {
+        const title =
+          extractHeadingTitle(text) ??
+          new URL(url).pathname.split("/").pop() ??
+          url;
+        return { url, title, content: text, error: null };
+      }
 
+      const { document } = parseHTML(text);
+      const reader = new Readability(document as unknown as Document);
+      const article = reader.parse();
+
+      if (!article?.content) {
+        const rscResult = extractRSCContent(text);
+        if (rscResult) {
+          return { url, title: rscResult.title, content: rscResult.content, error: null };
+        }
+
+        const jsRendered = isLikelyJSRendered(text);
+        return {
+          url,
+          title: "",
+          content: "",
+          error: jsRendered
+            ? "Page appears to be JavaScript-rendered (content loads dynamically)"
+            : "Could not extract readable content from HTML structure",
+        };
+      }
+
+      const markdown = turndown.turndown(article.content);
+      if (markdown.length < MIN_USEFUL_CONTENT) {
+        return {
+          url,
+          title: article.title || "",
+          content: markdown,
+          error: isLikelyJSRendered(text)
+            ? "Page appears to be JavaScript-rendered (content loads dynamically)"
+            : "Extracted content appears incomplete",
+        };
+      }
+
+      return { url, title: article.title || "", content: markdown, error: null };
+    });
     return {
-      url,
-      title: article.title || "",
-      content: markdown,
-      error: null,
+      result,
+      cacheKey: result.error || !responseForCache
+        ? null
+        : responseCacheKey(url, responseForCache),
     };
   } catch (err) {
+    if (err instanceof FetchAbortError) {
+      return { result: { url, title: "", content: "", error: "Aborted" }, cacheKey: null };
+    }
+    if (err instanceof FetchTimeoutError) {
+      return { result: { url, title: "", content: "", error: err.message }, cacheKey: null };
+    }
+    if (err instanceof BodyLimitError) {
+      return {
+        result: {
+          url,
+          title: "",
+          content: "",
+          error: `Response too large (>${Math.round(err.limit / 1024 / 1024)}MB)`,
+        },
+        cacheKey: null,
+      };
+    }
     const message = err instanceof Error ? err.message : String(err);
-    return { url, title: "", content: "", error: message };
-  } finally {
-    clearTimeout(timeoutId);
-    signal?.removeEventListener("abort", onAbort);
+    return { result: { url, title: "", content: "", error: message }, cacheKey: null };
   }
 }
 
 // ── Public Fetch Function ────────────────────────────────────────────
 
+async function writeArtifact(
+  context: FetchContext,
+  url: string,
+  content: string,
+): Promise<string> {
+  const directory = await (context.artifactDirectory ??= mkdtemp(path.join(tmpdir(), "pi-web-fetch-")));
+  const artifact = path.join(directory, `${randomUUID()}.md`);
+  await writeFile(artifact, content, {
+    encoding: "utf8",
+    mode: 0o600,
+    flag: "wx",
+  });
+  context.artifacts.set(artifact, url);
+  return artifact;
+}
+
 async function fetchAndExtract(
   url: string,
+  options: FetchOptions,
+  context: FetchContext,
   signal?: AbortSignal,
-): Promise<FetchResult> {
+): Promise<StoredFetchResult> {
   if (signal?.aborted) {
-    return { url, title: "", content: "", error: "Aborted" };
+    return { url, title: "", content: "", artifact: "", error: "Aborted" };
   }
 
   try {
     new URL(url);
   } catch {
-    return { url, title: "", content: "", error: "Invalid URL" };
+    return { url, title: "", content: "", artifact: "", error: "Invalid URL" };
   }
 
-  const httpResult = await extractViaHttp(url, signal);
-  if (signal?.aborted) return { url, title: "", content: "", error: "Aborted" };
-  if (!httpResult.error) return httpResult;
+  // Only artifacts issued by this extension instance, for this exact URL, are
+  // readable. Refresh deliberately bypasses even a valid artifact.
+  if (!options.refresh && options.artifact && context.artifacts.get(options.artifact) === url) {
+    try {
+      const content = await readFile(options.artifact, "utf8");
+      return {
+        url,
+        title: extractHeadingTitle(content) ?? "",
+        content,
+        artifact: options.artifact,
+        error: null,
+      };
+    } catch {
+      // Re-fetch if a user removed the registered artifact.
+    }
+  }
+
+  const requestedCacheKey = publicCacheKey(url);
+  if (options.refresh && requestedCacheKey) context.cache.delete(requestedCacheKey);
+  if (!options.refresh && requestedCacheKey) {
+    const cached = context.cache.get(requestedCacheKey);
+    if (cached) return cached;
+  }
+
+  const httpAttempt = await extractViaHttp(url, signal);
+  const httpResult = httpAttempt.result;
+  if (signal?.aborted) return { ...httpResult, artifact: "", error: "Aborted" };
+  if (!httpResult.error) {
+    const stored = { ...httpResult, artifact: await writeArtifact(context, url, httpResult.content) };
+    if (httpAttempt.cacheKey) context.cache.set(httpAttempt.cacheKey, stored);
+    return stored;
+  }
 
   if (
     httpResult.error.startsWith("Unsupported content type") ||
-    httpResult.error.startsWith("Response too large")
-  ) {
-    return httpResult;
-  }
+    httpResult.error.startsWith("Response too large") ||
+    httpResult.error.startsWith("Timed out") ||
+    httpResult.error === "Aborted"
+  ) return { ...httpResult, artifact: "" };
 
-  const jinaResult = await extractWithJinaReader(url, signal);
-  if (jinaResult) return jinaResult;
-  if (signal?.aborted) return { url, title: "", content: "", error: "Aborted" };
+  let jinaResult: FetchResult | null = null;
+  try {
+    jinaResult = await extractWithJinaReader(url, signal);
+  } catch (error) {
+    if (error instanceof FetchAbortError) return { ...httpResult, artifact: "", error: "Aborted" };
+    if (error instanceof FetchTimeoutError) return { ...httpResult, artifact: "", error: error.message };
+    if (error instanceof BodyLimitError) return { ...httpResult, artifact: "", error: `Response too large (>${Math.round(error.limit / 1024 / 1024)}MB)` };
+  }
+  if (jinaResult) {
+    // Jina is an external relay, so do not persist its response in the URL cache.
+    return { ...jinaResult, artifact: await writeArtifact(context, url, jinaResult.content) };
+  }
+  if (signal?.aborted) return { ...httpResult, artifact: "", error: "Aborted" };
 
   return {
     ...httpResult,
+    artifact: "",
     error: `${httpResult.error}\n\nThe page may be JavaScript-rendered. Try:\n  • A different URL for the same content\n`,
   };
 }
@@ -570,39 +685,76 @@ async function fetchAndExtract(
 // ── Extension Registration ───────────────────────────────────────────
 
 export default function (pi: ExtensionAPI) {
+  const context: FetchContext = {
+    cache: new SessionCache<StoredFetchResult>({
+      ttlMs: CACHE_TTL_MS,
+      maxEntries: CACHE_MAX_ENTRIES,
+      maxSize: CACHE_MAX_CHARS,
+      sizeOf: (value) => Array.from(value.content).length,
+    }),
+    artifacts: new Map(),
+  };
+
   pi.registerTool({
     name: "web_fetch",
     label: "Web Fetch",
     description:
-      "Fetch a web page and extract readable content as clean markdown. Uses Readability + Turndown for high-quality HTML→markdown conversion. Handles PDFs, plain text, and falls back to Jina Reader for JS-rendered pages.",
+      "Fetch a URL and extract readable markdown with Readability, PDF support, and a Jina Reader fallback. Responses are streamed with hard body limits and returned in bounded Unicode-safe windows; use offset/limit or maxChars to recover more from the session artifact.",
     promptSnippet:
-      "Fetch a URL and extract readable content as markdown. Supports HTML pages, PDFs, and plain text.",
+      "Fetch a URL as bounded markdown (HTML, PDF, plain text, with Jina fallback); use offset/limit for more.",
 
     parameters: Type.Object({
       url: Type.String({ description: "URL to fetch" }),
+      offset: Type.Optional(Type.Integer({ minimum: 0, description: "Unicode character offset into the extracted content (default 0)" })),
+      limit: Type.Optional(Type.Integer({ minimum: 1, maximum: MAX_OUTPUT_CHARS, description: "Maximum extracted characters to return" })),
+      maxChars: Type.Optional(Type.Integer({ minimum: 1, maximum: MAX_OUTPUT_CHARS, description: "Alias for limit" })),
+      maxLines: Type.Optional(Type.Integer({ minimum: 1, maximum: MAX_OUTPUT_LINES, description: "Maximum lines to return" })),
+      refresh: Type.Optional(Type.Boolean({ description: "Bypass and replace the short public-URL session cache" })),
+      artifact: Type.Optional(Type.String({ description: "Previously returned local artifact path for recovery without a network request" })),
     }),
 
     async execute(_toolCallId, params, signal) {
-      const result = await fetchAndExtract(params.url, signal);
+      const result = await fetchAndExtract(params.url, params, context, signal);
 
       if (result.error) {
         throw new Error(`${params.url}: ${result.error}`);
       }
 
-      const header = result.title
-        ? `# ${result.title}\n\nSource: ${result.url}\n\n---\n\n`
+      const maxChars = Math.min(MAX_OUTPUT_CHARS, params.maxChars ?? params.limit ?? DEFAULT_OUTPUT_CHARS);
+      const maxLines = Math.min(MAX_OUTPUT_LINES, params.maxLines ?? DEFAULT_OUTPUT_LINES);
+      const window = sliceOutput(result.content, {
+        offset: params.offset,
+        maxChars,
+        maxLines,
+      });
+      const displayTitle = Array.from(result.title).slice(0, 240).join("");
+      const displayUrl = result.url.length > 300 ? `${result.url.slice(0, 297)}...` : result.url;
+      const header = displayTitle
+        ? `# ${displayTitle}\n\nSource: ${displayUrl}\n\n---\n\n`
+        : "";
+      const continuation = window.truncated
+        ? `\n\n[Output limited to ${window.chars} chars/${window.totalLines} total lines. Full artifact: ${result.artifact}. Recover with offset ${window.nextOffset ?? 0}.]`
         : "";
       return {
         content: [
           {
             type: "text" as const,
-            text: header + result.content,
+            text: header + window.text + continuation,
           },
         ],
         details: {
           url: result.url,
           title: result.title,
-          chars: result.content.length,
+          chars: window.chars,
+          totalChars: window.totalChars,
+          totalLines: window.totalLines,
+          offset: window.offset,
+          maxChars,
+          maxLines,
+          truncated: window.truncated,
+          nextOffset: window.nextOffset,
+          artifact: result.artifact,
+          cacheable: Boolean(publicCacheKey(result.url)),
         },
       };
     },

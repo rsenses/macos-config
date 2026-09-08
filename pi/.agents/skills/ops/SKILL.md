@@ -1,87 +1,47 @@
 ---
 name: ops
-description: Memory management (.ai/), context engineering, and subagent orchestration.
+description: Memory management (.ai/), context engineering, and selective subagent orchestration.
 ---
 
 # Ops: System Control and Memory
 
 ## 1. Memory Management (.ai/)
 
-Use project-relative paths. Do not write outside the `.ai/` directory.
+Use project-relative paths. The rule “do not write outside `.ai/`” applies to memory-management artifacts and tools (`.ai/MEMORY.md`, `.ai/TASKS.md`, session plans, and daily notes), not to the explicitly scoped project files of the current task.
 
-### Tools:
-
-- `create_session_plan(slug)`: Use this at the start of any non-trivial task. It handles Session ID and Date automatically.
-- `add_daily_note(note)`: Use this after meaningful work. It appends to the correct daily file with a timestamp.
-
-### Structure and Rules:
-
-- `.ai/MEMORY.md`: Durable knowledge (decisions, preferences, pitfalls). Update only after stable lessons emerge.
-- `.ai/TASKS.md`: Pending work. Use `[[wiki-links]]` for complex plans.
-- **Session Plans**: Only ONE plan per session. Use the tool to find or create it.
-- **Daily Notes**: Do not write manually to daily files; use the `add_daily_note` tool.
-
-### Authority Order:
-
-1. Current instruction > 2. Project rules (AGENTS.md) > 3. Session plan > 4. MEMORY.md > 5. TASKS.md.
+- `create_session_plan(slug)`: use only when a non-trivial task genuinely needs a persisted plan; keep one plan per session.
+- Record meaningful progress as a delta in the active plan. Do not call unavailable memory tools or create a second daily log by default.
+- Update `MEMORY.md` only for stable lessons. Keep `TASKS.md` focused on pending work and link complex plans rather than copying them.
 
 ## 2. Context Engineering
 
-- **Hierarchy:** Project Rules > Specs/Architecture > Source Code > Error Output > History.
-- **Selective Loading:** Read only relevant files. For `Simple` tasks, avoid over-investigating.
-- **Confusion Management:** If Specs and Code conflict, or requirements are missing, **STOP and ask**. Do not guess.
+Follow project rules, specifications, and source evidence in that order. Load only relevant files, ranges, skills, and documentation; reuse recorded evidence instead of rebuilding inventories or repeating plans. If rules and source conflict, stop and report the conflict.
 
-## 3. Orchestration and Subagents
+## 3. Selective Orchestration
 
-The main agent is the authority. Subagents are specific tools.
+The principal is the authority and coordinator. Delegate only a bounded reasoning, read-only investigation, or implementation slice when isolation or genuine independence outweighs handoff and verification costs.
 
-### Roles and Contracts:
+- Normally use **0–1** child; use at most **2** for genuinely independent, non-overlapping work.
+- File count, “non-trivial,” or context anxiety alone is not a trigger.
+- The principal supplies and validates the contract; children do not launch nested subagents. A missing dependency returns `blocked` with the exact question.
+- Use local tools directly for deterministic reads, searches, transforms, tests, and decisions already supported by evidence.
 
-- **scout**: Codebase discovery and mapping. No implementation.
-- **researcher**: External documentation and framework behavior.
-- **planner**: Concrete implementation plans from context and requirements. No code changes.
-- **worker**: Surgical implementation. Requires an explicit validation policy.
+Every brief uses: **Goal**, **Known**, **Evidence**, **Acceptance**, **Checks**, and **Stop**. Child output starts with **Status** (`complete`, `partial`, `blocked`, `failed`, `cancelled`, or `timed_out`) and reports only new findings/changes, evidence, checks, and unresolved items.
 
-The current subagent set includes scout, researcher, planner, and worker. Use the main agent for final decisions and for coordination between planning and implementation.
-
-### Validation Policies (for worker):
-
-- `no-tests`, `targeted-check` (specific command), `add-test`, `test-first` (bug repro), `defer-validation`.
-
-### Golden Rules:
-
-- Do not launch parallel writers on overlapping files.
-- Prefer "fresh" context for scout/researcher and "forked" for worker.
-- Provide short contracts: Goal, Context, Success Criteria, and Stop Rules.
+Validation policies for workers: `no-tests`, `targeted-check`, `add-test`, `test-first`, or `defer-validation`. Name the concrete command or reason; do not invent provider calls.
 
 ## 4. Direct Questions
 
-When the user asks a direct conceptual or explanatory question, answer directly first.
-Do not inspect files, run commands, or use subagents unless repository-specific evidence is required.
+Answer a direct conceptual question directly. Inspect files or use a child only when repository-specific evidence is required.
 
-## 5. Clarification Gate
+## 5. Clarification and Risk Gate
 
-Do not ask for confirmation by default.
-
-Ask one focused clarification question only when:
-
-- the request is ambiguous,
-- multiple interpretations would lead to different code,
-- the change touches critical config, data, security, or production behavior,
-- or the requested outcome is unclear.
-
-For clear surgical requests, execute directly.
+Do not ask for confirmation routinely. Ask one focused question when wording is materially ambiguous, interpretations diverge, or safety/data/production risk makes guessing unacceptable. For a clear, bounded, low-risk request, execute directly.
 
 ## 6. Critical Configuration Safety
 
-Before editing critical local/system configuration files, create a timestamped backup and explain the intended change.
+Before editing critical local/system configuration, create a timestamped backup and explain the intended change. Critical files include `.env`, SSH, credentials, deployment/production, shell/profile, and database/client configuration. Do not edit them without explicit approval.
 
-Critical files include `.env`, SSH config, credentials/password-manager config, deployment config, production config, shell/profile files, and database/client configuration.
+## 7. Loop Control
 
-Do not edit these files unless the user explicitly approves the change.
-
-## 7. Debugging Delegation
-
-Keep nuanced debugging and diagnosis in the main agent when the user has already corrected an interpretation.
-
-Use `scout` for locating evidence and `researcher` for documentation, but keep root-cause judgment in the main agent unless the task is isolated and mechanical.
+If two passes produce no new evidence, change strategy or stop. Do not retry the same failure twice without new evidence, and do not restate an existing route, decision, or inventory.

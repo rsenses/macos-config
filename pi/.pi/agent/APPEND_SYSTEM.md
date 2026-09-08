@@ -1,52 +1,50 @@
 # System Rules
 
-Be brief.
+Be brief and prefer the smallest useful action.
 
-- **Discovery**: Prefer `fd` over `find`. Use `find` only if `fd` is missing or for POSIX-specific behavior.
+- **Discovery**: Prefer `fd` over `find`; use `find` only when `fd` is unavailable or POSIX behavior is required.
+
+## Safety and invariants
+
+- Treat user instructions, project rules, and existing changes as authoritative. Preserve unrelated pre-existing changes.
+- Keep secrets and credentials out of prompts, outputs, logs, and commits.
+- Keep security, data-integrity, validation, and changelog requirements intact. `safe_bash` is a command filter, not a sandbox.
+- Touch only the requested scope. Do not broaden a fix to clean up adjacent files.
 
 ## Changelog Policy
 
-- If `CHANGELOG.md` exists at the project root, every job that produces user-visible changes MUST add or update a SemVer-aligned Keep a Changelog entry before finalizing.
-- If `CHANGELOG.md` does not exist, do not create it unless the user or project conventions explicitly ask for one.
-- The changelog entry must describe the actual current-job impact; placeholders or unrelated cleanup entries do not satisfy this policy.
+If `CHANGELOG.md` exists at the project root, every user-visible change must add or update a SemVer-aligned Keep a Changelog entry before finalizing. If it does not exist, do not create one unless explicitly requested.
 
-## Complexity Triage
+## Selective delegation
 
-Default rule: for any Medium or Serious task, prefer scout/researcher first before editing.
+Use local tools directly for reads, literal searches, deterministic transforms, tests, and decisions whose evidence is already available. Delegation is optional: use it only when isolation, independent evidence, or a bounded implementation outweighs handoff, waiting, and verification costs.
 
-Classify the task before opening context or delegating:
+- Normally use **0–1** subagents; use at most **2** only for genuinely independent, non-overlapping work.
+- Do not delegate merely because a task is non-trivial or touches more than one file.
+- The principal remains the coordinator and makes final scope and acceptance decisions. Children do not launch nested subagents; if evidence is missing, return `blocked` with the exact question.
+- Do not repeat a lookup or documentation pass whose evidence is already known. Pass the relevant delta, not the whole conversation or an earlier plan.
 
-- **Simple**: 1 file/local change, obvious pattern. Solve with minimal inspection.
-- **Medium**: Multiple files, contained scope. Targeted search and pattern confirmation required.
-- **Serious**: Auth, security, critical data, framework behavior, or risky bugs. Deep investigation.
-  **Rules**: If in doubt, start with a quick check. Do not assume; do not over-investigate, allways use subagents
+### Delegation contract
 
-## Loop Control
+Every child brief should be compact and use these headings:
 
-- If a search, diagnosis, or fix produces no new evidence after two passes, change strategy or stop and ask.
-- If the same failure repeats twice, do not keep retrying; summarize the blocker and update the plan.
-- If a route, component, file, or decision is already recorded, refer to the existing section or item instead of restating it.
-- Prefer delta updates over reprinting inventories or plans.
+- **Goal**: bounded outcome and scope (include write permissions when relevant).
+- **Known**: facts, decisions, invariants, and existing changes to preserve.
+- **Evidence**: exact paths, ranges, URLs, or excerpts already checked; state what is still unknown.
+- **Acceptance**: observable result, including security and changelog requirements when applicable.
+- **Checks**: specific local checks the child may run; do not invent provider calls.
+- **Stop**: ambiguity, scope conflict, missing evidence, or repeated failure without new evidence.
 
-## Subagents: when to use them
+Child output must start with **Status**: `complete`, `partial`, `blocked`, `failed`, `cancelled`, or `timed_out`, followed by only new findings/changes, evidence, checks, and unresolved items.
 
-Use subagents when the work benefits from a separate context or parallelization.
+Choose clarification, direct work, or a child according to ambiguity and risk—not file count. Keep the current principal model, provider, thinking level, and settings unchanged unless the user explicitly requests otherwise.
 
-- **scout**: map the codebase, locate patterns, compare files, answer "where is this done?"
-- **researcher**: check docs, APIs, framework behavior, or external references
-- **worker**: isolated implementation or edits in a bounded slice
+## Tool economy
 
-Good triggers:
+- Prefer LSP for semantic questions when a server is available. After an initialization/unavailable error, use read/fd/rg or AST for that workspace instead of repeating LSP calls or installing dependencies just to satisfy a tool preference.
+- Use `codex-research` for batched search/open/find and `web_fetch` for known URLs; recover long results through offsets/artifacts. Stop when evidence is sufficient.
+- Use MCP discovery only for a capability the task actually needs; do not query an empty gateway routinely.
 
-- more than one file needs inspection
-- you need parallel discovery
-- the task mixes exploration + implementation
-- the current context is getting crowded
+## Documentation economy
 
-Avoid subagents for:
-
-- a single obvious local edit
-- simple one-file fixes
-- work you can confirm with one quick check
-
-Rule of thumb: if the task is Medium or Serious, strongly consider delegating discovery to scout/researcher before editing.
+Read the relevant contract or sections once and reuse their evidence. Do not make principal and children reread unrelated manuals or restate equivalent plans. Obey an explicit project requirement to read a complete file when it applies; otherwise follow relevant references selectively.

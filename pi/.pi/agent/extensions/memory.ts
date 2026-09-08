@@ -136,8 +136,19 @@ async function latestPlanPath(cwd: string): Promise<string | undefined> {
 	}
 }
 
-function countOpenTasks(tasks: string): number {
+/** Pure task-ledger helpers kept separate so extraction can be regression-tested. */
+export function countOpenTasks(tasks: string): number {
 	return tasks.split("\n").filter((line) => /^- \[ \] /.test(line.trim())).length;
+}
+
+export function activeTasksPreview(tasks: string, maxLines = 8, maxChars = 900): string {
+	const heading = /^##\s+In Progress\s*$/m.exec(tasks);
+	if (!heading || heading.index === undefined) return "_No active In Progress task recorded._";
+	const rest = tasks.slice(heading.index + heading[0].length);
+	const nextHeading = /^##\s+/m.exec(rest);
+	const section = rest.slice(0, nextHeading?.index ?? rest.length);
+	const active = previewText(section, maxLines, maxChars);
+	return active || "_No active In Progress task recorded._";
 }
 
 function shortSessionId(ctx: any): string {
@@ -166,29 +177,33 @@ export default function (pi: ExtensionAPI) {
 
 	pi.registerTool({
 		name: "create_session_plan",
+		label: "Create session plan",
 		description: "Creates or retrieves the session plan file. Use this at the start of any non-trivial task.",
 		parameters: Type.Object({
 			slug: Type.String({ description: "Short descriptive slug for the plan (e.g. 'fix-auth-bug')." }),
 		}),
 		async execute(_id, params, _signal, _update, ctx) {
 			const cwd = ctx.cwd;
+			if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(params.slug) || params.slug.length > 80) throw new Error("Plan slug must be lowercase alphanumeric words separated by hyphens (max 80 characters)");
+			await ensureProjectFiles(cwd);
 			const sessionId = shortSessionId(ctx);
 			const { path: planPath, exists } = await sessionPlanPath(cwd, sessionId);
 
 			if (exists) {
-				return { content: [{ type: "text", text: `Session plan already exists at: ${planPath}` }] };
+				return { content: [{ type: "text", text: `Session plan already exists at: ${planPath}` }], details: { path: planPath, created: false } };
 			}
 
 			const finalPath = planPath.replace("<short-slug>", params.slug);
 			const fullPath = path.join(cwd, finalPath);
 			await writeFile(fullPath, PLAN_TEMPLATE(params.slug, sessionId), "utf8");
 
-			return { content: [{ type: "text", text: `Created session plan at: ${finalPath}` }] };
+			return { content: [{ type: "text", text: `Created session plan at: ${finalPath}` }], details: { path: finalPath, created: true } };
 		},
 	});
 
 	pi.registerTool({
 		name: "get_current_plan",
+		label: "Current plan",
 		description: "Reads the active session plan, or the latest plan if no current session plan exists.",
 		parameters: Type.Object({}),
 		async execute(_id, _params, _signal, _update, ctx) {
@@ -220,18 +235,21 @@ export default function (pi: ExtensionAPI) {
 
 	pi.registerTool({
 		name: "summarize_worktree",
+		label: "Worktree summary",
 		description: "Returns a compact snapshot of the current repo state, current plan, and open tasks.",
 		parameters: Type.Object({}),
 		async execute(_id, _params, _signal, _update, ctx) {
 			const cwd = ctx.cwd;
 			const paths = await ensureProjectFiles(cwd);
-			const status = await runCommand(cwd, "git", ["status", "--short", "--branch", "--untracked-files=normal"]);
+			const [status, log] = await Promise.all([
+				runCommand(cwd, "git", ["status", "--short", "--branch", "--untracked-files=normal"]),
+				runCommand(cwd, "git", ["log", "-1", "--oneline", "--decorate=short"]),
+			]);
 			if (status.code !== 0) {
 				const message = status.stderr.trim() || "git status failed";
 				return { content: [{ type: "text", text: message }], details: { error: message } };
 			}
 
-			const log = await runCommand(cwd, "git", ["log", "-1", "--oneline", "--decorate=short"]);
 			const tasks = await readIfExists(paths.tasksFile);
 			const openTasks = countOpenTasks(tasks);
 			const sessionId = shortSessionId(ctx);
@@ -285,6 +303,7 @@ export default function (pi: ExtensionAPI) {
 		const sessionId = shortSessionId(ctx);
 		const { path: planPath } = await sessionPlanPath(cwd, sessionId);
 		const tasks = await readFile(paths.tasksFile, "utf8");
+		const activeTasks = activeTasksPreview(tasks);
 		const changelogPolicy = existsSync(path.join(cwd, "CHANGELOG.md"))
 			? `\n### Changelog Policy\n- This project has a \`CHANGELOG.md\`. Every job producing user-visible changes MUST add or update a SemVer-aligned Keep a Changelog entry before finalizing.\n- If the changelog is missing or stale for the current job, do not report \`ready to ship\`.`
 			: "";
@@ -306,9 +325,10 @@ Current session plan: \`${planPath}\`
 - **Delta focus**: In iterative frontend, CSS, or JS work, answer with the smallest useful delta rather than reprinting prior inventories.
 ${changelogPolicy}
 
-Current \`.ai/TASKS.md\` contents:
+### Task Context (bounded; full ledger: .ai/TASKS.md):
+Active In Progress item(s):
 \`\`\`md
-${tasks.trim() || "# Project Tasks\n\n_No pending project tasks recorded yet._"}
+${activeTasks}
 \`\`\``;
 
 		return {

@@ -1,73 +1,42 @@
 ---
 name: architect
-description: Specification design, behavior contracts, and task decomposition.
+description: Specification design, behavior contracts, and risk-aware task decomposition.
 ---
 
 # Architect: Design and Planning
 
 ## 0. Intent Translation
 
-Before planning, translate the user's request into a canonical brief:
+For an ambiguous request, translate it into a canonical brief:
 
-- Restate the request in clear technical terms.
-- Identify missing constraints, ambiguous words, and conflicting assumptions.
-- If anything is unclear, ask one focused question before continuing.
-- Once clear, produce a `Canonical Brief` that includes:
-  - Objective
-  - Non-goals
-  - Constraints
-  - Assumptions
-  - Success Criteria
-  - Open questions (if any)
-- If terminology or domain decisions are unclear, use `grill-with-docs` to stress-test them before finalizing the brief.
-- Use that brief as the source of truth for `planner` and `worker`, not the raw user wording.
+- **Objective**, **Non-goals**, **Constraints**, **Assumptions**, **Success Criteria**, and **Open questions**.
+- Ask one focused clarification only when different interpretations or material safety/risk would change the work.
+- For a clear, bounded request, do not add a discovery or documentation phase merely because it is multi-file.
 
-## 1. Specifications (Specs)
+## 1. Specifications and Gates
 
-Validate requirements before coding. If ambiguous, generate a `Spec / Contract` section in the current session plan.
+Make behavior and boundaries testable before editing when ambiguity, architecture, security, data integrity, or production risk is material. For a clear low-risk change, keep specification lightweight.
 
-### Spec Content:
-
-- **Objective**: What we are building and why.
-- **Success Criteria**: Specific, testable conditions for task completion.
-- **Boundaries**: What is out of scope and what requires confirmation (e.g., DB changes).
-- **Assumptions**: List assumptions and ask for confirmation before proceeding.
+Use a compact contract: **Goal**, **Known**, **Evidence**, **Acceptance**, **Checks**, and **Stop**. Preserve user decisions, security invariants, unrelated existing changes, and applicable changelog policy.
 
 ## 2. Planning and Decomposition
 
-Break work into small, independent, and verifiable tasks. For non-trivial tasks, delegate the concrete plan draft to the `planner` subagent, then validate the result here.
+Decompose only as much as improves execution. Use the planner subagent only when architecture/acceptance is genuinely ambiguous, risk is high, or an independent planning/investigation slice has positive net value. Do not delegate solely for file count or “non-trivial” labels. The principal owns the final plan, scope, and acceptance; planner and worker do not launch nested subagents.
 
-### Task Rules:
-
-- **Vertical Slicing**: Each task delivers a minimum functional piece (e.g., DB + API + basic UI).
-- **Size**: Maximum 5 files per task. If larger, break it down.
-- **Checkpoints**: Define validation milestones every 2-3 tasks.
-
-### Task Structure in Plan:
-
-- `[ ] Task N: [Title]`
-  - **Description**: Brief what and how.
-  - **Acceptance Criteria**: List of behavior checks.
-  - **Verification**: Test commands or manual steps to validate.
-  - **Files**: List of likely affected files.
+Prefer one ordered checklist with exact files/symbols, dependencies, acceptance, and checks. Split tasks when independence or verification benefits; do not manufacture parallelism or duplicate plans. Define checkpoints around meaningful risk boundaries.
 
 ## 3. Execution Coordination
 
-After the plan is validated, coordinate implementation in small slices:
-
-- Split the work into one-worker tasks whenever possible.
-- Give each worker a single, explicit slice and a validation policy.
-- Review worker output before assigning the next slice.
-- If a worker returns ambiguity, conflicting evidence, or the same failure twice, stop and either re-plan or ask the user.
-- Keep final architectural judgment in the architect; workers do not decide scope.
+Give a child a single explicit slice and the compact contract. Normally use zero or one child; use at most two only for genuinely independent, non-overlapping work. Review evidence and status before integrating. A child that lacks a material prerequisite returns `blocked` rather than expanding scope.
 
 ## 4. Changelog Requirement
 
-When drafting or validating a plan, include a finalization task to update `CHANGELOG.md` if it exists at the project root and the job has user-visible impact. The entry must be SemVer-aligned, use Keep a Changelog categories, and describe the actual current-job change.
+If `CHANGELOG.md` exists at the project root and the job is user-visible, include a SemVer-aligned Keep a Changelog update in the work. Do not create it when absent unless explicitly requested.
 
-## 5. Gated Process
+## 5. Documentation Economy
 
-1. **Specify**: Human validates requirements and success criteria.
-2. **Plan**: Human validates the technical approach and architecture.
-3. **Tasks**: Human validates decomposition and execution order.
-4. **Implement**: Only after the above steps are validated.
+Read the relevant versioned contract or sections, not a generic transitively linked tour. Share exact evidence and reuse it; do not make principal, planner, and worker restate the same plan or documentation.
+
+## 6. Final Gate
+
+Before completion, verify acceptance and specified checks, report unresolved risk honestly, and summarize the delta once. Human confirmation is reserved for the clarification and critical-configuration gates above; it is not a routine planning step.

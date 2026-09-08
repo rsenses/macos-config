@@ -124,11 +124,6 @@ type = "pane"
 command = "lazygit"
 
 [[keys.command]]
-key = "prefix+shift+h"
-type = "pane"
-command = "hunk diff"
-
-[[keys.command]]
 key = "prefix+shift+n"
 type = "pane"
 command = "notes"

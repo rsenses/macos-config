@@ -18,10 +18,6 @@ command = "herdr pane rename \"$HERDR_PANE_ID\" nvim; nvim"
 split = "right"
 
 [[tabs]]
-name = "hunk"
-command = "hunk diff --watch"
-
-[[tabs]]
 name = "server"
 
 [[tabs.panes]]
