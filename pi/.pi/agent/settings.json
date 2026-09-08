@@ -8,7 +8,9 @@
     "npm:pi-mcp-adapter@2.32.1",
     "npm:pi-lsp-bridge@2.3.0",
     "npm:pi-gpt-search@1.1.0",
-    "npm:@plannotator/pi-extension@0.27.12"
+    "npm:@plannotator/pi-extension@0.27.12",
+    "npm:@hypabolic/pi-hypa",
+    "git:github.com/tmustier/pi-auto-compact"
   ],
   "enabledModels": [
     "opencode-go/deepseek-v4-flash",
