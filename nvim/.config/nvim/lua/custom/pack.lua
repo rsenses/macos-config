@@ -22,10 +22,24 @@ vim.pack.add({
   'https://github.com/stevearc/conform.nvim',
   -- 'https://github.com/barrettruth/canola.nvim',
   'https://github.com/supermaven-inc/supermaven-nvim',
+  'https://github.com/rachartier/tiny-cmdline.nvim',
+  'https://github.com/kevinhwang91/nvim-hlslens',
+  -- 'https://github.com/abecodes/tabout.nvim',
 }, {
   confirm = false,
   load = true,
 })
+
+-- TABOUT
+-- require('tabout').setup {}
+
+-- HLSLENS
+require('hlslens').setup()
+
+-- TINY CMDLINE
+vim.g.tiny_cmdline = {
+  width = { value = '70%' },
+}
 
 -- COLORSCHEMA
 vim.o.background = 'light'

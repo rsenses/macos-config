@@ -16,6 +16,10 @@ fi
 """
 
 [post-switch]
+# Populate missing ignored files when entering an existing worktree.
+# Without --force, local copies (including .env) are never overwritten.
+copy_missing = "wt step copy-ignored"
+
 rename_tmux = """
 if [ -n "${TMUX:-}" ] && [ -n "${TMUX_PANE:-}" ]; then
   BRANCH="{{ branch | sanitize }}"

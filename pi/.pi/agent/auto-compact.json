@@ -1,16 +1,10 @@
 {
   "compactionModel": {
     "provider": "openai-codex",
-    "model": "gpt-5.3-codex-spark",
-    "thinking": "medium",
+    "model": "gpt-5.6-luna",
+    "thinking": "low",
     "instructions": "Do not drop unfinished work, and do not make unfinished work sound finished. Keep every pending check, tentative finding, candidate, blocker and unresolved question in the summary. The next agent may otherwise act on unverified conclusions."
   },
-  "fallbackCompactionModels": [
-    {
-      "provider": "openai-codex",
-      "model": "gpt-5.6-luna",
-      "thinking": "low"
-    }
-  ],
+  "fallbackCompactionModels": [],
   "rules": []
 }
