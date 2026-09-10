@@ -1,3 +1,4 @@
+import { spawn } from "node:child_process";
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import {
 	Editor,
@@ -537,6 +538,26 @@ function withUILock<T>(fn: () => Promise<T>): Promise<T> {
 	return prev.then(fn).finally(() => release!());
 }
 
+function notifyHerdr(question: string): void {
+	const herdrBinPath = process.env.HERDR_BIN_PATH;
+	if (process.env.HERDR_ENV !== "1" || !herdrBinPath) return;
+
+	const body = question.replace(/\s+/g, " ").trim().slice(0, 240);
+	if (!body) return;
+
+	try {
+		const child = spawn(
+			herdrBinPath,
+			["notification", "show", "Pi necesita tu respuesta", "--body", body, "--sound", "request"],
+			{ detached: true, stdio: "ignore" },
+		);
+		child.once("error", () => {});
+		child.unref();
+	} catch {
+		// A failed auxiliary notification must not prevent the question from opening.
+	}
+}
+
 export default function askUserQuestion(pi: ExtensionAPI) {
 	pi.registerTool({
 		name: "ask_user_question",
@@ -570,6 +591,8 @@ export default function askUserQuestion(pi: ExtensionAPI) {
 			}
 
 			return withUILock(async () => {
+				notifyHerdr(params.question);
+
 				if (mode === "text") {
 					const editorTitle = context ? `${params.question}\n\n${context}` : params.question;
 					const answer = await ctx.ui.editor(editorTitle);

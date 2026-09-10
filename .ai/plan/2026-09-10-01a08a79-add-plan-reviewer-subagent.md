@@ -125,3 +125,82 @@ Apply a small, local adaptation rather than importing the upstream catalog:
 - Stop and preserve the current wording if an upstream idea conflicts with a documented local decision.
 - Do not restore deleted prompts or add broad upstream workflows requiring issue-tracker setup.
 - Stop after two validation failures without new evidence.
+
+## Follow-up: analyze-herdr-question-notifications
+
+### Goal
+Determine, without implementing changes, whether Herdr can notify when a Pi agent asks the user a question, and describe the smallest viable integration path plus any product/runtime gaps.
+
+### Known
+- Herdr configuration already documents background notification delivery modes (`off`, `herdr`, `terminal`, `system`) and separate request/done sounds.
+- A prior local investigation recorded that `ui.toast.delivery = "herdr"` is in-app only and that external notifications require `system` or `terminal`; verify this against current local code/config and official documentation before relying on it.
+- The Pi repository has an official Herdr agent-state integration and recent Herdr release notes mention Pi lifecycle hooks and question/approval detection.
+- The preceding investigation was analysis-only. The user later authorized the smallest direct implementation if it remained simple: switch delivery to `system` and notify from the question extension.
+
+### Evidence to gather
+- Read the complete relevant Herdr notification configuration and Pi integration extension.
+- Inspect local Herdr commands/config/status output if available without mutating state.
+- Verify the event/state vocabulary for Pi questions and the notification routing path in official Herdr docs/source or release notes.
+- Trace whether Pi's question event reaches Herdr's notification classifier and whether the configured delivery can leave the active Herdr UI.
+
+### Acceptance
+- Report a capability verdict: supported now, supported with configuration, supported with a small integration, or not exposed.
+- Identify the exact signal, command/configuration surface, and routing mode required.
+- Separate verified facts from assumptions and list the smallest implementation options with risks.
+- Leave the worktree clean after the analysis, apart from any explicitly requested plan-only record.
+
+### Stop rules
+- Do not implement or change configuration during this phase.
+- Do not claim support from generic notification settings unless the Pi-question signal is proven to reach that path.
+- Stop if local binaries or docs are unavailable and report the exact missing evidence.
+
+### Findings
+
+#### Local runtime and integration
+- `pi --version` reports `0.85.1`.
+- The local `ask_user_question` extension waits through `ctx.ui.editor()`, `ctx.ui.select()`/custom UI, so it is covered by Pi's blocking-UI lifecycle rather than being a normal idle-text question.
+- The local Herdr-managed integration is version 8 and only subscribes to `pi.events.on("herdr:blocked", ...)`; it reports `working`, `blocked`, or `idle` through `pane.report_agent`. The local tree contains no bridge from Pi's native `ui_prompt_start`/`ui_prompt_end` events.
+- `herdr config check` returns `config: ok`. `herdr integration status --outdated-only` reports only an outdated OpenCode integration; Pi is not reported as outdated.
+
+#### Verified upstream behavior
+- Pi `0.85.1` documents `ui_prompt_start` and `ui_prompt_end` for blocking `ctx.ui.select`, `confirm`, `input`, `editor`, and `custom` prompts. The events are best-effort notification hooks and are not awaited before the prompt opens/closes. The feature was merged as Pi PR #8355 and included in `0.84.4`.
+- Herdr treats an installed Pi lifecycle integration as the authoritative source for `idle`, `working`, and `blocked`, and skips screen-manifest fallback for that pane. Therefore the native Pi question UI cannot currently be recovered by adding only a local screen-detection rule.
+- Herdr's notification system reacts to agent state changes. `ui.toast.delivery = "herdr"` is an in-app toast; `terminal` delegates to the outer terminal and `system` to the OS notification service. The default notification delay is one second, and active tabs are suppressed.
+- Herdr `0.9.0` and current upstream still ship Pi integration version 8; its bundled source has no `ui_prompt_*` handlers. No released first-party v9 bridge was found.
+
+### Verdict
+
+**Supported with a small integration plus notification configuration; not supported out of the box for Pi questions today.** The exact missing signal is the translation from Pi's `ui_prompt_start`/`ui_prompt_end` to the existing Herdr convention `herdr:blocked` with `active: true/false`. Once Herdr receives `blocked`, its normal agent notification path can alert on the request.
+
+This conclusion applies to a blocking `ask_user_question`/`ctx.ui` prompt. A model that merely writes a question in ordinary text while Pi is idle has no equivalent reliable signal and should not be treated as a notification event.
+
+### Smallest viable options (not implemented)
+
+1. **Sidecar Pi extension (smallest and safest):** listen to `pi.on("ui_prompt_start")` and `pi.on("ui_prompt_end")`, then emit the existing `pi.events` `herdr:blocked` event. Keep it beside the Herdr-managed file because `herdr integration install pi` overwrites the managed extension. Use the native events rather than tool-name heuristics; they cover this extension and other `ctx.ui` prompts.
+2. **First-party Herdr integration update:** wait for or contribute a Herdr Pi integration revision that maps those same native events. This avoids local maintenance, but no v9 release is currently present.
+3. **Temporary managed-file patch:** technically possible but not recommended because reinstall/update replaces it.
+
+For the current local config, `delivery = "herdr"` is sufficient only when an in-app toast is acceptable. To reach the desktop/outer terminal while away from the active Herdr UI, the eventual configuration would need `delivery = "terminal"` or `delivery = "system"`; no configuration was changed during this analysis.
+
+### Analysis validation
+
+- Read local Pi question extension, local Herdr integration/config, Pi `0.85.1` extension documentation, Herdr agent/integration/configuration/socket documentation, and Herdr `0.9.0` release notes.
+- Ran `herdr config check` — passed (`config: ok`).
+- Ran `herdr integration status --outdated-only` — only OpenCode was reported as outdated.
+- Searched the local Pi extensions for `ui_prompt_*` and `herdr:blocked` — only the existing Herdr listener was found; no bridge exists.
+- The preceding analysis phase made no implementation or runtime configuration change; the later user-approved implementation is recorded below.
+
+### User-approved implementation
+
+- Changed `herdr/.config/herdr/config.toml` from in-app toast delivery to `delivery = "system"`.
+- Added a small best-effort notifier to `pi/.pi/agent/extensions/ask-user-question.ts`. It runs only inside Herdr (`HERDR_ENV=1`), uses the inherited `HERDR_BIN_PATH` without a shell, sends the question as a bounded body through `herdr notification show`, requests the existing `request` sound, and never prevents the question UI from opening if notification delivery fails.
+- The notifier runs after the existing UI mutex is acquired, avoiding a notification for a question that is still queued behind another question.
+- No changes were made to the managed Herdr integration or to Pi's general lifecycle state reporting.
+
+### User-approved implementation validation
+
+- `git diff --check` — passed.
+- `herdr config check` — passed (`config: ok`).
+- `herdr server reload-config` — passed (`status: applied`).
+- `node --experimental-strip-types --check pi/.pi/agent/extensions/ask-user-question.ts` — passed.
+- Reviewed the diff to confirm no shell interpolation, no notification outside Herdr, and no changes to question behavior.

@@ -245,7 +245,7 @@ agent_panel_sort = "spaces"
 # herdr = show in-app toasts
 # terminal = ask the outer terminal to show a desktop notification
 # system = ask the OS notification service directly
-delivery = "herdr"
+delivery = "system"
 # delay_seconds = 1
 
 [ui.toast.herdr]
