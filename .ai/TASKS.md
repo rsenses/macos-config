@@ -4,6 +4,9 @@ Pending project work that should survive across sessions.
 
 ## Inbox
 
+- [x] Review the current skills and prompts against [mattpocock/skills](https://github.com/mattpocock/skills), then update what is useful.
+- [ ] Investigate whether Herdr can alert or notify me when a Pi agent asks a question.
+
 ## In Progress
 
 - [ ] rtk extension not working — see [[.ai/plan/2026-05-15-019e2ad2-rtk-extension-debug.md]]

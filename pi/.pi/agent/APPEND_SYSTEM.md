@@ -24,6 +24,12 @@ Use local tools directly for reads, literal searches, deterministic transforms, 
 - The principal remains the coordinator and makes final scope and acceptance decisions. Children do not launch nested subagents; if evidence is missing, return `blocked` with the exact question.
 - Do not repeat a lookup or documentation pass whose evidence is already known. Pass the relevant delta, not the whole conversation or an earlier plan.
 
+### Manual-only plan reviewer
+
+- `plan-reviewer` is a user-invoked reviewer, not an autonomous planning resource.
+- Dispatch it only when the user explicitly asks to review a saved plan or invokes `/review-plan`.
+- Do not dispatch it from the architect, planner, `/plan`, `/run-plan`, or `/finalize` workflows merely because a review would be useful.
+
 ### Delegation contract
 
 Every child brief should be compact and use these headings:

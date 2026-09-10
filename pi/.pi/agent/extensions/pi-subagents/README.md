@@ -1,6 +1,6 @@
 # Pi subagents
 
-Four bounded roles; the principal coordinates and verifies acceptance.
+Five bounded roles; the principal coordinates and verifies acceptance. `plan-reviewer` is manual-only and must never be dispatched solely by the architect's own decision.
 
 | Agent | Model / thinking | Tools |
 |---|---|---|
@@ -8,6 +8,7 @@ Four bounded roles; the principal coordinates and verifies acceptance.
 | researcher | `openai-codex/gpt-5.6-luna` / **medium** | codex-research, web_fetch |
 | planner | `openai-codex/gpt-5.6-luna` / **high** | read, grep, find, ls |
 | worker | `openai-codex/gpt-5.6-luna` / **medium** | read, write, edit, grep, find, ls, safe_bash, ast_grep, web_fetch |
+| plan-reviewer | `openai-codex/gpt-6-astra` / **low** | read, grep, find, ls |
 
 **Principal stays Luna/max.** Normally use no child or one child; at most two genuinely independent tasks. File count alone is not a reason to delegate. Planner is optional. Children cannot delegate; missing substantial evidence is returned to the principal as a blocker.
 

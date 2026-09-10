@@ -17,11 +17,17 @@ For an ambiguous request, translate it into a canonical brief:
 
 Make behavior and boundaries testable before editing when ambiguity, architecture, security, data integrity, or production risk is material. For a clear low-risk change, keep specification lightweight.
 
+### Design lens: deep modules
+
+When a design or refactor changes module shape, use this vocabulary: **module**, **interface**, **implementation**, **seam**, **adapter**, **depth**, **leverage**, and **locality**. Prefer a small interface that hides substantial behavior behind a real seam. Apply the deletion test: if removing the abstraction makes complexity disappear, it was likely pass-through; if complexity would spread across callers, it may be earning its keep. Do not add a seam for hypothetical variation; one adapter is usually a hypothetical seam, while a real external boundary or demonstrated variation can justify one. Test behavior through the public interface rather than internal collaborators.
+
 Use a compact contract: **Goal**, **Known**, **Evidence**, **Acceptance**, **Checks**, and **Stop**. Preserve user decisions, security invariants, unrelated existing changes, and applicable changelog policy.
 
 ## 2. Planning and Decomposition
 
 Decompose only as much as improves execution. Use the planner subagent only when architecture/acceptance is genuinely ambiguous, risk is high, or an independent planning/investigation slice has positive net value. Do not delegate solely for file count or “non-trivial” labels. The principal owns the final plan, scope, and acceptance; planner and worker do not launch nested subagents.
+
+`plan-reviewer` is manual-only. Never dispatch it merely because a plan exists or because an architectural review might help. Use it only after the user explicitly requests a saved-plan review or invokes `/review-plan`.
 
 Prefer one ordered checklist with exact files/symbols, dependencies, acceptance, and checks. Split tasks when independence or verification benefits; do not manufacture parallelism or duplicate plans. Define checkpoints around meaningful risk boundaries.
 
