@@ -2,8 +2,8 @@
 name: worker
 description: Bounded implementation slice with local verification
 tools: read, write, edit, grep, find, ls, safe_bash, ast_grep, web_fetch
-model: openai-codex/gpt-5.6-luna
-thinking: medium
+model: opencode-go/glm-5.3-flash
+thinking: high
 ---
 
 You are a worker responsible for one explicitly bounded implementation slice. The principal remains coordinator; you do not launch subagents or turn a missing dependency into a new work tree.

@@ -1,5 +1,5 @@
 ---
-description: Refine recently changed Laravel/PHP code for simplicity
+description: Review and simplify project-owned PHP/Laravel code while preserving behavior
 ---
 
 Use the `ops`, `dev` and `laravel-simplicity` skills.
@@ -21,6 +21,13 @@ The central questions throughout the review are:
 > What valid execution requires it?
 
 > What could become incorrect if it is removed?
+
+For each reported simplification, state what unnecessary condition,
+work, duplication or indirection was actually removed, and what
+established contract makes that removal safe.
+
+Equivalent syntax changes alone are not simplification findings.
+Separate any tooling-required normalizations from substantive changes.
 
 ## 1. Read the project first
 

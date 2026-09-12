@@ -1,113 +1,99 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# Script para instalar Xcode, Homebrew, Zsh, Tmux y Neovim
+set -euo pipefail
 
-# Función para verificar si un paquete está instalado
-check_package() {
-  local package="$1"
-  if ! command -v "$package" &> /dev/null; then
-    echo "No se encuentra el paquete '$package'. Instalando..."
-    if command -v xcode &> /dev/null; then
-      echo "Xcode ya está instalado."
-    else
-      # Instalar Xcode
-      echo "Instalando Xcode..."
-      sudo xcode-select --install
-      if [ $? -eq 0 ]; then
-        echo "Xcode instalado correctamente."
-      else
-        echo "Error al instalar Xcode."
-        exit 1
-      fi
-    fi
+DOTFILES_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+
+ensure_xcode_tools() {
+  if xcode-select -p >/dev/null 2>&1; then
+    echo "Command Line Tools de Xcode ya están instaladas."
+    return 0
   fi
-}
 
-# Función para instalar un paquete usando Homebrew
-install_package() {
-  local package="$1"
-  echo "Instalando '$package'..."
-  brew install "$package"
-  if [ $? -eq 0 ]; then
-    echo "'$package' instalado correctamente."
-  else
-    echo "Error al instalar '$package'."
-    exit 1
-  fi
-}
-
-# --- Comprobación e instalación de Xcode ---
-check_package "xcode"
-if [ $? -eq 0 ]; then
-  echo "Xcode ya está instalado. Pasando a la siguiente etapa."
-else
-  echo "Xcode no está instalado.  Instalando..."
+  echo "No encuentro las Command Line Tools de Xcode; abriendo su instalador..."
   sudo xcode-select --install
-  if [ $? -eq 0 ]; then
-    echo "Xcode instalado correctamente."
-  else
-    echo "Error al instalar Xcode."
+  if ! xcode-select -p >/dev/null 2>&1; then
+    echo "Instala las Command Line Tools y vuelve a ejecutar este script." >&2
     exit 1
   fi
-fi
+}
 
-# --- Comprobación e instalación de Homebrew ---
-check_package "homebrew"
-if [ $? -eq 0 ]; then
-  echo "Homebrew ya está instalado. Pasando a la siguiente etapa."
-else
-  echo "Homebrew no está instalado.  Instalando..."
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  if [ $? -eq 0 ]; then
-    echo "Homebrew instalado correctamente."
-  else
-    echo "Error al instalar Homebrew."
-    exit 1
+ensure_homebrew() {
+  if ! command -v brew >/dev/null 2>&1; then
+    echo "No encuentro Homebrew; instalándolo..."
+    command -v curl >/dev/null 2>&1 || {
+      echo "Error: necesito curl para instalar Homebrew." >&2
+      exit 1
+    }
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   fi
-fi
 
-# --- Instalación de Zsh, Tmux y Neovim usando Homebrew Stow ---
-echo "Instalando Zsh, Tmux y Neovim usando Homebrew Stow..."
+  if ! command -v brew >/dev/null 2>&1; then
+    for brew_bin in /opt/homebrew/bin/brew /usr/local/bin/brew; do
+      if [[ -x "$brew_bin" ]]; then
+        eval "$("$brew_bin" shellenv)"
+        break
+      fi
+    done
+  fi
 
-# Instalar Zsh
-install_package "zsh"
-if [ $? -eq 0 ]; then
-  echo "Zsh instalado correctamente."
-else
-  echo "Error al instalar Zsh."
-  exit 1
-fi
+  command -v brew >/dev/null 2>&1 || {
+    echo "Error: Homebrew no quedó disponible en PATH." >&2
+    exit 1
+  }
+}
 
-# Instalar Tmux
-install_package "tmux"
-if [ $? -eq 0 ]; then
-  echo "Tmux instalado correctamente."
-else
-  echo "Error al instalar Tmux."
-  exit 1
-fi
+ensure_npm_command() {
+  local executable="$1"
+  local package="$2"
 
-# Instalar Neovim
-install_package "neovim"
-if [ $? -eq 0 ]; then
-  echo "Neovim instalado correctamente."
-else
-  echo "Error al instalar Neovim."
-  exit 1
-fi
+  if command -v "$executable" >/dev/null 2>&1; then
+    return 0
+  fi
+  command -v npm >/dev/null 2>&1 || {
+    echo "Error: necesito npm para instalar ${package}." >&2
+    exit 1
+  }
+
+  echo "Instalando ${package}..."
+  npm install --global --ignore-scripts "$package"
+  command -v "$executable" >/dev/null 2>&1 || {
+    echo "Error: ${package} se instaló, pero no encuentro ${executable} en PATH." >&2
+    exit 1
+  }
+}
+
+ensure_xcode_tools
+ensure_homebrew
+
+echo "Instalando dependencias declaradas en Brewfile..."
+brew bundle --file="$DOTFILES_DIR/Brewfile"
+
+# Pi y el servidor LSP de Stylelint se distribuyen como paquetes npm, no como
+# dotfiles. --ignore-scripts evita ejecutar scripts de instalación de terceros.
+ensure_npm_command pi '@earendil-works/pi-coding-agent'
+ensure_npm_command stylelint-language-server '@stylelint/language-server'
+
+# Enlaza solo paquetes que existen en este repositorio. Las rutas explícitas
+# hacen que el script sea independiente del directorio desde el que se ejecuta.
+stow_packages=(
+  bin
+  git
+  ghostty
+  herdr
+  nvim
+  phpactor
+  pi
+  ripgrep
+  tmux
+  wezterm
+  worktrunk
+  yazi
+  zsh
+)
+
+for package in "${stow_packages[@]}"; do
+  stow --dir="$DOTFILES_DIR" --target="$HOME" --restow "$package"
+done
 
 echo "Instalación completada."
-
-stow -R nvim
-stow -R wezterm
-stow -R zsh
-stow -R tmux
-stow -R ghostty
-stow -R sesh
-stow -R git
-stow -R editorconfig
-stow -R bin
-stow -R phpactor
-stow -R yazi
-stow -R ripgrep
-stow -R bin

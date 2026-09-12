@@ -152,7 +152,7 @@ export function activeTasksPreview(tasks: string, maxLines = 8, maxChars = 900):
 }
 
 function shortSessionId(ctx: any): string {
-	const id = ctx.sessionManager?.sessionId || ctx.sessionId;
+	const id = ctx.sessionManager?.getSessionId?.() || ctx.sessionId;
 	if (id) return id.slice(0, 8);
 	return "session";
 }

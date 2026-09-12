@@ -1,0 +1,35 @@
+# Shared PATH setup for login and interactive shells.
+# Keep this separate from .zshenv: that file is sourced by every zsh process.
+
+if [[ -n "${DOTFILES_ZSH_PATHS_LOADED:-}" ]]; then
+  return 0
+fi
+
+typeset -g DOTFILES_ZSH_PATHS_LOADED=1
+typeset -gU path PATH
+
+if [[ -x /opt/homebrew/bin/brew ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
+# Homebrew upgrades can leave FPATH pointing at an old zsh Cellar directory.
+if [[ -d /opt/homebrew/opt/zsh/share/zsh/functions ]]; then
+  typeset -U fpath
+  fpath=(/opt/homebrew/opt/zsh/share/zsh/functions $fpath)
+fi
+
+if [[ $(uname) == "Darwin" ]]; then
+  path=(
+    "/opt/homebrew/bin"
+    "/Applications/Visual Studio Code - Insiders.app/Contents/Resources/app/bin"
+    "$HOME/go/bin"
+    $path
+  )
+fi
+
+path=(
+  "$HOME/.cargo/bin"
+  "$HOME/.local/bin"
+  "$HOME/.composer/vendor/bin"
+  $path
+)

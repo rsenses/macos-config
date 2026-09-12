@@ -1,9 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SITES_DIR="$HOME/dev/caddy-sites"
-CADDYFILE="/opt/homebrew/etc/Caddyfile"
-STATE_PREFIX="/tmp/dev"
+# Rutas operativas. Las variables DEV_* existen para poder ejecutar este
+# script en un entorno aislado (pruebas); sin ellas el comportamiento es el
+# de siempre: $HOME/dev/caddy-sites, /tmp/dev y el Caddyfile de Homebrew.
+SITES_DIR="${DEV_SITES_DIR:-$HOME/dev/caddy-sites}"
+CADDYFILE="${DEV_CADDYFILE:-/opt/homebrew/etc/Caddyfile}"
+CADDY_ADMIN="${DEV_CADDY_ADMIN:-http://localhost:2019}"
+STATE_PREFIX="${DEV_STATE_PREFIX:-/tmp/dev}"
+LOCK_DIR="${DEV_LOCK_DIR:-${STATE_PREFIX}.lock}"
+LOCK_OWNER_FILE="$LOCK_DIR/owner"
+LOCK_HELD=0
 PORT_START=8000
 PORT_END=8999
 
@@ -61,6 +68,53 @@ find_free_port() {
   return 1
 }
 
+release_mutation_lock() {
+  local owner=""
+
+  (( LOCK_HELD == 1 )) || return 0
+  owner="$(cat "$LOCK_OWNER_FILE" 2>/dev/null || true)"
+  if [[ "$owner" == "$BASHPID" ]]; then
+    rm -f -- "$LOCK_OWNER_FILE"
+    rmdir -- "$LOCK_DIR" 2>/dev/null || true
+  fi
+  LOCK_HELD=0
+}
+
+acquire_mutation_lock() {
+  local owner=""
+  local attempts=0
+
+  (( LOCK_HELD == 1 )) && return 0
+  mkdir -p -- "$(dirname "$LOCK_DIR")"
+
+  while ! mkdir -- "$LOCK_DIR" 2>/dev/null; do
+    owner="$(cat "$LOCK_OWNER_FILE" 2>/dev/null || true)"
+    if [[ "$owner" =~ ^[0-9]+$ ]] && ! kill -0 "$owner" >/dev/null 2>&1; then
+      # A crashed invocation can leave the directory behind. Remove it only
+      # when its recorded owner is definitely gone; never steal an unknown lock.
+      rm -f -- "$LOCK_OWNER_FILE"
+      rmdir -- "$LOCK_DIR" 2>/dev/null || true
+      continue
+    fi
+
+    if (( attempts >= 200 )); then
+      echo "Error: otra operación de dev mantiene el bloqueo ${LOCK_DIR}." >&2
+      return 1
+    fi
+    sleep 0.05
+    attempts=$((attempts + 1))
+  done
+
+  if ! printf '%s\n' "$BASHPID" > "$LOCK_OWNER_FILE"; then
+    rmdir -- "$LOCK_DIR" 2>/dev/null || true
+    echo "Error: no pude crear el propietario del bloqueo ${LOCK_DIR}." >&2
+    return 1
+  fi
+
+  LOCK_HELD=1
+  trap release_mutation_lock EXIT
+}
+
 hash_path() {
   local path="$1"
 
@@ -77,11 +131,18 @@ hash_path() {
 wait_for_port() {
   local p="$1"
   local timeout_sec="${2:-8}"
+  local owner_pid="${3:-}"
+  local owner_start="${4:-}"
   local elapsed=0
 
   while (( elapsed < timeout_sec * 10 )); do
     if port_is_listening "$p"; then
-      return 0
+      # An occupied port is not enough: during the find/start race it could
+      # belong to another process. When an owner is supplied, wait only for a
+      # PHP listener belonging to the process we just started.
+      if [[ -z "$owner_pid" ]] || port_listener_belongs_to "$p" "$owner_pid" "$owner_start"; then
+        return 0
+      fi
     fi
     sleep 0.1
     elapsed=$((elapsed + 1))
@@ -218,14 +279,19 @@ pick_port() {
 }
 
 write_snippet() {
-  mkdir -p "$SITES_DIR"
+  if ! mkdir -p "$SITES_DIR"; then
+    echo "Error: no pude crear el directorio de snippets ${SITES_DIR}." >&2
+    return 1
+  fi
 
   # Une hosts con espacios (site labels múltiples)
   local host_line
   host_line="$(printf "%s " "${HOSTS[@]}")"
   host_line="${host_line% }"
 
-  cat > "$SNIPPET" <<SNIP
+  local temp_file="${SNIPPET}.tmp.$$"
+
+  if ! cat > "$temp_file" <<SNIP
 ${host_line} {
   tls {
     issuer internal {
@@ -238,37 +304,100 @@ reverse_proxy 127.0.0.1:${PORT} {
 }
 }
 SNIP
+  then
+    rm -f "$temp_file"
+    echo "Error: no pude escribir el snippet de Caddy ${SNIPPET}." >&2
+    return 1
+  fi
+
+  if ! mv -f "$temp_file" "$SNIPPET"; then
+    rm -f "$temp_file"
+    echo "Error: no pude publicar el snippet de Caddy ${SNIPPET}." >&2
+    return 1
+  fi
+}
+
+caddy_admin_reachable() {
+  curl -fsS "${CADDY_ADMIN}/config/" >/dev/null 2>&1
+}
+
+caddy_run() {
+  local subcmd="$1"
+  shift
+
+  if caddy "$subcmd" "$@" >/dev/null 2>&1; then
+    return 0
+  fi
+
+  if sudo caddy "$subcmd" "$@" >/dev/null 2>&1; then
+    return 0
+  fi
+
+  echo "Error: no pude ejecutar 'caddy $subcmd'." >&2
+  echo "Prueba con 'sudo -v' o ejecuta 'sudo dev up' una vez para autorizar Caddy." >&2
+  return 1
+}
+
+caddy_reload() {
+  caddy_run reload --force --config "$CADDYFILE" --adapter caddyfile
+}
+
+caddy_start() {
+  caddy_run start --config "$CADDYFILE" --adapter caddyfile
 }
 
 reload_caddy() {
   local start_if_needed="${1:-no}"
 
-  run_caddy() {
-    local subcmd="$1"
-    shift
-
-    if caddy "$subcmd" "$@" >/dev/null 2>&1; then
-      return 0
-    fi
-
-    if sudo caddy "$subcmd" "$@" >/dev/null 2>&1; then
-      return 0
-    fi
-
-    echo "Error: no pude ejecutar 'caddy $subcmd'." >&2
-    echo "Prueba con 'sudo -v' o ejecuta 'sudo dev up' una vez para autorizar Caddy." >&2
-    return 1
-  }
-
-  if ! curl -fsS http://localhost:2019/config/ >/dev/null 2>&1; then
+  if ! caddy_admin_reachable; then
     if [[ "$start_if_needed" == "yes" ]]; then
-      run_caddy start --config "$CADDYFILE" --adapter caddyfile
+      caddy_start || return 1
     else
       return 0
     fi
   fi
 
-  run_caddy reload --force --config "$CADDYFILE" --adapter caddyfile
+  caddy_reload
+}
+
+# Retira del disco los snippets gestionados por esta herramienta que publican
+# el upstream 127.0.0.1:<puerto>. Solo se tocan *.caddy dentro de SITES_DIR y
+# solo si contienen la marca exacta del upstream; nunca otros archivos.
+purge_snippets_for_port() {
+  local port="$1"
+  local snippet_file
+
+  [[ "$port" =~ ^[0-9]+$ ]] || return 0
+
+  for snippet_file in "$SITES_DIR"/*.caddy; do
+    [[ -f "$snippet_file" ]] || continue
+    if grep -qF "reverse_proxy 127.0.0.1:${port} " "$snippet_file" 2>/dev/null; then
+      rm -f "$snippet_file"
+      printf 'Snippet retirado: %s\n' "$snippet_file" >&2
+    fi
+  done
+
+  return 0
+}
+
+# Retira el snippet nominal de un proyecto si su primera línea (los hosts)
+# menciona el dominio principal; evita borrar ficheros ajenos con el mismo nombre.
+purge_snippet_for_host() {
+  local snippet_file="$1"
+  local host="$2"
+  local first_line=""
+
+  [[ -n "$host" && -f "$snippet_file" ]] || return 0
+
+  first_line="$(head -n 1 "$snippet_file" 2>/dev/null)" || first_line=""
+  # Hosts are space-separated on the generated first line. Match a complete
+  # host token instead of a substring such as `api.test` in `my-api.test`.
+  if [[ " $first_line " == *" $host "* ]]; then
+    rm -f "$snippet_file"
+    printf 'Snippet retirado: %s\n' "$snippet_file" >&2
+  fi
+
+  return 0
 }
 
 read_state_value() {
@@ -290,13 +419,119 @@ read_state_value() {
   return 1
 }
 
+# Hora de arranque del proceso (ps lstart) con un pequeño reintento: nada
+# después de un fork puede tardar un instante en aparecer en la tabla de
+# procesos. Si al final no se puede leer, se guarda vacío y la identidad se
+# comprobará solo por comando y puerto.
+ps_command_for_pid() {
+  ps -ww -p "$1" -o command= 2>/dev/null
+}
+
+ps_start_for_pid() {
+  ps -ww -p "$1" -o lstart= 2>/dev/null
+}
+
+ps_state_for_pid() {
+  ps -ww -p "$1" -o state= 2>/dev/null
+}
+
+ps_parent_for_pid() {
+  ps -ww -p "$1" -o ppid= 2>/dev/null | tr -d '[:space:]'
+}
+
+# El comando registrado debe coincidir con un servidor PHP de este puerto:
+# `php artisan serve ... --port=<puerto>` o `php -S 127.0.0.1:<puerto> ...`.
+php_command_matches() {
+  local command_line="$1"
+  local port="$2"
+
+  case "$port" in
+    ''|*[!0-9]*) return 1 ;;
+  esac
+
+  case "$command_line" in
+    *"artisan serve"*)
+      case "$command_line" in
+        *"--port=$port "*|*"--port=$port") return 0 ;;
+      esac
+      ;;
+    *"php -S 127.0.0.1:$port "*|*"php -S 127.0.0.1:$port")
+      return 0
+      ;;
+  esac
+
+  return 1
+}
+
+# Un PID solo se considera "nuestro" si su comando coincide con el servidor
+# PHP del puerto registrado y, cuando se guardó la hora de arranque, esta
+# coincide también. Así un PID reciclado por otro proceso nunca recibe señales.
+php_pid_belongs() {
+  local pid="$1"
+  local port="$2"
+  local expected_start="$3"
+  local actual_command=""
+  local actual_start=""
+
+  [[ "$pid" =~ ^[0-9]+$ ]] || return 1
+  (( 10#$pid > 1 )) || return 1
+  [[ "$port" =~ ^[0-9]+$ ]] || return 1
+  (( 10#$port >= 1 && 10#$port <= 65535 )) || return 1
+
+  actual_command="$(ps_command_for_pid "$pid")" || return 1
+  [[ -n "$actual_command" ]] || return 1
+  php_command_matches "$actual_command" "$port" || return 1
+
+  if [[ -n "$expected_start" ]]; then
+    actual_start="$(ps_start_for_pid "$pid")" || return 1
+    [[ "$actual_start" == "$expected_start" ]] || return 1
+  fi
+
+  return 0
+}
+
+port_listener_pid() {
+  local port="$1"
+
+  lsof -nP -t -iTCP:"$port" -sTCP:LISTEN 2>/dev/null | head -n 1
+}
+
+# Verify the listener after starting PHP. This prevents a process that wins the
+# find-free-port race from being published behind the new Caddy route.
+port_listener_belongs_to() {
+  local port="$1"
+  local owner_pid="$2"
+  local owner_start="${3:-}"
+  local listener_pid=""
+
+  listener_pid="$(port_listener_pid "$port")" || listener_pid=""
+  [[ "$listener_pid" =~ ^[0-9]+$ ]] || return 1
+  process_is_descendant_of "$listener_pid" "$owner_pid" || return 1
+
+  if [[ "$listener_pid" == "$owner_pid" ]]; then
+    php_pid_belongs "$listener_pid" "$port" "$owner_start"
+  else
+    php_pid_belongs "$listener_pid" "$port" ""
+  fi
+}
+
 write_php_state() {
   local pid="$1"
   local hosts_line
+  local pid_start=""
+  local tries=0
   local temp_file="${PHP_STATE_FILE}.tmp.$$"
 
   hosts_line="$(printf "%s " "${HOSTS[@]}")"
   hosts_line="${hosts_line% }"
+
+  while [[ -z "$pid_start" ]] && (( tries < 5 )); do
+    pid_start="$(ps_start_for_pid "$pid")" || pid_start=""
+    if [[ -z "$pid_start" ]]; then
+      sleep 0.1
+      tries=$((tries + 1))
+    fi
+  done
 
   {
     printf 'PROJECT_DIR=%s\n' "$PROJECT_DIR"
@@ -304,6 +539,7 @@ write_php_state() {
     printf 'HOSTS=%s\n' "$hosts_line"
     printf 'PORT=%s\n' "$PORT"
     printf 'PID=%s\n' "$pid"
+    printf 'PID_START=%s\n' "$pid_start"
   } > "$temp_file"
 
   mv -f "$temp_file" "$PHP_STATE_FILE"
@@ -345,7 +581,15 @@ start_php_server() {
     fi
 
     nohup "${server_command[@]}" >"$PHP_LOG_FILE" 2>&1 < /dev/null &
-    write_php_state "$!"
+    local server_pid="$!"
+
+    # Si el estado no se puede guardar, el servidor quedaría huérfano y sin
+    # control: se mata y se propaga el error antes de publicar el upstream.
+    if ! write_php_state "$server_pid"; then
+      kill "$server_pid" >/dev/null 2>&1 || true
+      echo "Error: no pude registrar el estado del servidor PHP." >&2
+      exit 1
+    fi
   )
 }
 
@@ -381,42 +625,137 @@ read_php_pid() {
 
 php_pid_is_running() {
   local pid="$1"
+  local process_state=""
 
-  [[ -n "$pid" ]] || return 1
+  [[ "$pid" =~ ^[0-9]+$ ]] || return 1
+  process_state="$(ps_state_for_pid "$pid" 2>/dev/null || true)"
+  # `kill -0` also succeeds for a zombie on macOS until its parent reaps it.
+  [[ "$process_state" != Z* ]] || return 1
   kill -0 "$pid" >/dev/null 2>&1
+}
+
+# Returns success only when child_pid is the listener itself or a descendant of
+# owner_pid. This covers artisan's child `php -S` without ever killing another
+# PHP process that merely happens to use the same port.
+process_is_descendant_of() {
+  local child_pid="$1"
+  local owner_pid="$2"
+  local parent_pid=""
+  local depth=0
+
+  [[ "$child_pid" =~ ^[0-9]+$ && "$owner_pid" =~ ^[0-9]+$ ]] || return 1
+  [[ "$child_pid" == "$owner_pid" ]] && return 0
+
+  while (( depth < 32 )); do
+    parent_pid="$(ps_parent_for_pid "$child_pid" 2>/dev/null || true)"
+    [[ "$parent_pid" =~ ^[0-9]+$ ]] || return 1
+    [[ "$parent_pid" == "$owner_pid" ]] && return 0
+    [[ "$parent_pid" != 0 && "$parent_pid" != 1 && "$parent_pid" != "$child_pid" ]] || return 1
+    child_pid="$parent_pid"
+    depth=$((depth + 1))
+  done
+
+  return 1
 }
 
 stop_process() {
   local pid="$1"
+  local attempts=0
+
+  php_pid_is_running "$pid" || return 0
+
+  kill "$pid" >/dev/null 2>&1 || true
+
+  while php_pid_is_running "$pid" && (( attempts < 10 )); do
+    sleep 0.1
+    attempts=$((attempts + 1))
+  done
 
   if php_pid_is_running "$pid"; then
-    kill "$pid" >/dev/null 2>&1 || true
-    sleep 0.2
-    if php_pid_is_running "$pid"; then
-      kill -9 "$pid" >/dev/null 2>&1 || true
-    fi
+    kill -9 "$pid" >/dev/null 2>&1 || true
+    sleep 0.1
   fi
+
+  ! php_pid_is_running "$pid"
 }
 
+# Último recurso conservador: si el puerto sigue ocupado tras parar al PID
+# registrado (p. ej. el hijo `php -S` de `artisan serve`), solo se detiene al
+# ocupante si su comando coincide con un servidor PHP en ese puerto concreto.
+stop_port_listener_if_ours() {
+  local port="$1"
+  local owner_pid="${2:-}"
+  local listener_pid=""
+
+  [[ "$port" =~ ^[0-9]+$ ]] || return 0
+  [[ "$owner_pid" =~ ^[0-9]+$ ]] || return 0
+  port_is_listening "$port" || return 0
+
+  listener_pid="$(port_listener_pid "$port")" || listener_pid=""
+
+  if [[ ! "$listener_pid" =~ ^[0-9]+$ ]]; then
+    echo "Aviso: el puerto ${port} sigue ocupado y no pude identificar al proceso que lo escucha." >&2
+    return 1
+  fi
+
+  if ! process_is_descendant_of "$listener_pid" "$owner_pid"; then
+    echo "Aviso: el puerto ${port} sigue ocupado por un proceso fuera de este servidor; no se detiene." >&2
+    return 1
+  fi
+
+  if ! php_pid_belongs "$listener_pid" "$port" ""; then
+    echo "Aviso: el puerto ${port} sigue ocupado por el PID ${listener_pid}, que no parece un servidor PHP de este proyecto; no se detiene." >&2
+    return 1
+  fi
+
+  stop_process "$listener_pid" || true
+
+  if port_is_listening "$port"; then
+    echo "Aviso: el puerto ${port} sigue ocupado tras detener al PID ${listener_pid}." >&2
+    return 1
+  fi
+
+  return 0
+}
+
+# Para el servidor descrito por un archivo de estado y limpia ese estado.
+# Nunca se señaliza un PID solo porque exista: se exige identidad
+# (comando + puerto, y hora de arranque si se registró). Si el PID está vivo
+# pero no se puede verificar, se avisa y se devuelve error sin matarlo.
 stop_state_file() {
   local state_file="$1"
   local pid=""
+  local port=""
+  local start=""
+  local status=0
 
-  if pid="$(read_state_value PID "$state_file" 2>/dev/null)" && [[ "$pid" =~ ^[0-9]+$ ]]; then
-    stop_process "$pid"
+  port="$(read_state_value PORT "$state_file" 2>/dev/null)" || port=""
+  pid="$(read_state_value PID "$state_file" 2>/dev/null)" || pid=""
+
+  if [[ "$pid" =~ ^[0-9]+$ ]] && php_pid_is_running "$pid"; then
+    start="$(read_state_value PID_START "$state_file" 2>/dev/null)" || start=""
+    if php_pid_belongs "$pid" "$port" "$start"; then
+      # Stop artisan's listener while it is still a descendant. Once the
+      # parent exits macOS may reparent the child, so discovering it only
+      # afterwards would leave the PHP listener alive.
+      if ! stop_port_listener_if_ours "$port" "$pid"; then
+        status=1
+      fi
+      if ! stop_process "$pid"; then
+        echo "Aviso: no pude terminar el PID ${pid}." >&2
+        status=1
+      fi
+    else
+      echo "Aviso: el PID ${pid} del estado ${state_file} no corresponde a un servidor PHP de este proyecto (¿PID reutilizado?); no se detiene." >&2
+      status=1
+    fi
   fi
+
+  stop_port_listener_if_ours "$port" "$pid" || status=1
 
   rm -f "$state_file"
-}
 
-stop_php_server() {
-  local pid=""
-
-  if load_php_state >/dev/null 2>&1 && pid="$(read_php_pid 2>/dev/null)"; then
-    stop_process "$pid"
-  fi
-
-  rm -f "$PHP_STATE_FILE"
+  return "$status"
 }
 
 hosts_overlap() {
@@ -514,7 +853,9 @@ case "${cmd}" in
   up)
     resolve_project
     load_project_config
+    acquire_mutation_lock || exit 1
 
+    routes_changed=0
     find_domain_conflicts
     if (( ${#DOMAIN_CONFLICTS[@]} > 0 )); then
       show_domain_conflicts
@@ -524,11 +865,42 @@ case "${cmd}" in
       fi
 
       for state_file in "${DOMAIN_CONFLICTS[@]}"; do
-        stop_state_file "$state_file"
+        conflict_port="$(read_state_value PORT "$state_file" 2>/dev/null)" || conflict_port=""
+        conflict_dir="$(read_state_value PROJECT_DIR "$state_file" 2>/dev/null)" || conflict_dir=""
+        conflict_domain="$(read_state_value DOMAIN "$state_file" 2>/dev/null)" || conflict_domain=""
+        purge_snippets_for_port "$conflict_port"
+        if [[ -n "$conflict_dir" && -n "$conflict_domain" ]]; then
+          purge_snippet_for_host "$SITES_DIR/$(basename "$conflict_dir").caddy" "$conflict_domain"
+        fi
+        if ! stop_state_file "$state_file"; then
+          echo "Error: no pude detener por completo la instancia en conflicto." >&2
+          exit 1
+        fi
+        routes_changed=1
       done
     fi
 
-    stop_php_server || true
+    # Remove the previous route before stopping/replacing its server. If Caddy
+    # is reachable, a failed reload aborts instead of leaving an old route in
+    # memory while this command continues with a new port.
+    if [[ -f "$PHP_STATE_FILE" || -f "$SNIPPET" ]]; then
+      old_port="$(read_state_value PORT "$PHP_STATE_FILE" 2>/dev/null || true)"
+      purge_snippets_for_port "$old_port"
+      purge_snippet_for_host "$SNIPPET" "$DOMAIN"
+      routes_changed=1
+    fi
+
+    if (( routes_changed )) && caddy_admin_reachable; then
+      caddy_reload || {
+        echo "Error: no pude retirar las rutas antiguas de Caddy." >&2
+        exit 1
+      }
+    fi
+
+    if ! stop_state_file "$PHP_STATE_FILE"; then
+      echo "Error: no pude detener por completo la instancia anterior." >&2
+      exit 1
+    fi
     pick_port
 
     if port_is_listening "$PORT"; then
@@ -537,19 +909,37 @@ case "${cmd}" in
       exit 1
     fi
 
+    # Retira snippets antiguos que publiquen este puerto para que ningún
+    # dominio viejo siga sirviendo el proyecto nuevo tras la recarga.
+    purge_snippets_for_port "$PORT"
+
     # Arranca PHP antes de publicar el nuevo upstream para que Caddy no
     # pueda enviar peticiones a un puerto todavía vacío.
     start_php_server
-    if ! wait_for_port "$PORT" 10; then
-      stop_php_server || true
+    if ! wait_for_port "$PORT" 10 \
+        "$(read_state_value PID "$PHP_STATE_FILE" 2>/dev/null || true)" \
+        "$(read_state_value PID_START "$PHP_STATE_FILE" 2>/dev/null || true)"; then
+      stop_state_file "$PHP_STATE_FILE" || true
+      reload_caddy no || true
       echo "Error: PHP no quedó escuchando en el puerto $PORT para ${DOMAIN}." >&2
       show_php_log
       exit 1
     fi
 
-    write_snippet
+    if ! write_snippet; then
+      # El servidor ya está controlado por un estado; no lo dejes huérfano si
+      # falla la publicación del snippet.
+      stop_state_file "$PHP_STATE_FILE" || true
+      reload_caddy no || true
+      echo "Error: no pude escribir el snippet de Caddy para ${DOMAIN}." >&2
+      exit 1
+    fi
+
     if ! reload_caddy yes; then
-      stop_php_server || true
+      rm -f "$SNIPPET"
+      # Mejor esfuerzo: saca el snippet recién escrito de la config en memoria.
+      reload_caddy no || true
+      stop_state_file "$PHP_STATE_FILE" || true
       echo "Error: no pude recargar Caddy para ${DOMAIN}." >&2
       exit 1
     fi
@@ -560,13 +950,39 @@ case "${cmd}" in
 
   down)
     resolve_project
+    acquire_mutation_lock || exit 1
 
-    stop_php_server || true
-    echo "OK: parado ${DOMAIN}"
+    down_status=0
+    state_port="$(read_state_value PORT "$PHP_STATE_FILE" 2>/dev/null)" || state_port=""
+
+    # Retira los snippets de este proyecto antes de recargar, para que Caddy
+    # deje de publicar el dominio en cuanto se confirma la recarga.
+    purge_snippets_for_port "$state_port"
+    purge_snippet_for_host "$SNIPPET" "$DOMAIN"
+
+    if caddy_admin_reachable; then
+      caddy_reload || down_status=1
+    else
+      echo "Aviso: Caddy no está en ejecución; el snippet de ${DOMAIN} se ha retirado del disco." >&2
+    fi
+
+    stop_state_file "$PHP_STATE_FILE" || down_status=1
+
+    if (( down_status == 0 )); then
+      echo "OK: parado ${DOMAIN}"
+    else
+      echo "Error: no pude detener ${DOMAIN} por completo; revisa los avisos." >&2
+      exit 1
+    fi
     ;;
 
   reload)
-    "$0" down "${name:-}"
+    # Do not start a replacement while the old route/process could still be
+    # active: a failed down must remain visible to the caller.
+    if ! "$0" down "${name:-}"; then
+      echo "Error: no se inicia el reemplazo porque 'down' no terminó correctamente." >&2
+      exit 1
+    fi
     "$0" up "${name:-}"
     ;;
 
@@ -585,8 +1001,13 @@ case "${cmd}" in
 
     if load_php_state; then
       echo "Puerto: $PORT"
+      state_start="$(read_state_value PID_START "$PHP_STATE_FILE" 2>/dev/null)" || state_start=""
       if pid="$(read_php_pid 2>/dev/null)" && php_pid_is_running "$pid"; then
-        echo "Servidor PHP: activo en 127.0.0.1:$PORT"
+        if php_pid_belongs "$pid" "$PORT" "$state_start"; then
+          echo "Servidor PHP: activo en 127.0.0.1:$PORT"
+        else
+          echo "Servidor PHP: el PID $pid está vivo pero no corresponde a este proyecto (¿PID reutilizado?)"
+        fi
       else
         echo "Servidor PHP: inactivo"
       fi
@@ -601,14 +1022,38 @@ case "${cmd}" in
     ;;
 
   down-all)
+    acquire_mutation_lock || exit 1
     echo "Parando todos los proyectos..."
+
+    down_status=0
+    down_any=0
+    for state_file in "${STATE_PREFIX}"-*.state; do
+      [[ -f "$state_file" ]] || continue
+      down_any=1
+      state_port="$(read_state_value PORT "$state_file" 2>/dev/null)" || state_port=""
+      state_dir="$(read_state_value PROJECT_DIR "$state_file" 2>/dev/null)" || state_dir=""
+      state_domain="$(read_state_value DOMAIN "$state_file" 2>/dev/null)" || state_domain=""
+      purge_snippets_for_port "$state_port"
+      if [[ -n "$state_dir" && -n "$state_domain" ]]; then
+        purge_snippet_for_host "$SITES_DIR/$(basename "$state_dir").caddy" "$state_domain"
+      fi
+    done
+
+    if (( down_any )); then
+      if caddy_admin_reachable; then
+        caddy_reload || down_status=1
+      else
+        echo "Aviso: Caddy no está en ejecución; los snippets se han retirado del disco." >&2
+      fi
+    fi
 
     for state_file in "${STATE_PREFIX}"-*.state; do
       [[ -f "$state_file" ]] || continue
-      stop_state_file "$state_file"
+      stop_state_file "$state_file" || down_status=1
     done
 
     echo "OK: todos los servidores PHP detenidos"
+    (( down_status == 0 )) || exit 1
     ;;
 
   *)

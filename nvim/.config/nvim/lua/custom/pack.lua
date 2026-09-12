@@ -1,7 +1,31 @@
 vim.cmd 'packadd cfilter'
 vim.cmd.packadd 'nvim.difftool'
+
+-- `vim.pack` has no lazy.nvim-style `build` field. Update Treesitter parsers
+-- after an explicit plugin update instead, and expose the reviewable native
+-- package update flow without doing network work at startup.
+local pack_update_group = vim.api.nvim_create_augroup('PackUpdateHooks', { clear = true })
+vim.api.nvim_create_autocmd('PackChanged', {
+  group = pack_update_group,
+  callback = function(ev)
+    local data = ev.data
+    if data.spec.name ~= 'nvim-treesitter' or data.kind ~= 'update' then
+      return
+    end
+
+    vim.schedule(function()
+      if vim.fn.exists ':TSUpdate' == 2 then
+        vim.cmd 'TSUpdate'
+      end
+    end)
+  end,
+})
+
+vim.api.nvim_create_user_command('PackUpdate', function()
+  vim.pack.update()
+end, { desc = 'Review and update native packages' })
+
 vim.pack.add({
-  'https://github.com/christoomey/vim-tmux-navigator',
   -- 'https://github.com/tpope/vim-dadbod',
   -- 'https://github.com/kristijanhusak/vim-dadbod-ui',
   'https://github.com/mistweaverco/kulala.nvim',
@@ -11,7 +35,6 @@ vim.pack.add({
   {
     src = 'https://github.com/nvim-treesitter/nvim-treesitter',
     version = 'main',
-    build = ':TSUpdate',
   },
   'https://github.com/nvim-treesitter/nvim-treesitter-context',
   'https://github.com/windwp/nvim-ts-autotag',
@@ -406,13 +429,6 @@ require('supermaven-nvim').setup {
 }
 -- END SUPERMAVEN
 
--- TMUX
-vim.keymap.set('n', '<c-h>', '<cmd>TmuxNavigateLeft<cr>')
-vim.keymap.set('n', '<c-j>', '<cmd>TmuxNavigateDown<cr>')
-vim.keymap.set('n', '<c-k>', '<cmd>TmuxNavigateUp<cr>')
-vim.keymap.set('n', '<c-l>', '<cmd>TmuxNavigateRight<cr>')
--- END TMUX
-
 -- TREESITTER
 local ts = require 'nvim-treesitter'
 local ensure_installed = {
@@ -439,16 +455,9 @@ local ensure_installed = {
 
 ts.install(ensure_installed)
 
-ts.setup {
-  highlight = {
-    enable = true,
-    additional_vim_regex_highlighting = false,
-  },
-  indent = {
-    enable = true,
-    disable = { 'http' },
-  },
-}
+-- `nvim-treesitter` main exposes Neovim's native Treesitter APIs. Highlighting
+-- and folding use Neovim's native APIs; indentation is provided by the plugin
+-- and is intentionally enabled for buffers with a working parser.
 
 local treesitter_group = vim.api.nvim_create_augroup('TreesitterStart', { clear = true })
 vim.api.nvim_create_autocmd('FileType', {
@@ -458,7 +467,10 @@ vim.api.nvim_create_autocmd('FileType', {
       return
     end
 
-    pcall(vim.treesitter.start, ev.buf)
+    local started = pcall(vim.treesitter.start, ev.buf)
+    if started then
+      vim.bo[ev.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+    end
   end,
 })
 

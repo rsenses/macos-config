@@ -27,6 +27,26 @@ For each non-trivial defensive branch or abstraction, identify:
 
 If no benefit remains, use the direct expression. If evidence is missing, investigate the narrow question rather than inventing a fallback or deleting a safeguard. Do not narrate this checklist for every trivial edit.
 
+## Evaluate necessity before syntax
+
+When reviewing a defensive check, first decide whether the condition
+needs to be checked at this point.
+
+If an established contract already resolves it, remove the redundant
+check while preserving any remaining authorization or domain decision.
+
+If the condition distinguishes reachable states, preserve it. Rewriting
+an equivalent required check, such as `instanceof` versus a null
+comparison for a proven `T|null` value, is not by itself a simplification.
+Leave equivalent syntax to project conventions and tooling.
+
+For every proposed change, identify the unnecessary condition, work,
+duplication or indirection actually removed. Do not narrow a supported
+contract, hide a check in a wrapper, or change failure behavior merely
+to make code appear simpler.
+
+No change is a valid outcome.
+
 ## Trace the real flow
 
 For a candidate, follow callers to the point being reviewed:

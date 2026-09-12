@@ -10,8 +10,12 @@ envrc = "if [ ! -e .envrc ]; then if [ -n \"{{ base_worktree_path }}\" ] && [ -f
 [[pre-start]]
 mise = """
 if command -v mise >/dev/null 2>&1; then
-  mise trust -y .
-  mise install
+  if mise trust .; then
+    mise install
+  else
+    printf 'mise: la confianza no fue concedida; se cancela la preparación del worktree.\n' >&2
+    exit 1
+  fi
 fi
 """
 
@@ -29,6 +33,6 @@ fi
 """
 
 [commit.generation]
-command = '''f=$(mktemp); printf '\n\n' > "$f"; sed 's/^/# /' >> "$f"; ${EDITOR:-vi} "$f" < /dev/tty > /dev/tty; grep -v '^#' "$f"'''
+command = '''f=$(mktemp); trap 'rm -f -- "$f"' EXIT; printf '\n\n' > "$f"; sed 's/^/# /' >> "$f"; ${EDITOR:-vi} "$f" < /dev/tty > /dev/tty; grep -v '^#' "$f"'''
 
 [projects]

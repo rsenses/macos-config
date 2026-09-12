@@ -13,7 +13,7 @@
 
 	editor = nvim
 
-	pager = hunk pager
+	pager = nvim -R -c 'setlocal filetype=git' -
 	hooksPath = /Users/rubensilvarodriguez/.githooks
 [apply]
 
@@ -32,6 +32,8 @@
 	# Use colors in Git commands that are capable of colored output when
 	# outputting to the terminal. (This is the default setting in Git ≥ 1.8.4.)
 	ui = auto
+	# Neovim highlights Git output itself; do not feed it ANSI escape codes.
+	pager = false
 
 [alias]
   # View the log format
@@ -83,5 +85,5 @@
 	gpgsign = true
 [branch]
     sort = -committerdate
-[coderabbit]
-	machineId = cli/7285f8f00fa2431780b6a8a4faf0bbfa
+[include]
+	path = ~/.gitconfig.local

@@ -43,6 +43,13 @@ Every child brief should be compact and use these headings:
 
 Child output must start with **Status**: `complete`, `partial`, `blocked`, `failed`, `cancelled`, or `timed_out`, followed by only new findings/changes, evidence, checks, and unresolved items.
 
+### Context budget
+
+- When a task has two independent evidence domains, prefer bounded read-only scouts in parallel before broad reads in the principal context.
+- Use `scout` for repository or reference investigation; use `planner` only after evidence has been summarized.
+- Never request complete files, documentation, plans, or transcripts from a child. Require concise findings with exact paths/ranges and unresolved questions.
+- Keep the principal context to the contract, summarized evidence, decisions, and deltas; do not duplicate child output in the plan or final response.
+
 Choose clarification, direct work, or a child according to ambiguity and risk—not file count. Keep the current principal model, provider, thinking level, and settings unchanged unless the user explicitly requests otherwise.
 
 ## Tool economy

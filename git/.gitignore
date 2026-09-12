@@ -19,3 +19,22 @@ _ide_helper_models.php
 ._*
 .valetrc
 .envrc
+
+# Credentials and local configuration; keep shareable env examples visible.
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+.zshvars
+.secrets
+auth.json
+credentials.json
+.gitconfig.local
+id_rsa
+id_dsa
+id_ecdsa
+id_ed25519
+*.key
+*.p12
+*.pfx

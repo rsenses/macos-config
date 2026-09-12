@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
 local type
-type=$(printf "work\npersonal" | fzf) || return
+type=$(printf "work\npersonal" | fzf --no-multi) || return
 cd "$HOME/data/$type/notes" || return
 nvim daily.md

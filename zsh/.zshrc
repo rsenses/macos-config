@@ -1,4 +1,8 @@
 # Paths
+if [[ -r "$HOME/.config/zsh/.zshpaths" ]]; then
+  source "$HOME/.config/zsh/.zshpaths"
+fi
+
 if command -v zoxide >/dev/null 2>&1; then
   eval "$(zoxide init --cmd cd zsh)"
 fi
@@ -87,4 +91,8 @@ export CLICOLOR=1  # macOS ls colors
 bindkey "^H" backward-delete-char
 bindkey "^?" backward-delete-char
 
+# Full mise activation belongs at the end of the interactive setup.
+if command -v mise >/dev/null 2>&1; then
+  eval "$(mise activate zsh)"
+fi
 

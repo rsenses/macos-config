@@ -27,7 +27,7 @@ vim.lsp.config('lua_ls', {
 })
 
 vim.lsp.config('stylelint_lsp', {
-  cmd = { 'stylelint', '--stdio' },
+  cmd = { 'stylelint-language-server', '--stdio' },
 })
 
 vim.lsp.enable {

@@ -527,6 +527,35 @@ async function askMultiChoice(
 	});
 }
 
+async function askRPCText(ctx: any, question: string, context: string | undefined): Promise<AskAnswer | null> {
+	const title = context ? `${question}\n\n${context}` : question;
+	const answer = await ctx.ui.input(title);
+	if (answer === undefined) return null;
+	const value = answer.trim();
+	return { type: "text", label: value, value };
+}
+
+async function askRPCSingleChoice(
+	ctx: any,
+	question: string,
+	options: AskOption[],
+): Promise<AskAnswer | null> {
+	const otherLabel = getOtherLabel(options);
+	const selected = await ctx.ui.select(question, [...options.map((option) => option.label), otherLabel]);
+	if (selected === undefined) return null;
+
+	const optionIndex = options.findIndex((option) => option.label === selected);
+	if (optionIndex >= 0) {
+		const option = options[optionIndex];
+		return { type: "option", label: option.label, value: option.value, index: optionIndex + 1 };
+	}
+
+	const answer = await ctx.ui.input(otherLabel);
+	if (answer === undefined) return null;
+	const value = answer.trim();
+	return { type: "other", label: value, value };
+}
+
 // Mutex to serialize concurrent UI interactions.
 // showExtensionCustom/editor can only handle one active call at a time.
 let uiLock: Promise<void> = Promise.resolve();
@@ -591,32 +620,57 @@ export default function askUserQuestion(pi: ExtensionAPI) {
 			}
 
 			return withUILock(async () => {
-				notifyHerdr(params.question);
-
-				if (mode === "text") {
-					const editorTitle = context ? `${params.question}\n\n${context}` : params.question;
-					const answer = await ctx.ui.editor(editorTitle);
-					if (answer === undefined) {
-						return cancelledResult(params.question, mode, context);
+				if (ctx.mode !== "tui") {
+					if (mode === "multi-select") {
+						return unavailableResult(
+							params.question,
+							mode,
+							"ask_user_question multi-select requires interactive TUI mode",
+							context,
+						);
 					}
-					return buildResult(params.question, context, mode, [
-						{ type: "text", label: answer.trim(), value: answer.trim() },
-					]);
-				}
 
-				if (mode === "single-select") {
-					const answer = await askSingleChoice(ctx, params.question, context, options);
+					const answer =
+						mode === "text"
+							? await askRPCText(ctx, params.question, context)
+							: await askRPCSingleChoice(ctx, params.question, options);
 					if (!answer) {
 						return cancelledResult(params.question, mode, context);
 					}
 					return buildResult(params.question, context, mode, [answer]);
 				}
 
-				const answers = await askMultiChoice(ctx, params.question, context, options);
-				if (!answers) {
-					return cancelledResult(params.question, mode, context);
+				notifyHerdr(params.question);
+				pi.events.emit("herdr:blocked", { active: true, label: params.question });
+
+				try {
+					if (mode === "text") {
+						const editorTitle = context ? `${params.question}\n\n${context}` : params.question;
+						const answer = await ctx.ui.editor(editorTitle);
+						if (answer === undefined) {
+							return cancelledResult(params.question, mode, context);
+						}
+						return buildResult(params.question, context, mode, [
+							{ type: "text", label: answer.trim(), value: answer.trim() },
+						]);
+					}
+
+					if (mode === "single-select") {
+						const answer = await askSingleChoice(ctx, params.question, context, options);
+						if (!answer) {
+							return cancelledResult(params.question, mode, context);
+						}
+						return buildResult(params.question, context, mode, [answer]);
+					}
+
+					const answers = await askMultiChoice(ctx, params.question, context, options);
+					if (!answers) {
+						return cancelledResult(params.question, mode, context);
+					}
+					return buildResult(params.question, context, mode, answers);
+				} finally {
+					pi.events.emit("herdr:blocked", { active: false });
 				}
-				return buildResult(params.question, context, mode, answers);
 			});
 		},
 

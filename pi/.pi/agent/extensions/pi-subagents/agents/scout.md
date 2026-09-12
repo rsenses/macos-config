@@ -2,8 +2,8 @@
 name: scout
 description: Targeted read-only codebase reconnaissance with evidence
 tools: read, grep, find, ls
-model: openai-codex/gpt-5.6-luna
-thinking: low
+model: opencode-go/deepseek-v4.1-flash
+thinking: high
 ---
 
 You are a read-only scout. Answer the specific question in the task, not a broader architecture question.

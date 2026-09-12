@@ -20,6 +20,7 @@ project="$(
         --height=100% \
         --layout=reverse \
         --border=none \
+        --no-multi \
         --prompt='project > ' \
         --preview='' \
         --preview-window=hidden
@@ -57,10 +58,18 @@ workspace_label() {
 worktrees=""
 
 if is_git_repo "$project"; then
-  worktrees="$(get_extra_worktrees "$project" || true)"
+  # Incluye el checkout principal: desde Herdr es tan útil volver a la rama
+  # principal como saltar a un worktree enlazado. Conservamos el acceso rápido
+  # directo cuando el repositorio no tiene worktrees adicionales.
+  all_worktrees="$(get_worktrees "$project" || true)"
+  extra_worktrees="$(get_extra_worktrees "$project" || true)"
+  if [ -n "${extra_worktrees:-}" ]; then
+    worktrees="$all_worktrees"
+  fi
 fi
 
-if [ -n "${worktrees:-}" ]; then
+worktree_count="$(printf '%s\n' "${worktrees:-}" | awk 'NF { count++ } END { print count + 0 }')"
+if [ "${worktree_count:-0}" -gt 1 ]; then
   dir="$(
     printf '%s\n' "$worktrees" \
       | awk -F/ '
@@ -73,6 +82,7 @@ if [ -n "${worktrees:-}" ]; then
           --height=100% \
           --layout=reverse \
           --border=none \
+          --no-multi \
           --prompt='worktree > ' \
           --delimiter=$'\t' \
           --with-nth=1 \
@@ -81,14 +91,59 @@ if [ -n "${worktrees:-}" ]; then
   )" || exit 0
 
   [ -n "${dir:-}" ] || exit 0
-  dir="$(printf '%s\n' "$dir" | cut -f2)"
+  dir="${dir#*$'\t'}"
 else
   dir="$project"
 fi
 
 dir="$(canonical_path "$dir")"
-label="$(workspace_label "$(canonical_path "$project")")"
 
+if is_git_repo "$project"; then
+  require jq
+
+  # Use Herdr's worktree API so the repository root is reused as the parent
+  # workspace and linked worktrees are opened as children instead of creating
+  # duplicate standalone workspaces on every invocation.
+  source_json="$(herdr worktree list --cwd "$project" --json 2>/dev/null)" || {
+    printf 'herdr-sessionizer: no pude consultar los worktrees de Herdr\n' >&2
+    exit 1
+  }
+  repo_root="$(printf '%s\n' "$source_json" | jq -r '.result.source.repo_root // empty')"
+  [[ -n "$repo_root" ]] || {
+    printf 'herdr-sessionizer: Herdr no devolvió la raíz del repositorio\n' >&2
+    exit 1
+  }
+  repo_root="$(canonical_path "$repo_root")"
+
+  root_workspace_id="$(printf '%s\n' "$source_json" | jq -r '.result.source.source_workspace_id // empty')"
+  if [[ -z "$root_workspace_id" ]]; then
+    repo_label="$(printf '%s\n' "$source_json" | jq -r '.result.source.repo_name // empty')"
+    repo_label="${repo_label%.git}"
+    if [[ -n "$repo_label" ]]; then
+      herdr workspace create --cwd "$repo_root" --label "$repo_label" --no-focus >/dev/null || {
+        printf 'herdr-sessionizer: no pude crear el workspace raíz\n' >&2
+        exit 1
+      }
+    fi
+  fi
+
+  if [[ "$dir" == "$repo_root" ]]; then
+    label_args=()
+  else
+    worktree_label="$(git -C "$dir" branch --show-current 2>/dev/null || true)"
+    [[ -n "$worktree_label" ]] || worktree_label="$(workspace_label "$dir")"
+    label_args=(--label "$worktree_label")
+  fi
+
+  exec herdr worktree open \
+    --cwd "$repo_root" \
+    --path "$dir" \
+    "${label_args[@]}" \
+    --focus \
+    --json
+fi
+
+label="$(workspace_label "$dir")"
 exec herdr workspace create \
   --cwd "$dir" \
   --label "$label" \

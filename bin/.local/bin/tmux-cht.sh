@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-selected=$(cat ~/.tmux-cht-languages | fzf)
+selected=$(cat ~/.tmux-cht-languages | fzf --no-multi)
 if [[ -z $selected ]]; then
 	exit 0
 fi

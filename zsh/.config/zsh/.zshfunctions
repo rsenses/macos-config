@@ -32,7 +32,7 @@ destinations() {
 
 # select destination
 dest() {
-  destinations | sed "s|^$HOME/|~/|" | fzf --prompt="Destino> "
+  destinations | sed "s|^$HOME/|~/|" | fzf --no-multi --prompt="Destino> "
 }
 
 # send downloaded files on destination
@@ -48,6 +48,7 @@ send_downloads() {
       | sed "s|^$HOME/|~/|" \
       | fzf \
         --prompt="Downloads> " \
+        --no-multi \
         --header="ENTER mover | CTRL-D trash | CTRL-O quicklook | CTRL-R rename | ESC salir" \
         --preview '
           p="${1/#\~/'"$HOME"'}"
@@ -110,7 +111,7 @@ ss() {
     ' "$ssh_config" \
       | grep -vE '(^\*|!|[*?])' \
       | sort -u \
-      | fzf --prompt="ssh > " --preview ':' --preview-window hidden
+      | fzf --no-multi --prompt="ssh > " --preview ':' --preview-window hidden
   ) || return
 
   [[ -n "$server" ]] && ssh "$server"
@@ -132,22 +133,22 @@ lastdl() {
 gbr() {
   local branch
   branch=$(
-    git branch --all --sort=-committerdate \
+    command git branch --all --sort=-committerdate \
       | sed 's/^[* ]*//' \
       | sed 's#remotes/origin/##' \
       | sort -u \
-      | fzf --prompt='branch > ' \
+      | fzf --no-multi --prompt='branch > ' \
           --preview 'git log --oneline --decorate --graph -20 {}'
   ) || return
 
-  git switch "$branch"
+  command git switch "$branch"
 }
 
 # git add con fzf
 gaf() {
   local files
-  files=("${(@f)$(git status --short | sed 's/^...//' | fzf -m)}") || return
-  [[ ${#files[@]} -gt 0 ]] && git add -- "${files[@]}"
+  files=("${(@f)$(command git status --short | sed 's/^...//' | fzf -m)}") || return
+  [[ ${#files[@]} -gt 0 ]] && command git add -- "${files[@]}"
 }
 
 # git conflicts con fzf y abre en nvim
@@ -155,8 +156,8 @@ gcf() {
   local file
 
   file=$(
-    git diff --name-only --diff-filter=U \
-      | fzf --prompt='conflict > '
+    command git diff --name-only --diff-filter=U \
+      | fzf --no-multi --prompt='conflict > '
   ) || return
 
   nvim "$file"
@@ -164,10 +165,16 @@ gcf() {
 
 # git resuelve conflictos todos con ours
 gours() {
-  git diff --name-only --diff-filter=U | while read -r f; do
-    git checkout --ours -- "$f"
-  done
-  git add .
+  local -a files
+  files=("${(@f)$(command git diff --name-only --diff-filter=U)}")
+
+  if (( ${#files[@]} == 0 )); then
+    printf 'gours: no hay conflictos sin resolver\n' >&2
+    return 1
+  fi
+
+  command git checkout --ours -- "${files[@]}" || return 1
+  command git add -- "${files[@]}"
 }
 
 # resize images
@@ -223,7 +230,7 @@ _fzf_home_dirs() {
 }
 
 pickdir() {
-  _fzf_home_dirs | fzf --prompt='destino > ' --delimiter="$HOME/" --with-nth=2
+  _fzf_home_dirs | fzf --no-multi --prompt='destino > ' --delimiter="$HOME/" --with-nth=2
 }
 
 mvv() {

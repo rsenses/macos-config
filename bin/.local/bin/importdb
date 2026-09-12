@@ -20,6 +20,10 @@ preview_file() {
   esac
 }
 
+# fzf launches the preview command in a child Bash. Export the helper so both
+# compressed and plain SQL previews use the same implementation.
+export -f preview_file
+
 build_mariadb_args() {
   mariadb_args=(
     --host="$MARIADB_HOST"
@@ -138,6 +142,7 @@ selected_entry="$(
       --border=none \
       --delimiter=$'\t' \
       --with-nth=1 \
+      --no-multi \
       --prompt='sql > ' \
       --header="$SOURCE_DIR" \
       --preview='bash -c '\''preview_file "$1"'\'' _ {2}' \
@@ -165,6 +170,7 @@ database="$(
       --height=100% \
       --layout=reverse \
       --border=none \
+      --no-multi \
       --prompt='db > '
 )" || exit 0
 

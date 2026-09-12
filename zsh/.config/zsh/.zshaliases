@@ -1,5 +1,5 @@
 # Bookmarks
-alias help='tldr --list | fzf --preview "tldr {1}" --preview-window=right,70% | xargs tldr'
+alias help='tldr --list | fzf --no-multi --preview "tldr {1}" --preview-window=right,70% | xargs tldr'
 
 # Colorize grep output (good for log files)
 alias grep='grep --color=auto'
@@ -59,7 +59,7 @@ unalias git 2>/dev/null
 git() {
   case "$1" in
     s|status)
-      echo "[hint] usa: gs  → git status -sb" >&2
+      echo "[hint] usa: gst  → git status -sb" >&2
       ;;
     diff)
       echo "[hint] usa: gd  → git diff" >&2
@@ -100,7 +100,7 @@ git() {
       echo "[hint] usa: gco ... → git checkout ..." >&2
       ;;
     "")
-      echo "[hint] aliases: gs gd ga gaa gc gcm gca gp gl gb gco" >&2
+      echo "[hint] aliases: gst gd ga gaa gc gca gp gl gb gco" >&2
       ;;
   esac
 

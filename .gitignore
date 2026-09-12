@@ -1,28 +1,101 @@
+# Local project memory: plans, reports, prompts/results and work notes.
+/.ai/
+
+# Secrets and machine-local overrides (examples remain versionable).
+.secrets
+.zshvars
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+auth.json
+credentials.json
+.gitconfig.local
+id_rsa
+id_dsa
+id_ecdsa
+id_ed25519
+*.key
+*.p12
+*.pfx
+/intelephense/licence.txt
+
+# Ad-hoc exports at the repository root, not SQL source/migrations elsewhere.
+/*.sql
+/*.sql.gz
+/*.dump
+/*.dump.gz
+
+# Shell, editor and OS state.
 .zcompdump
 .zcompdump.*
 .zsh_history
 .zsh_sessions
 vifminfo.json
-zsh/plugins
-lazy-lock.json
-tmux/.config/tmux/plugins/
-.aider*
-.secrets
-.zshvars
 .DS_Store
-**/.DS_Store
-node_modules
-**/node_modules
-.worktrees
-nvim-pack-lock.json
-auth.json
+*.bak
+*.old
+*.orig
+*.rej
+*~
+*.swp
+*.swo
+__pycache__/
+*.pyc
+
+# Installed packages and runtime artifacts, not dependency lockfiles.
+node_modules/
+.cache/
+*.log
+*.jsonl
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+*.db
+*.db-*
+*.sock
+zsh/plugins/
+tmux/.config/tmux/plugins/
+.worktrees/
+.aider*
+lazy-lock.json
 run-history.jsonl
-pi/**/sessions/*
 mcp-cache.json
+mcp-npx-cache.json
 cache.json
 context.md
 progress.md
 session.json
-herdr-server.log
-herdr-client.log
-mcp-npx-cache.json
+
+# Pi mixes configuration and private runtime state in the same directory.
+# Deny new top-level files by default; allow only reviewed, declarative config.
+/pi/.pi/*
+!/pi/.pi/agent/
+!/pi/.pi/rules/
+/pi/.pi/agent/*
+!/pi/.pi/agent/APPEND_SYSTEM.md
+!/pi/.pi/agent/settings.json
+!/pi/.pi/agent/auto-compact.json
+!/pi/.pi/agent/lsp.json
+!/pi/.pi/agent/extensions/
+!/pi/.pi/agent/skills/
+!/pi/.pi/agent/prompts/
+!/pi/.pi/agent/themes/
+/pi/.agents/*
+!/pi/.agents/skills/
+# Also cover runtime directories created inside otherwise allowed extensions.
+/pi/**/sessions/
+/pi/**/usage-data/
+
+# Herdr: config/templates are source; registry, installations and state are local.
+/herdr/.config/herdr/*
+!/herdr/.config/herdr/config.toml
+!/herdr/.config/herdr/plugins/
+/herdr/.config/herdr/plugins/*
+!/herdr/.config/herdr/plugins/config/
+
+# Worktrunk: never publish per-repository approvals or runtime locks.
+/worktrunk/.config/worktrunk/*
+!/worktrunk/.config/worktrunk/config.toml

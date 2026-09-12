@@ -1,6 +1,6 @@
 # VARS ========================================
 export BAT_THEME=kanagawa
-export ARTISAN_OPEN_ON_MAKE_EDITOR=vim
+export ARTISAN_OPEN_ON_MAKE_EDITOR=nvim
 export LANG=es_ES.UTF-8
 export EDITOR=/opt/homebrew/bin/nvim
 export HOMEBREW_PREFIX=/opt/homebrew
@@ -11,34 +11,5 @@ export LEAN_CTX_PI_MODE=replace
 export PASSWORD_STORE_ENABLE_EXTENSIONS=true
 export PASSWORD_STORE_EXTENSIONS_DIR="$HOME/.password-store/.extensions"
 
-typeset -gU path PATH
-
-if [ -x /opt/homebrew/bin/brew ]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-fi
-
-# Homebrew upgrades can leave FPATH pointing at an old zsh Cellar directory.
-if [[ -d /opt/homebrew/opt/zsh/share/zsh/functions ]]; then
-  typeset -U fpath
-  fpath=(/opt/homebrew/opt/zsh/share/zsh/functions $fpath)
-fi
-
-if command -v mise >/dev/null 2>&1; then
-  eval "$(mise activate zsh)"
-fi
-
-if [[ $(uname) == "Darwin" ]]; then
-    path=(
-        "/opt/homebrew/bin"
-        "/Applications/Visual Studio Code - Insiders.app/Contents/Resources/app/bin"
-        "$HOME/go/bin"
-        $path
-    )
-fi
-
-path=(
-    "$HOME/.cargo/bin"
-    "$HOME/.local/bin"
-    "$HOME/.composer/vendor/bin"
-    $path
-)
+# Make configured mise tools win over later PATH additions.
+export MISE_ACTIVATE_AGGRESSIVE=1

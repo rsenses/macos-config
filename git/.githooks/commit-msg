@@ -2,13 +2,16 @@
 set -euo pipefail
 
 msg_file="$1"
-msg="$(cat "$msg_file")"
+subject="$(sed -n '1p' "$msg_file")"
 
-pattern='^(Merge( .+)?$|(?:wip|feat|fix|docs|style|refactor|test|chore)(\(.+\))?: .+)'
+# Validate the subject only. Bodies may contain examples or prose beginning
+# with `fix:` without turning an invalid subject into a valid commit.
+# The optional bang keeps Conventional Commits' breaking-change marker usable.
+pattern='^(Merge( .+)?|((wip|feat|fix|docs|style|refactor|test|chore)(\([^)]*\))?!?: .+))$'
 
-if ! printf '%s' "$msg" | grep -Eq "$pattern"; then
-  echo "Invalid commit message."
-  echo $msg
-  echo "Example: feat(auth): add session refresh"
+if ! printf '%s\n' "$subject" | grep -Eq "$pattern"; then
+  printf '%s\n' "Invalid commit message." >&2
+  printf 'Subject: %s\n' "$subject" >&2
+  printf '%s\n' "Example: feat(auth): add session refresh" >&2
   exit 1
 fi
