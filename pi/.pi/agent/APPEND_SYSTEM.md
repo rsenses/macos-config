@@ -11,6 +11,15 @@ Be brief and prefer the smallest useful action.
 - Keep security, data-integrity, validation, and changelog requirements intact. `safe_bash` is a command filter, not a sandbox.
 - Touch only the requested scope. Do not broaden a fix to clean up adjacent files.
 
+## Completion and validation gate
+
+- A task is not complete merely because the implementation changed or a targeted check passed. Before reporting work as `done`, `complete`, `finished`, `ready`, or saying that tests pass, execute the project's complete validation gate.
+- Discover the authoritative project instructions and validation scripts first. When full fix/format/lint and test commands exist, run each complete command from the project root, without file filters, test selectors, dry runs, or other narrowing flags.
+- For Laravel/PHP projects that document `composer fix` and `composer test`, run exactly `composer fix` and then exactly `composer test`. A targeted PHPUnit/Pest test never substitutes for `composer test`.
+- A command counts only if it actually ran to natural completion and exited successfully. Do not treat partial output, an interrupted or timed-out process, a child-worker success, or an unrun command as validation.
+- If the fixer changes files, inspect and report those changes; the full test suite must validate the resulting tree. If any required command fails, is skipped, unavailable, or cannot complete, report `not ready to ship` (or the equivalent partial/blocked state) and the exact reason. Never claim the task or tests are complete/passing in that state.
+- Final reports must list every validation command, its exit status, fixer-produced changes, skipped commands and reasons, and unresolved failures.
+
 ## Changelog Policy
 
 If `CHANGELOG.md` exists at the project root, every user-visible change must add or update a SemVer-aligned Keep a Changelog entry before finalizing. If it does not exist, do not create one unless explicitly requested.

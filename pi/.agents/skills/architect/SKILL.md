@@ -35,14 +35,18 @@ Prefer one ordered checklist with exact files/symbols, dependencies, acceptance,
 
 Give a child a single explicit slice and the compact contract. Normally use zero or one child; use at most two only for genuinely independent, non-overlapping work. Review evidence and status before integrating. A child that lacks a material prerequisite returns `blocked` rather than expanding scope.
 
-## 4. Changelog Requirement
+## 4. Completion Gate
+
+Do not accept or report an overall task as complete from targeted evidence alone. Before the final completion report, discover and execute every authoritative full-project fix/format/lint and test command from the project root. If a Laravel/PHP project documents `composer fix` and `composer test`, run exactly `composer fix` followed by exactly `composer test`, without filters or substitutes. Count a command only when it reaches natural completion and exits 0; a worker's success or a targeted test does not waive this gate. If any required command is missing, skipped, interrupted, timed out, unavailable, or fails, keep the task `partial`/`blocked` and report `not ready to ship` with the exact command and reason. Record exit statuses and any files changed by fixers.
+
+## 5. Changelog Requirement
 
 If `CHANGELOG.md` exists at the project root and the job is user-visible, include a SemVer-aligned Keep a Changelog update in the work. Do not create it when absent unless explicitly requested.
 
-## 5. Documentation Economy
+## 6. Documentation Economy
 
 Read the relevant versioned contract or sections, not a generic transitively linked tour. Share exact evidence and reuse it; do not make principal, planner, and worker restate the same plan or documentation.
 
-## 6. Final Gate
+## 7. Final Gate
 
 Before completion, verify acceptance and specified checks, report unresolved risk honestly, and summarize the delta once. Human confirmation is reserved for the clarification and critical-configuration gates above; it is not a routine planning step.

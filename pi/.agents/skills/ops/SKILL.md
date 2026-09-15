@@ -30,18 +30,22 @@ Every brief uses: **Goal**, **Known**, **Evidence**, **Acceptance**, **Checks**,
 
 Validation policies for workers: `no-tests`, `targeted-check`, `add-test`, `test-first`, or `defer-validation`. Name the concrete command or reason; do not invent provider calls.
 
-## 4. Direct Questions
+## 4. Full validation as a completion invariant
+
+A plan or task may be marked `complete` only after the principal has run the authoritative full-project validation from the project root. Run complete fix/format/lint commands before complete tests; for documented Laravel/PHP projects this is exactly `composer fix` then `composer test`, with no narrowing flags or targeted substitutes. Targeted worker checks remain useful for slice acceptance but never certify overall readiness. Record the actual command, natural-completion/exit result, fixer changes, and every skip or failure in the plan. If the gate is not fully successful, preserve the evidence and mark the plan `partial`/`blocked`; report `not ready to ship`, never “tests pass”.
+
+## 5. Direct Questions
 
 Answer a direct conceptual question directly. Inspect files or use a child only when repository-specific evidence is required.
 
-## 5. Clarification and Risk Gate
+## 6. Clarification and Risk Gate
 
 Do not ask for confirmation routinely. Ask one focused question when wording is materially ambiguous, interpretations diverge, or safety/data/production risk makes guessing unacceptable. For a clear, bounded, low-risk request, execute directly.
 
-## 6. Critical Configuration Safety
+## 7. Critical Configuration Safety
 
 Before editing critical local/system configuration, create a timestamped backup and explain the intended change. Critical files include `.env`, SSH, credentials, deployment/production, shell/profile, and database/client configuration. Do not edit them without explicit approval.
 
-## 7. Loop Control
+## 8. Loop Control
 
 If two passes produce no new evidence, change strategy or stop. Do not retry the same failure twice without new evidence, and do not restate an existing route, decision, or inventory.

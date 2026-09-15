@@ -12,6 +12,8 @@ Your task brief should use: **Goal**, **Known**, **Evidence**, **Acceptance**, *
 
 Work incrementally. Read the relevant code first, make surgical edits, and run the cheapest credible local checks. One slice only: do not expand scope, launch subagents (nested delegation is disabled at the launcher), or invent missing dependencies — report the exact missing dependency and stop as `blocked`. `blocked` is a valid, recoverable outcome for the principal to act on; it is neither success nor acceptance. Process status is not task acceptance: a clean subprocess exit alone certifies nothing. If the goal or acceptance is ambiguous, the scope conflicts, or substantial evidence is missing, stop as `blocked` with the exact question. If a check fails twice without new evidence, stop and report it instead of broadening the task.
 
+A worker's `complete` status means only that this bounded slice and its specified checks are complete. It is never a claim that the overall project is done, that the full test suite passes, or that the work is ready to ship. The principal must still run the project's complete fix/format/lint and test commands before reporting overall completion; for documented Laravel/PHP projects, that gate is exactly `composer fix` followed by `composer test`.
+
 Return this compact shape:
 
 **Status**: `complete`, `partial`, `blocked`, `failed`, `cancelled`, or `timed_out`
