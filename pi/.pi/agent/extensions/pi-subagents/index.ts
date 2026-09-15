@@ -123,6 +123,9 @@ interface AgentResult {
   progress: AgentProgress;
   /** Requested model, retained for diagnosing selection/fallback. */
   requestedModel?: string;
+  /** Requested planner profile (schema name and display label), when one was used. */
+  profile?: string;
+  profileLabel?: string;
   thinking?: string;
   totalDurationMs?: number;
   queueDurationMs?: number;
@@ -233,6 +236,30 @@ const CUSTOM_TOOL_EXTENSIONS: Record<string, string> = {
   // PI_SUBAGENT_ALLOWED is set) only registers the allowlisted agents.
   subagent: path.join(EXT_DIR, "index.ts"),
 };
+
+// ── Planner Profiles ──────────────────────────────────────────────────
+
+// One code-level map. A profile pins BOTH the exact provider/model and the
+// thinking level; there is no implicit fallback between models, and an
+// explicit `thinking` override that conflicts with the profile is rejected.
+export interface PlannerProfile {
+  /** Human-facing display label (the schema value is ASCII for stable args). */
+  label: string;
+  model: string;
+  thinking: string;
+}
+
+const PLANNER_PROFILE_AGENT = "planner";
+
+const PLANNER_PROFILES: Record<string, PlannerProfile> = {
+  habitual: { label: "habitual", model: "openai-codex/gpt-5.6-luna", thinking: "high" },
+  diseno: { label: "diseño", model: "openai-codex/gpt-5.6-sol", thinking: "medium" },
+  delicado: { label: "delicado", model: "openai-codex/gpt-6-astra", thinking: "low" },
+};
+
+function plannerProfileNames(): string {
+  return Object.keys(PLANNER_PROFILES).join(", ");
+}
 
 // ── Agent Discovery & Registration ────────────────────────────────────
 
@@ -923,8 +950,9 @@ function renderAgentProgress(
           : theme.fg("error", "✗");
   const stats = `${prog.toolCount} tools · ${formatDuration(prog.durationMs)}`;
   const modelStr = r.model ? theme.fg("dim", ` (${r.model})`) : "";
+  const profileStr = r.profile ? theme.fg("dim", ` [${r.profileLabel || r.profile}]`) : "";
   addLine(
-    `${icon} ${theme.fg("toolTitle", theme.bold(r.agent))}${modelStr} — ${theme.fg("dim", stats)}`,
+    `${icon} ${theme.fg("toolTitle", theme.bold(r.agent))}${modelStr}${profileStr} — ${theme.fg("dim", stats)}`,
   );
 
   // NOTE: the task body used to be rendered here at depth 0 (truncated when
@@ -1049,7 +1077,7 @@ export default function (pi: ExtensionAPI) {
     name: "subagent",
     label: "Subagent",
     description:
-      `Delegate bounded work; no conversation is inherited. Available: ${agents.map(a => `${a.name} (${a.description})`).join("; ")}. Include goal, known evidence, constraints, acceptance, checks and stop condition.`,
+      `Delegate bounded work; no conversation is inherited. Available: ${agents.map(a => `${a.name} (${a.description})`).join("; ")}. Include goal, known evidence, constraints, acceptance, checks and stop condition. The planner accepts an optional profile: habitual (Luna/high), diseno (diseño; Sol/medium), delicado (Astra/low); profiles fail instead of falling back.`,
     promptSnippet: "Run subagents for delegated tasks",
     promptGuidelines: [
       "Parallel tool calls are your primary parallelism mechanism — put multiple independent read/fetch calls in one function_calls block. Don't use subagents to parallelize simple I/O.",
@@ -1061,6 +1089,14 @@ export default function (pi: ExtensionAPI) {
       agent: Type.String({ description: "Name of the agent to invoke" }),
       task: Type.String({ description: "Goal, known evidence, constraints, acceptance, checks, stop condition; do not paste the whole conversation" }),
       thinking: Type.Optional(Type.Union([Type.Literal("low"), Type.Literal("medium"), Type.Literal("high"), Type.Literal("max")], { description: "Override this invocation only; use high for difficult/risky work, not routine lookups" })),
+      profile: Type.Optional(
+        Type.Union(
+          Object.keys(PLANNER_PROFILES).map((name) => Type.Literal(name)),
+          {
+            description: `Planner-only profile that pins BOTH the exact model and thinking level (${Object.entries(PLANNER_PROFILES).map(([n, p]) => `${n}/${p.label}: ${p.model} @ ${p.thinking}`).join("; ")}). Unavailable or conflicting selections fail before spawn; never combined with a different explicit thinking`,
+          },
+        ),
+      ),
       cwd: Type.Optional(
         Type.String({ description: "Working directory for the agent process" }),
       ),
@@ -1084,7 +1120,36 @@ export default function (pi: ExtensionAPI) {
       }
 
       const invocationStart = Date.now();
-      const agent = { ...configuredAgent, thinking: params.thinking ?? configuredAgent.thinking };
+
+      // Profile resolution. A profile is planner-only and pins BOTH the exact
+      // model and the thinking level. Every failure mode below throws before
+      // spawn — there is no implicit model fallback and no silent clamp.
+      const profileName = params.profile;
+      let profile: PlannerProfile | undefined;
+      if (profileName !== undefined) {
+        if (params.agent !== PLANNER_PROFILE_AGENT) {
+          throw new Error(
+            `Profile "${profileName}" is only valid for the "${PLANNER_PROFILE_AGENT}" agent, not "${params.agent}"`,
+          );
+        }
+        profile = PLANNER_PROFILES[profileName];
+        if (!profile) {
+          throw new Error(`Unknown profile: ${profileName}. Available profiles: ${plannerProfileNames()}`);
+        }
+        if (params.thinking !== undefined && params.thinking !== profile.thinking) {
+          throw new Error(
+            `Profile "${profileName}" pins thinking "${profile.thinking}"; conflicting explicit override "${params.thinking}". Omit thinking or request the profile's level`,
+          );
+        }
+      }
+
+      const agent: AgentConfig = { ...configuredAgent };
+      if (profile) {
+        agent.model = profile.model;
+        agent.thinking = profile.thinking;
+      } else if (params.thinking !== undefined) {
+        agent.thinking = params.thinking;
+      }
       const modelSeparator = agent.model.indexOf("/");
       const provider = agent.model.slice(0, modelSeparator);
       const modelId = agent.model.slice(modelSeparator + 1);
@@ -1092,6 +1157,21 @@ export default function (pi: ExtensionAPI) {
       if (!selectedModel) throw new Error(`Configured model unavailable: ${agent.model}; no implicit fallback`);
       const supported = getSupportedThinkingLevels(selectedModel);
       if (!supported.includes(agent.thinking as any)) throw new Error(`Unsupported thinking ${agent.thinking} for ${agent.model}; supported: ${supported.join(", ")}`);
+      // Scoped-model check: when the parent session scopes models (non-empty
+      // ctx.scopedModels), the exact provider/model must be inside that scope;
+      // an empty scope means every registry model is usable. No fallback is
+      // invented when the model is not scoped — the call fails instead.
+      if (profile) {
+        const scoped = ctx.scopedModels ?? [];
+        const inScope = scoped.some(
+          (sm) => sm.model.provider === selectedModel.provider && sm.model.id === selectedModel.id,
+        );
+        if (!inScope) {
+          throw new Error(
+            `Profile "${profileName}" model ${agent.model} is not in this session's scoped models (enabledModels); no fallback. Add it to enabledModels or clear the model scope`,
+          );
+        }
+      }
       const contextWindow = selectedModel.contextWindow;
       let queueDurationMs = 0;
       const liveResult: AgentResult = {
@@ -1101,6 +1181,7 @@ export default function (pi: ExtensionAPI) {
         output: "",
         exitCode: -1,
         requestedModel: agent.model,
+        ...(profile ? { profile: profileName, profileLabel: profile.label } : {}),
         model: agent.model,
         contextWindow,
         usage: emptyUsage(),
@@ -1158,6 +1239,10 @@ export default function (pi: ExtensionAPI) {
 
       result.contextWindow = contextWindow;
       result.thinking = agent.thinking;
+      if (profile) {
+        result.profile = profileName;
+        result.profileLabel = profile.label;
+      }
       result.totalDurationMs = Date.now() - invocationStart;
       result.queueDurationMs = queueDurationMs;
       const aggregate = toPiUsage(result.usage);
@@ -1193,8 +1278,9 @@ export default function (pi: ExtensionAPI) {
               : args.task
             ).replace(/\n/g, " ")
           : "";
+        const profileTag = args.profile ? theme.fg("dim", ` [${args.profile}]`) : "";
         return new Text(
-          `${theme.fg("toolTitle", theme.bold("subagent"))} ${theme.fg("accent", args.agent)} ${theme.fg("dim", taskPreview)}`,
+          `${theme.fg("toolTitle", theme.bold("subagent"))} ${theme.fg("accent", args.agent)}${profileTag} ${theme.fg("dim", taskPreview)}`,
           0,
           0,
         );
@@ -1208,10 +1294,11 @@ export default function (pi: ExtensionAPI) {
           ? (context.lastComponent.clear(), context.lastComponent)
           : new Container();
       const agentLabel = args.agent ? ` ${theme.fg("accent", args.agent)}` : "";
+      const profileLabel = args.profile ? theme.fg("dim", ` [profile: ${args.profile}]`) : "";
       const cwdLabel = args.cwd ? theme.fg("dim", ` (cwd: ${args.cwd})`) : "";
       c.addChild(
         new Text(
-          `${theme.fg("toolTitle", theme.bold("subagent"))}${agentLabel}${cwdLabel}`,
+          `${theme.fg("toolTitle", theme.bold("subagent"))}${agentLabel}${profileLabel}${cwdLabel}`,
           0,
           0,
         ),

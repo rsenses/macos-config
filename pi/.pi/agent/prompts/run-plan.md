@@ -5,13 +5,18 @@ argument-hint: "<prompt>"
 
 Use the `architect` skill, the `dev` skill, and the `ops` skill.
 
-**Goal**: Implement the current plan for: "$ARGUMENTS"
+**Goal**: Execute the current plan for: "$ARGUMENTS", as a coordinated, recoverable execution gated by durable task state in the plan file.
 
 **Rules**:
 
-1. Read the plan before starting and treat it as the canonical source of truth.
-2. Have the architect split the plan into small execution slices and assign them one at a time to workers.
-3. If the plan already contains an inventory or report, reuse it by reference and report only new, changed, or missing items.
-4. Execute one slice at a time. Use the cheapest credible validation for that slice, usually PHPStan or a targeted check. Do not run the full test/fix flow unless explicitly requested.
-5. Use `worker` subagents with explicit validation policies. Workers may use `scout` and `researcher` as needed, but must return ambiguity or repeated failure upward to the architect.
-6. If the same failure repeats twice, or the plan conflicts with the codebase, stop, update the plan, or ask.
+1. Validate the active plan before anything else. Read and validate the canonical active plan via `get_current_plan` (and use `read` for the full body when the bounded view is not enough) before any architect/worker/subagent execution. Treat the plan file as the canonical source of truth. Refuse to execute a missing, ambiguous, stale-worktree, incomplete, or unresolved plan: report an actionable blocker (what is wrong, where, and the exact resolution needed) instead of picking another plan or guessing. Never select a plan by modification time.
+2. Present a concise execution preview before dispatching anything: plan path, TL;DR, Current Step, task count and scope, risks/stop rules, and the plan's validation policy. Then ask for explicit confirmation using the existing question tool/UI, one question at a time. No architect, worker, or any `subagent` call may happen before the user confirms. If the user cancels or declines, leave the plan file unchanged, report the exact next action, and stop; a cancellation is never a failure.
+3. After approval, set the plan status to `in-progress` in the plan file. For each task, mark it `in-progress` in the plan before dispatching it, respecting dependencies: dispatch a task only when its dependency tasks are complete and its recorded acceptance remains valid. Execute sequentially by default; parallelize only disjoint read-only or non-overlapping slices when the plan explicitly permits it, and never parallelize overlapping writes or validation that requires a stable tree.
+4. If the plan already contains an inventory or report, reuse it by reference and report only new, changed, or missing items.
+5. Execute one slice at a time. Pass each worker exactly its task contract: the Goal/Known/Evidence/Acceptance/Checks/Stop slice, exact evidence references, permission/scope boundary, existing unrelated changes to preserve, acceptance criteria, checks, and stop rule. Do not pass the entire plan or raw conversation.
+6. Use `worker` subagents with explicit validation policies. Workers may use `scout` and `researcher` as needed, but must return ambiguity or repeated failure upward to the architect. Require the bounded worker result contract: `Status`, `Changes`, `Evidence`, `Checks`, `Unresolved`. A successful child process is not task acceptance: run the task's local acceptance checks yourself (use the cheapest credible validation for the slice, usually a targeted check such as PHPStan; do not run the full test/fix flow unless explicitly requested) and accept the task only on local evidence.
+7. After every task, update the same plan file: task status, changed paths, check command/outcome, Current Step, and any unresolved or blocked evidence. Never infer or record progress from chat history or file mtime alone.
+8. Distinguish child process status from task acceptance and preserve exact evidence on `partial`, `blocked`, `timeout`, or `cancelled` outcomes: persist what ran, what changed, which checks passed/failed/skipped, and the exact unresolved question. Mark the task `blocked` (retaining its evidence) rather than restarting from scratch, and stop on ambiguity, unplanned scope, or the plan conflicting with the codebase.
+9. Stop when the same failure repeats twice without new evidence.
+10. On resume, reread the plan's completed/blocked task records and validation history from the file and skip only tasks whose recorded acceptance remains valid; re-verify anything stale or ambiguous before dispatching. Never restart accepted work.
+11. Finish by recording final validation and status `complete` (or `partial`/`blocked` with the exact blocker) in the plan file, updating Current Step to the next resumable action, and reporting only a concise delta to the user (status, changed paths, checks, unresolved items). No commits, no remote changes, and no automatic plan-reviewer calls: plan review remains manual and user-initiated.

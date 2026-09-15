@@ -2,7 +2,9 @@
 // PI_SDK_ROOT=/path/to/pi-coding-agent node --test integration.test.mjs
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { mkdir, mkdtemp, writeFile, rm, readFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, writeFile, rm, readFile, realpath } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
+import { execFile } from 'node:child_process';
 import { tmpdir, homedir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -29,10 +31,27 @@ test('actual extension loading, allowlists, protocol, usage and failure hook', {
     assert.ok(ext);
     const registered = ext.tools.get('subagent');
     const tool = registered.definition ?? registered;
-    const model = {provider:'openai-codex',id:'gpt-5.6-luna',reasoning:true,contextWindow:272000,thinkingLevelMap:{low:'low',medium:'medium',high:'high',max:'max'}};
-    const ctx = {cwd:dir,modelRegistry:{find:(p,id)=>p===model.provider&&id===model.id?model:undefined}};
+    // Fake registry covering every configured agent/profile model. All are reasoning
+    // models supporting off/minimal/low/medium/high; only Luna maps `max`, so any
+    // other level (e.g. xhigh) exercises the unsupported-thinking fail path.
+    const thinkMap = {off:'off',minimal:'minimal',low:'low',medium:'medium',high:'high'};
+    const fakeModel = (providerModel, extraMap = {}) => {
+      const [provider, id] = providerModel.split('/');
+      return {provider, id, reasoning:true, contextWindow:272000, thinkingLevelMap:{...thinkMap, ...extraMap}};
+    };
+    const MODELS = {
+      deepseek: fakeModel('opencode-go/deepseek-v4.1-flash'),      // scout frontmatter
+      glm: fakeModel('opencode-go/glm-5.3-flash'),                 // worker frontmatter
+      luna: fakeModel('openai-codex/gpt-5.6-luna', {max:'max'}),   // researcher/planner + habitual profile
+      sol: fakeModel('openai-codex/gpt-5.6-sol'),                  // diseno profile
+      astra: fakeModel('openai-codex/gpt-6-astra'),                // plan-reviewer + delicado profile
+    };
+    const byModel = new Map(Object.values(MODELS).map(m => [`${m.provider}/${m.id}`, m]));
+    const scopedModels = Object.values(MODELS).map(m => ({model:{provider:m.provider, id:m.id}}));
+    const ctx = {cwd:dir, scopedModels, modelRegistry:{find:(p,id)=>byModel.get(`${p}/${id}`)}};
     const usage = {input:10,output:2,cacheRead:5,cacheWrite:0,totalTokens:17,cost:{input:.01,output:.02,cacheRead:0,cacheWrite:0,total:.03}};
-    const event = (reason,text,extra={})=>({type:'message_end',message:{role:'assistant',provider:model.provider,model:model.id,stopReason:reason,content:[{type:'text',text}],usage,...extra}});
+    const scoutModel = MODELS.deepseek;
+    const event = (reason,text,extra={})=>({type:'message_end',message:{role:'assistant',provider:scoutModel.provider,model:scoutModel.id,stopReason:reason,content:[{type:'text',text}],usage,...extra}});
     await writeFile(process.env.PI_TEST_FIXTURE,JSON.stringify(event('stop','**Status**: complete\nVerified.'))+'\n');
     const success = await tool.execute('s',{agent:'scout',task:'Locate fixture',thinking:'low'},undefined,undefined,ctx);
     assert.equal(success.details.status,'complete');
@@ -40,7 +59,8 @@ test('actual extension loading, allowlists, protocol, usage and failure hook', {
     assert.equal(success.usage.cost.total,.03);
     assert.equal(success.details.results[0].thinking,'low');
     const argv = JSON.parse(await readFile(process.env.PI_TEST_FIXTURE+'.args','utf8'));
-    assert.equal(argv[argv.indexOf('--model')+1],'openai-codex/gpt-5.6-luna');
+    // Scout frontmatter pins opencode-go/deepseek-v4.1-flash; no fallback to Luna.
+    assert.equal(argv[argv.indexOf('--model')+1],'opencode-go/deepseek-v4.1-flash');
     assert.equal(argv[argv.indexOf('--tools')+1],'read,grep,find,ls');
     assert.ok(!argv.includes('--no-context-files'));
     assert.equal(argv[argv.indexOf('--system-prompt')+1], join(here, 'SYSTEM.md'));
@@ -75,6 +95,48 @@ test('actual extension loading, allowlists, protocol, usage and failure hook', {
     globalThis.__pi_subagents.registerAgent({name:'unsupported-tool',description:'fixture',tools:['imaginary'],model:'openai-codex/gpt-5.6-luna',thinking:'low',systemPrompt:'test',filePath:''});
     await assert.rejects(tool.execute('u',{agent:'unsupported-tool',task:'Invalid'},undefined,undefined,ctx),/Unavailable tool imaginary/);
     globalThis.__pi_subagents.unregisterAgent('unsupported-tool');
+    // ── Planner profiles: exact model/thinking per named profile, no fallback. ──
+    await writeFile(process.env.PI_TEST_FIXTURE, JSON.stringify(event('stop','**Status**: complete\nProfile fixture.'))+'\n');
+    const profileCases = [
+      ['habitual','habitual','openai-codex/gpt-5.6-luna','high'],
+      ['diseno','diseño','openai-codex/gpt-5.6-sol','medium'],
+      ['delicado','delicado','openai-codex/gpt-6-astra','low'],
+    ];
+    for (const [name, label, expectedModel, expectedThinking] of profileCases) {
+      const run = await tool.execute('pf',{agent:'planner',task:'Profile fixture',profile:name},undefined,undefined,ctx);
+      assert.equal(run.details.status,'complete',name);
+      const child = run.details.results[0];
+      assert.equal(child.profile,name);
+      assert.equal(child.profileLabel,label);
+      assert.equal(child.requestedModel,expectedModel);
+      assert.equal(child.thinking,expectedThinking);
+      const profileArgs = JSON.parse(await readFile(process.env.PI_TEST_FIXTURE+'.args','utf8'));
+      assert.equal(profileArgs[profileArgs.indexOf('--model')+1],expectedModel);
+      assert.equal(profileArgs[profileArgs.indexOf('--thinking')+1],expectedThinking);
+    }
+    // A same-level explicit thinking override alongside a profile is accepted.
+    const sameLevel = await tool.execute('pf',{agent:'planner',task:'Profile fixture',profile:'diseno',thinking:'medium'},undefined,undefined,ctx);
+    assert.equal(sameLevel.details.status,'complete');
+    assert.equal(sameLevel.details.results[0].profile,'diseno');
+    // Fail-fast paths below must all reject before the fake child spawns: the
+    // recorded args file is removed first and must stay absent after each reject.
+    const profileArgsFile = process.env.PI_TEST_FIXTURE+'.args';
+    await rm(profileArgsFile,{force:true});
+    const noRegistry = {...ctx, modelRegistry:{find:()=>undefined}};
+    const narrowScope = {...ctx, scopedModels:[{model:{provider:'openai-codex', id:'gpt-5.6-luna'}}]};
+    const failFast = [
+      [{agent:'scout',task:'x',profile:'habitual'}, /only valid for the "planner" agent/],
+      [{agent:'planner',task:'x',profile:'nope'}, /Unknown profile/],
+      [{agent:'planner',task:'x',profile:'habitual',thinking:'medium'}, /conflicting explicit override/],
+      [{agent:'planner',task:'x',profile:'delicado'}, /Configured model unavailable: openai-codex\/gpt-6-astra/],
+      [{agent:'planner',task:'x',profile:'delicado'}, /not in this session's scoped models/],
+      [{agent:'planner',task:'x',thinking:'xhigh'}, /Unsupported thinking xhigh/],
+    ];
+    for (const [index, [params, pattern]] of failFast.entries()) {
+      const failCtx = index === 3 ? noRegistry : index === 4 ? narrowScope : ctx;
+      await assert.rejects(tool.execute('ff'+index,{...params},undefined,undefined,failCtx), pattern);
+      assert.equal(existsSync(profileArgsFile), false, `spawned despite failure ${index}`);
+    }
     // All researcher/worker custom extensions resolve, without calling them.
     const custom = await load([join(here,'../web-fetch/index.ts'),join(here,'../ast-grep.ts'),join(here,'tools/safe-bash.ts'),join(homedir(),'.pi/agent/npm/node_modules/pi-gpt-search/src/index.ts')]);
     const names = new Set(custom.flatMap(e=>[...e.tools.keys()]));
@@ -105,14 +167,197 @@ test('actual extension loading, allowlists, protocol, usage and failure hook', {
       assert.match(html.details.title,/Fixture article/);
     } finally { globalThis.fetch=originalFetch;for(const d of artifactDirs)await rm(d,{recursive:true,force:true}); }
     const memory = (await load([join(here,'../memory.ts')])).find(e=>e.tools.has('create_session_plan'));
+    const toolOf=(name)=>{const r=memory.tools.get(name);return r.definition??r;};
     const planRegistration=memory.tools.get('create_session_plan');const planTool=planRegistration.definition??planRegistration;
+    const getPlanTool=toolOf('get_current_plan');
+    const sumTool=toolOf('summarize_worktree');
     await assert.rejects(planTool.execute('x',{slug:'../../escape'},undefined,undefined,ctx),/slug/);
+
+    // ── Provider-free memory coverage: canonical plan, pointer-first resolution, ──
+    // ── idempotency, fail-closed blockers, bounded snapshot/injection, and UI.   ──
+    // Limitation: the loader's runtime pi.appendEntry is a throwing stub outside a
+    // live session, so pointer WRITES cannot be exercised here; pointer READ
+    // resolution is driven through a fake sessionManager fed to the real tools.
+    const POINTER_TYPE = 'memory.active-plan'; // memory.ts PLAN_POINTER_TYPE contract
+    const fullSessionId = '01a0a3bf-2233-4455-8a9b-ccddeeff0001';
+    const worktree = (await realpath(dir)).replace(/[\\/]+$/,'');
+    const pointerEntry = (planPath, over = {}) => ({
+      type:'custom', customType:POINTER_TYPE,
+      data:{v:1, planPath, sessionId:fullSessionId, worktree, slug:'pointer-plan', updatedAt:'2026-09-15T00:00:00.000Z', ...over},
+    });
+    const memCtx = {cwd:dir, sessionManager:{getSessionId:()=>fullSessionId, getEntries:()=>[]}};
+    const ctxWithPointers = (entries) => ({...memCtx, sessionManager:{getSessionId:()=>fullSessionId, getEntries:()=>entries.map(([p, over]) => pointerEntry(p, over))}});
+
+    // Local git identity so worktree resolution and summarize_worktree agree.
+    await new Promise((res,rej)=>execFile('git',['init','-q'],{cwd:dir},e=>e?rej(e):res()));
+
+    // Canonical template sections and identity metadata.
+    const created = await planTool.execute('m',{slug:'pointer-plan'},undefined,undefined,memCtx);
+    assert.equal(created.details.created,true);
+    const pointerRel = created.details.path;
+    assert.match(pointerRel,/^\.ai\/plan\/.+\.md$/);
+    const planBody = await readFile(join(dir,pointerRel),'utf8');
+    for (const section of ['# Plan: pointer-plan','- Status: pending','- Session ID: '+fullSessionId,'- Worktree: '+worktree,'## TL;DR','## Current Step','## Goal','## Spec / Contract','## Tasks','## Risks / Stop Rules','## Validation Policy','## Validation','## Unresolved']) {
+      assert.ok(planBody.includes(section),section);
+    }
+
+    // Idempotent creation: the same session adopts the existing plan file.
+    const again = await planTool.execute('m',{slug:'pointer-plan'},undefined,undefined,memCtx);
+    assert.equal(again.details.created,false);
+    assert.equal(again.details.path,pointerRel);
+    assert.equal(typeof again.details.pointerPersisted,'boolean');
+
+    // Plan-body identity must agree with the active pointer; do not trust a
+    // valid path when its persisted metadata belongs to another session/worktree.
+    await writeFile(join(dir,pointerRel),planBody.replace(`- Session ID: ${fullSessionId}`, '- Session ID: another-session-9999'));
+    await assert.rejects(getPlanTool.execute('m',{},undefined,undefined,ctxWithPointers([[pointerRel]])),/Plan metadata belongs to a different session/);
+    await writeFile(join(dir,pointerRel),planBody.replace(`- Worktree: ${worktree}`, '- Worktree: /elsewhere/worktree'));
+    await assert.rejects(getPlanTool.execute('m',{},undefined,undefined,ctxWithPointers([[pointerRel]])),/Plan metadata belongs to a different worktree/);
+    await writeFile(join(dir,pointerRel),planBody);
+
+    // Populate a canonical plan; later assertions check the bounded snapshot.
+    await writeFile(join(dir,pointerRel),`# Plan: pointer-plan
+- Status: in-progress
+- Created: 2026-09-15
+- Session ID: ${fullSessionId}
+- Worktree: ${worktree}
+
+## TL;DR
+Finish the provider-free regression matrix.
+
+## Current Step
+T08 regression coverage in progress.
+
+## Goal
+Cover pointer resolution without touching defaults. HIDDEN_FULL_PLAN_BODY_MARKER must never be injected whole.
+
+## Spec / Contract
+Known, Evidence, Acceptance, Checks and Stop live in the file.
+
+## Tasks
+- [x] T01 done slice
+- [ ] T02 active regression slice
+- [ ] T03 pending slice
+
+## Risks / Stop Rules
+Stop on ambiguity or repeated failure.
+
+## Validation Policy
+Local-only checks; no provider calls.
+
+## Validation
+- 2026-09-15 targeted tests pass.
+
+## Unresolved
+- Unresolved sentinel: confirm scoped-model behavior.
+`);
+
+    // Legacy current-session resolution (no pointer entries yet).
+    const got = await getPlanTool.execute('m',{},undefined,undefined,memCtx);
+    assert.equal(got.details.source,'current-session');
+    assert.equal(got.details.planStatus,'in-progress');
+    assert.deepEqual(got.details.planTasks,{total:3,open:2,done:1});
+    assert.match(got.details.planCurrentStep,/T08/);
+    assert.match(got.details.planActiveTask,/T02/);
+    assert.match(got.details.planWarning,/Unresolved sentinel/);
+
+    // Pointer-first resolution beats a newer plan file; never resolved by mtime.
+    const newerRel = '.ai/plan/2026-09-15-decoy0000-newest-by-mtime.md';
+    await writeFile(join(dir,newerRel),'# Plan: decoy\n\nDECOY_NEWEST_BY_MTIME\n');
+    const ptrCtx = ctxWithPointers([[pointerRel]]);
+    const viaPointer = await getPlanTool.execute('m',{},undefined,undefined,ptrCtx);
+    assert.equal(viaPointer.details.source,'active-pointer');
+    assert.match(viaPointer.content[0].text,/pointer-plan/);
+    assert.doesNotMatch(viaPointer.content[0].text,/DECOY_NEWEST_BY_MTIME/);
+
+    // Fail-closed blockers: worktree/session mismatch, ambiguity, traversal, missing file.
+    await assert.rejects(getPlanTool.execute('b',{},undefined,undefined,ctxWithPointers([[pointerRel,{worktree:'/elsewhere/worktree'}]])),/different worktree/);
+    await assert.rejects(getPlanTool.execute('b',{},undefined,undefined,ctxWithPointers([[pointerRel,{sessionId:'other-session-9999'}]])),/different session/);
+    await assert.rejects(getPlanTool.execute('b',{},undefined,undefined,ctxWithPointers([[pointerRel],[newerRel]])),/Ambiguous active plan pointers/);
+    await assert.rejects(getPlanTool.execute('b',{},undefined,undefined,ctxWithPointers([['../../escape.md']])),/escapes \.ai\/plan\//);
+    await assert.rejects(getPlanTool.execute('b',{},undefined,undefined,ctxWithPointers([['.ai/plan/2026-09-15-vanished.md']])),/references a missing file/);
+
+    // create_session_plan rebinds an existing plan recorded for another worktree.
+    const rebound = await planTool.execute('m',{slug:'pointer-plan'},undefined,undefined,ctxWithPointers([[pointerRel,{worktree:'/elsewhere/worktree'}]]));
+    assert.equal(rebound.details.created,false);
+    assert.equal(rebound.details.rebound,true);
+    assert.equal(rebound.details.path,pointerRel);
+    assert.match(rebound.content[0].text,/rebound to worktree/);
+
+    // summarize_worktree reports bounded plan state next to Git information.
+    const sum = await sumTool.execute('m',{},undefined,undefined,ptrCtx);
+    assert.match(sum.content[0].text,/Branch: /);
+    assert.match(sum.content[0].text,/Current plan: .*pointer-plan\.md \(active-pointer\)/);
+    assert.match(sum.content[0].text,/Plan status: in-progress/);
+    assert.match(sum.content[0].text,/Plan tasks: 2 open \/ 1 done \(3 total\)/);
+    assert.match(sum.content[0].text,/Active task: .*T02 active regression slice/);
+    assert.equal(sum.details.planSource,'active-pointer');
+    assert.deepEqual(sum.details.planTasks,{total:3,open:2,done:1});
+
+    // TUI mode refreshes the existing status/widget surfaces; other modes do not.
+    const uiCalls = [];
+    const ui = {setStatus:(key,value)=>uiCalls.push(['status',key,value]), setWidget:(key,lines)=>uiCalls.push(['widget',key,lines])};
+    await getPlanTool.execute('u',{},undefined,undefined,{...ptrCtx,mode:'tui',ui});
+    const lastStatus = uiCalls.filter(c=>c[0]==='status').pop();
+    const lastWidget = uiCalls.filter(c=>c[0]==='widget').pop();
+    assert.match(String(lastStatus?.[2]),/Plan in-progress · 2 open\/1 done/);
+    const widgetText = (lastWidget?.[2]||[]).join('\n');
+    assert.match(widgetText,/Plan: .*pointer-plan\.md \(in-progress\)/);
+    assert.match(widgetText,/TL;DR: Finish the provider-free regression matrix/);
+    assert.match(widgetText,/Step: T08 regression coverage in progress/);
+    assert.match(widgetText,/Tasks: 2 open \/ 1 done \(3 total\)/);
+    assert.match(widgetText,/Warning: .*Unresolved sentinel/);
+    const offCalls = [];
+    const offUi = {setStatus:()=>offCalls.push(1), setWidget:()=>offCalls.push(1)};
+    await getPlanTool.execute('u',{},undefined,undefined,{...ptrCtx,mode:'json',ui:offUi});
+    assert.equal(offCalls.length,0,'non-TUI mode must not touch the status/widget UI');
+
+    // Bounded injection: path/status/counts/step/active task/warning, never the full body.
+    const planInjection = await memory.handlers.get('before_agent_start')[0]({systemPrompt:'base'},ptrCtx);
+    assert.match(planInjection.systemPrompt,/pointer-plan/);
+    assert.match(planInjection.systemPrompt,/in-progress/);
+    assert.match(planInjection.systemPrompt,/2 open \/ 1 done \(3 total\)/);
+    assert.match(planInjection.systemPrompt,/Finish the provider-free regression matrix/);
+    assert.match(planInjection.systemPrompt,/T08 regression coverage in progress/);
+    assert.match(planInjection.systemPrompt,/T02 active regression slice/);
+    assert.match(planInjection.systemPrompt,/Unresolved sentinel/);
+    assert.doesNotMatch(planInjection.systemPrompt,/HIDDEN_FULL_PLAN_BODY_MARKER|## Spec \/ Contract|## Validation Policy/);
+    assert.ok(planInjection.systemPrompt.length<4000);
+
+    // session_before_switch clears stale status/widget text in TUI mode only.
+    uiCalls.length = 0;
+    await memory.handlers.get('session_before_switch')[0]({}, {...ptrCtx,mode:'tui',ui});
+    assert.equal(uiCalls.filter(c=>c[0]==='status').pop()?.[2],undefined);
+    assert.equal(uiCalls.filter(c=>c[0]==='widget').pop()?.[2],undefined);
+    const offClearCalls = [];
+    const offClearUi = {setStatus:()=>offClearCalls.push(1), setWidget:()=>offClearCalls.push(1)};
+    await memory.handlers.get('session_before_switch')[0]({}, {...ptrCtx,mode:'json',ui:offClearUi});
+    assert.equal(offClearCalls.length,0);
+
     await planTool.execute('x',{slug:'test-plan'},undefined,undefined,ctx);
     await writeFile(join(dir,'.ai/TASKS.md'),'# Tasks\n## Inbox\n- [ ] inbox sentinel\n## In Progress\n- [ ] active sentinel\n## Done\n'+('- [x] done sentinel\n'.repeat(1000)));
     const injection=await memory.handlers.get('before_agent_start')[0]({systemPrompt:'base'},ctx);
     assert.match(injection.systemPrompt,/active sentinel/);
     assert.doesNotMatch(injection.systemPrompt,/done sentinel|inbox sentinel/);
     assert.ok(injection.systemPrompt.length<4000);
+
+    // ── Prompt-contract assertions: explicit confirmation gates and resume language. ──
+    const planPrompt = await readFile(join(here,'..','..','prompts','plan.md'),'utf8');
+    assert.match(planPrompt,/^description: .+/m);
+    assert.match(planPrompt,/ask for explicit approval using the existing question tool\/UI/);
+    assert.match(planPrompt,/No planner `subagent` call may happen before an explicit approval/);
+    assert.match(planPrompt,/Treat a decline as an end to the planner path/);
+    assert.match(planPrompt,/Persistence and read-back are mandatory before the final response/);
+    assert.match(planPrompt,/re-read the entire file from disk/);
+    const runPrompt = await readFile(join(here,'..','..','prompts','run-plan.md'),'utf8');
+    assert.match(runPrompt,/^description: .+/m);
+    assert.match(runPrompt,/ask for explicit confirmation using the existing question tool\/UI/);
+    assert.match(runPrompt,/No architect, worker, or any `subagent` call may happen before the user confirms/);
+    assert.match(runPrompt,/mark it `in-progress` in the plan before dispatching/);
+    assert.match(runPrompt,/Never infer or record progress from chat history or file mtime alone/);
+    assert.match(runPrompt,/On resume, reread the plan's completed\/blocked task records/);
+    assert.match(runPrompt,/Never restart accepted work/);
+    assert.match(runPrompt,/Never select a plan by modification time/);
   } finally {
     process.env.PATH=oldPath;
     if(oldFixture===undefined)delete process.env.PI_TEST_FIXTURE;else process.env.PI_TEST_FIXTURE=oldFixture;

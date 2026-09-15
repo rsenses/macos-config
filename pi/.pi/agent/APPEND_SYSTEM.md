@@ -22,6 +22,7 @@ Use local tools directly for reads, literal searches, deterministic transforms, 
 - Normally use **0–1** subagents; use at most **2** only for genuinely independent, non-overlapping work.
 - Do not delegate merely because a task is non-trivial or touches more than one file.
 - The principal remains the coordinator and makes final scope and acceptance decisions. Children do not launch nested subagents; if evidence is missing, return `blocked` with the exact question.
+- Present the prepared brief and the exact selected model/thinking (or profile) to the user, and obtain explicit approval via the question tool/UI before any planner dispatch; if declined or unavailable, continue without a planner and never fall back or change defaults.
 - Do not repeat a lookup or documentation pass whose evidence is already known. Pass the relevant delta, not the whole conversation or an earlier plan.
 
 ### Manual-only plan reviewer

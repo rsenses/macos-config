@@ -4,13 +4,34 @@ Five bounded roles; the principal coordinates and verifies acceptance. `plan-rev
 
 | Agent | Model / thinking | Tools |
 |---|---|---|
-| scout | `openai-codex/gpt-5.6-luna` / **low** | read, grep, find, ls |
+| scout | `opencode-go/deepseek-v4.1-flash` / **high** | read, grep, find, ls |
 | researcher | `openai-codex/gpt-5.6-luna` / **medium** | codex-research, web_fetch |
-| planner | `openai-codex/gpt-5.6-luna` / **high** | read, grep, find, ls |
-| worker | `openai-codex/gpt-5.6-luna` / **medium** | read, write, edit, grep, find, ls, safe_bash, ast_grep, web_fetch |
+| planner (default) | `openai-codex/gpt-5.6-luna` / **high** | read, grep, find, ls — optional `profile` (see below) |
+| worker | `opencode-go/glm-5.3-flash` / **high** | read, write, edit, grep, find, ls, safe_bash, ast_grep, web_fetch |
 | plan-reviewer | `openai-codex/gpt-6-astra` / **low** | read, grep, find, ls |
 
+### Planner profiles
+
+The `subagent` tool accepts an optional `profile` argument for the planner only. A profile pins **both** the exact model and the thinking level; there is no fallback between models and no silent clamping.
+
+| Profile (argument) | Display label | Model | Thinking |
+|---|---|---|---|
+| `habitual` | habitual | `openai-codex/gpt-5.6-luna` | high |
+| `diseno` | diseño | `openai-codex/gpt-5.6-sol` | medium |
+| `delicado` | delicado | `openai-codex/gpt-6-astra` | low |
+
+Profile rules:
+
+- Profiles are planner-only; passing one to any other agent fails before spawn.
+- Unknown profile names fail with the available list.
+- A profile combined with an explicit `thinking` that differs from the profile's level fails; pass the profile's own level if you must be explicit.
+- The exact model must exist in the model registry and, when the session has non-empty scoped models (`enabledModels`), must be inside that scope; an empty scope accepts any registry model. An out-of-scope or unsupported selection fails with a clear error — never a fallback.
+- The selected profile name/label and the exact effective model/thinking are recorded in the result details and UI so confirmation and recovery show what was requested and what launched.
+- `openai-codex/gpt-5.6-sol` is explicitly allowlisted in `pi/.pi/agent/settings.json` `enabledModels` solely to make the `diseno` profile selectable; principal defaults (`defaultProvider`/`defaultModel`/`defaultThinkingLevel`) are unchanged.
+
 **Principal stays Luna/max.** Normally use no child or one child; at most two genuinely independent tasks. File count alone is not a reason to delegate. Planner is optional. Children cannot delegate; missing substantial evidence is returned to the principal as a blocker.
+
+**Role contracts.** Planner is read-only: no edits, provider calls, or nested delegation; it reuses the supplied Known/Evidence and returns one executable checklist (exact files/symbols, dependencies, acceptance, checks) with explicit unresolved questions or `blocked` instead of guesses. Worker executes one bounded implementation slice: it preserves unrelated changes, security/data-integrity invariants, user decisions and changelog policy, never delegates or invents missing dependencies, and returns exactly `Status`, `Changes`, `Evidence`, `Checks`, `Unresolved`. The `execution=` prefix below describes the process/protocol; it never certifies task acceptance — the principal verifies acceptance locally, and `blocked` is a recoverable outcome, not success.
 
 Scout/planner deliberately lack shell, edit and mutating AST tools. Worker has local discovery, execution, structural editing and documentation retrieval. Researcher has real search, not merely URL extraction. LSP is not injected into every child: use the principal's configured server when semantic evidence is needed, and pass that evidence in the brief.
 
@@ -24,7 +45,7 @@ Scout/planner deliberately lack shell, edit and mutating AST tools. Worker has l
 }
 ```
 
-`agent` and `task` are required. `cwd` and `thinking` are optional. Invocation overrides accept `low`, `medium`, `high`, `max`; unsupported model/effort combinations fail before spawn instead of silently clamping. No automatic provider fallback or paid subscription activation occurs.
+`agent` and `task` are required. `cwd` and `thinking` are optional; `profile` is optional and planner-only (see above). Invocation overrides accept `low`, `medium`, `high`, `max`; unsupported model/effort combinations fail before spawn instead of silently clamping. No automatic provider fallback or paid subscription activation occurs.
 
 Use low for lookup, medium for contained implementation/synthesis, high for difficult or risky reasoning. Max is available explicitly, not the child default. A small local smoke comparison is recorded in `.ai/audits/2026-09-06-pi-harness/IMPLEMENTATION.md`; it is not an autonomous-coding benchmark. Flash remains a candidate after Go access is restored, not a configured dependency that currently fails.
 

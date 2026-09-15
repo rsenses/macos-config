@@ -1,5 +1,5 @@
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { mkdir, readFile, readdir, stat, writeFile } from "node:fs/promises";
+import { mkdir, readFile, readdir, realpath, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { spawn } from "node:child_process";
 import path from "node:path";
@@ -18,25 +18,30 @@ Pending project work that should survive across sessions.
 ## Done
 `;
 
-const PLAN_TEMPLATE = (slug: string, sessionId: string) => `# Plan: ${slug}
-- Status: in-progress
-- Created: ${new Date().toISOString().split("T")[0]}
+const PLAN_TEMPLATE = (slug: string, sessionId: string, worktree: string) => `# Plan: ${slug}
+- Status: pending
+- Created: ${localDate()}
 - Session ID: ${sessionId}
+- Worktree: ${worktree}
 
-## Goal
+## TL;DR
 
 ## Current Step
+
+## Goal
 
 ## Spec / Contract
 
 ## Tasks
-- [ ] Task 1: ...
+- [ ] T1: ...
 
-## Stop Rules
+## Risks / Stop Rules
 
 ## Validation Policy
 
 ## Validation
+
+## Unresolved
 `;
 
 function projectPaths(cwd: string) {
@@ -121,21 +126,6 @@ async function runCommand(cwd: string, command: string, args: string[]): Promise
 	});
 }
 
-async function latestPlanPath(cwd: string): Promise<string | undefined> {
-	const paths = projectPaths(cwd);
-	try {
-		const entries = (await readdir(paths.planDir)).filter((file) => file.endsWith(".md"));
-		const files = await Promise.all(entries.map(async (file) => ({
-			file,
-			mtimeMs: (await stat(path.join(paths.planDir, file))).mtimeMs,
-		})));
-		files.sort((a, b) => b.mtimeMs - a.mtimeMs || a.file.localeCompare(b.file));
-		return files[0] ? `.ai/plan/${files[0].file}` : undefined;
-	} catch {
-		return undefined;
-	}
-}
-
 /** Pure task-ledger helpers kept separate so extraction can be regression-tested. */
 export function countOpenTasks(tasks: string): number {
 	return tasks.split("\n").filter((line) => /^- \[ \] /.test(line.trim())).length;
@@ -151,25 +141,420 @@ export function activeTasksPreview(tasks: string, maxLines = 8, maxChars = 900):
 	return active || "_No active In Progress task recorded._";
 }
 
-function shortSessionId(ctx: any): string {
-	const id = ctx.sessionManager?.getSessionId?.() || ctx.sessionId;
-	if (id) return id.slice(0, 8);
-	return "session";
+// --- Plan identity and pointer resolution (pure helpers; no filesystem access) ---
+
+/** Custom session entry type for the versioned active-plan pointer record. */
+export const PLAN_POINTER_TYPE = "memory.active-plan";
+
+export interface PlanPointer {
+	v: number;
+	planPath: string;
+	sessionId: string;
+	worktree: string;
+	slug: string;
+	updatedAt: string;
 }
 
-async function sessionPlanPath(cwd: string, sessionId: string): Promise<{ path: string; exists: boolean }> {
-	const paths = projectPaths(cwd);
-	const prefix = `${localDate()}-${sessionId}-`;
+/** Normalize a worktree identity: canonical Git root or real path, no trailing separators. */
+export function normalizeWorktreePath(input: string): string {
+	if (typeof input !== "string") return "";
+	return input.replace(/[\\/]+$/, "");
+}
 
+/** Full session ID when persisted contexts provide one; stable fallback for non-persisted test contexts. */
+function sessionIdOf(ctx: any): string {
+	return ctx.sessionManager?.getSessionId?.() || ctx.sessionId || "session";
+}
+
+/** Legacy plans used the first 8 characters of the session ID in filenames. */
+function legacySessionId(sessionId: string): string {
+	return sessionId.length > 8 ? sessionId.slice(0, 8) : sessionId;
+}
+
+/** True when planPath is a relative path contained under <cwd>/.ai/plan/. */
+export function isPlanPathContained(planPath: string, cwd: string): boolean {
+	if (typeof planPath !== "string" || !planPath || path.isAbsolute(planPath)) return false;
+	const planDir = path.resolve(cwd, ".ai", "plan");
+	const resolved = path.resolve(cwd, planPath);
+	return resolved === planDir || resolved.startsWith(planDir + path.sep);
+}
+
+/** Parse and shape-validate a raw pointer record; returns undefined for foreign or malformed data. */
+export function parsePlanPointer(data: unknown): PlanPointer | undefined {
+	if (!data || typeof data !== "object") return undefined;
+	const record = data as Record<string, unknown>;
+	if (typeof record.planPath !== "string" || !record.planPath) return undefined;
+	if (typeof record.sessionId !== "string" || !record.sessionId) return undefined;
+	if (typeof record.worktree !== "string" || !record.worktree) return undefined;
+	return {
+		v: typeof record.v === "number" ? record.v : 1,
+		planPath: record.planPath,
+		sessionId: record.sessionId,
+		worktree: normalizeWorktreePath(record.worktree),
+		slug: typeof record.slug === "string" ? record.slug : "",
+		updatedAt: typeof record.updatedAt === "string" ? record.updatedAt : "",
+	};
+}
+
+/** Custom (type: "custom") entries from the active session branch, latest-first capable. */
+export function activeBranchEntries(sessionManager: any): unknown[] {
 	try {
-		const existing = (await readdir(paths.planDir))
-			.filter((file) => file.startsWith(prefix) && file.endsWith(".md"))
-			.sort();
-
-		if (existing[0]) return { path: `.ai/plan/${existing[0]}`, exists: true };
+		if (typeof sessionManager?.buildContextEntries === "function") return sessionManager.buildContextEntries();
+		if (typeof sessionManager?.getEntries === "function") return sessionManager.getEntries();
 	} catch {}
+	return [];
+}
 
-	return { path: `.ai/plan/${prefix}<short-slug>.md`, exists: false };
+export type PlanPointerResolution =
+	| { status: "none" }
+	| { status: "valid"; pointer: PlanPointer }
+	| { status: "ambiguous"; pointers: PlanPointer[] }
+	| { status: "invalid"; pointer: PlanPointer; reason: string }
+	| { status: "session-mismatch"; pointer: PlanPointer }
+	| { status: "worktree-mismatch"; pointer: PlanPointer };
+
+/**
+ * Resolve the latest active-plan pointer from session entries against the expected
+ * session/worktree identity. Pure: no filesystem or process access.
+ */
+export function resolvePlanPointer(entries: unknown, expected: { sessionId: string; worktree: string; cwd: string }): PlanPointerResolution {
+	const list = Array.isArray(entries) ? entries : [];
+	const pointers: PlanPointer[] = [];
+	for (let i = list.length - 1; i >= 0; i--) {
+		const entry = list[i] as { type?: string; customType?: string; data?: unknown } | undefined;
+		if (entry?.type !== "custom" || entry?.customType !== PLAN_POINTER_TYPE) continue;
+		const pointer = parsePlanPointer(entry.data);
+		if (pointer) pointers.push(pointer);
+	}
+	if (!pointers.length) return { status: "none" };
+	const latest = pointers[0];
+	if (new Set(pointers.map((pointer) => pointer.planPath)).size > 1) return { status: "ambiguous", pointers };
+	if (!isPlanPathContained(latest.planPath, expected.cwd)) {
+		return { status: "invalid", pointer: latest, reason: `plan path "${latest.planPath}" escapes .ai/plan/` };
+	}
+	const sessionMatch = latest.sessionId === expected.sessionId || legacySessionId(latest.sessionId) === legacySessionId(expected.sessionId);
+	const worktreeMatch = latest.worktree === normalizeWorktreePath(expected.worktree);
+	if (!sessionMatch) {
+		return worktreeMatch
+			? { status: "session-mismatch", pointer: latest }
+			: { status: "invalid", pointer: latest, reason: `pointer belongs to another session (${latest.sessionId}) and worktree (${latest.worktree})` };
+	}
+	if (!worktreeMatch) return { status: "worktree-mismatch", pointer: latest };
+	return { status: "valid", pointer: latest };
+}
+
+// --- Plan metadata/status helpers (pure) ---
+
+/** Extract the `Status:` metadata line value from a plan body. */
+export function planStatus(content: string): string | undefined {
+	const match = /^-\s*Status:\s*(.+)$/m.exec(content);
+	return match ? match[1].trim() : undefined;
+}
+
+function planMetadata(content: string, key: string): string | undefined {
+	const escaped = key.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+	const match = new RegExp(`^-\\s*${escaped}:\\s*(.+)$`, "m").exec(content);
+	return match ? match[1].trim() : undefined;
+}
+
+/** Return an actionable identity mismatch for metadata present in the plan body. */
+function planIdentityMismatch(content: string, expected: { sessionId: string; worktree: string }): string | undefined {
+	const planSessionId = planMetadata(content, "Session ID");
+	if (planSessionId && legacySessionId(planSessionId) !== legacySessionId(expected.sessionId)) {
+		return `Plan metadata belongs to a different session (${planSessionId}); expected ${expected.sessionId}`;
+	}
+	const planWorktree = planMetadata(content, "Worktree");
+	if (planWorktree && normalizeWorktreePath(planWorktree) !== normalizeWorktreePath(expected.worktree)) {
+		return `Plan metadata belongs to a different worktree (${planWorktree}); expected ${expected.worktree}`;
+	}
+	return undefined;
+}
+
+/** Extract one bounded `## <heading>` section body from a plan body. */
+export function planSection(content: string, heading: string, maxChars = 1200): string {
+	const normalized = content.replace(/\r\n/g, "\n");
+	const escaped = heading.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+	const match = new RegExp(`^##\\s+${escaped}\\s*$`, "m").exec(normalized);
+	if (!match) return "";
+	const rest = normalized.slice(match.index + match[0].length);
+	const nextHeading = /^##\s+/m.exec(rest);
+	const section = rest.slice(0, nextHeading?.index ?? rest.length).trim();
+	return section.length > maxChars ? `${section.slice(0, maxChars)}\n[truncated]` : section;
+}
+
+/** Count plan checklist tasks by status. */
+export function planTaskCounts(content: string): { total: number; open: number; done: number } {
+	const open = countOpenTasks(content);
+	const done = content.split("\n").filter((line) => /^- \[[xX]\] /.test(line.trim())).length;
+	return { total: open + done, open, done };
+}
+
+// --- Bounded plan snapshot (pure; no filesystem access) ---
+
+const PLAN_SNAPSHOT_SECTION_CHARS = 400;
+const PLAN_SNAPSHOT_LINE_CHARS = 300;
+
+/** Collapse a (possibly multi-line) bounded string to one short line for status/widget surfaces. */
+function truncateLine(text: string, maxChars = PLAN_SNAPSHOT_LINE_CHARS): string {
+	const one = text.replace(/\s+/g, " ").trim();
+	if (!one) return "";
+	return one.length > maxChars ? `${one.slice(0, maxChars - 1)}…` : one;
+}
+
+/** First open `- [ ]` checklist task in the plan body, bounded to one line. */
+export function planActiveTask(content: string, maxChars = PLAN_SNAPSHOT_LINE_CHARS): string {
+	for (const line of content.split("\n")) {
+		const trimmed = line.trim();
+		if (/^- \[ \] /.test(trimmed)) return truncateLine(trimmed, maxChars);
+	}
+	return "";
+}
+
+/** Short latest warning: first Unresolved line, else last Validation line, else "". */
+export function planWarning(content: string, maxChars = PLAN_SNAPSHOT_LINE_CHARS): string {
+	const unresolved = planSection(content, "Unresolved", maxChars);
+	const firstUnresolved = unresolved.split("\n").map((line) => line.trim()).find(Boolean);
+	if (firstUnresolved) return truncateLine(firstUnresolved, maxChars);
+	const validation = planSection(content, "Validation", maxChars);
+	const lastValidation = validation.split("\n").map((line) => line.trim()).filter(Boolean).pop();
+	return lastValidation ? truncateLine(lastValidation, maxChars) : "";
+}
+
+export interface PlanSnapshot {
+	planPath: string;
+	status: string;
+	tldr: string;
+	currentStep: string;
+	tasks: { total: number; open: number; done: number };
+	activeTask: string;
+	warning: string;
+}
+
+/** Derive the bounded recovery view (status/TL;DR/step/counts/active task/warning) from a plan body. */
+export function planSnapshot(content: string, planPath: string): PlanSnapshot {
+	return {
+		planPath,
+		status: planStatus(content) ?? "unknown",
+		tldr: planSection(content, "TL;DR", PLAN_SNAPSHOT_SECTION_CHARS),
+		currentStep: planSection(content, "Current Step", PLAN_SNAPSHOT_SECTION_CHARS),
+		tasks: planTaskCounts(content),
+		activeTask: planActiveTask(content),
+		warning: planWarning(content),
+	};
+}
+
+// --- Filesystem-backed identity and resolution ---
+
+/** Canonical Git root when available, otherwise the real path of cwd, normalized. */
+async function worktreeIdentity(cwd: string): Promise<string> {
+	try {
+		const gitRoot = await runCommand(cwd, "git", ["rev-parse", "--show-toplevel"]);
+		if (gitRoot.code === 0 && gitRoot.stdout.trim()) return normalizeWorktreePath(gitRoot.stdout.trim());
+	} catch {}
+	try {
+		return normalizeWorktreePath(await realpath(cwd));
+	} catch {
+		return normalizeWorktreePath(cwd);
+	}
+}
+
+/** Legacy exact current-session plan filenames (full or short session ID prefix, today's date). */
+async function findSessionPlanFiles(cwd: string, sessionId: string): Promise<string[]> {
+	const paths = projectPaths(cwd);
+	const prefixes = [...new Set([sessionId, legacySessionId(sessionId)])].map((id) => `${localDate()}-${id}-`);
+	try {
+		return (await readdir(paths.planDir))
+			.filter((file) => file.endsWith(".md") && prefixes.some((prefix) => file.startsWith(prefix)))
+			.sort()
+			.map((file) => `.ai/plan/${file}`);
+	} catch {
+		return [];
+	}
+}
+
+function planSlugFromFilename(planPath: string, sessionId: string): string {
+	const file = path.basename(planPath).replace(/\.md$/, "");
+	for (const id of [sessionId, legacySessionId(sessionId)]) {
+		const prefix = `${localDate()}-${id}-`;
+		if (file.startsWith(prefix)) return file.slice(prefix.length) || "session-plan";
+	}
+	return file || "session-plan";
+}
+
+export interface ActivePlanResolution {
+	planPath?: string;
+	source: "active-pointer" | "current-session" | "missing";
+	pointer?: PlanPointer;
+	blocked?: string;
+	currentSessionPath: string;
+}
+
+/**
+ * Resolve the active plan for the current session/worktree. Pointer first; legacy
+ * fallback only for an exact current-session filename. Never selects by mtime;
+ * ambiguity and mismatch are reported as actionable blockers.
+ */
+async function resolveActivePlan(cwd: string, ctx: any): Promise<ActivePlanResolution> {
+	const sessionId = sessionIdOf(ctx);
+	const currentSessionPath = `.ai/plan/${localDate()}-${sessionId}-<slug>.md`;
+	const worktree = await worktreeIdentity(cwd);
+	const entries = activeBranchEntries(ctx.sessionManager);
+
+	if (entries.length) {
+		const resolution = resolvePlanPointer(entries, { sessionId, worktree, cwd });
+		if (resolution.status === "ambiguous") {
+			return {
+				source: "missing",
+				blocked: `Ambiguous active plan pointers: ${resolution.pointers.map((pointer) => pointer.planPath).join(", ")}. Remove or rename the stale plan file so exactly one remains, then run create_session_plan.`,
+				currentSessionPath,
+			};
+		}
+		if (resolution.status === "invalid") {
+			return {
+				source: "missing",
+				blocked: `Invalid active plan pointer: ${resolution.reason}. Run create_session_plan to establish a valid plan.`,
+				currentSessionPath,
+			};
+		}
+		if (resolution.status === "valid") {
+			const fullPath = path.join(cwd, resolution.pointer.planPath);
+			if (existsSync(fullPath)) {
+				const mismatch = planIdentityMismatch(await readIfExists(fullPath), { sessionId, worktree });
+				if (mismatch) return { source: "missing", blocked: mismatch, currentSessionPath: resolution.pointer.planPath };
+				return { planPath: resolution.pointer.planPath, source: "active-pointer", pointer: resolution.pointer, currentSessionPath: resolution.pointer.planPath };
+			}
+			return {
+				source: "missing",
+				blocked: `Active plan pointer references a missing file: ${resolution.pointer.planPath}. Run create_session_plan to recreate it.`,
+				currentSessionPath: resolution.pointer.planPath,
+			};
+		}
+		if (resolution.status === "worktree-mismatch") {
+			return {
+				source: "missing",
+				blocked: `Active plan pointer (${resolution.pointer.planPath}) was recorded for a different worktree (${resolution.pointer.worktree}). Run create_session_plan in this worktree.`,
+				currentSessionPath,
+			};
+		}
+		if (resolution.status === "session-mismatch") {
+			return {
+				source: "missing",
+				blocked: `Active plan pointer (${resolution.pointer.planPath}) was recorded for a different session (${resolution.pointer.sessionId}). Run create_session_plan for this session.`,
+				currentSessionPath,
+			};
+		}
+	}
+
+	const legacy = await findSessionPlanFiles(cwd, sessionId);
+	if (legacy.length === 1) {
+		const mismatch = planIdentityMismatch(await readIfExists(path.join(cwd, legacy[0])), { sessionId, worktree });
+		if (mismatch) return { source: "missing", blocked: mismatch, currentSessionPath: legacy[0] };
+		return { planPath: legacy[0], source: "current-session", currentSessionPath: legacy[0] };
+	}
+	if (legacy.length > 1) {
+		return {
+			source: "missing",
+			blocked: `Multiple current-session plan candidates: ${legacy.join(", ")}. Rename or remove stale files so exactly one remains.`,
+			currentSessionPath: legacy[0],
+		};
+	}
+	return { source: "missing", currentSessionPath };
+}
+
+// --- Existing-UI progress (ctx.ui.setStatus/setWidget; TUI only, never throws) ---
+
+const PLAN_STATUS_KEY = "session-plan";
+const PLAN_WIDGET_KEY = "session-plan";
+
+function planStatusText(snapshot: PlanSnapshot | undefined, blocked?: string): string | undefined {
+	if (blocked) return truncateLine(`Plan blocked: ${blocked}`, 120);
+	if (!snapshot) return undefined;
+	const step = truncateLine(snapshot.currentStep, 48);
+	const tasks = `${snapshot.tasks.open} open/${snapshot.tasks.done} done`;
+	return truncateLine(`Plan ${snapshot.status} · ${tasks}${step ? ` · ${step}` : ""}`, 120);
+}
+
+function planWidgetLines(snapshot: PlanSnapshot | undefined, blocked?: string): string[] | undefined {
+	if (!snapshot) return undefined;
+	const lines = [`Plan: ${snapshot.planPath} (${snapshot.status})`];
+	if (snapshot.tldr) lines.push(`TL;DR: ${truncateLine(snapshot.tldr, 90)}`);
+	if (snapshot.currentStep) lines.push(`Step: ${truncateLine(snapshot.currentStep, 90)}`);
+	lines.push(`Tasks: ${snapshot.tasks.open} open / ${snapshot.tasks.done} done (${snapshot.tasks.total} total)`);
+	const warning = blocked ?? snapshot.warning;
+	if (warning) lines.push(`Warning: ${truncateLine(warning, 90)}`);
+	return lines;
+}
+
+/** Bounded injected plan view for the system prompt: identity/status/counts/step/active task/warning only. */
+function planSnapshotBlock(snapshot: PlanSnapshot | undefined, blocked?: string): string {
+	if (blocked) return `> Active plan unavailable: ${blocked}`;
+	if (!snapshot) return "_No active session plan yet. Run `create_session_plan` at the start of non-trivial tasks._";
+	const lines = [
+		`**Plan**: \`${snapshot.planPath}\` — status: ${snapshot.status}`,
+		`**Tasks**: ${snapshot.tasks.open} open / ${snapshot.tasks.done} done (${snapshot.tasks.total} total)`,
+	];
+	if (snapshot.tldr) lines.push(`**TL;DR**: ${snapshot.tldr}`);
+	if (snapshot.currentStep) lines.push(`**Current Step**: ${snapshot.currentStep}`);
+	if (snapshot.activeTask) lines.push(`**Active task**: ${snapshot.activeTask}`);
+	if (snapshot.warning) lines.push(`**Warning**: ${snapshot.warning}`);
+	return lines.join("\n");
+}
+
+/** Update the existing status/widget UI from a plan snapshot; no-op outside TUI and never throws. */
+function updatePlanUI(ctx: any, snapshot?: PlanSnapshot, blocked?: string): void {
+	try {
+		const ui = ctx?.ui;
+		if (!ui || typeof ui.setStatus !== "function" || typeof ui.setWidget !== "function") return;
+		if (ctx?.mode !== undefined && ctx.mode !== "tui") return;
+		ui.setStatus(PLAN_STATUS_KEY, planStatusText(snapshot, blocked));
+		ui.setWidget(PLAN_WIDGET_KEY, planWidgetLines(snapshot, blocked), { placement: "aboveEditor" });
+	} catch {}
+}
+
+/** Clear status/widget state before a session switch so no stale plan text lingers. */
+function clearPlanUI(ctx: any): void {
+	try {
+		const ui = ctx?.ui;
+		if (!ui || typeof ui.setStatus !== "function" || typeof ui.setWidget !== "function") return;
+		if (ctx?.mode !== undefined && ctx.mode !== "tui") return;
+		ui.setStatus(PLAN_STATUS_KEY, undefined);
+		ui.setWidget(PLAN_WIDGET_KEY, undefined, { placement: "aboveEditor" });
+	} catch {}
+}
+
+/** Refresh the existing UI from the canonical plan (or a precomputed bounded snapshot). */
+async function refreshPlanUI(ctx: any, precomputed?: { snapshot?: PlanSnapshot; blocked?: string }): Promise<void> {
+	try {
+		if (precomputed) {
+			updatePlanUI(ctx, precomputed.snapshot, precomputed.blocked);
+			return;
+		}
+		const cwd: string | undefined = ctx?.cwd;
+		if (!cwd) {
+			clearPlanUI(ctx);
+			return;
+		}
+		const resolved = await resolveActivePlan(cwd, ctx);
+		if (resolved.blocked) {
+			updatePlanUI(ctx, undefined, resolved.blocked);
+			return;
+		}
+		const content = resolved.planPath ? await readIfExists(path.join(cwd, resolved.planPath)) : "";
+		updatePlanUI(ctx, content ? planSnapshot(content, resolved.planPath!) : undefined);
+	} catch {}
+}
+
+function planPointerRecord(pointer: Omit<PlanPointer, "v" | "updatedAt">): PlanPointer {
+	return { v: 1, ...pointer, updatedAt: new Date().toISOString() };
+}
+
+function persistPlanPointer(pi: ExtensionAPI, pointer: PlanPointer): boolean {
+	try {
+		pi.appendEntry(PLAN_POINTER_TYPE, pointer);
+		return true;
+	} catch {
+		return false;
+	}
 }
 
 export default function (pi: ExtensionAPI) {
@@ -186,50 +571,127 @@ export default function (pi: ExtensionAPI) {
 			const cwd = ctx.cwd;
 			if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(params.slug) || params.slug.length > 80) throw new Error("Plan slug must be lowercase alphanumeric words separated by hyphens (max 80 characters)");
 			await ensureProjectFiles(cwd);
-			const sessionId = shortSessionId(ctx);
-			const { path: planPath, exists } = await sessionPlanPath(cwd, sessionId);
+			const sessionId = sessionIdOf(ctx);
+			const worktree = await worktreeIdentity(cwd);
+			const entries = activeBranchEntries(ctx.sessionManager);
+			const resolution = entries.length ? resolvePlanPointer(entries, { sessionId, worktree, cwd }) : { status: "none" as const };
 
-			if (exists) {
-				return { content: [{ type: "text", text: `Session plan already exists at: ${planPath}` }], details: { path: planPath, created: false } };
+			if (resolution.status === "valid" || resolution.status === "worktree-mismatch") {
+				const pointer = resolution.pointer;
+				const contained = isPlanPathContained(pointer.planPath, cwd);
+				if (contained && existsSync(path.join(cwd, pointer.planPath))) {
+					if (resolution.status === "worktree-mismatch") {
+						const rebound = planPointerRecord({ planPath: pointer.planPath, sessionId: pointer.sessionId, worktree, slug: pointer.slug });
+						const persisted = persistPlanPointer(pi, rebound);
+						await refreshPlanUI(ctx);
+						return {
+							content: [{ type: "text", text: `Session plan already exists at: ${pointer.planPath} (rebound to worktree ${worktree}${persisted ? "" : "; pointer not persisted"})` }],
+							details: { path: pointer.planPath, created: false, rebound: true, pointerPersisted: persisted },
+						};
+					}
+					await refreshPlanUI(ctx);
+					return {
+						content: [{ type: "text", text: `Session plan already exists at: ${pointer.planPath}` }],
+						details: { path: pointer.planPath, created: false, pointerPersisted: true },
+					};
+				}
+				// Pointer references a missing file: recreate at the same path instead of a second plan.
+				const slug = pointer.slug || params.slug;
+				await writeFile(path.join(cwd, pointer.planPath), PLAN_TEMPLATE(slug, sessionId, worktree), "utf8");
+				const persisted = persistPlanPointer(pi, planPointerRecord({ planPath: pointer.planPath, sessionId, worktree, slug }));
+				await refreshPlanUI(ctx);
+				return {
+					content: [{ type: "text", text: `Recreated missing session plan at: ${pointer.planPath}${persisted ? "" : " (warning: session pointer could not be persisted)"}` }],
+					details: { path: pointer.planPath, created: true, pointerPersisted: persisted },
+				};
 			}
 
-			const finalPath = planPath.replace("<short-slug>", params.slug);
-			const fullPath = path.join(cwd, finalPath);
-			await writeFile(fullPath, PLAN_TEMPLATE(params.slug, sessionId), "utf8");
+			if (resolution.status === "ambiguous") {
+				throw new Error(`Ambiguous active plan pointers: ${resolution.pointers.map((pointer) => pointer.planPath).join(", ")}. Remove or rename the stale plan file so exactly one remains, then retry.`);
+			}
+			if (resolution.status === "invalid") {
+				throw new Error(`Invalid active plan pointer: ${resolution.reason}. Remove or fix the stale pointer, then retry.`);
+			}
 
-			return { content: [{ type: "text", text: `Created session plan at: ${finalPath}` }], details: { path: finalPath, created: true } };
+			// No usable pointer (none, or one belonging to another session): adopt an exact
+			// current-session legacy plan instead of creating a second plan.
+			const legacy = await findSessionPlanFiles(cwd, sessionId);
+			if (legacy.length > 1) throw new Error(`Multiple current-session plan candidates: ${legacy.join(", ")}. Rename or remove stale files so exactly one remains, then retry.`);
+			if (legacy.length === 1) {
+				const pointer = planPointerRecord({ planPath: legacy[0], sessionId, worktree, slug: planSlugFromFilename(legacy[0], sessionId) });
+				const persisted = persistPlanPointer(pi, pointer);
+				await refreshPlanUI(ctx);
+				return {
+					content: [{ type: "text", text: `Adopted existing session plan at: ${legacy[0]}${persisted ? "" : " (warning: session pointer could not be persisted)"}` }],
+					details: { path: legacy[0], created: false, pointerPersisted: persisted },
+				};
+			}
+
+			const finalPath = `.ai/plan/${localDate()}-${sessionId}-${params.slug}.md`;
+			const fullPath = path.join(cwd, finalPath);
+			await writeFile(fullPath, PLAN_TEMPLATE(params.slug, sessionId, worktree), "utf8");
+			const persisted = persistPlanPointer(pi, planPointerRecord({ planPath: finalPath, sessionId, worktree, slug: params.slug }));
+			await refreshPlanUI(ctx);
+			return {
+				content: [{ type: "text", text: `Created session plan at: ${finalPath}${persisted ? "" : " (warning: session pointer could not be persisted)"}` }],
+				details: { path: finalPath, created: true, pointerPersisted: persisted },
+			};
 		},
 	});
 
 	pi.registerTool({
 		name: "get_current_plan",
 		label: "Current plan",
-		description: "Reads the active session plan, or the latest plan if no current session plan exists.",
+		description: "Reads the active session plan for this session and worktree. Fails closed on ambiguity or identity mismatch instead of guessing.",
 		parameters: Type.Object({}),
 		async execute(_id, _params, _signal, _update, ctx) {
-			const cwd = ctx.cwd;
-			await ensureProjectFiles(cwd);
-			const sessionId = shortSessionId(ctx);
-			const current = await sessionPlanPath(cwd, sessionId);
-			const fallbackPath = current.exists ? current.path : await latestPlanPath(cwd);
-			const planPath = fallbackPath || current.path;
-			const fullPath = path.join(cwd, planPath);
-			const content = await readIfExists(fullPath);
-			const source = current.exists ? "current-session" : fallbackPath ? "latest" : "missing";
-			const preview = content ? previewText(content, 16, 2000) : "";
-			const text = content
-				? `Plan source: ${source}\nPath: ${planPath}\n\n${preview}`
-				: `Plan source: ${source}\nPath: ${planPath}\n\nNo plan file found.`;
+			let uiState: { snapshot?: PlanSnapshot; blocked?: string } = {};
+			try {
+				const cwd = ctx.cwd;
+				await ensureProjectFiles(cwd);
+				const resolved = await resolveActivePlan(cwd, ctx);
+				if (resolved.blocked) {
+					uiState = { blocked: resolved.blocked };
+					throw new Error(resolved.blocked);
+				}
+				const planPath = resolved.planPath ?? resolved.currentSessionPath;
+				const fullPath = path.join(cwd, planPath);
+				const content = await readIfExists(fullPath);
+				const source = resolved.source;
+				const snapshot = content ? planSnapshot(content, planPath) : undefined;
+				if (snapshot) uiState = { snapshot };
+				const preview = content ? previewText(content, 16, 2000) : "";
+				const header = [
+					`Plan source: ${source}`,
+					`Path: ${planPath}`,
+					snapshot ? `Status: ${snapshot.status}` : undefined,
+					snapshot ? `Tasks: ${snapshot.tasks.open} open / ${snapshot.tasks.done} done (${snapshot.tasks.total} total)` : undefined,
+					snapshot?.currentStep ? `Current Step: ${truncateLine(snapshot.currentStep, 200)}` : undefined,
+					snapshot?.warning ? `Warning: ${snapshot.warning}` : undefined,
+				].filter(Boolean);
+				const text = content
+					? `${header.join("\n")}\n\n${preview}`
+					: `${header.join("\n")}\n\nNo plan file found.`;
 
-			return {
-				content: [{ type: "text", text }],
-				details: {
-					path: planPath,
-					source,
-					exists: Boolean(content),
-					currentSessionPath: current.path,
-				},
-			};
+				return {
+					content: [{ type: "text", text }],
+					details: {
+						path: planPath,
+						source,
+						exists: Boolean(content),
+						currentSessionPath: resolved.currentSessionPath,
+						...(snapshot ? {
+							planStatus: snapshot.status,
+							planTasks: snapshot.tasks,
+							planCurrentStep: snapshot.currentStep,
+							planActiveTask: snapshot.activeTask,
+							planWarning: snapshot.warning,
+						} : {}),
+					},
+				};
+			} finally {
+				await refreshPlanUI(ctx, uiState);
+			}
 		},
 	});
 
@@ -241,9 +703,10 @@ export default function (pi: ExtensionAPI) {
 		async execute(_id, _params, _signal, _update, ctx) {
 			const cwd = ctx.cwd;
 			const paths = await ensureProjectFiles(cwd);
-			const [status, log] = await Promise.all([
+			const [status, log, resolved] = await Promise.all([
 				runCommand(cwd, "git", ["status", "--short", "--branch", "--untracked-files=normal"]),
 				runCommand(cwd, "git", ["log", "-1", "--oneline", "--decorate=short"]),
+				resolveActivePlan(cwd, ctx),
 			]);
 			if (status.code !== 0) {
 				const message = status.stderr.trim() || "git status failed";
@@ -252,32 +715,37 @@ export default function (pi: ExtensionAPI) {
 
 			const tasks = await readIfExists(paths.tasksFile);
 			const openTasks = countOpenTasks(tasks);
-			const sessionId = shortSessionId(ctx);
-			const current = await sessionPlanPath(cwd, sessionId);
-			const fallbackPath = current.exists ? current.path : await latestPlanPath(cwd);
-			const planPath = fallbackPath || current.path;
-			const planContent = await readIfExists(path.join(cwd, planPath));
-			const planPreview = planContent ? previewText(planContent, 8, 900) : "";
+			const planPath = resolved.planPath ?? resolved.currentSessionPath;
+			const planContent = resolved.planPath ? await readIfExists(path.join(cwd, resolved.planPath)) : "";
+			const snapshot = planContent ? planSnapshot(planContent, planPath) : undefined;
 			const statusLines = status.stdout.trim().split("\n").filter(Boolean);
 			const branchLine = statusLines[0]?.replace(/^##\s*/, "") || "unknown";
 			const dirtyFiles = statusLines.slice(1).map((line) => line.replace(/^[ MADRCU?!]+/, "").trim()).filter(Boolean);
 			const lastCommit = log.stdout.trim() || "unavailable";
+			const planNote = resolved.blocked ? " (blocked)" : ` (${resolved.source})`;
 			const lines = [
 				`Branch: ${branchLine}`,
 				dirtyFiles.length ? `Dirty: ${dirtyFiles.length} file(s)` : "Dirty: clean",
 				`Last commit: ${lastCommit}`,
-				`Current plan: ${planPath}${current.exists ? "" : fallbackPath ? " (latest)" : " (missing)"}`,
+				`Current plan: ${planPath}${resolved.planPath ? planNote : " (missing)"}`,
 				`Open tasks: ${openTasks}`,
 			];
+
+			if (resolved.blocked) lines.push(`Plan warning: ${resolved.blocked}`);
+			if (snapshot) {
+				lines.push(`Plan status: ${snapshot.status}`);
+				if (snapshot.currentStep) lines.push(`Current step: ${truncateLine(snapshot.currentStep, 120)}`);
+				if (snapshot.activeTask) lines.push(`Active task: ${snapshot.activeTask}`);
+				lines.push(`Plan tasks: ${snapshot.tasks.open} open / ${snapshot.tasks.done} done (${snapshot.tasks.total} total)`);
+				if (snapshot.warning) lines.push(`Plan warning: ${snapshot.warning}`);
+			}
 
 			if (dirtyFiles.length) {
 				lines.push("", "Changed files:", ...dirtyFiles.slice(0, 8).map((file) => `- ${file}`));
 				if (dirtyFiles.length > 8) lines.push(`- … +${dirtyFiles.length - 8} more`);
 			}
 
-			if (planPreview) {
-				lines.push("", "Plan preview:", planPreview);
-			}
+			updatePlanUI(ctx, snapshot, resolved.blocked);
 
 			return {
 				content: [{ type: "text", text: lines.join("\n") }],
@@ -287,8 +755,16 @@ export default function (pi: ExtensionAPI) {
 					dirtyFiles,
 					lastCommit,
 					planPath,
-					planSource: current.exists ? "current-session" : fallbackPath ? "latest" : "missing",
+					planSource: resolved.source,
 					openTasks,
+					...(snapshot ? {
+						planStatus: snapshot.status,
+						planCurrentStep: snapshot.currentStep,
+						planActiveTask: snapshot.activeTask,
+						planTasks: snapshot.tasks,
+						planWarning: snapshot.warning,
+					} : {}),
+					...(resolved.blocked ? { planBlocked: resolved.blocked } : {}),
 				},
 			};
 		},
@@ -300,10 +776,19 @@ export default function (pi: ExtensionAPI) {
 		const cwd = event.systemPromptOptions?.cwd ?? ctx.cwd;
 		const paths = await ensureProjectFiles(cwd);
 
-		const sessionId = shortSessionId(ctx);
-		const { path: planPath } = await sessionPlanPath(cwd, sessionId);
+		const resolved = await resolveActivePlan(cwd, ctx);
+		const planPath = resolved.planPath ?? resolved.currentSessionPath;
+		const planNote = resolved.planPath
+			? ""
+			: resolved.blocked
+				? ` (blocked: ${resolved.blocked})`
+				: " (no active plan yet — run `create_session_plan`)";
 		const tasks = await readFile(paths.tasksFile, "utf8");
-		const activeTasks = activeTasksPreview(tasks);
+		const activeTasks = activeTasksPreview(tasks, 4, 600);
+		const planContent = resolved.planPath ? await readIfExists(path.join(cwd, resolved.planPath)) : "";
+		const snapshot = planContent ? planSnapshot(planContent, resolved.planPath!) : undefined;
+		updatePlanUI(ctx, snapshot, resolved.blocked);
+		const snapshotBlock = planSnapshotBlock(snapshot, resolved.blocked);
 		const changelogPolicy = existsSync(path.join(cwd, "CHANGELOG.md"))
 			? `\n### Changelog Policy\n- This project has a \`CHANGELOG.md\`. Every job producing user-visible changes MUST add or update a SemVer-aligned Keep a Changelog entry before finalizing.\n- If the changelog is missing or stale for the current job, do not report \`ready to ship\`.`
 			: "";
@@ -314,7 +799,9 @@ The current project uses local task and plan files:
 - \`.ai/TASKS.md\` — pending project work.
 - \`.ai/plan/\` — task-specific implementation plans.
 
-Current session plan: \`${planPath}\`
+Current session plan: \`${planPath}\`${planNote}
+
+${snapshotBlock}
 
 ### Workflow Policy
 - **Planning**: Use \`create_session_plan\` at the start of non-trivial tasks. Update the plan file directly.
@@ -336,5 +823,17 @@ ${activeTasks}
 		};
 	});
 
+	// Refresh the existing status/widget UI on safe session boundaries: refresh from
+	// the canonical file on start/tree changes, clear stale text before a switch.
+	pi.on("session_start", async (_event, ctx) => {
+		await refreshPlanUI(ctx);
+	});
 
+	pi.on("session_before_switch", (_event, ctx) => {
+		clearPlanUI(ctx);
+	});
+
+	pi.on("session_tree", async (_event, ctx) => {
+		await refreshPlanUI(ctx);
+	});
 }
