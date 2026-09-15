@@ -307,7 +307,9 @@ async function approvePlannerCandidate(
   requestedProfile: string | undefined,
   requestedThinking: string | undefined,
   ctx: ExtensionContext,
-): Promise<{ candidate: PlannerCandidate; model: any }> {
+  signal?: AbortSignal,
+): Promise<{ candidate: PlannerCandidate; model: any } | undefined> {
+  if (signal?.aborted) return undefined;
   if (!ctx.hasUI || typeof ctx.ui?.select !== "function") {
     throw new Error("Planner launch requires interactive approval; no UI is available, so the planner was not started");
   }
@@ -381,10 +383,9 @@ async function approvePlannerCandidate(
   const selected = await ctx.ui.select(
     `Planner approval — ${configuredAgent.description || "bounded planning task"}: ${reason}`,
     options,
+    { signal },
   );
-  if (!selected || selected === "Cancel planner launch") {
-    throw new Error("Planner launch cancelled; no child was started");
-  }
+  if (signal?.aborted || !selected || selected === "Cancel planner launch") return undefined;
   const candidate = optionMap.get(selected);
   if (!candidate) throw new Error("Planner approval returned an unknown choice; no child was started");
   return resolveModelCandidate(candidate, ctx);
@@ -1197,7 +1198,7 @@ export default function (pi: ExtensionAPI) {
   pi.on("tool_result", (event) => {
     if (event.toolName !== "subagent") return;
     const details = event.details as Details | undefined;
-    if (["failed", "cancelled", "timed_out", "blocked"].includes(details?.status || "")) {
+    if (["failed", "timed_out", "blocked"].includes(details?.status || "")) {
       return { isError: true };
     }
   });
@@ -1265,7 +1266,14 @@ export default function (pi: ExtensionAPI) {
       let profileName: string | undefined;
       let selectedModel: any;
       if (params.agent === PLANNER_PROFILE_AGENT) {
-        const approval = await approvePlannerCandidate(configuredAgent, params.task!, requestedProfile, params.thinking, ctx);
+        const approval = await approvePlannerCandidate(configuredAgent, params.task!, requestedProfile, params.thinking, ctx, signal);
+        if (!approval) {
+          return {
+            content: [{ type: "text", text: "Planner launch cancelled; no child was started. Stop this attempt; do not retry with another profile/role or continue direct planning." }],
+            details: { status: "cancelled", results: [] },
+            terminate: true,
+          };
+        }
         selectedModel = approval.model;
         agent.model = approval.candidate.model;
         agent.thinking = approval.candidate.thinking;

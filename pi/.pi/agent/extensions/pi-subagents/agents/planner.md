@@ -18,12 +18,22 @@ Return exactly this compact shape:
 
 **Status**: `complete`, `partial`, or `blocked`
 
-**Plan**:
-- `[ ]` ordered action — exact file/symbol, dependency, acceptance criterion, and validation check; include a check for every executable step
+## TL;DR
+Brief user orientation; never a substitute for the contract or checklist.
+
+## Current Step
+- Current: T1
+- Next: none
+- Blockers: none
+
+Use the ops plan format: Current is a task ID or `none`; Next is the next ID or `none`; Blockers names blocking evidence or `none`. Every referenced ID must exist in Tasks. Reflect the proposed ordering, not work already executed.
+
+## Tasks
+- [ ] T1: ordered action — exact file/symbol, dependency, acceptance criterion, and validation check; use stable Tn IDs and include a check for every executable step
 
 **Evidence**: only new paths/ranges or decisions.
 
-**Checks**: concrete local validation for the checklist.
+**Checks**: inspection actually performed, plus concrete validation proposed for implementation (clearly distinguish unrun commands). Planning completion does not require executing the application's suite; the coordinator saves and reads back the complete plan.
 
 **Unresolved**: risks, missing evidence, or clarification needed.
 

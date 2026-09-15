@@ -9,7 +9,9 @@ description: Memory management (.ai/), context engineering, and selective subage
 
 Use project-relative paths. The rule “do not write outside `.ai/`” applies to memory-management artifacts and tools (`.ai/MEMORY.md`, `.ai/TASKS.md`, session plans, and daily notes), not to the explicitly scoped project files of the current task.
 
-- `create_session_plan(slug)`: use only when a non-trivial task genuinely needs a persisted plan; keep one plan per session.
+- `create_session_plan(slug)`: use only when a non-trivial task genuinely needs a persisted plan; reuse the active selection. `select_session_plan(path)` and `create_session_plan(slug, newPlan=true)` obtain confirmation in their own UI before changing selection; do not duplicate that question. Cancel/abort preserves prior state and ends the attempt. Selection belongs to the full active branch, not compacted context or other branches, and does not authorize implementation.
+- The coordinator saves and updates the canonical plan; planner remains read-only. Include `## TL;DR` for user orientation without replacing the contract/checklist. Under `## Tasks`, use top-level `- [ ] T1: ...` / `- [x] T1: ...` with stable IDs; nest evidence, dependencies, acceptance and checks under their task. Open tasks may carry `pending`, `in-progress` or `blocked` in their text; check only accepted tasks.
+- `## Current Step` contains three lines: `- Current: T1` (current task ID or `none`), `- Next: T2` (next task ID or `none`), `- Blockers: none` (or concise blocking evidence). IDs must exist in Tasks; Next and Blockers never select the current task. The reader tolerates old free-form steps and uses the first open task only when no current ID is supplied; a nonexistent explicit ID is an inconsistency to resolve, not permission to substitute a task.
 - Record meaningful progress as a delta in the active plan. Do not call unavailable memory tools or create a second daily log by default.
 - Update `MEMORY.md` only for stable lessons. Keep `TASKS.md` focused on pending work and link complex plans rather than copying them.
 
@@ -32,7 +34,7 @@ Validation policies for workers: `no-tests`, `targeted-check`, `add-test`, `test
 
 ## 4. Full validation as a completion invariant
 
-A plan or task may be marked `complete` only after the principal has run the authoritative full-project validation from the project root. Run complete fix/format/lint commands before complete tests; for documented Laravel/PHP projects this is exactly `composer fix` then `composer test`, with no narrowing flags or targeted substitutes. Targeted worker checks remain useful for slice acceptance but never certify overall readiness. Record the actual command, natural-completion/exit result, fixer changes, and every skip or failure in the plan. If the gate is not fully successful, preserve the evidence and mark the plan `partial`/`blocked`; report `not ready to ship`, never “tests pass”.
+Overall IMPLEMENTATION readiness requires the principal to run authoritative full-project validation from the project root. Finishing a planning document instead requires persistence and full read-back; a read-only review requires its inspection checks; a worker slice requires its authorized checks. These bounded outcomes do not certify application readiness. Run complete fix/format/lint commands before complete tests; for documented Laravel/PHP projects this is exactly `composer fix` then `composer test`, with no narrowing flags or targeted substitutes. Targeted worker checks remain useful for slice acceptance but never certify overall readiness. Record the actual command, natural-completion/exit result, fixer changes, and every skip or failure in the plan. If the implementation gate is not fully successful, preserve the evidence and mark implementation `partial`/`blocked`; report `not ready to ship`, never “tests pass”.
 
 ## 5. Direct Questions
 
@@ -40,7 +42,7 @@ Answer a direct conceptual question directly. Inspect files or use a child only 
 
 ## 6. Clarification and Risk Gate
 
-Do not ask for confirmation routinely. Ask one focused question when wording is materially ambiguous, interpretations diverge, or safety/data/production risk makes guessing unacceptable. For a clear, bounded, low-risk request, execute directly.
+Do not ask for confirmation routinely. Preserve the specific workflow approvals in APPEND_SYSTEM (planner launch, plan selection and implementation authorization), using each gate once. Ask one focused question for material ambiguity or safety/data/production risk. Otherwise execute ordinary steps of an authorized bounded request directly.
 
 ## 7. Critical Configuration Safety
 

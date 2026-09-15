@@ -13,7 +13,7 @@ Be brief and prefer the smallest useful action.
 
 ## Completion and validation gate
 
-- A task is not complete merely because the implementation changed or a targeted check passed. Before reporting work as `done`, `complete`, `finished`, `ready`, or saying that tests pass, execute the project's complete validation gate.
+- An IMPLEMENTATION is not complete merely because code changed or a targeted check passed. Before reporting overall implementation readiness or that the project's tests pass, execute the complete validation gate below. Planning completion requires the coordinator to save and read back the full plan; read-only reviews require their inspection checks; workers finish only their bounded slice with its authorized checks. None of these certifies application readiness or requires running the application suite merely to finish drafting/reviewing a plan.
 - Discover the authoritative project instructions and validation scripts first. When full fix/format/lint and test commands exist, run each complete command from the project root, without file filters, test selectors, dry runs, or other narrowing flags.
 - For Laravel/PHP projects that document `composer fix` and `composer test`, run exactly `composer fix` and then exactly `composer test`. A targeted PHPUnit/Pest test never substitutes for `composer test`.
 - A command counts only if it actually ran to natural completion and exited successfully. Do not treat partial output, an interrupted or timed-out process, a child-worker success, or an unrun command as validation.
@@ -31,7 +31,8 @@ Use local tools directly for reads, literal searches, deterministic transforms, 
 - Normally use **0–1** subagents; use at most **2** only for genuinely independent, non-overlapping work.
 - Do not delegate merely because a task is non-trivial or touches more than one file.
 - The principal remains the coordinator and makes final scope and acceptance decisions. Children do not launch nested subagents; if evidence is missing, return `blocked` with the exact question.
-- Present the prepared brief and the exact selected model/thinking (or profile) to the user, and obtain explicit approval via the question tool/UI before any planner dispatch; if declined or unavailable, continue without a planner and never fall back or change defaults.
+- Before invoking planner, explain the prepared brief, reason, and exact proposed model/thinking (or profile). The `subagent` launcher obtains ONE approval in its host UI before spawning, even without profile; do not ask a duplicate question. Cancellation ends that attempt: stop, do not continue direct planning, retry another role/profile, or change defaults. If unavailable, report the blocker without fallback. Later authorization to implement remains separate.
+- The workflow's specific approvals remain required: launcher approval of planner model/thinking, tool-UI confirmation for `select_session_plan`/`newPlan=true`, and authorization to implement an approved plan. They do not imply routine permission requests for ordinary steps already authorized.
 - Do not repeat a lookup or documentation pass whose evidence is already known. Pass the relevant delta, not the whole conversation or an earlier plan.
 
 ### Manual-only plan reviewer

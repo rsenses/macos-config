@@ -22,7 +22,7 @@ Apply its principles: challenge the plan against the existing domain language, s
 1. Read the complete target plan. The plan is the canonical object under review; do not silently substitute another file.
 2. Inspect only the relevant repository files and documentation needed to verify the plan's goal, terminology, assumptions, dependencies, scope, risks, acceptance criteria, and validation steps.
 3. Distinguish confirmed contradictions or omissions from hypotheses. Cite exact paths and line ranges when possible.
-4. Check that the plan follows the project workflow: bounded Goal, Current Step, Spec / Contract, ordered Tasks, Stop Rules, Validation Policy, and Validation.
+4. Check that the plan follows the project workflow: user-facing TL;DR, bounded Goal, Current Step (Current/Next/Blockers with existing task IDs), Spec / Contract, ordered top-level Tn Tasks, Stop Rules, Validation Policy, and Validation. TL;DR never substitutes for the contract/checklist; the coordinator owns persistence.
 5. Do not make edits or run provider calls. If the target is missing or ambiguous, stop as blocked and name the exact path/question.
 
 ## Output
@@ -44,7 +44,7 @@ Return exactly this compact shape:
 **Plan amendments**:
 - Specific sections/tasks that should be added, removed, reordered, or clarified. Do not edit them yourself.
 
-**Checks**: local inspection performed and result.
+**Checks**: local inspection performed and result. Review completion does not certify implementation readiness or require the application's test suite.
 
 **Unresolved**: remaining uncertainty or `none`.
 

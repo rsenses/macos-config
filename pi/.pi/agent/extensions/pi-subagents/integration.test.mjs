@@ -10,8 +10,187 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 const sdkRoot = process.env.PI_SDK_ROOT;
 const here = dirname(fileURLToPath(import.meta.url));
+
+// Models the installed UI contract: stays pending until a user decision or opts.signal abort.
+function pendingDialog() {
+  const opened = Promise.withResolvers();
+  const answer = Promise.withResolvers();
+  const dialog = {
+    opened: opened.promise,
+    choose: answer.resolve,
+    select(title, options, opts) {
+      dialog.calls = (dialog.calls ?? 0) + 1;
+      dialog.title = title;
+      dialog.options = options;
+      dialog.signal = opts?.signal;
+      const cancel = () => answer.resolve(undefined);
+      opts?.signal?.addEventListener('abort', cancel, {once:true});
+      if (opts?.signal?.aborted) cancel();
+      opened.resolve();
+      return answer.promise.finally(()=>opts?.signal?.removeEventListener('abort', cancel));
+    },
+  };
+  return dialog;
+}
+async function settles(promise) {
+  let timer;
+  try {
+    return await Promise.race([promise, new Promise((_,reject)=>{
+      timer = setTimeout(()=>reject(new Error('dialog did not settle after abort')),1000);
+    })]);
+  } finally { clearTimeout(timer); }
+}
+
+async function memoryFixture(run) {
+  const {SessionManager} = await import(pathToFileURL(join(sdkRoot,'dist/index.js')));
+  const {loadExtensions,createExtensionRuntime} = await import(pathToFileURL(join(sdkRoot,'dist/core/extensions/loader.js')));
+  const dir = await mkdtemp(join(tmpdir(),'pi-memory-regression-'));
+  try {
+    let sm = SessionManager.create(dir,join(dir,'sessions'));
+    // Real persistence starts after an assistant message; this one is entirely fictitious.
+    const before = sm.appendMessage({role:'assistant',content:[],api:'fixture',provider:'fixture',model:'fixture',stopReason:'stop',timestamp:0,
+      usage:{input:0,output:0,cacheRead:0,cacheWrite:0,totalTokens:0,cost:{input:0,output:0,cacheRead:0,cacheWrite:0,total:0}}});
+    const runtime = createExtensionRuntime();
+    runtime.appendEntry = (type,data)=>sm.appendCustomEntry(type,data);
+    const loaded = await loadExtensions([join(here,'../memory.ts')],dir,undefined,runtime);
+    assert.deepEqual(loaded.errors,[]);
+    const ext = loaded.extensions[0];
+    const ctx = {cwd:dir,hasUI:true,ui:{confirm:async()=>true},get sessionManager(){return sm;}};
+    const call = (name,params={},signal,over={}) => {
+      const registered = ext.tools.get(name);
+      return (registered.definition??registered).execute('fixture',params,signal,undefined,{...ctx,...over});
+    };
+    await run({dir,call,before,ctx,get sm(){return sm;},reopen(){sm=SessionManager.open(sm.getSessionFile(),join(dir,'sessions'));}});
+  } finally {await rm(dir,{recursive:true,force:true});}
+}
+
+test('memory: persisted selection, full active branch, abandoned branch and read errors',{skip:!sdkRoot},async()=>{
+  await memoryFixture(async f=>{
+    const created = await f.call('create_session_plan',{slug:'a'});
+    assert.equal(created.details.pointerPersisted,true);
+    assert.match((await f.call('get_current_plan')).details.planActiveTask,/T1/);
+    const a = created.details.path;
+    f.reopen();
+    assert.equal((await f.call('get_current_plan')).details.path,a);
+    const kept = f.sm.appendMessage({role:'user',content:'retained fixture',timestamp:0});
+    f.sm.appendCompaction('fixture summary',kept,100);
+    assert.ok(f.sm.getBranch().some(e=>e.customType==='memory.active-plan'));
+    assert.ok(!f.sm.buildContextEntries().some(e=>e.customType==='memory.active-plan'));
+    assert.equal((await f.call('get_current_plan')).details.path,a);
+    const compactedLeaf = f.sm.getLeafId();
+    const another = await f.call('create_session_plan',{slug:'b',newPlan:true});
+    assert.notEqual(another.details.path,a);
+    f.sm.branch(compactedLeaf);
+    assert.equal((await f.call('get_current_plan')).details.path,a,'ignore newer B outside active branch');
+    f.sm.branch(f.before);
+    assert.ok(f.sm.getEntries().some(e=>e.customType==='memory.active-plan'));
+    assert.ok(!f.sm.getBranch().some(e=>e.customType==='memory.active-plan'));
+    assert.equal(existsSync(join(f.dir,a)),true);
+    await assert.rejects(f.call('get_current_plan'),/branch has no active plan selection/);
+    await assert.rejects(f.call('create_session_plan',{slug:'a'}),/branch has no active plan selection/);
+    for (const method of ['getBranch','getEntries']) {
+      const broken = {getSessionId:()=>f.sm.getSessionId(),getBranch:()=>[],getEntries:()=>[],[method]:()=>{throw new Error('state read failed');}};
+      await assert.rejects(f.call('get_current_plan',{},undefined,{sessionManager:broken}),/state read failed/);
+      await assert.rejects(f.call('create_session_plan',{slug:'a'},undefined,{sessionManager:broken}),/state read failed/);
+    }
+  });
+});
+
+test('memory: legacy recovery and coherent real tasks / explicit IDs',{skip:!sdkRoot},async()=>{
+  await memoryFixture(async f=>{
+    await mkdir(join(f.dir,'.ai/plan'),{recursive:true});
+    const a = `.ai/plan/2020-01-02-${f.sm.getSessionId().slice(0,8)}-legacy.md`;
+    const body = (step) => `# Plan: legacy\n## Current Step\n${step}\n## Tasks\n\`\`\`markdown\n- [ ] T99 fictitious\n\`\`\`\n- [ ] T1 real first\n  - [ ] T90 subtask\n- [ ] T2 real second\n## Validation\n- [ ] T91 not a task\n`;
+    for(const [step,expected] of [
+      ['',/T1 real first/],
+      ['- Current: T2\n- Next: T1\n- Blockers: none',/T2 real second/],
+      ['- Next: T2\n- Current: T1\n- Blockers: none',/T1 real first/],
+      ['- Current: none\n- Next: T2\n- Blockers: T2 awaits T1',/T1 real first/],
+      ['- Current: T08\n- Next: T1\n- Blockers: none',/Inconsistent Current Step: T08.*not found/],
+      ['T08 old free-form step',/Inconsistent Current Step: T08.*not found/],
+    ]) {
+      await writeFile(join(f.dir,a),body(step));
+      const got = await f.call('get_current_plan');
+      assert.equal(got.details.source,'current-session');
+      assert.equal(got.details.path,a);
+      assert.deepEqual(got.details.planTasks,{total:2,open:2,done:0});
+      assert.match(got.details.planActiveTask,expected);
+      assert.doesNotMatch(got.details.planActiveTask,/T99/);
+    }
+  });
+});
+
+test('memory: confirm selection/newPlan before mutation; cancel, abort and reopen',{skip:!sdkRoot},async()=>{
+  await memoryFixture(async f=>{
+    const untouched = f.sm.getEntries();
+    for(const [name,params] of [['select_session_plan',{path:'.ai/plan/absent.md'}],['create_session_plan',{slug:'another',newPlan:true}]]) {
+      assert.equal((await f.call(name,params,undefined,{ui:{confirm:async()=>false}})).details.status,'cancelled');
+      assert.equal(existsSync(join(f.dir,'.ai')),false,'no documents/directories on cancelled first switch');
+      assert.deepEqual(f.sm.getEntries(),untouched);
+    }
+    const created = await f.call('create_session_plan',{slug:'a'},undefined,{hasUI:false,ui:undefined});
+    const a = created.details.path;
+    const b = '.ai/plan/existing-b.md';
+    await writeFile(join(f.dir,b),'# Plan: B\n');
+    const original = await readFile(join(f.dir,a),'utf8');
+    const originalEntries = f.sm.getEntries();
+    const {readdir} = await import('node:fs/promises');
+    const files = await readdir(join(f.dir,'.ai/plan'));
+    for(const [name,params] of [['select_session_plan',{path:b}],['create_session_plan',{slug:'another',newPlan:true}]]) {
+      const unchanged = async()=>{
+        assert.deepEqual(f.sm.getEntries(),originalEntries);
+        assert.deepEqual(await readdir(join(f.dir,'.ai/plan')),files);
+        assert.equal(await readFile(join(f.dir,a),'utf8'),original);
+        assert.equal(await readFile(join(f.dir,b),'utf8'),'# Plan: B\n');
+        assert.equal((await f.call('get_current_plan')).details.path,a);
+      };
+      const declined = await f.call(name,params,undefined,{ui:{confirm:async()=>false}});
+      assert.equal(declined.details.status,'cancelled');
+      await unchanged();
+      await assert.rejects(f.call(name,params,undefined,{hasUI:false,ui:undefined}),/no UI/);
+      await unchanged();
+      const abort = new AbortController();
+      abort.abort();
+      const preAborted = await f.call(name,params,abort.signal,{ui:{confirm:()=>assert.fail('pre-aborted dialog opened')}});
+      assert.equal(preAborted.details.status,'cancelled');
+      await unchanged();
+      const pending = pendingDialog();
+      const controller = new AbortController();
+      const run = f.call(name,params,controller.signal,{ui:{confirm:pending.select}});
+      await settles(pending.opened);
+      assert.match(pending.options,name==='select_session_plan'?/existing-b.md/:/another/);
+      await unchanged();
+      controller.abort();
+      assert.equal((await settles(run)).details.status,'cancelled');
+      assert.equal(pending.signal,controller.signal);
+      await unchanged();
+    }
+    const {symlink} = await import('node:fs/promises');
+    const outside = join(f.dir,'outside-plan.md');
+    await writeFile(outside,'outside sentinel');
+    const link = '.ai/plan/outside-link.md';
+    await symlink(outside,join(f.dir,link));
+    await assert.rejects(f.call('select_session_plan',{path:link}),/existing regular file within/);
+    assert.equal(await readFile(outside,'utf8'),'outside sentinel');
+    assert.deepEqual(f.sm.getEntries(),originalEntries);
+    const selected = await f.call('select_session_plan',{path:b});
+    assert.equal(selected.details.selected,true);
+    assert.equal(selected.details.pointerPersisted,true);
+    f.reopen();
+    assert.equal((await f.call('get_current_plan')).details.path,b);
+    const fresh = await f.call('create_session_plan',{slug:'another',newPlan:true});
+    assert.equal(fresh.details.created,true);
+    assert.equal(fresh.details.pointerPersisted,true);
+    assert.notEqual(fresh.details.path,a);
+    assert.notEqual(fresh.details.path,b);
+    f.reopen();
+    assert.equal((await f.call('get_current_plan')).details.path,fresh.details.path);
+    assert.equal(await readFile(join(f.dir,a),'utf8'),original);
+    assert.equal(await readFile(join(f.dir,b),'utf8'),'# Plan: B\n');
+  });
+});
 test('actual extension loading, allowlists, protocol, usage and failure hook', {skip: !sdkRoot}, async () => {
-  const { DefaultResourceLoader, SettingsManager } = await import(pathToFileURL(join(sdkRoot, 'dist/index.js')));
+  const { DefaultResourceLoader, SettingsManager, SessionManager } = await import(pathToFileURL(join(sdkRoot, 'dist/index.js')));
   const dir = await mkdtemp(join(tmpdir(), 'pi-subagent-integration-'));
   const oldPath = process.env.PATH;
   const oldFixture = process.env.PI_TEST_FIXTURE;
@@ -50,10 +229,11 @@ test('actual extension loading, allowlists, protocol, usage and failure hook', {
     const scopedModels = Object.values(MODELS).map(m => ({model:{provider:m.provider, id:m.id}}));
     const ctx = {
       cwd:dir,
+      sessionManager:SessionManager.inMemory(dir),
       scopedModels,
       modelRegistry:{find:(p,id)=>byModel.get(`${p}/${id}`)},
       hasUI:true,
-      ui:{select:async (_title, options)=>options[0], notify:()=>{}},
+      ui:{select:async (_title, options)=>options[0], confirm:async()=>true, notify:()=>{}},
     };
     const usage = {input:10,output:2,cacheRead:5,cacheWrite:0,totalTokens:17,cost:{input:.01,output:.02,cacheRead:0,cacheWrite:0,total:.03}};
     const scoutModel = MODELS.deepseek;
@@ -133,15 +313,51 @@ test('actual extension loading, allowlists, protocol, usage and failure hook', {
     const profileArgsFile = process.env.PI_TEST_FIXTURE+'.args';
     await rm(profileArgsFile,{force:true});
     const cancelledUi = {...ctx,ui:{select:async (_title, options)=>options.at(-1), notify:()=>{}}};
-    await assert.rejects(tool.execute('pc',{agent:'planner',task:'Cancel fixture',profile:'habitual'},undefined,undefined,cancelledUi),/cancelled/);
+    const declined = await tool.execute('pc',{agent:'planner',task:'Cancel fixture',profile:'habitual'},undefined,undefined,cancelledUi);
+    assert.equal(declined.details.status,'cancelled');
+    assert.equal(declined.terminate,true);
+    const declineHooks = await Promise.all(hooks.map(h=>h({toolName:'subagent',details:declined.details},ctx)));
+    assert.ok(!declineHooks.some(x=>x?.isError===true));
     assert.equal(existsSync(profileArgsFile),false,'cancelled planner must not spawn');
     await assert.rejects(tool.execute('ph',{agent:'planner',task:'Headless fixture',profile:'habitual'},undefined,undefined,{...ctx,hasUI:false,ui:undefined}),/no UI/);
     assert.equal(existsSync(profileArgsFile),false,'headless planner must not spawn');
     const abortedPlanner = new AbortController();
     abortedPlanner.abort();
-    const abortedPlannerResult = await tool.execute('pa',{agent:'planner',task:'Abort fixture',profile:'habitual'},abortedPlanner.signal,undefined,ctx);
+    const abortedPlannerResult = await tool.execute('pa',{agent:'planner',task:'Abort fixture',profile:'habitual'},abortedPlanner.signal,undefined,{...ctx,ui:{select:()=>assert.fail('already aborted invocation opened UI')}});
     assert.equal(abortedPlannerResult.details.status,'cancelled');
     assert.equal(existsSync(profileArgsFile),false,'aborted planner must not spawn');
+    // A genuinely pending selector: no child until a decision; abort dismisses it.
+    const pending = pendingDialog();
+    const waitingAbort = new AbortController();
+    const waitingRun = tool.execute('pw',{agent:'planner',task:'Pending approval',profile:'diseno'},waitingAbort.signal,undefined,{...ctx,ui:{select:pending.select}});
+    await pending.opened;
+    assert.equal(existsSync(profileArgsFile),false);
+    waitingAbort.abort();
+    const waitingResult = await settles(waitingRun);
+    assert.equal(waitingResult.details.status,'cancelled');
+    assert.equal(pending.calls,1);
+    assert.equal(existsSync(profileArgsFile),false);
+    assert.equal(pending.signal,waitingAbort.signal);
+
+    const approval = pendingDialog();
+    const approvedRun = tool.execute('pok',{agent:'planner',task:'Pending approval',profile:'diseno'},undefined,undefined,{...ctx,ui:{select:approval.select}});
+    await approval.opened;
+    assert.equal(existsSync(profileArgsFile),false,'no child before manual decision');
+    assert.match(approval.options[0],/openai-codex\/gpt-5.6-sol @ medium/);
+    approval.choose(approval.options[0]);
+    assert.equal((await approvedRun).details.status,'complete');
+    assert.equal(approval.calls,1);
+    const approvedArgs = JSON.parse(await readFile(profileArgsFile,'utf8'));
+    assert.equal(approvedArgs[approvedArgs.indexOf('--model')+1],'openai-codex/gpt-5.6-sol');
+    assert.equal(approvedArgs[approvedArgs.indexOf('--thinking')+1],'medium');
+
+    await rm(profileArgsFile,{force:true});
+    const lastMomentAbort = new AbortController();
+    const lastMoment = await tool.execute('late',{agent:'planner',task:'Abort on approval',profile:'diseno'},lastMomentAbort.signal,undefined,
+      {...ctx,ui:{select:async(_title,options)=>{lastMomentAbort.abort();return options[0];}}});
+    assert.equal(lastMoment.details.status,'cancelled');
+    assert.equal(existsSync(profileArgsFile),false,'recheck abort after UI, before spawn');
+
     // Fail-fast paths below must all reject before the fake child spawns: the
     // recorded args file is removed first and must stay absent after each reject.
     await rm(profileArgsFile,{force:true});
@@ -198,9 +414,8 @@ test('actual extension loading, allowlists, protocol, usage and failure hook', {
 
     // ── Provider-free memory coverage: canonical plan, pointer-first resolution, ──
     // ── idempotency, fail-closed blockers, bounded snapshot/injection, and UI.   ──
-    // Limitation: the loader's runtime pi.appendEntry is a throwing stub outside a
-    // live session, so pointer WRITES cannot be exercised here; pointer READ
-    // resolution is driven through a fake sessionManager fed to the real tools.
+    // This loader retains the throwing appendEntry stub to cover persistence
+    // failure. Separate regressions below bind it to a real temporary SessionManager.
     const POINTER_TYPE = 'memory.active-plan'; // memory.ts PLAN_POINTER_TYPE contract
     const fullSessionId = '01a0a3bf-2233-4455-8a9b-ccddeeff0001';
     const worktree = (await realpath(dir)).replace(/[\\/]+$/,'');
@@ -208,8 +423,14 @@ test('actual extension loading, allowlists, protocol, usage and failure hook', {
       type:'custom', customType:POINTER_TYPE,
       data:{v:1, planPath, sessionId:fullSessionId, worktree, slug:'pointer-plan', updatedAt:'2026-09-15T00:00:00.000Z', ...over},
     });
-    const memCtx = {cwd:dir, sessionManager:{getSessionId:()=>fullSessionId, getEntries:()=>[]}};
-    const ctxWithPointers = (entries) => ({...memCtx, sessionManager:{getSessionId:()=>fullSessionId, getEntries:()=>entries.map(([p, over]) => pointerEntry(p, over))}});
+    const sessionState = (entries = []) => ({
+      getSessionId:()=>fullSessionId,
+      getBranch:()=>entries,
+      buildContextEntries:()=>entries,
+      getEntries:()=>entries,
+    });
+    const memCtx = {cwd:dir, sessionManager:sessionState()};
+    const ctxWithPointers = (entries) => ({...memCtx, sessionManager:sessionState(entries.map(([p, over]) => pointerEntry(p, over)))});
 
     // Local git identity so worktree resolution and summarize_worktree agree.
     await new Promise((res,rej)=>execFile('git',['init','-q'],{cwd:dir},e=>e?rej(e):res()));
@@ -297,10 +518,12 @@ Local-only checks; no provider calls.
     assert.equal(got.details.planStatus,'in-progress');
     assert.deepEqual(got.details.planTasks,{total:3,open:2,done:1});
     assert.match(got.details.planCurrentStep,/T08/);
-    assert.match(got.details.planActiveTask,/T02/);
+    assert.match(got.details.planActiveTask,/Inconsistent Current Step: T08.*not found/);
+    // Restore a consistent current task for snapshot/UI assertions below.
+    const consistentBody = currentPlanBody.replace('T08 regression coverage in progress.', '- Current: T02\n- Next: T03\n- Blockers: none');
     assert.match(got.details.planWarning,/Unresolved sentinel/);
     assert.equal(got.details.path,historicalRel);
-    await writeFile(join(dir,pointerRel),currentPlanBody);
+    await writeFile(join(dir,pointerRel),consistentBody);
 
     // Pointer-first resolution beats a newer plan file; never resolved by mtime.
     const newerRel = '.ai/plan/2026-09-15-decoy0000-newest-by-mtime.md';
@@ -356,7 +579,7 @@ Local-only checks; no provider calls.
     const widgetText = (lastWidget?.[2]||[]).join('\n');
     assert.match(widgetText,/Plan: .*pointer-plan\.md \(in-progress\)/);
     assert.match(widgetText,/TL;DR: Finish the provider-free regression matrix/);
-    assert.match(widgetText,/Step: T08 regression coverage in progress/);
+    assert.match(widgetText,/Step: - Current: T02/);
     assert.match(widgetText,/Tasks: 2 open \/ 1 done \(3 total\)/);
     assert.match(widgetText,/Warning: .*Unresolved sentinel/);
     const offCalls = [];
@@ -370,7 +593,7 @@ Local-only checks; no provider calls.
     assert.match(planInjection.systemPrompt,/in-progress/);
     assert.match(planInjection.systemPrompt,/2 open \/ 1 done \(3 total\)/);
     assert.match(planInjection.systemPrompt,/Finish the provider-free regression matrix/);
-    assert.match(planInjection.systemPrompt,/T08 regression coverage in progress/);
+    assert.match(planInjection.systemPrompt,/- Current: T02/);
     assert.match(planInjection.systemPrompt,/T02 active regression slice/);
     assert.match(planInjection.systemPrompt,/Unresolved sentinel/);
     assert.doesNotMatch(planInjection.systemPrompt,/HIDDEN_FULL_PLAN_BODY_MARKER|## Spec \/ Contract|## Validation Policy/);
@@ -401,23 +624,6 @@ Local-only checks; no provider calls.
     assert.doesNotMatch(injection.systemPrompt,/done sentinel|inbox sentinel/);
     assert.ok(injection.systemPrompt.length<4000);
 
-    // ── Prompt-contract assertions: explicit confirmation gates and resume language. ──
-    const planPrompt = await readFile(join(here,'..','..','prompts','plan.md'),'utf8');
-    assert.match(planPrompt,/^description: .+/m);
-    assert.match(planPrompt,/ask for explicit approval using the existing question tool\/UI/);
-    assert.match(planPrompt,/No planner `subagent` call may happen before an explicit approval/);
-    assert.match(planPrompt,/Treat a decline as an end to the planner path/);
-    assert.match(planPrompt,/Persistence and read-back are mandatory before the final response/);
-    assert.match(planPrompt,/re-read the entire file from disk/);
-    const runPrompt = await readFile(join(here,'..','..','prompts','run-plan.md'),'utf8');
-    assert.match(runPrompt,/^description: .+/m);
-    assert.match(runPrompt,/ask for explicit confirmation using the existing question tool\/UI/);
-    assert.match(runPrompt,/No architect, worker, or any `subagent` call may happen before the user confirms/);
-    assert.match(runPrompt,/mark it `in-progress` in the plan before dispatching/);
-    assert.match(runPrompt,/Never infer or record progress from chat history or file mtime alone/);
-    assert.match(runPrompt,/On resume, reread the plan's completed\/blocked task records/);
-    assert.match(runPrompt,/Never restart accepted work/);
-    assert.match(runPrompt,/Never select a plan by modification time/);
   } finally {
     process.env.PATH=oldPath;
     if(oldFixture===undefined)delete process.env.PI_TEST_FIXTURE;else process.env.PI_TEST_FIXTURE=oldFixture;

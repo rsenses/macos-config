@@ -29,11 +29,11 @@ Stop the line when something breaks: reproduce, localize, reduce, fix the root c
 
 ## 5. Full-project completion gate
 
-Before claiming the task is complete, discover the project's authoritative full fix/format/lint and test commands and run them from the project root, without narrowing flags or file/test selectors. For Laravel/PHP projects documenting them, run exactly `composer fix` and then exactly `composer test`. Targeted tests and static checks are interim evidence only, never a substitute. A command must reach natural completion and exit 0; if it fails, is skipped, unavailable, interrupted, or times out, report `not ready to ship` and the exact blocker. If the fixer changes files, inspect those changes and ensure the full test suite runs against the post-fix tree. Do not say “tests pass” unless the complete test command actually passed.
+Before claiming overall IMPLEMENTATION readiness, discover the project's authoritative full fix/format/lint and test commands and run them from the project root, without narrowing flags or file/test selectors. Planning completion uses persistence and full read-back; read-only reviews use inspection checks; workers use their bounded authorized checks. These outcomes do not certify application readiness and do not require the application suite merely to draft or review a plan. For Laravel/PHP projects documenting them, run exactly `composer fix` and then exactly `composer test`. Targeted tests and static checks are interim evidence only, never a substitute. A command must reach natural completion and exit 0; if it fails, is skipped, unavailable, interrupted, or times out, report `not ready to ship` and the exact blocker. If the fixer changes files, inspect those changes and ensure the full test suite runs against the post-fix tree. Do not say “tests pass” unless the complete test command actually passed.
 
 ## 6. Verification Checklist
 
-Before completion:
+Before overall implementation completion (planning/review/worker outcomes use §5's scoped checks):
 
 - [ ] Complete project fix/format/lint command(s) pass.
 - [ ] Complete project test command(s) pass after the fixer, or the exact blocker is reported.
