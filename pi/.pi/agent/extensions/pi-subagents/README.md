@@ -6,7 +6,7 @@ Five bounded roles; the principal coordinates and verifies acceptance. `plan-rev
 |---|---|---|
 | scout | `opencode-go/deepseek-v4.1-flash` / **high** | read, grep, find, ls |
 | researcher | `openai-codex/gpt-5.6-luna` / **medium** | codex-research, web_fetch |
-| planner (default) | `openai-codex/gpt-5.6-luna` / **high** | read, grep, find, ls — optional `profile` (see below) |
+| planner (default) | `openai-codex/gpt-5.6-luna` / **high** | read, grep, find, ls — UI approval required; optional `profile` (see below) |
 | worker | `opencode-go/glm-5.3-flash` / **high** | read, write, edit, grep, find, ls, safe_bash, ast_grep, web_fetch |
 | plan-reviewer | `openai-codex/gpt-6-astra` / **low** | read, grep, find, ls |
 
@@ -26,7 +26,8 @@ Profile rules:
 - Unknown profile names fail with the available list.
 - A profile combined with an explicit `thinking` that differs from the profile's level fails; pass the profile's own level if you must be explicit.
 - The exact model must exist in the model registry and, when the session has non-empty scoped models (`enabledModels`), must be inside that scope; an empty scope accepts any registry model. An out-of-scope or unsupported selection fails with a clear error — never a fallback.
-- The selected profile name/label and the exact effective model/thinking are recorded in the result details and UI so confirmation and recovery show what was requested and what launched.
+- Every planner launch pauses for the host UI to show the reason, exact profile/model/thinking, and options to approve, choose another available profile, or cancel. This applies when `profile` is omitted too; headless/print/json execution is blocked before spawn.
+- The selected profile name/label and the exact effective model/thinking are recorded in the result details and progress UI so approval and recovery show what was requested and what launched.
 - `openai-codex/gpt-5.6-sol` is explicitly allowlisted in `pi/.pi/agent/settings.json` `enabledModels` solely to make the `diseno` profile selectable; principal defaults (`defaultProvider`/`defaultModel`/`defaultThinkingLevel`) are unchanged.
 
 **Principal stays Luna/max.** Normally use no child or one child; at most two genuinely independent tasks. File count alone is not a reason to delegate. Planner is optional. Children cannot delegate; missing substantial evidence is returned to the principal as a blocker.
@@ -45,7 +46,7 @@ Scout/planner deliberately lack shell, edit and mutating AST tools. Worker has l
 }
 ```
 
-`agent` and `task` are required. `cwd` and `thinking` are optional; `profile` is optional and planner-only (see above). Invocation overrides accept `low`, `medium`, `high`, `max`; unsupported model/effort combinations fail before spawn instead of silently clamping. No automatic provider fallback or paid subscription activation occurs.
+`agent` and `task` are required. `cwd` and `thinking` are optional; `profile` is optional and planner-only (see above). Invocation overrides accept `low`, `medium`, `high`, `max`; unsupported model/effort combinations fail before spawn instead of silently clamping. No automatic provider fallback or paid subscription activation occurs. A planner call without an explicit profile is still an approval-gated call; omission never auto-approves or bypasses model validation.
 
 Use low for lookup, medium for contained implementation/synthesis, high for difficult or risky reasoning. Max is available explicitly, not the child default. A small local smoke comparison is recorded in `.ai/audits/2026-09-06-pi-harness/IMPLEMENTATION.md`; it is not an autonomous-coding benchmark. Flash remains a candidate after Go access is restored, not a configured dependency that currently fails.
 

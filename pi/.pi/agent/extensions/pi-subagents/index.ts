@@ -261,6 +261,135 @@ function plannerProfileNames(): string {
   return Object.keys(PLANNER_PROFILES).join(", ");
 }
 
+interface PlannerCandidate {
+  key: string;
+  label: string;
+  model: string;
+  thinking: string;
+  profileName?: string;
+  profile?: PlannerProfile;
+}
+
+function modelParts(model: string): { provider: string; id: string } {
+  const separator = model.indexOf("/");
+  if (separator <= 0 || separator === model.length - 1) {
+    throw new Error(`Invalid provider/model selection: ${model}`);
+  }
+  return { provider: model.slice(0, separator), id: model.slice(separator + 1) };
+}
+
+function modelInScope(model: { provider: string; id: string }, scopedModels: any[] | undefined): boolean {
+  if (!scopedModels || scopedModels.length === 0) return true;
+  return scopedModels.some((entry) => entry.model.provider === model.provider && entry.model.id === model.id);
+}
+
+function resolveModelCandidate(
+  candidate: PlannerCandidate,
+  ctx: ExtensionContext,
+  requireScope = true,
+): { candidate: PlannerCandidate; model: any } {
+  const { provider, id } = modelParts(candidate.model);
+  const selectedModel = ctx.modelRegistry.find(provider, id);
+  if (!selectedModel) throw new Error(`Configured model unavailable: ${candidate.model}; no implicit fallback`);
+  if (!getSupportedThinkingLevels(selectedModel).includes(candidate.thinking as any)) {
+    throw new Error(`Unsupported thinking ${candidate.thinking} for ${candidate.model}; supported: ${getSupportedThinkingLevels(selectedModel).join(", ")}`);
+  }
+  if (requireScope && !modelInScope(selectedModel, ctx.scopedModels as any[] | undefined)) {
+    throw new Error(`Model ${candidate.model} is not in this session's scoped models (enabledModels); no fallback. Add it to enabledModels or clear the model scope`);
+  }
+  return { candidate, model: selectedModel };
+}
+
+/** Require a real UI decision for every planner launch, including omitted profiles. */
+async function approvePlannerCandidate(
+  configuredAgent: AgentConfig,
+  task: string,
+  requestedProfile: string | undefined,
+  requestedThinking: string | undefined,
+  ctx: ExtensionContext,
+): Promise<{ candidate: PlannerCandidate; model: any }> {
+  if (!ctx.hasUI || typeof ctx.ui?.select !== "function") {
+    throw new Error("Planner launch requires interactive approval; no UI is available, so the planner was not started");
+  }
+
+  if (requestedProfile !== undefined) {
+    if (!PLANNER_PROFILES[requestedProfile]) {
+      throw new Error(`Unknown profile: ${requestedProfile}. Available profiles: ${plannerProfileNames()}`);
+    }
+    const pinned = PLANNER_PROFILES[requestedProfile];
+    if (requestedThinking !== undefined && requestedThinking !== pinned.thinking) {
+      throw new Error(`Profile "${requestedProfile}" pins thinking "${pinned.thinking}"; conflicting explicit override "${requestedThinking}". Omit thinking or request the profile's level`);
+    }
+  }
+
+  const candidates: PlannerCandidate[] = [];
+  const configuredCandidate: PlannerCandidate = {
+    key: "configured",
+    label: "configured planner selection",
+    model: configuredAgent.model,
+    thinking: requestedThinking ?? configuredAgent.thinking,
+  };
+  let configuredResolved: { candidate: PlannerCandidate; model: any } | undefined;
+  try {
+    if (requestedProfile === undefined) configuredResolved = resolveModelCandidate(configuredCandidate, ctx);
+  } catch (error) {
+    if (requestedProfile === undefined && requestedThinking !== undefined) throw error;
+    if (requestedProfile === undefined && typeof ctx.ui.notify === "function") {
+      ctx.ui.notify(`Configured planner selection unavailable (${String(error)}). Choose another available profile.`, "warning");
+    }
+    if (requestedProfile !== undefined) throw error;
+  }
+
+  for (const [name, profile] of Object.entries(PLANNER_PROFILES)) {
+    const candidate: PlannerCandidate = {
+      key: name,
+      label: profile.label,
+      model: profile.model,
+      thinking: profile.thinking,
+      profileName: name,
+      profile,
+    };
+    try {
+      const resolved = resolveModelCandidate(candidate, ctx);
+      candidates.push(resolved.candidate);
+    } catch (error) {
+      if (name === requestedProfile) throw error;
+    }
+  }
+
+  const configuredMatchesProfile = candidates.find((candidate) =>
+    configuredResolved && candidate.model === configuredResolved.candidate.model && candidate.thinking === configuredResolved.candidate.thinking,
+  );
+  if (configuredResolved && !configuredMatchesProfile) candidates.unshift(configuredResolved.candidate);
+  const proposed = requestedProfile
+    ? candidates.find((candidate) => candidate.profileName === requestedProfile)
+    : configuredMatchesProfile ?? candidates[0];
+  if (!proposed || candidates.length === 0) {
+    throw new Error("No available planner profile satisfies the configured model, thinking level, and model scope; planner was not started");
+  }
+
+  const ordered = [proposed, ...candidates.filter((candidate) => candidate !== proposed)];
+  const optionMap = new Map<string, PlannerCandidate>();
+  const options = ordered.map((candidate) => {
+    const prefix = candidate === proposed ? "Approve" : "Choose";
+    const label = `${prefix} ${candidate.label} — ${candidate.model} @ ${candidate.thinking}`;
+    optionMap.set(label, candidate);
+    return label;
+  });
+  options.push("Cancel planner launch");
+  const reason = task.replace(/\s+/g, " ").trim().slice(0, 180);
+  const selected = await ctx.ui.select(
+    `Planner approval — ${configuredAgent.description || "bounded planning task"}: ${reason}`,
+    options,
+  );
+  if (!selected || selected === "Cancel planner launch") {
+    throw new Error("Planner launch cancelled; no child was started");
+  }
+  const candidate = optionMap.get(selected);
+  if (!candidate) throw new Error("Planner approval returned an unknown choice; no child was started");
+  return resolveModelCandidate(candidate, ctx);
+}
+
 // ── Agent Discovery & Registration ────────────────────────────────────
 
 let agents: AgentConfig[] = [];
@@ -1121,56 +1250,34 @@ export default function (pi: ExtensionAPI) {
 
       const invocationStart = Date.now();
 
-      // Profile resolution. A profile is planner-only and pins BOTH the exact
-      // model and the thinking level. Every failure mode below throws before
-      // spawn — there is no implicit model fallback and no silent clamp.
-      const profileName = params.profile;
-      let profile: PlannerProfile | undefined;
-      if (profileName !== undefined) {
-        if (params.agent !== PLANNER_PROFILE_AGENT) {
-          throw new Error(
-            `Profile "${profileName}" is only valid for the "${PLANNER_PROFILE_AGENT}" agent, not "${params.agent}"`,
-          );
-        }
-        profile = PLANNER_PROFILES[profileName];
-        if (!profile) {
-          throw new Error(`Unknown profile: ${profileName}. Available profiles: ${plannerProfileNames()}`);
-        }
-        if (params.thinking !== undefined && params.thinking !== profile.thinking) {
-          throw new Error(
-            `Profile "${profileName}" pins thinking "${profile.thinking}"; conflicting explicit override "${params.thinking}". Omit thinking or request the profile's level`,
-          );
-        }
+      // Every planner invocation is approved in the host UI immediately before
+      // semaphore/spawn. Omitted profiles are also gated: the UI approves the
+      // configured selection or chooses one of the available named profiles.
+      const requestedProfile = params.profile;
+      if (requestedProfile !== undefined && params.agent !== PLANNER_PROFILE_AGENT) {
+        throw new Error(
+          `Profile "${requestedProfile}" is only valid for the "${PLANNER_PROFILE_AGENT}" agent, not "${params.agent}"`,
+        );
       }
 
       const agent: AgentConfig = { ...configuredAgent };
-      if (profile) {
-        agent.model = profile.model;
-        agent.thinking = profile.thinking;
-      } else if (params.thinking !== undefined) {
-        agent.thinking = params.thinking;
-      }
-      const modelSeparator = agent.model.indexOf("/");
-      const provider = agent.model.slice(0, modelSeparator);
-      const modelId = agent.model.slice(modelSeparator + 1);
-      const selectedModel = ctx.modelRegistry.find(provider, modelId);
-      if (!selectedModel) throw new Error(`Configured model unavailable: ${agent.model}; no implicit fallback`);
-      const supported = getSupportedThinkingLevels(selectedModel);
-      if (!supported.includes(agent.thinking as any)) throw new Error(`Unsupported thinking ${agent.thinking} for ${agent.model}; supported: ${supported.join(", ")}`);
-      // Scoped-model check: when the parent session scopes models (non-empty
-      // ctx.scopedModels), the exact provider/model must be inside that scope;
-      // an empty scope means every registry model is usable. No fallback is
-      // invented when the model is not scoped — the call fails instead.
-      if (profile) {
-        const scoped = ctx.scopedModels ?? [];
-        const inScope = scoped.some(
-          (sm) => sm.model.provider === selectedModel.provider && sm.model.id === selectedModel.id,
-        );
-        if (!inScope) {
-          throw new Error(
-            `Profile "${profileName}" model ${agent.model} is not in this session's scoped models (enabledModels); no fallback. Add it to enabledModels or clear the model scope`,
-          );
-        }
+      let profile: PlannerProfile | undefined;
+      let profileName: string | undefined;
+      let selectedModel: any;
+      if (params.agent === PLANNER_PROFILE_AGENT) {
+        const approval = await approvePlannerCandidate(configuredAgent, params.task!, requestedProfile, params.thinking, ctx);
+        selectedModel = approval.model;
+        agent.model = approval.candidate.model;
+        agent.thinking = approval.candidate.thinking;
+        profileName = approval.candidate.profileName;
+        profile = approval.candidate.profile;
+      } else {
+        if (params.thinking !== undefined) agent.thinking = params.thinking;
+        const parts = modelParts(agent.model);
+        selectedModel = ctx.modelRegistry.find(parts.provider, parts.id);
+        if (!selectedModel) throw new Error(`Configured model unavailable: ${agent.model}; no implicit fallback`);
+        const supported = getSupportedThinkingLevels(selectedModel);
+        if (!supported.includes(agent.thinking as any)) throw new Error(`Unsupported thinking ${agent.thinking} for ${agent.model}; supported: ${supported.join(", ")}`);
       }
       const contextWindow = selectedModel.contextWindow;
       let queueDurationMs = 0;

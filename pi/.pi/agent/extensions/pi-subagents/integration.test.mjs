@@ -48,7 +48,13 @@ test('actual extension loading, allowlists, protocol, usage and failure hook', {
     };
     const byModel = new Map(Object.values(MODELS).map(m => [`${m.provider}/${m.id}`, m]));
     const scopedModels = Object.values(MODELS).map(m => ({model:{provider:m.provider, id:m.id}}));
-    const ctx = {cwd:dir, scopedModels, modelRegistry:{find:(p,id)=>byModel.get(`${p}/${id}`)}};
+    const ctx = {
+      cwd:dir,
+      scopedModels,
+      modelRegistry:{find:(p,id)=>byModel.get(`${p}/${id}`)},
+      hasUI:true,
+      ui:{select:async (_title, options)=>options[0], notify:()=>{}},
+    };
     const usage = {input:10,output:2,cacheRead:5,cacheWrite:0,totalTokens:17,cost:{input:.01,output:.02,cacheRead:0,cacheWrite:0,total:.03}};
     const scoutModel = MODELS.deepseek;
     const event = (reason,text,extra={})=>({type:'message_end',message:{role:'assistant',provider:scoutModel.provider,model:scoutModel.id,stopReason:reason,content:[{type:'text',text}],usage,...extra}});
@@ -118,9 +124,26 @@ test('actual extension loading, allowlists, protocol, usage and failure hook', {
     const sameLevel = await tool.execute('pf',{agent:'planner',task:'Profile fixture',profile:'diseno',thinking:'medium'},undefined,undefined,ctx);
     assert.equal(sameLevel.details.status,'complete');
     assert.equal(sameLevel.details.results[0].profile,'diseno');
+
+    // Omitting profile still requires a real approval and records the selected
+    // effective profile; headless execution and cancellation cannot spawn.
+    const withoutProfile = await tool.execute('np',{agent:'planner',task:'No profile fixture'},undefined,undefined,ctx);
+    assert.equal(withoutProfile.details.status,'complete');
+    assert.equal(withoutProfile.details.results[0].profile,'habitual');
+    const profileArgsFile = process.env.PI_TEST_FIXTURE+'.args';
+    await rm(profileArgsFile,{force:true});
+    const cancelledUi = {...ctx,ui:{select:async (_title, options)=>options.at(-1), notify:()=>{}}};
+    await assert.rejects(tool.execute('pc',{agent:'planner',task:'Cancel fixture',profile:'habitual'},undefined,undefined,cancelledUi),/cancelled/);
+    assert.equal(existsSync(profileArgsFile),false,'cancelled planner must not spawn');
+    await assert.rejects(tool.execute('ph',{agent:'planner',task:'Headless fixture',profile:'habitual'},undefined,undefined,{...ctx,hasUI:false,ui:undefined}),/no UI/);
+    assert.equal(existsSync(profileArgsFile),false,'headless planner must not spawn');
+    const abortedPlanner = new AbortController();
+    abortedPlanner.abort();
+    const abortedPlannerResult = await tool.execute('pa',{agent:'planner',task:'Abort fixture',profile:'habitual'},abortedPlanner.signal,undefined,ctx);
+    assert.equal(abortedPlannerResult.details.status,'cancelled');
+    assert.equal(existsSync(profileArgsFile),false,'aborted planner must not spawn');
     // Fail-fast paths below must all reject before the fake child spawns: the
     // recorded args file is removed first and must stay absent after each reject.
-    const profileArgsFile = process.env.PI_TEST_FIXTURE+'.args';
     await rm(profileArgsFile,{force:true});
     const noRegistry = {...ctx, modelRegistry:{find:()=>undefined}};
     const narrowScope = {...ctx, scopedModels:[{model:{provider:'openai-codex', id:'gpt-5.6-luna'}}]};
@@ -207,12 +230,16 @@ test('actual extension loading, allowlists, protocol, usage and failure hook', {
     assert.equal(again.details.path,pointerRel);
     assert.equal(typeof again.details.pointerPersisted,'boolean');
 
-    // Plan-body identity must agree with the active pointer; do not trust a
-    // valid path when its persisted metadata belongs to another session/worktree.
+    // An explicitly persisted pointer is the current selection; the plan body
+    // retains provenance and may have been authored in another session. Legacy
+    // filename recovery still checks body identity before adopting it.
     await writeFile(join(dir,pointerRel),planBody.replace(`- Session ID: ${fullSessionId}`, '- Session ID: another-session-9999'));
-    await assert.rejects(getPlanTool.execute('m',{},undefined,undefined,ctxWithPointers([[pointerRel]])),/Plan metadata belongs to a different session/);
+    const adoptedForeign = await getPlanTool.execute('m',{},undefined,undefined,ctxWithPointers([[pointerRel]]));
+    assert.equal(adoptedForeign.details.source,'active-pointer');
     await writeFile(join(dir,pointerRel),planBody.replace(`- Worktree: ${worktree}`, '- Worktree: /elsewhere/worktree'));
-    await assert.rejects(getPlanTool.execute('m',{},undefined,undefined,ctxWithPointers([[pointerRel]])),/Plan metadata belongs to a different worktree/);
+    const adoptedForeignWorktree = await getPlanTool.execute('m',{},undefined,undefined,ctxWithPointers([[pointerRel]]));
+    assert.equal(adoptedForeignWorktree.details.source,'active-pointer');
+    await assert.rejects(getPlanTool.execute('m',{},undefined,undefined,memCtx),/Plan metadata belongs to a different worktree/);
     await writeFile(join(dir,pointerRel),planBody);
 
     // Populate a canonical plan; later assertions check the bounded snapshot.
@@ -237,6 +264,10 @@ Known, Evidence, Acceptance, Checks and Stop live in the file.
 ## Tasks
 - [x] T01 done slice
 - [ ] T02 active regression slice
+  - [ ] subchecklist must not count
+\`\`\`markdown
+- [ ] T99 example in a code fence must not count
+\`\`\`
 - [ ] T03 pending slice
 
 ## Risks / Stop Rules
@@ -247,12 +278,20 @@ Local-only checks; no provider calls.
 
 ## Validation
 - 2026-09-15 targeted tests pass.
+- [ ] validation checkbox must not count
+
+## Notes
+- [ ] outside Tasks must not count
 
 ## Unresolved
 - Unresolved sentinel: confirm scoped-model behavior.
 `);
 
-    // Legacy current-session resolution (no pointer entries yet).
+    // Legacy recovery is independent of the current date and prefers the full ID.
+    const currentPlanBody = await readFile(join(dir,pointerRel),'utf8');
+    await rm(join(dir,pointerRel));
+    const historicalRel = `.ai/plan/2024-01-02-${fullSessionId}-historical.md`;
+    await writeFile(join(dir,historicalRel),currentPlanBody);
     const got = await getPlanTool.execute('m',{},undefined,undefined,memCtx);
     assert.equal(got.details.source,'current-session');
     assert.equal(got.details.planStatus,'in-progress');
@@ -260,6 +299,8 @@ Local-only checks; no provider calls.
     assert.match(got.details.planCurrentStep,/T08/);
     assert.match(got.details.planActiveTask,/T02/);
     assert.match(got.details.planWarning,/Unresolved sentinel/);
+    assert.equal(got.details.path,historicalRel);
+    await writeFile(join(dir,pointerRel),currentPlanBody);
 
     // Pointer-first resolution beats a newer plan file; never resolved by mtime.
     const newerRel = '.ai/plan/2026-09-15-decoy0000-newest-by-mtime.md';
@@ -270,19 +311,30 @@ Local-only checks; no provider calls.
     assert.match(viaPointer.content[0].text,/pointer-plan/);
     assert.doesNotMatch(viaPointer.content[0].text,/DECOY_NEWEST_BY_MTIME/);
 
-    // Fail-closed blockers: worktree/session mismatch, ambiguity, traversal, missing file.
+    // The latest pointer in the active branch is authoritative: A -> B selects B.
+    const nextRel = '.ai/plan/2026-09-15-next-plan.md';
+    await writeFile(join(dir,nextRel),planBody.replace('# Plan: pointer-plan','# Plan: next-plan'));
+    const branchCtx = ctxWithPointers([[pointerRel],[nextRel]]);
+    const viaNext = await getPlanTool.execute('m',{},undefined,undefined,branchCtx);
+    assert.equal(viaNext.details.source,'active-pointer');
+    assert.equal(viaNext.details.path,nextRel);
+    assert.match(viaNext.content[0].text,/next-plan/);
+
+    // Fail-closed blockers: worktree/session mismatch, traversal, and missing file.
     await assert.rejects(getPlanTool.execute('b',{},undefined,undefined,ctxWithPointers([[pointerRel,{worktree:'/elsewhere/worktree'}]])),/different worktree/);
     await assert.rejects(getPlanTool.execute('b',{},undefined,undefined,ctxWithPointers([[pointerRel,{sessionId:'other-session-9999'}]])),/different session/);
-    await assert.rejects(getPlanTool.execute('b',{},undefined,undefined,ctxWithPointers([[pointerRel],[newerRel]])),/Ambiguous active plan pointers/);
     await assert.rejects(getPlanTool.execute('b',{},undefined,undefined,ctxWithPointers([['../../escape.md']])),/escapes \.ai\/plan\//);
-    await assert.rejects(getPlanTool.execute('b',{},undefined,undefined,ctxWithPointers([['.ai/plan/2026-09-15-vanished.md']])),/references a missing file/);
+    await assert.rejects(getPlanTool.execute('b',{},undefined,undefined,ctxWithPointers([['.ai/plan/2026-09-15-vanished.md']])),/missing, non-file/);
 
-    // create_session_plan rebinds an existing plan recorded for another worktree.
-    const rebound = await planTool.execute('m',{slug:'pointer-plan'},undefined,undefined,ctxWithPointers([[pointerRel,{worktree:'/elsewhere/worktree'}]]));
-    assert.equal(rebound.details.created,false);
-    assert.equal(rebound.details.rebound,true);
-    assert.equal(rebound.details.path,pointerRel);
-    assert.match(rebound.content[0].text,/rebound to worktree/);
+    // A missing selected file remains blocked; creation never recreates it.
+    await assert.rejects(planTool.execute('b',{slug:'replacement'},undefined,undefined,ctxWithPointers([['.ai/plan/2026-09-15-vanished.md']])),/will not be recreated/);
+    const replacementPath = join(dir,'.ai/plan/2026-09-15-vanished.md');
+    assert.equal(existsSync(replacementPath),false);
+
+    // Explicit selection/adoption never overwrites or recreates the file.
+    const selected = await toolOf('select_session_plan').execute('s',{path:nextRel},undefined,undefined,ctx);
+    assert.equal(selected.details.selected,false,'fixture runtime cannot persist appendEntry outside a live session');
+    assert.equal(existsSync(join(dir,nextRel)),true);
 
     // summarize_worktree reports bounded plan state next to Git information.
     const sum = await sumTool.execute('m',{},undefined,undefined,ptrCtx);
@@ -323,6 +375,14 @@ Local-only checks; no provider calls.
     assert.match(planInjection.systemPrompt,/Unresolved sentinel/);
     assert.doesNotMatch(planInjection.systemPrompt,/HIDDEN_FULL_PLAN_BODY_MARKER|## Spec \/ Contract|## Validation Policy/);
     assert.ok(planInjection.systemPrompt.length<4000);
+    const contextHandler = memory.handlers.get('context')[0];
+    const contextual = await contextHandler({type:'context',messages:[]},ptrCtx);
+    assert.equal(contextual.messages.length,1);
+    assert.match(contextual.messages[0].content,/Finish the provider-free regression matrix/);
+    assert.doesNotMatch(contextual.messages[0].content,/HIDDEN_FULL_PLAN_BODY_MARKER|## Spec \/ Contract/);
+    for (const eventName of ['session_compact','tool_execution_end','turn_end','agent_end','agent_settled']) {
+      assert.ok(memory.handlers.get(eventName)?.length, `missing refresh hook: ${eventName}`);
+    }
 
     // session_before_switch clears stale status/widget text in TUI mode only.
     uiCalls.length = 0;
