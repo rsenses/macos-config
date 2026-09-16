@@ -7,5 +7,5 @@ fi
 
 # Make mise-managed tools available to applications launched from a login shell.
 if command -v mise >/dev/null 2>&1; then
-  eval "$(mise activate zsh --shims)"
+  eval "$(mise activate zsh)"
 fi
