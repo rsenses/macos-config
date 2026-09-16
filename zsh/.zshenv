@@ -2,8 +2,10 @@
 export BAT_THEME=kanagawa
 export ARTISAN_OPEN_ON_MAKE_EDITOR=nvim
 export LANG=es_ES.UTF-8
-export EDITOR=/opt/homebrew/bin/nvim
-export HOMEBREW_PREFIX=/opt/homebrew
+export EDITOR=nvim
+if [[ "$(uname)" == "Darwin" ]]; then
+    export HOMEBREW_PREFIX=/opt/homebrew
+fi
 export OLLAMA_API_BASE=http://127.0.0.1:11434
 export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
 export XDG_CONFIG_HOME="$HOME/.config"
