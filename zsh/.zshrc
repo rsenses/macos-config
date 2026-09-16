@@ -25,6 +25,12 @@ if command -v starship >/dev/null 2>&1; then
   eval "$(starship init zsh)"
 fi
 
+# Zsh completion
+if [[ "$OSTYPE" == darwin* || "$OSTYPE" == linux* ]]; then
+  autoload -Uz compinit
+  compinit
+fi
+
 # Worktrunk
 if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
 
@@ -49,10 +55,6 @@ setopt SHARE_HISTORY
 # beeping is annoying
 unsetopt BEEP
 
-if [[ "$OSTYPE" == darwin* ]]; then
-  autoload -U compinit
-  compinit
-fi
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
 
 autoload -z edit-command-line
