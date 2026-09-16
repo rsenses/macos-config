@@ -2,6 +2,7 @@
 /.ai/
 
 # Secrets and machine-local overrides (examples remain versionable).
+/zsh/.zshenv.local
 .secrets
 .zshvars
 .env
