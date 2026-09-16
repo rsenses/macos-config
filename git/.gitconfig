@@ -1,6 +1,6 @@
 [core]
 	# Use custom `.gitignore` and `.gitattributes`
-	excludesfile = /Users/rubensilvarodriguez/.gitignore
+	excludesfile = ~/.gitignore
 
 	# Treat spaces before tabs and all kinds of trailing whitespace as an error
 	# [default] trailing-space: looks for spaces at the end of a line
@@ -14,7 +14,7 @@
 	editor = nvim
 
 	pager = nvim -R -c 'setlocal filetype=git' -
-	hooksPath = /Users/rubensilvarodriguez/.githooks
+	hooksPath = ~/.githooks
 [apply]
 
 	# Detect whitespace errors when applying a patch
@@ -25,8 +25,7 @@
 
 [user]
 	name = Rubén Silva
-	email = me@rsenses.com
-	signingkey = /Users/rubensilvarodriguez/.ssh/github.pub
+	email = me@rsilva.es
 
 [color]
 	# Use colors in Git commands that are capable of colored output when
@@ -77,8 +76,6 @@
 	tool = vimdiff
 [http]
 	sslVerify = true
-[credential]
-	helper = osxkeychain
 [gpg]
 	format = ssh
 [commit]
