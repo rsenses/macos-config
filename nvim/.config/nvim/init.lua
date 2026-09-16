@@ -27,6 +27,14 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
+-- Clipboard
+if vim.fn.has 'mac' == 1 then
+  vim.opt.clipboard = 'unnamedplus'
+elseif vim.fn.has 'linux' == 1 then
+  vim.g.clipboard = 'osc52'
+  vim.opt.clipboard = 'unnamedplus'
+end
+
 -- Experimental UI2: floating cmdline and messages
 require('vim._core.ui2').enable {}
 -- recuerda g< para abrir los mensajes
