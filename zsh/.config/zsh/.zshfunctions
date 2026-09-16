@@ -35,67 +35,6 @@ dest() {
   destinations | sed "s|^$HOME/|~/|" | fzf --no-multi --prompt="Destino> "
 }
 
-# send downloaded files on destination
-send_downloads() {
-  local downloads="$HOME/Downloads"
-  local src src_abs dst
-
-  [[ -d "$downloads" ]] || return 1
-
-  while :; do
-    src="$(
-      find "$downloads" -mindepth 1 -maxdepth 1 ! -name '.DS_Store' \
-      | sed "s|^$HOME/|~/|" \
-      | fzf \
-        --prompt="Downloads> " \
-        --no-multi \
-        --header="ENTER mover | CTRL-D trash | CTRL-O quicklook | CTRL-R rename | ESC salir" \
-        --preview '
-          p="${1/#\~/'"$HOME"'}"
-          if [ -d "$p" ]; then
-            eza -la --group-directories-first --color=always "$p" 2>/dev/null ||
-            ls -la "$p"
-          elif file --mime "$p" | grep -q "charset=binary"; then
-            file "$p"
-          else
-            bat --style=numbers --color=always "$p" 2>/dev/null ||
-            file "$p"
-          fi
-        ' \
-        --bind "ctrl-d:execute-silent(
-          printf '%s\n' {} | sed 's|^~|$HOME|' | xargs -I {} trash \"{}\"
-        )+reload(
-          find $downloads -mindepth 1 -maxdepth 1 ! -name '.DS_Store' | sed 's|^$HOME/|~/|'
-        )" \
-        --bind "ctrl-o:execute-silent(
-          p=\$(printf '%s\n' {} | sed 's|^~|$HOME|');
-          qlmanage -p \"\$p\" >/dev/null 2>&1 &
-        )" \
-        --bind "ctrl-r:execute(
-          p=\$(printf '%s\n' {} | sed 's|^~|$HOME|');
-          dir=\$(dirname \"\$p\");
-          base=\$(basename \"\$p\");
-          printf 'Rename %s -> ' \"\$base\" > /dev/tty;
-          read -r newname < /dev/tty;
-          if [ -n \"\$newname\" ] && [ \"\$newname\" != \"\$base\" ]; then
-            mv \"\$p\" \"\$dir/\$newname\";
-          fi
-        )+reload(
-          find $downloads -mindepth 1 -maxdepth 1 ! -name '.DS_Store' | sed 's|^$HOME/|~/|'
-        )"
-    )" || break
-
-    [[ -z "$src" ]] && break
-    src_abs="${src/#\~/$HOME}"
-
-    dst="$(dest)" || continue
-    [[ -n "$dst" ]] || continue
-    dst="${dst/#\~/$HOME}"
-
-    mv "$src_abs" "$dst"
-  done
-}
-
 # ssh
 ss() {
   local ssh_config="$HOME/.ssh/config"

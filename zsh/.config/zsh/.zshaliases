@@ -1,6 +1,3 @@
-# Bookmarks
-alias help='tldr --list | fzf --no-multi --preview "tldr {1}" --preview-window=right,70% | xargs tldr'
-
 # Colorize grep output (good for log files)
 alias grep='grep --color=auto'
 
