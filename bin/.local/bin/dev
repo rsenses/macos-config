@@ -6,6 +6,7 @@ set -euo pipefail
 # de siempre: $HOME/dev/caddy-sites, /tmp/dev y el Caddyfile de Homebrew.
 SITES_DIR="${DEV_SITES_DIR:-$HOME/dev/caddy-sites}"
 CADDYFILE="${DEV_CADDYFILE:-/opt/homebrew/etc/Caddyfile}"
+DOMAIN_SUFFIX="${DEV_DOMAIN_SUFFIX:-test}"
 CADDY_ADMIN="${DEV_CADDY_ADMIN:-http://localhost:2019}"
 STATE_PREFIX="${DEV_STATE_PREFIX:-/tmp/dev}"
 LOCK_DIR="${DEV_LOCK_DIR:-${STATE_PREFIX}.lock}"
@@ -188,7 +189,7 @@ resolve_project() {
     REPO_NAME="$(basename "$target_dir")"
   fi
 
-  DOMAIN="${REPO_NAME}.test"
+  DOMAIN="${REPO_NAME}.${DOMAIN_SUFFIX}"
   SNIPPET="$SITES_DIR/${REPO_NAME}.caddy"
   CONFIG_FILE="$PROJECT_DIR/.config/caddy"
   WEB_ROOT="$PROJECT_DIR"
@@ -225,8 +226,8 @@ normalize_alias_host() {
   [[ -n "$host" ]] || return 0
 
   case "$host" in
-    *.test) printf '%s\n' "$host" ;;
-    *) printf '%s.test\n' "$host" ;;
+    *."$DOMAIN_SUFFIX") printf '%s\n' "$host" ;;
+    *) printf '%s.%s\n' "$host" "$DOMAIN_SUFFIX" ;;
   esac
 }
 
