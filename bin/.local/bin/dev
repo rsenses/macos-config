@@ -23,8 +23,9 @@ SNIPPET=""
 CONFIG_FILE=""
 WEB_ROOT=""
 PORT=""
-PHP_LOG_FILE=""
-PHP_STATE_FILE=""
+LOG_FILE=""
+STATE_FILE=""
+SERVER_TYPE=""
 declare -a ALIASES=()
 declare -a HOSTS=()
 declare -a DOMAIN_CONFLICTS=()
@@ -140,8 +141,8 @@ wait_for_port() {
     if port_is_listening "$p"; then
       # An occupied port is not enough: during the find/start race it could
       # belong to another process. When an owner is supplied, wait only for a
-      # PHP listener belonging to the process we just started.
-      if [[ -z "$owner_pid" ]] || port_listener_belongs_to "$p" "$owner_pid" "$owner_start"; then
+      # listener belonging to the process we just started.
+      if [[ -z "$owner_pid" ]] || port_listener_belongs_to "$p" "$owner_pid" "$owner_start" "$SERVER_TYPE"; then
         return 0
       fi
     fi
@@ -150,6 +151,41 @@ wait_for_port() {
   done
 
   return 1
+}
+
+package_has_dev_script() {
+  command -v node >/dev/null 2>&1 || return 1
+
+  node -e '
+    const fs = require("fs");
+    try {
+      const packageJson = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
+      const dev = packageJson.scripts && packageJson.scripts.dev;
+      process.exit(typeof dev === "string" && dev.trim() ? 0 : 1);
+    } catch (_) {
+      process.exit(1);
+    }
+  ' "$PROJECT_DIR/package.json" >/dev/null 2>&1
+}
+
+detect_server_type() {
+  SERVER_TYPE=""
+
+  if [[ -f "$PROJECT_DIR/artisan" ]]; then
+    SERVER_TYPE="laravel"
+  elif [[ -f "$WEB_ROOT/index.php" ]]; then
+    SERVER_TYPE="php"
+  elif [[ -f "$PROJECT_DIR/package.json" ]] && package_has_dev_script; then
+    SERVER_TYPE="node"
+  fi
+}
+
+server_type_label() {
+  case "${1:-php}" in
+    node) printf 'Node' ;;
+    laravel|php|'') printf 'PHP' ;;
+    *) printf '%s' "$1" ;;
+  esac
 }
 
 resolve_project() {
@@ -194,14 +230,16 @@ resolve_project() {
   CONFIG_FILE="$PROJECT_DIR/.config/caddy"
   WEB_ROOT="$PROJECT_DIR"
   PROJECT_ID="$(hash_path "$PROJECT_DIR")"
-  PHP_STATE_FILE="${STATE_PREFIX}-${PROJECT_ID}.state"
-  PHP_LOG_FILE="${STATE_PREFIX}-${PROJECT_ID}.log"
+  STATE_FILE="${STATE_PREFIX}-${PROJECT_ID}.state"
+  LOG_FILE="${STATE_PREFIX}-${PROJECT_ID}.log"
 
   if [[ -d "$PROJECT_DIR/public" ]]; then
     WEB_ROOT="$PROJECT_DIR/public"
   elif [[ -d "$PROJECT_DIR/web" ]]; then
     WEB_ROOT="$PROJECT_DIR/web"
   fi
+
+  detect_server_type
 }
 
 append_alias_if_missing() {
@@ -464,15 +502,89 @@ php_command_matches() {
   return 1
 }
 
+# Nuxt y Vite reciben estos argumentos a través de `npm run dev -- ...`.
+# Se aceptan las formas con espacio y con `=` que muestran sus procesos.
+node_server_args_match() {
+  local command_line="$1"
+  local port="$2"
+  local bounded_command=" $command_line "
+
+  case "$port" in
+    ''|*[!0-9]*) return 1 ;;
+  esac
+
+  case "$bounded_command" in
+    *" --host 127.0.0.1 "*|*" --host=127.0.0.1 "*|*" --hostname 127.0.0.1 "*|*" --hostname=127.0.0.1 "*) ;;
+    *) return 1 ;;
+  esac
+
+  case "$bounded_command" in
+    *" --port $port "*|*" --port=$port "*) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+node_command_matches() {
+  local command_line="$1"
+  local port="$2"
+  local role="${3:-root}"
+
+  node_server_args_match "$command_line" "$port" || return 1
+
+  if [[ "$role" == "root" ]]; then
+    case "$command_line" in
+      *"npm run dev"*|*"npm-cli.js run dev"*|*"npm-cli.cjs run dev"*) return 0 ;;
+    esac
+  else
+    case " $command_line " in
+      *" node "*|*"/node "*|*" nodejs "*|*"/nodejs "*) return 0 ;;
+    esac
+  fi
+
+  return 1
+}
+
+server_command_matches() {
+  local command_line="$1"
+  local port="$2"
+  local server_type="${3:-php}"
+  local role="${4:-root}"
+
+  case "$server_type" in
+    laravel|php) php_command_matches "$command_line" "$port" ;;
+    node) node_command_matches "$command_line" "$port" "$role" ;;
+    *) return 1 ;;
+  esac
+}
+
+process_cwd_for_pid() {
+  local pid="$1"
+  local line=""
+  local lsof_output=""
+
+  lsof_output="$(lsof -nP -a -p "$pid" -d cwd -Fn 2>/dev/null)" || return 1
+  while IFS= read -r line; do
+    case "$line" in
+      n*) printf '%s\n' "${line#n}"; return 0 ;;
+    esac
+  done <<< "$lsof_output"
+
+  return 1
+}
+
 # Un PID solo se considera "nuestro" si su comando coincide con el servidor
-# PHP del puerto registrado y, cuando se guardó la hora de arranque, esta
-# coincide también. Así un PID reciclado por otro proceso nunca recibe señales.
-php_pid_belongs() {
+# del puerto registrado y, cuando se guardó la hora de arranque, esta coincide
+# también. Si se puede leer el directorio de trabajo, debe ser el del proyecto.
+server_pid_belongs() {
   local pid="$1"
   local port="$2"
   local expected_start="$3"
+  local server_type="${4:-php}"
+  local expected_workdir="${5:-}"
+  local role="${6:-root}"
   local actual_command=""
   local actual_start=""
+  local actual_cwd=""
 
   [[ "$pid" =~ ^[0-9]+$ ]] || return 1
   (( 10#$pid > 1 )) || return 1
@@ -481,11 +593,15 @@ php_pid_belongs() {
 
   actual_command="$(ps_command_for_pid "$pid")" || return 1
   [[ -n "$actual_command" ]] || return 1
-  php_command_matches "$actual_command" "$port" || return 1
+  server_command_matches "$actual_command" "$port" "$server_type" "$role" || return 1
 
   if [[ -n "$expected_start" ]]; then
     actual_start="$(ps_start_for_pid "$pid")" || return 1
     [[ "$actual_start" == "$expected_start" ]] || return 1
+  fi
+
+  if [[ -n "$expected_workdir" ]] && actual_cwd="$(process_cwd_for_pid "$pid" 2>/dev/null)"; then
+    [[ "$actual_cwd" == "$expected_workdir" ]] || return 1
   fi
 
   return 0
@@ -497,12 +613,14 @@ port_listener_pid() {
   lsof -nP -t -iTCP:"$port" -sTCP:LISTEN 2>/dev/null | head -n 1
 }
 
-# Verify the listener after starting PHP. This prevents a process that wins the
-# find-free-port race from being published behind the new Caddy route.
+# Verify the listener after starting the selected server. The listener may be
+# a child of npm (or of artisan), so the process tree is part of the check.
 port_listener_belongs_to() {
   local port="$1"
   local owner_pid="$2"
   local owner_start="${3:-}"
+  local server_type="${4:-php}"
+  local expected_workdir="${5:-}"
   local listener_pid=""
 
   listener_pid="$(port_listener_pid "$port")" || listener_pid=""
@@ -510,18 +628,20 @@ port_listener_belongs_to() {
   process_is_descendant_of "$listener_pid" "$owner_pid" || return 1
 
   if [[ "$listener_pid" == "$owner_pid" ]]; then
-    php_pid_belongs "$listener_pid" "$port" "$owner_start"
+    server_pid_belongs "$listener_pid" "$port" "$owner_start" "$server_type" "$expected_workdir"
   else
-    php_pid_belongs "$listener_pid" "$port" ""
+    server_pid_belongs "$listener_pid" "$port" "" "$server_type" "$expected_workdir" listener
   fi
 }
 
-write_php_state() {
+write_server_state() {
   local pid="$1"
+  local workdir="$2"
   local hosts_line
   local pid_start=""
+  local process_group=""
   local tries=0
-  local temp_file="${PHP_STATE_FILE}.tmp.$$"
+  local temp_file="${STATE_FILE}.tmp.$$"
 
   hosts_line="$(printf "%s " "${HOSTS[@]}")"
   hosts_line="${hosts_line% }"
@@ -534,6 +654,8 @@ write_php_state() {
     fi
   done
 
+  process_group="$(ps_group_for_pid "$pid" 2>/dev/null || true)"
+
   {
     printf 'PROJECT_DIR=%s\n' "$PROJECT_DIR"
     printf 'DOMAIN=%s\n' "$DOMAIN"
@@ -541,39 +663,53 @@ write_php_state() {
     printf 'PORT=%s\n' "$PORT"
     printf 'PID=%s\n' "$pid"
     printf 'PID_START=%s\n' "$pid_start"
+    printf 'SERVER_TYPE=%s\n' "$SERVER_TYPE"
+    printf 'WORK_DIR=%s\n' "$workdir"
+    printf 'PGID=%s\n' "$process_group"
   } > "$temp_file"
 
-  mv -f "$temp_file" "$PHP_STATE_FILE"
+  mv -f "$temp_file" "$STATE_FILE"
 }
 
-start_php_server() {
-  mkdir -p "$(dirname "$PHP_LOG_FILE")"
-  : > "$PHP_LOG_FILE"
+start_server() {
+  mkdir -p "$(dirname "$LOG_FILE")"
+  : > "$LOG_FILE"
 
-  mkdir -p "$(dirname "$PHP_STATE_FILE")"
+  mkdir -p "$(dirname "$STATE_FILE")"
 
   local -a server_command
   local server_workdir="$PROJECT_DIR"
-  if [[ -f "$PROJECT_DIR/artisan" ]]; then
-    server_command=(php artisan serve --host=127.0.0.1 --port="${PORT}")
-  elif [[ -f "$WEB_ROOT/index.php" ]]; then
-    # Drupal resuelve algunos servicios con rutas relativas a su docroot.
-    # El servidor debe arrancar desde web/ para que core/core.services.yml
-    # apunte a web/core/core.services.yml.
-    server_workdir="$WEB_ROOT"
-    server_command=(php -S "127.0.0.1:${PORT}" -t "$WEB_ROOT")
-    if [[ -f "$WEB_ROOT/.ht.router.php" ]]; then
-      server_command+=("$WEB_ROOT/.ht.router.php")
-    fi
-  else
-    echo "Error: no encuentro un entrypoint PHP (artisan o index.php) en ${PROJECT_DIR}." >&2
-    return 1
-  fi
+  case "$SERVER_TYPE" in
+    laravel)
+      server_command=(php artisan serve --host=127.0.0.1 --port="${PORT}")
+      ;;
+    php)
+      # Drupal resuelve algunos servicios con rutas relativas a su docroot.
+      # El servidor debe arrancar desde web/ para que core/core.services.yml
+      # apunte a web/core/core.services.yml.
+      server_workdir="$WEB_ROOT"
+      server_command=(php -S "127.0.0.1:${PORT}" -t "$WEB_ROOT")
+      if [[ -f "$WEB_ROOT/.ht.router.php" ]]; then
+        server_command+=("$WEB_ROOT/.ht.router.php")
+      fi
+      ;;
+    node)
+      if ! command -v npm >/dev/null 2>&1; then
+        echo "Error: no encuentro npm para el proyecto JavaScript ${PROJECT_DIR}." >&2
+        return 1
+      fi
+      server_command=(npm run dev -- --host 127.0.0.1 --port "$PORT")
+      ;;
+    *)
+      echo "Error: no encuentro un proyecto compatible en ${PROJECT_DIR}." >&2
+      return 1
+      ;;
+  esac
 
   (
     cd "$server_workdir"
 
-    if [[ -f "$PROJECT_DIR/artisan" ]]; then
+    if [[ "$SERVER_TYPE" == "laravel" ]]; then
       # direnv u otras herramientas pueden exportar el placeholder sin resolver.
       # Laravel no sobreescribe una APP_URL heredada y Symfony la rechaza.
       case "${APP_URL:-}" in
@@ -581,56 +717,75 @@ start_php_server() {
       esac
     fi
 
-    nohup "${server_command[@]}" >"$PHP_LOG_FILE" 2>&1 < /dev/null &
+    if [[ "$SERVER_TYPE" == "node" ]] && command -v setsid >/dev/null 2>&1; then
+      nohup setsid "${server_command[@]}" >"$LOG_FILE" 2>&1 < /dev/null &
+    else
+      nohup "${server_command[@]}" >"$LOG_FILE" 2>&1 < /dev/null &
+    fi
     local server_pid="$!"
 
     # Si el estado no se puede guardar, el servidor quedaría huérfano y sin
     # control: se mata y se propaga el error antes de publicar el upstream.
-    if ! write_php_state "$server_pid"; then
+    if ! write_server_state "$server_pid" "$server_workdir"; then
+      # El estado es el control de vida del proceso; si falla, intenta limpiar
+      # también los hijos que pueda haber creado npm.
+      process_group="$(ps_group_for_pid "$server_pid" 2>/dev/null || true)"
+      stop_server_process "$server_pid" "$PORT" "$SERVER_TYPE" "$server_workdir" "$process_group" || true
       kill "$server_pid" >/dev/null 2>&1 || true
-      echo "Error: no pude registrar el estado del servidor PHP." >&2
+      echo "Error: no pude registrar el estado del servidor." >&2
       exit 1
     fi
   )
 }
 
-show_php_log() {
-  if [[ -f "$PHP_LOG_FILE" ]]; then
-    tail -n 40 "$PHP_LOG_FILE" >&2 || true
+show_server_log() {
+  if [[ -f "$LOG_FILE" ]]; then
+    tail -n 40 "$LOG_FILE" >&2 || true
   else
-    echo "Log no encontrado: $PHP_LOG_FILE" >&2
+    echo "Log no encontrado: $LOG_FILE" >&2
   fi
 }
 
-load_php_state() {
+load_server_state() {
   local state_project
   local state_port
+  local state_type=""
 
-  state_project="$(read_state_value PROJECT_DIR "$PHP_STATE_FILE" 2>/dev/null)" || return 1
+  state_project="$(read_state_value PROJECT_DIR "$STATE_FILE" 2>/dev/null)" || return 1
   [[ "$state_project" == "$PROJECT_DIR" ]] || return 1
 
-  state_port="$(read_state_value PORT "$PHP_STATE_FILE" 2>/dev/null)" || return 1
+  state_port="$(read_state_value PORT "$STATE_FILE" 2>/dev/null)" || return 1
   [[ "$state_port" =~ ^[0-9]+$ ]] || return 1
   (( state_port >= 1 && state_port <= 65535 )) || return 1
+
+  if state_type="$(read_state_value SERVER_TYPE "$STATE_FILE" 2>/dev/null)"; then
+    case "$state_type" in
+      laravel|php|node) SERVER_TYPE="$state_type" ;;
+      *) return 1 ;;
+    esac
+  elif [[ -z "$SERVER_TYPE" ]]; then
+    # Compatibility with state files written before SERVER_TYPE existed.
+    SERVER_TYPE="php"
+  fi
 
   PORT="$state_port"
 }
 
-read_php_pid() {
+read_server_pid() {
   local pid=""
 
-  pid="$(read_state_value PID "$PHP_STATE_FILE" 2>/dev/null)" || return 1
+  pid="$(read_state_value PID "$STATE_FILE" 2>/dev/null)" || return 1
   [[ -n "$pid" && "$pid" =~ ^[0-9]+$ ]] || return 1
   printf '%s\n' "$pid"
 }
 
-php_pid_is_running() {
+server_pid_is_running() {
   local pid="$1"
   local process_state=""
 
   [[ "$pid" =~ ^[0-9]+$ ]] || return 1
   process_state="$(ps_state_for_pid "$pid" 2>/dev/null || true)"
-  # `kill -0` also succeeds for a zombie on macOS until its parent reaps it.
+  # `kill -0` también tiene éxito con un zombie en macOS hasta que su padre lo recoge.
   [[ "$process_state" != Z* ]] || return 1
   kill -0 "$pid" >/dev/null 2>&1
 }
@@ -659,37 +814,115 @@ process_is_descendant_of() {
   return 1
 }
 
+ps_children_for_pid() {
+  local parent_pid="$1"
+
+  ps -axo pid=,ppid= 2>/dev/null | awk -v parent="$parent_pid" '$2 == parent {print $1}'
+}
+
+ps_group_for_pid() {
+  ps -ww -p "$1" -o pgid= 2>/dev/null | tr -d '[:space:]'
+}
+
 stop_process() {
   local pid="$1"
   local attempts=0
 
-  php_pid_is_running "$pid" || return 0
+  server_pid_is_running "$pid" || return 0
 
   kill "$pid" >/dev/null 2>&1 || true
 
-  while php_pid_is_running "$pid" && (( attempts < 10 )); do
+  while server_pid_is_running "$pid" && (( attempts < 10 )); do
     sleep 0.1
     attempts=$((attempts + 1))
   done
 
-  if php_pid_is_running "$pid"; then
+  if server_pid_is_running "$pid"; then
     kill -9 "$pid" >/dev/null 2>&1 || true
     sleep 0.1
   fi
 
-  ! php_pid_is_running "$pid"
+  ! server_pid_is_running "$pid"
+}
+
+process_group_belongs_to() {
+  local pid="$1"
+  local process_group="$2"
+  local actual_group=""
+
+  [[ "$pid" =~ ^[0-9]+$ && "$process_group" =~ ^[0-9]+$ ]] || return 1
+  (( 10#$pid > 1 && 10#$process_group > 1 )) || return 1
+  [[ "$pid" == "$process_group" ]] || return 1
+
+  actual_group="$(ps_group_for_pid "$pid")" || return 1
+  [[ "$actual_group" == "$process_group" ]]
+}
+
+process_group_is_running() {
+  local process_group="$1"
+  local process_list=""
+
+  [[ "$process_group" =~ ^[0-9]+$ ]] || return 1
+  if process_list="$(ps -axo pid=,pgid=,state= 2>/dev/null)"; then
+    [[ -n "$process_list" ]] || return 1
+    awk -v group="$process_group" '$2 == group && $3 !~ /^Z/ {found=1} END {exit !found}' <<< "$process_list"
+    return $?
+  fi
+
+  kill -0 -- "-$process_group" >/dev/null 2>&1
+}
+
+stop_process_group() {
+  local pid="$1"
+  local process_group="$2"
+  local attempts=0
+
+  process_group_belongs_to "$pid" "$process_group" || return 1
+  kill -TERM -- "-$process_group" >/dev/null 2>&1 || return 1
+
+  while process_group_is_running "$process_group" && (( attempts < 10 )); do
+    sleep 0.1
+    attempts=$((attempts + 1))
+  done
+
+  if process_group_is_running "$process_group"; then
+    kill -KILL -- "-$process_group" >/dev/null 2>&1 || true
+    sleep 0.1
+  fi
+
+  ! process_group_is_running "$process_group"
+}
+
+stop_descendant_processes() {
+  local owner_pid="$1"
+  local parent_pid="$2"
+  local child_pid=""
+  local children=""
+
+  children="$(ps_children_for_pid "$parent_pid" 2>/dev/null || true)"
+  for child_pid in $children; do
+    [[ "$child_pid" =~ ^[0-9]+$ ]] || continue
+    stop_descendant_processes "$owner_pid" "$child_pid"
+    if process_is_descendant_of "$child_pid" "$owner_pid"; then
+      stop_process "$child_pid" || true
+    fi
+  done
 }
 
 # Último recurso conservador: si el puerto sigue ocupado tras parar al PID
-# registrado (p. ej. el hijo `php -S` de `artisan serve`), solo se detiene al
-# ocupante si su comando coincide con un servidor PHP en ese puerto concreto.
+# registrado (p. ej. el hijo de artisan o de npm), solo se detiene al ocupante
+# si sigue siendo un descendiente cuyo comando coincide con ese servidor.
 stop_port_listener_if_ours() {
   local port="$1"
   local owner_pid="${2:-}"
+  local server_type="${3:-php}"
+  local server_label=""
+  local expected_workdir="${4:-}"
   local listener_pid=""
 
   [[ "$port" =~ ^[0-9]+$ ]] || return 0
   [[ "$owner_pid" =~ ^[0-9]+$ ]] || return 0
+  server_label="$(server_type_label "$server_type")"
   port_is_listening "$port" || return 0
 
   listener_pid="$(port_listener_pid "$port")" || listener_pid=""
@@ -704,8 +937,8 @@ stop_port_listener_if_ours() {
     return 1
   fi
 
-  if ! php_pid_belongs "$listener_pid" "$port" ""; then
-    echo "Aviso: el puerto ${port} sigue ocupado por el PID ${listener_pid}, que no parece un servidor PHP de este proyecto; no se detiene." >&2
+  if ! server_pid_belongs "$listener_pid" "$port" "" "$server_type" "$expected_workdir" listener; then
+    echo "Aviso: el puerto ${port} sigue ocupado por el PID ${listener_pid}, que no parece un servidor ${server_label} de este proyecto; no se detiene." >&2
     return 1
   fi
 
@@ -719,40 +952,73 @@ stop_port_listener_if_ours() {
   return 0
 }
 
+stop_server_process() {
+  local pid="$1"
+  local port="$2"
+  local server_type="$3"
+  local workdir="$4"
+  local process_group="${5:-}"
+  local status=0
+
+  if [[ "$server_type" == "node" ]] && process_group_belongs_to "$pid" "$process_group"; then
+    # `setsid` gives npm and all its descendants a private group. The group ID
+    # is the verified PID, so a negative kill cannot reach an unrelated job.
+    stop_process_group "$pid" "$process_group" || status=1
+  else
+    # macOS does not provide setsid by default. Stop the listener and the
+    # complete descendant tree while npm is still alive, then stop npm itself.
+    stop_port_listener_if_ours "$port" "$pid" "$server_type" "$workdir" || status=1
+    stop_descendant_processes "$pid" "$pid"
+    stop_process "$pid" || status=1
+  fi
+
+  return "$status"
+}
+
 # Para el servidor descrito por un archivo de estado y limpia ese estado.
 # Nunca se señaliza un PID solo porque exista: se exige identidad
-# (comando + puerto, y hora de arranque si se registró). Si el PID está vivo
-# pero no se puede verificar, se avisa y se devuelve error sin matarlo.
+# (comando + puerto, hora de arranque cuando se registró y árbol de procesos).
 stop_state_file() {
   local state_file="$1"
   local pid=""
   local port=""
   local start=""
+  local server_type="php"
+  local server_label="PHP"
+  local workdir=""
+  local process_group=""
+  local owner_verified=0
   local status=0
 
   port="$(read_state_value PORT "$state_file" 2>/dev/null)" || port=""
   pid="$(read_state_value PID "$state_file" 2>/dev/null)" || pid=""
+  server_type="$(read_state_value SERVER_TYPE "$state_file" 2>/dev/null || true)"
+  case "$server_type" in
+    laravel|php|node) ;;
+    *) server_type="php" ;;
+  esac
+  server_label="$(server_type_label "$server_type")"
+  workdir="$(read_state_value WORK_DIR "$state_file" 2>/dev/null || true)"
+  [[ -n "$workdir" ]] || workdir="$(read_state_value PROJECT_DIR "$state_file" 2>/dev/null || true)"
+  process_group="$(read_state_value PGID "$state_file" 2>/dev/null || true)"
 
-  if [[ "$pid" =~ ^[0-9]+$ ]] && php_pid_is_running "$pid"; then
+  if [[ "$pid" =~ ^[0-9]+$ ]] && server_pid_is_running "$pid"; then
     start="$(read_state_value PID_START "$state_file" 2>/dev/null)" || start=""
-    if php_pid_belongs "$pid" "$port" "$start"; then
-      # Stop artisan's listener while it is still a descendant. Once the
-      # parent exits macOS may reparent the child, so discovering it only
-      # afterwards would leave the PHP listener alive.
-      if ! stop_port_listener_if_ours "$port" "$pid"; then
-        status=1
-      fi
-      if ! stop_process "$pid"; then
-        echo "Aviso: no pude terminar el PID ${pid}." >&2
+    if server_pid_belongs "$pid" "$port" "$start" "$server_type" "$workdir"; then
+      owner_verified=1
+      if ! stop_server_process "$pid" "$port" "$server_type" "$workdir" "$process_group"; then
+        echo "Aviso: no pude terminar por completo el servidor ${server_label} (PID ${pid})." >&2
         status=1
       fi
     else
-      echo "Aviso: el PID ${pid} del estado ${state_file} no corresponde a un servidor PHP de este proyecto (¿PID reutilizado?); no se detiene." >&2
+      echo "Aviso: el PID ${pid} del estado ${state_file} no corresponde a un servidor ${server_label} de este proyecto (¿PID reutilizado?); no se detiene." >&2
       status=1
     fi
   fi
 
-  stop_port_listener_if_ours "$port" "$pid" || status=1
+  if (( owner_verified == 1 )); then
+    stop_port_listener_if_ours "$port" "$pid" "$server_type" "$workdir" || status=1
+  fi
 
   rm -f "$state_file"
 
@@ -784,14 +1050,14 @@ find_domain_conflicts() {
 
   for state_file in "${STATE_PREFIX}"-*.state; do
     [[ -f "$state_file" ]] || continue
-    [[ "$state_file" == "$PHP_STATE_FILE" ]] && continue
+    [[ "$state_file" == "$STATE_FILE" ]] && continue
 
     if ! other_pid="$(read_state_value PID "$state_file" 2>/dev/null)"; then
       continue
     fi
     [[ "$other_pid" =~ ^[0-9]+$ ]] || continue
 
-    if ! php_pid_is_running "$other_pid"; then
+    if ! server_pid_is_running "$other_pid"; then
       rm -f "$state_file"
       continue
     fi
@@ -884,8 +1150,8 @@ case "${cmd}" in
     # Remove the previous route before stopping/replacing its server. If Caddy
     # is reachable, a failed reload aborts instead of leaving an old route in
     # memory while this command continues with a new port.
-    if [[ -f "$PHP_STATE_FILE" || -f "$SNIPPET" ]]; then
-      old_port="$(read_state_value PORT "$PHP_STATE_FILE" 2>/dev/null || true)"
+    if [[ -f "$STATE_FILE" || -f "$SNIPPET" ]]; then
+      old_port="$(read_state_value PORT "$STATE_FILE" 2>/dev/null || true)"
       purge_snippets_for_port "$old_port"
       purge_snippet_for_host "$SNIPPET" "$DOMAIN"
       routes_changed=1
@@ -898,7 +1164,7 @@ case "${cmd}" in
       }
     fi
 
-    if ! stop_state_file "$PHP_STATE_FILE"; then
+    if ! stop_state_file "$STATE_FILE"; then
       echo "Error: no pude detener por completo la instancia anterior." >&2
       exit 1
     fi
@@ -914,23 +1180,23 @@ case "${cmd}" in
     # dominio viejo siga sirviendo el proyecto nuevo tras la recarga.
     purge_snippets_for_port "$PORT"
 
-    # Arranca PHP antes de publicar el nuevo upstream para que Caddy no
-    # pueda enviar peticiones a un puerto todavía vacío.
-    start_php_server
+    # Arranca el servidor antes de publicar el nuevo upstream para que Caddy
+    # no pueda enviar peticiones a un puerto todavía vacío.
+    start_server
     if ! wait_for_port "$PORT" 10 \
-        "$(read_state_value PID "$PHP_STATE_FILE" 2>/dev/null || true)" \
-        "$(read_state_value PID_START "$PHP_STATE_FILE" 2>/dev/null || true)"; then
-      stop_state_file "$PHP_STATE_FILE" || true
+        "$(read_state_value PID "$STATE_FILE" 2>/dev/null || true)" \
+        "$(read_state_value PID_START "$STATE_FILE" 2>/dev/null || true)"; then
+      stop_state_file "$STATE_FILE" || true
       reload_caddy no || true
-      echo "Error: PHP no quedó escuchando en el puerto $PORT para ${DOMAIN}." >&2
-      show_php_log
+      echo "Error: $(server_type_label "$SERVER_TYPE") no quedó escuchando en el puerto $PORT para ${DOMAIN}." >&2
+      show_server_log
       exit 1
     fi
 
     if ! write_snippet; then
       # El servidor ya está controlado por un estado; no lo dejes huérfano si
       # falla la publicación del snippet.
-      stop_state_file "$PHP_STATE_FILE" || true
+      stop_state_file "$STATE_FILE" || true
       reload_caddy no || true
       echo "Error: no pude escribir el snippet de Caddy para ${DOMAIN}." >&2
       exit 1
@@ -940,13 +1206,13 @@ case "${cmd}" in
       rm -f "$SNIPPET"
       # Mejor esfuerzo: saca el snippet recién escrito de la config en memoria.
       reload_caddy no || true
-      stop_state_file "$PHP_STATE_FILE" || true
+      stop_state_file "$STATE_FILE" || true
       echo "Error: no pude recargar Caddy para ${DOMAIN}." >&2
       exit 1
     fi
 
     echo "OK: https://${DOMAIN}  ->  127.0.0.1:${PORT} (${PROJECT_DIR})"
-    echo "Log: $PHP_LOG_FILE"
+    echo "Log: $LOG_FILE"
     ;;
 
   down)
@@ -954,7 +1220,7 @@ case "${cmd}" in
     acquire_mutation_lock || exit 1
 
     down_status=0
-    state_port="$(read_state_value PORT "$PHP_STATE_FILE" 2>/dev/null)" || state_port=""
+    state_port="$(read_state_value PORT "$STATE_FILE" 2>/dev/null)" || state_port=""
 
     # Retira los snippets de este proyecto antes de recargar, para que Caddy
     # deje de publicar el dominio en cuanto se confirma la recarga.
@@ -967,7 +1233,7 @@ case "${cmd}" in
       echo "Aviso: Caddy no está en ejecución; el snippet de ${DOMAIN} se ha retirado del disco." >&2
     fi
 
-    stop_state_file "$PHP_STATE_FILE" || down_status=1
+    stop_state_file "$STATE_FILE" || down_status=1
 
     if (( down_status == 0 )); then
       echo "OK: parado ${DOMAIN}"
@@ -1000,26 +1266,40 @@ case "${cmd}" in
       echo "Config: (sin .config/caddy)"
     fi
 
-    if load_php_state; then
+    if load_server_state; then
       echo "Puerto: $PORT"
-      state_start="$(read_state_value PID_START "$PHP_STATE_FILE" 2>/dev/null)" || state_start=""
-      if pid="$(read_php_pid 2>/dev/null)" && php_pid_is_running "$pid"; then
-        if php_pid_belongs "$pid" "$PORT" "$state_start"; then
-          echo "Servidor PHP: activo en 127.0.0.1:$PORT"
+      state_start="$(read_state_value PID_START "$STATE_FILE" 2>/dev/null)" || state_start=""
+      state_workdir="$(read_state_value WORK_DIR "$STATE_FILE" 2>/dev/null || true)"
+      [[ -n "$state_workdir" ]] || state_workdir="$PROJECT_DIR"
+      if pid="$(read_server_pid 2>/dev/null)" && server_pid_is_running "$pid"; then
+        if server_pid_belongs "$pid" "$PORT" "$state_start" "$SERVER_TYPE" "$state_workdir"; then
+          if [[ "$SERVER_TYPE" == "node" ]]; then
+            echo "Servidor Node: activo en 127.0.0.1:$PORT"
+          else
+            echo "Servidor PHP: activo en 127.0.0.1:$PORT"
+          fi
         else
-          echo "Servidor PHP: el PID $pid está vivo pero no corresponde a este proyecto (¿PID reutilizado?)"
+          echo "Servidor $(server_type_label "$SERVER_TYPE"): el PID $pid está vivo pero no corresponde a este proyecto (¿PID reutilizado?)"
         fi
       else
-        echo "Servidor PHP: inactivo"
+        if [[ "$SERVER_TYPE" == "node" ]]; then
+          echo "Servidor Node: inactivo"
+        else
+          echo "Servidor PHP: inactivo"
+        fi
       fi
     else
       PORT=""
       echo "Puerto: (sin asignar)"
-      echo "Servidor PHP: inactivo"
+      if [[ "$SERVER_TYPE" == "node" ]]; then
+        echo "Servidor Node: inactivo"
+      else
+        echo "Servidor PHP: inactivo"
+      fi
     fi
 
-    echo "Log: $PHP_LOG_FILE"
-    show_php_log
+    echo "Log: $LOG_FILE"
+    show_server_log
     ;;
 
   down-all)
