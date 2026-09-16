@@ -100,3 +100,5 @@ session.json
 # Worktrunk: never publish per-repository approvals or runtime locks.
 /worktrunk/.config/worktrunk/*
 !/worktrunk/.config/worktrunk/config.toml
+# Plannotator runtime/install state.
+/plannotator/.plannotator/
