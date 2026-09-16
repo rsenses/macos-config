@@ -49,7 +49,10 @@ setopt SHARE_HISTORY
 # beeping is annoying
 unsetopt BEEP
 
-autoload -U compinit; compinit
+if [[ "$OSTYPE" == darwin* ]]; then
+  autoload -U compinit
+  compinit
+fi
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
 
 autoload -z edit-command-line
@@ -77,8 +80,28 @@ if [ -f ~/.config/zsh/.zshvars ]; then
 fi
 
 # ZSH PLUGINS ========================================
-[[ -r "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && \
-  source "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+typeset -a zsh_highlight_files
+zsh_highlight_files=(
+  /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+  /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+)
+
+if [[ -n "${HOMEBREW_PREFIX:-}" ]]; then
+  zsh_highlight_files=(
+    "$HOMEBREW_PREFIX/opt/zsh-syntax-highlighting/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+    "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+    $zsh_highlight_files
+  )
+fi
+
+for file in "${zsh_highlight_files[@]}"; do
+  if [[ -r "$file" ]]; then
+    source "$file"
+    break
+  fi
+done
+
+unset file zsh_highlight_files
 
 # Colors
 autoload -Uz colors && colors

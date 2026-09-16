@@ -3,9 +3,13 @@ export BAT_THEME=kanagawa
 export ARTISAN_OPEN_ON_MAKE_EDITOR=nvim
 export LANG=es_ES.UTF-8
 export EDITOR=nvim
-if [[ "$(uname)" == "Darwin" ]]; then
-    export HOMEBREW_PREFIX=/opt/homebrew
+
+# Ubuntu/Debian may run compinit from /etc/zsh/zshrc.
+# The user configuration enables it explicitly only on macOS.
+if [[ "$OSTYPE" != darwin* ]]; then
+    skip_global_compinit=1
 fi
+
 export OLLAMA_API_BASE=http://127.0.0.1:11434
 export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
 export XDG_CONFIG_HOME="$HOME/.config"

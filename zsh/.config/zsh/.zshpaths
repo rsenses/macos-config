@@ -8,14 +8,34 @@ fi
 typeset -g DOTFILES_ZSH_PATHS_LOADED=1
 typeset -gU path PATH
 
-if [[ -x /opt/homebrew/bin/brew ]]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
+# Discover Homebrew on Apple Silicon/Intel macOS or Linuxbrew.
+typeset brew_bin=''
+for candidate in \
+  /opt/homebrew/bin/brew \
+  /usr/local/bin/brew \
+  /home/linuxbrew/.linuxbrew/bin/brew
+do
+  if [[ -x "$candidate" ]]; then
+    brew_bin="$candidate"
+    break
+  fi
+done
+
+if [[ -z "$brew_bin" ]] && command -v brew >/dev/null 2>&1; then
+  brew_bin="$(command -v brew)"
 fi
 
+if [[ -n "$brew_bin" ]]; then
+  eval "$("$brew_bin" shellenv)"
+fi
+
+unset brew_bin candidate
+
 # Homebrew upgrades can leave FPATH pointing at an old zsh Cellar directory.
-if [[ -d /opt/homebrew/opt/zsh/share/zsh/functions ]]; then
+if [[ -n "${HOMEBREW_PREFIX:-}" &&
+      -d "$HOMEBREW_PREFIX/opt/zsh/share/zsh/functions" ]]; then
   typeset -U fpath
-  fpath=(/opt/homebrew/opt/zsh/share/zsh/functions $fpath)
+  fpath=("$HOMEBREW_PREFIX/opt/zsh/share/zsh/functions" $fpath)
 fi
 
 if [[ $(uname) == "Darwin" ]]; then
