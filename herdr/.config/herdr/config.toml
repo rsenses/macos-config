@@ -121,7 +121,7 @@ split_vertical = "prefix+|"
 [[keys.command]]
 key = "prefix+shift+g"
 type = "pane"
-command = "lazygit"
+command = "zsh -lc 'exec lazygit'"
 
 [[keys.command]]
 key = "prefix+shift+n"
@@ -131,7 +131,7 @@ command = "notes"
 [[keys.command]]
 key = "prefix+shift+f"
 type = "pane"
-command = "herdr-sessionizer"
+command = "zsh -lc 'exec herdr-sessionizer'"
 
 # [[keys.command]]
 # key = "prefix+up"
