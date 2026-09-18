@@ -6,6 +6,6 @@ if [[ -r "$HOME/.config/zsh/.zshpaths" ]]; then
 fi
 
 # Make mise-managed tools available to applications launched from a login shell.
-if command -v mise >/dev/null 2>&1; then
+if command -v mise >/dev/null 2>&1 && (( ! ${+functions[mise]} )); then
   eval "$(mise activate zsh)"
 fi

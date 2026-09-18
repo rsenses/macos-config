@@ -4,7 +4,7 @@ if [[ -r "$HOME/.config/zsh/.zshpaths" ]]; then
 fi
 
 # Full mise activation belongs at the end of the interactive setup.
-if command -v mise >/dev/null 2>&1; then
+if command -v mise >/dev/null 2>&1 && (( ! ${+functions[mise]} )); then
   eval "$(mise activate zsh)"
 fi
 
@@ -12,7 +12,7 @@ if command -v zoxide >/dev/null 2>&1; then
   eval "$(zoxide init --cmd cd zsh)"
 fi
 
-if command -v fzf >/dev/null 2>&1; then
+if command -v fzf >/dev/null 2>&1 && [[ -t 0 && -t 1 ]]; then
   eval "$(fzf --zsh)"
 fi
 
