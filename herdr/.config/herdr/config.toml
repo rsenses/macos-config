@@ -69,9 +69,9 @@ settings = "prefix+,"
 # detach = "prefix+q"
 # reload_config = "prefix+shift+r"
 # open_notification_target = "prefix+o"
-# workspace_picker = "prefix+w"
+# workspace_picker = "prefix+p"
 goto = "prefix+space"
-# new_workspace = "prefix+shift+n"
+new_workspace = "prefix+w"
 new_worktree = "prefix+g"
 # open_worktree = ""    # optional, unset by default
 # remove_worktree = ""  # optional, unset by default; opens confirmation
@@ -108,8 +108,8 @@ split_vertical = "prefix+|"
 
 # Navigate-mode movement. These local shortcuts win while navigate mode is open.
 # They are independent from focus_pane_*. Do not include prefix+, esc, enter, tab, or 1..9 here.
-# navigate_workspace_up = "up"
-# navigate_workspace_down = "down"
+# navigate_workspace_up = "k"
+# navigate_workspace_down = "j"
 # navigate_pane_left = "h"      # left arrow always focuses the pane to the left
 # navigate_pane_down = "j"
 # navigate_pane_up = "k"
@@ -133,11 +133,11 @@ key = "prefix+shift+f"
 type = "pane"
 command = "herdr-sessionizer"
 
-[[keys.command]]
-key = "prefix+up"
-type = "plugin_action"
-command = "cloudmanic.herdr-plus.projects"
-description = "herdr-plus: projects"
+# [[keys.command]]
+# key = "prefix+up"
+# type = "plugin_action"
+# command = "cloudmanic.herdr-plus.projects"
+# description = "herdr-plus: projects"
 
 [[keys.command]]
 key = "prefix+down"

@@ -33,6 +33,7 @@ alias dsstore="find . -name '*.DS_Store' -type f -ls -delete"
 alias brew-update="brew -v update; brew upgrade; brew cleanup; brew doctor"
 alias composer-update='composer self-update && composer global update'
 alias npm-update='npm update -g; npm cache clean --force'
+alias mise-update='brew update && brew upgrade mise && mise outdated && mise upgrade && mise reshim && exec zsh -l'
 alias update="brew-update; composer-update; npm-update"
 
 # ImageOptim, se puede usar . o nombre de archivo
