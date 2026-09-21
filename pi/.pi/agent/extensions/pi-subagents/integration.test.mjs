@@ -210,9 +210,9 @@ test('actual extension loading, allowlists, protocol, usage and failure hook', {
     assert.ok(ext);
     const registered = ext.tools.get('subagent');
     const tool = registered.definition ?? registered;
+    assert.equal(tool.parameters.properties.thinking, undefined, 'thinking is not a generic subagent argument');
     // Fake registry covering every configured agent/profile model. All are reasoning
-    // models supporting off/minimal/low/medium/high; only Luna maps `max`, so any
-    // other level (e.g. xhigh) exercises the unsupported-thinking fail path.
+    // models supporting off/minimal/low/medium/high; only Luna maps `max`.
     const thinkMap = {off:'off',minimal:'minimal',low:'low',medium:'medium',high:'high'};
     const fakeModel = (providerModel, extraMap = {}) => {
       const [provider, id] = providerModel.split('/');
@@ -239,17 +239,23 @@ test('actual extension loading, allowlists, protocol, usage and failure hook', {
     const scoutModel = MODELS.deepseek;
     const event = (reason,text,extra={})=>({type:'message_end',message:{role:'assistant',provider:scoutModel.provider,model:scoutModel.id,stopReason:reason,content:[{type:'text',text}],usage,...extra}});
     await writeFile(process.env.PI_TEST_FIXTURE,JSON.stringify(event('stop','**Status**: complete\nVerified.'))+'\n');
-    const success = await tool.execute('s',{agent:'scout',task:'Locate fixture',thinking:'low'},undefined,undefined,ctx);
+    const success = await tool.execute('s',{agent:'scout',task:'Locate fixture'},undefined,undefined,ctx);
     assert.equal(success.details.status,'complete');
     assert.equal(success.usage.input,10);
     assert.equal(success.usage.cost.total,.03);
-    assert.equal(success.details.results[0].thinking,'low');
+    assert.equal(success.details.results[0].thinking,'high');
     const argv = JSON.parse(await readFile(process.env.PI_TEST_FIXTURE+'.args','utf8'));
     // Scout frontmatter pins opencode-go/deepseek-v4.1-flash; no fallback to Luna.
     assert.equal(argv[argv.indexOf('--model')+1],'opencode-go/deepseek-v4.1-flash');
     assert.equal(argv[argv.indexOf('--tools')+1],'read,grep,find,ls');
     assert.ok(!argv.includes('--no-context-files'));
     assert.equal(argv[argv.indexOf('--system-prompt')+1], join(here, 'SYSTEM.md'));
+    await rm(process.env.PI_TEST_FIXTURE+'.args',{force:true});
+    await assert.rejects(
+      tool.execute('s-override',{agent:'scout',task:'Override fixture',thinking:'low'},undefined,undefined,ctx),
+      /Thinking overrides are only valid for the "planner" agent/,
+    );
+    assert.equal(existsSync(process.env.PI_TEST_FIXTURE+'.args'),false,'non-planner override must not spawn');
     await mkdir(join(dir,'.pi'),{recursive:true});
     await writeFile(join(dir,'.pi/SYSTEM.md'),'Preserve explicit project policy');
     for(const role of ['researcher','worker']) {
@@ -300,11 +306,6 @@ test('actual extension loading, allowlists, protocol, usage and failure hook', {
       assert.equal(profileArgs[profileArgs.indexOf('--model')+1],expectedModel);
       assert.equal(profileArgs[profileArgs.indexOf('--thinking')+1],expectedThinking);
     }
-    // A same-level explicit thinking override alongside a profile is accepted.
-    const sameLevel = await tool.execute('pf',{agent:'planner',task:'Profile fixture',profile:'diseno',thinking:'medium'},undefined,undefined,ctx);
-    assert.equal(sameLevel.details.status,'complete');
-    assert.equal(sameLevel.details.results[0].profile,'diseno');
-
     // Omitting profile still requires a real approval and records the selected
     // effective profile; headless execution and cancellation cannot spawn.
     const withoutProfile = await tool.execute('np',{agent:'planner',task:'No profile fixture'},undefined,undefined,ctx);
@@ -366,13 +367,11 @@ test('actual extension loading, allowlists, protocol, usage and failure hook', {
     const failFast = [
       [{agent:'scout',task:'x',profile:'habitual'}, /only valid for the "planner" agent/],
       [{agent:'planner',task:'x',profile:'nope'}, /Unknown profile/],
-      [{agent:'planner',task:'x',profile:'habitual',thinking:'medium'}, /conflicting explicit override/],
       [{agent:'planner',task:'x',profile:'delicado'}, /Configured model unavailable: openai-codex\/gpt-6-astra/],
       [{agent:'planner',task:'x',profile:'delicado'}, /not in this session's scoped models/],
-      [{agent:'planner',task:'x',thinking:'xhigh'}, /Unsupported thinking xhigh/],
     ];
     for (const [index, [params, pattern]] of failFast.entries()) {
-      const failCtx = index === 3 ? noRegistry : index === 4 ? narrowScope : ctx;
+      const failCtx = index === 2 ? noRegistry : index === 3 ? narrowScope : ctx;
       await assert.rejects(tool.execute('ff'+index,{...params},undefined,undefined,failCtx), pattern);
       assert.equal(existsSync(profileArgsFile), false, `spawned despite failure ${index}`);
     }

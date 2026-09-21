@@ -240,8 +240,7 @@ const CUSTOM_TOOL_EXTENSIONS: Record<string, string> = {
 // ── Planner Profiles ──────────────────────────────────────────────────
 
 // One code-level map. A profile pins BOTH the exact provider/model and the
-// thinking level; there is no implicit fallback between models, and an
-// explicit `thinking` override that conflicts with the profile is rejected.
+// thinking level; there is no implicit fallback between models.
 export interface PlannerProfile {
   /** Human-facing display label (the schema value is ASCII for stable args). */
   label: string;
@@ -305,7 +304,6 @@ async function approvePlannerCandidate(
   configuredAgent: AgentConfig,
   task: string,
   requestedProfile: string | undefined,
-  requestedThinking: string | undefined,
   ctx: ExtensionContext,
   signal?: AbortSignal,
 ): Promise<{ candidate: PlannerCandidate; model: any } | undefined> {
@@ -314,14 +312,8 @@ async function approvePlannerCandidate(
     throw new Error("Planner launch requires interactive approval; no UI is available, so the planner was not started");
   }
 
-  if (requestedProfile !== undefined) {
-    if (!PLANNER_PROFILES[requestedProfile]) {
-      throw new Error(`Unknown profile: ${requestedProfile}. Available profiles: ${plannerProfileNames()}`);
-    }
-    const pinned = PLANNER_PROFILES[requestedProfile];
-    if (requestedThinking !== undefined && requestedThinking !== pinned.thinking) {
-      throw new Error(`Profile "${requestedProfile}" pins thinking "${pinned.thinking}"; conflicting explicit override "${requestedThinking}". Omit thinking or request the profile's level`);
-    }
+  if (requestedProfile !== undefined && !PLANNER_PROFILES[requestedProfile]) {
+    throw new Error(`Unknown profile: ${requestedProfile}. Available profiles: ${plannerProfileNames()}`);
   }
 
   const candidates: PlannerCandidate[] = [];
@@ -329,13 +321,12 @@ async function approvePlannerCandidate(
     key: "configured",
     label: "configured planner selection",
     model: configuredAgent.model,
-    thinking: requestedThinking ?? configuredAgent.thinking,
+    thinking: configuredAgent.thinking,
   };
   let configuredResolved: { candidate: PlannerCandidate; model: any } | undefined;
   try {
     if (requestedProfile === undefined) configuredResolved = resolveModelCandidate(configuredCandidate, ctx);
   } catch (error) {
-    if (requestedProfile === undefined && requestedThinking !== undefined) throw error;
     if (requestedProfile === undefined && typeof ctx.ui.notify === "function") {
       ctx.ui.notify(`Configured planner selection unavailable (${String(error)}). Choose another available profile.`, "warning");
     }
@@ -1218,12 +1209,11 @@ export default function (pi: ExtensionAPI) {
     parameters: Type.Object({
       agent: Type.String({ description: "Name of the agent to invoke" }),
       task: Type.String({ description: "Goal, known evidence, constraints, acceptance, checks, stop condition; do not paste the whole conversation" }),
-      thinking: Type.Optional(Type.Union([Type.Literal("low"), Type.Literal("medium"), Type.Literal("high"), Type.Literal("max")], { description: "Override this invocation only; use high for difficult/risky work, not routine lookups" })),
       profile: Type.Optional(
         Type.Union(
           Object.keys(PLANNER_PROFILES).map((name) => Type.Literal(name)),
           {
-            description: `Planner-only profile that pins BOTH the exact model and thinking level (${Object.entries(PLANNER_PROFILES).map(([n, p]) => `${n}/${p.label}: ${p.model} @ ${p.thinking}`).join("; ")}). Unavailable or conflicting selections fail before spawn; never combined with a different explicit thinking`,
+            description: `Planner-only profile that pins BOTH the exact model and thinking level (${Object.entries(PLANNER_PROFILES).map(([n, p]) => `${n}/${p.label}: ${p.model} @ ${p.thinking}`).join("; ")}). Unavailable selections fail before spawn; never fall back`,
           },
         ),
       ),
@@ -1255,6 +1245,12 @@ export default function (pi: ExtensionAPI) {
       // semaphore/spawn. Omitted profiles are also gated: the UI approves the
       // configured selection or chooses one of the available named profiles.
       const requestedProfile = params.profile;
+      const requestedThinking = (params as { thinking?: unknown }).thinking;
+      if (requestedThinking !== undefined && params.agent !== PLANNER_PROFILE_AGENT) {
+        throw new Error(
+          `Thinking overrides are only valid for the "${PLANNER_PROFILE_AGENT}" agent; use its configured profile for other agents`,
+        );
+      }
       if (requestedProfile !== undefined && params.agent !== PLANNER_PROFILE_AGENT) {
         throw new Error(
           `Profile "${requestedProfile}" is only valid for the "${PLANNER_PROFILE_AGENT}" agent, not "${params.agent}"`,
@@ -1266,7 +1262,7 @@ export default function (pi: ExtensionAPI) {
       let profileName: string | undefined;
       let selectedModel: any;
       if (params.agent === PLANNER_PROFILE_AGENT) {
-        const approval = await approvePlannerCandidate(configuredAgent, params.task!, requestedProfile, params.thinking, ctx, signal);
+        const approval = await approvePlannerCandidate(configuredAgent, params.task!, requestedProfile, ctx, signal);
         if (!approval) {
           return {
             content: [{ type: "text", text: "Planner launch cancelled; no child was started. Stop this attempt; do not retry with another profile/role or continue direct planning." }],
@@ -1280,7 +1276,6 @@ export default function (pi: ExtensionAPI) {
         profileName = approval.candidate.profileName;
         profile = approval.candidate.profile;
       } else {
-        if (params.thinking !== undefined) agent.thinking = params.thinking;
         const parts = modelParts(agent.model);
         selectedModel = ctx.modelRegistry.find(parts.provider, parts.id);
         if (!selectedModel) throw new Error(`Configured model unavailable: ${agent.model}; no implicit fallback`);
