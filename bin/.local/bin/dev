@@ -385,6 +385,19 @@ caddy_start() {
   caddy_run start --config "$CADDYFILE" --adapter caddyfile
 }
 
+# Caddy ejecutado como servicio no suele poder instalar su CA interna en el
+# almacén de confianza del sistema. Inténtalo como usuario y, si hace falta,
+# con sudo; un fallo aquí no debe dejar un servidor funcionando sin ruta.
+trust_caddy_root() {
+  local -a trust_command=(trust --config "$CADDYFILE" --adapter caddyfile)
+
+  if caddy "${trust_command[@]}" >/dev/null 2>&1; then
+    return 0
+  fi
+
+  sudo caddy "${trust_command[@]}" >/dev/null 2>&1
+}
+
 reload_caddy() {
   local start_if_needed="${1:-no}"
 
@@ -572,6 +585,18 @@ process_cwd_for_pid() {
   return 1
 }
 
+# Laravel mantiene el proceso `artisan` en la raíz, pero su hijo `php -S`
+# escucha desde `public/`. Ambos directorios siguen identificando el mismo
+# proyecto; para el resto de servidores solo se acepta el directorio guardado.
+server_cwd_matches() {
+  local actual_cwd="$1"
+  local expected_workdir="$2"
+  local server_type="$3"
+
+  [[ "$actual_cwd" == "$expected_workdir" ]] && return 0
+  [[ "$server_type" == "laravel" && "$actual_cwd" == "$expected_workdir/public" ]]
+}
+
 # Un PID solo se considera "nuestro" si su comando coincide con el servidor
 # del puerto registrado y, cuando se guardó la hora de arranque, esta coincide
 # también. Si se puede leer el directorio de trabajo, debe ser el del proyecto.
@@ -601,7 +626,7 @@ server_pid_belongs() {
   fi
 
   if [[ -n "$expected_workdir" ]] && actual_cwd="$(process_cwd_for_pid "$pid" 2>/dev/null)"; then
-    [[ "$actual_cwd" == "$expected_workdir" ]] || return 1
+    server_cwd_matches "$actual_cwd" "$expected_workdir" "$server_type" || return 1
   fi
 
   return 0
@@ -1209,6 +1234,12 @@ case "${cmd}" in
       stop_state_file "$STATE_FILE" || true
       echo "Error: no pude recargar Caddy para ${DOMAIN}." >&2
       exit 1
+    fi
+
+    if ! trust_caddy_root; then
+      echo "Aviso: no pude instalar la CA interna de Caddy en el almacén de confianza." >&2
+      echo "HTTPS está activo, pero el navegador puede mostrar ERR_CERT_AUTHORITY_INVALID." >&2
+      echo "Prueba: sudo caddy trust --config ${CADDYFILE} --adapter caddyfile" >&2
     fi
 
     echo "OK: https://${DOMAIN}  ->  127.0.0.1:${PORT} (${PROJECT_DIR})"

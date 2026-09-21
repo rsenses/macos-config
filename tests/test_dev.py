@@ -48,6 +48,9 @@ printf 'curl %s\\n' "$*" >> "{self.calls}"
 ''')
         self._write_fake("caddy", f'''#!/bin/sh
 printf 'caddy %s\\n' "$*" >> "{self.calls}"
+if [ "${{DEV_FAKE_CADDY_TRUST_FAIL:-}}" = 1 ] && printf '%s' "$*" | grep -q '^trust '; then
+  exit 1
+fi
 [ -f "{self.tmp}/caddy-ok" ]
 ''')
         self._write_fake("sudo", f'''#!/bin/sh
@@ -78,7 +81,8 @@ count=$((count + 1))
 printf '%s\\n' "$count" > "{self.tmp}/lsof-count"
 if [ "$count" -ge "${{DEV_FAKE_LSOF_LISTEN_FROM:-1000000}}" ]; then
   listener="$(cat "{self.tmp}/fakephp.pids" "{self.tmp}/fakenode.pids" 2>/dev/null | tail -n 1)"
-  if [ -n "$listener" ] && kill -0 "$listener" >/dev/null 2>&1; then
+  if [ -n "$listener" ] && kill -0 "$listener" >/dev/null 2>&1 \
+      && ! /bin/ps -ww -p "$listener" -o state= 2>/dev/null | grep -q '^Z'; then
     if printf '%s' "$*" | grep -q -- ' -t '; then
       printf '%s\n' "$listener"
     fi
@@ -401,6 +405,43 @@ exec sleep 300
         self.assertTrue(self.wait_dead(proc), "el servidor verificado debe recibir la señal")
         self.assertFalse(self.state_file_for(self.project_real).exists())
 
+    def test_down_stops_verified_laravel_listener_from_public(self):
+        parent = self.spawn_sleep()
+        listener = self.spawn_sleep()
+        public_dir = self.project_real / "public"
+        public_dir.mkdir()
+        self.set_ps_identity(
+            parent.pid,
+            "php artisan serve --host=127.0.0.1 --port=8123",
+            start="FAKE-START",
+            cwd=self.project_real,
+        )
+        self.set_ps_identity(
+            listener.pid,
+            "/usr/bin/php -S 127.0.0.1:8123 /project/server.php",
+            cwd=public_dir,
+            parent=parent.pid,
+        )
+        (self.tmp / "fakephp.pids").write_text(f"{listener.pid}\n")
+        self.write_state(
+            self.project_real,
+            pid=parent.pid,
+            port=8123,
+            pid_start="FAKE-START",
+            server_type="laravel",
+            work_dir=self.project_real,
+        )
+
+        result = self.run_dev("down", env_extra={"DEV_FAKE_LSOF_LISTEN_FROM": "1"})
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertTrue(self.wait_dead(parent), "artisan debe quedar detenido")
+        self.assertTrue(
+            self.wait_dead(listener),
+            f"el listener PHP debe quedar detenido; llamadas:\n{self.calls.read_text()}",
+        )
+        self.assertFalse(self.state_file_for(self.project_real).exists())
+
     def test_down_rejects_reused_pid(self):
         proc = self.spawn_sleep()
         # El comando coincidiría, pero la hora de arranque guardada no: PID reciclado.
@@ -493,6 +534,62 @@ exec sleep 300
         self.assertNotIn("caddy start", " | ".join(caddy_calls),
                          "con el endpoint admin activo no debe arrancar Caddy")
         self.assertTrue(any("reload" in call for call in caddy_calls))
+        self.assertTrue(any(call.startswith("caddy trust ") for call in caddy_calls))
+
+    def test_up_includes_aliases_and_trusts_caddy_root(self):
+        self.mark_caddy_running()
+        self.mark_caddy_ok()
+        (self.project / "artisan").write_text("")
+        config = self.project / ".config" / "caddy"
+        config.parent.mkdir()
+        config.write_text("ALIASES=cobra-aeronautics.wyrko.es, metech.wyrko.es\n")
+
+        result = self.run_dev("up", env_extra={"DEV_FAKE_LSOF_LISTEN_FROM": "3"})
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        content = (self.sites / "proyecto.caddy").read_text()
+        self.assertIn(
+            "proyecto.test cobra-aeronautics.wyrko.es.test metech.wyrko.es.test {",
+            content,
+        )
+        self.assertTrue(any(call.startswith("caddy trust ") for call in self.caddy_calls()))
+
+    def test_up_preserves_alias_domain_before_custom_suffix(self):
+        self.mark_caddy_running()
+        self.mark_caddy_ok()
+        (self.project / "artisan").write_text("")
+        config = self.project / ".config" / "caddy"
+        config.parent.mkdir()
+        config.write_text("ALIASES=cobra-aeronautics.wyrko.es.test\n")
+
+        result = self.run_dev(
+            "up",
+            env_extra={
+                "DEV_DOMAIN_SUFFIX": "internal",
+                "DEV_FAKE_LSOF_LISTEN_FROM": "3",
+            },
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        content = (self.sites / "proyecto.caddy").read_text()
+        self.assertIn("proyecto.internal cobra-aeronautics.wyrko.es.test.internal {", content)
+
+    def test_up_warns_but_continues_when_caddy_trust_fails(self):
+        self.mark_caddy_running()
+        self.mark_caddy_ok()
+        (self.project / "artisan").write_text("")
+
+        result = self.run_dev(
+            "up",
+            env_extra={
+                "DEV_FAKE_LSOF_LISTEN_FROM": "3",
+                "DEV_FAKE_CADDY_TRUST_FAIL": "1",
+            },
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("ERR_CERT_AUTHORITY_INVALID", result.stderr)
+        self.assertTrue((self.sites / "proyecto.caddy").exists())
 
     def test_up_failure_removes_snippet_and_state(self):
         # Caddy no está en ejecución y el arranque falla: no debe quedar ni el
