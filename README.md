@@ -13,6 +13,11 @@ cd ~/dev/contrib/dotfiles
 stow --dir="$PWD" --target="$HOME" \
   bin ghostty git herdr nvim opencode phpactor pi plannotator \
   ripgrep sesh tmux worktrunk yazi zsh
+
+# Solo Linux: evita que PHP/Composer use el /tmp limitado.
+if [[ "$OSTYPE" == linux* ]]; then
+  stow --dir="$PWD" --target="$HOME" php
+fi
 ```
 
 El `--dir="$PWD"` hace que la instalación funcione aunque el repositorio esté en una ruta distinta de la histórica. Stow creará los enlaces en `$HOME` y `$HOME/.config`; revisa primero los conflictos si ya existen archivos en esas rutas.
@@ -27,9 +32,12 @@ Los paquetes principales son:
 | `nvim` | `~/.config/nvim` |
 | `herdr`, `worktrunk` | `~/.config/herdr`, `~/.config/worktrunk` |
 | `opencode`, `pi`, `plannotator` | Sus respectivos directorios de configuración en `$HOME` |
+| `php` (solo Linux) | `~/.config/php/conf.d` |
 | `ghostty`, `phpactor`, `ripgrep`, `sesh`, `tmux`, `yazi` | Sus respectivos directorios o archivos en `$HOME` |
 
 `Brewfile` es un inventario del entorno Homebrew personal, con fórmulas y casks principalmente orientados a macOS. No es necesario para usar Stow ni debe ejecutarse sin revisarlo en Ubuntu Server: los casks y algunas fórmulas pueden no estar disponibles allí.
+
+En Linux, el paquete `php` configura los temporales de PHP/Composer en `~/.cache/php-tmp`, en lugar de usar `/tmp`. El paquete `zsh` añade ese directorio de configuración al escaneo de PHP únicamente en Linux, sin quitar los ajustes de mise. El directorio temporal se crea con permisos `0700`; esto solo afecta a procesos PHP CLI y no modifica PHP-FPM/Apache ni el `TMPDIR` global. En macOS no se activa ni se necesita instalar el paquete `php`.
 
 ## Archivos locales
 

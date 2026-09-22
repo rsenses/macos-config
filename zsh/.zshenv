@@ -13,6 +13,22 @@ fi
 export OLLAMA_API_BASE=http://127.0.0.1:11434
 export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
 export XDG_CONFIG_HOME="$HOME/.config"
+
+# Keep PHP CLI and Composer temporary files on persistent home storage on Linux.
+if [[ "$OSTYPE" == linux* ]]; then
+    php_ini_scan_dir="$HOME/.config/php/conf.d"
+    if [[ -n "${PHP_INI_SCAN_DIR:-}" ]]; then
+        case ":$PHP_INI_SCAN_DIR:" in
+            *":$php_ini_scan_dir:"*) ;;
+            *) PHP_INI_SCAN_DIR="$php_ini_scan_dir:$PHP_INI_SCAN_DIR" ;;
+        esac
+    else
+        PHP_INI_SCAN_DIR="$php_ini_scan_dir:"
+    fi
+    export PHP_INI_SCAN_DIR
+    unset php_ini_scan_dir
+fi
+
 export LEAN_CTX_PI_MODE=replace
 export PASSWORD_STORE_ENABLE_EXTENSIONS=true
 export PASSWORD_STORE_EXTENSIONS_DIR="$HOME/.password-store/.extensions"

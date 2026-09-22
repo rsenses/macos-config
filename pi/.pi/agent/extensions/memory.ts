@@ -389,6 +389,7 @@ export function planWarning(content: string, maxChars = PLAN_SNAPSHOT_LINE_CHARS
 
 export interface PlanSnapshot {
 	planPath: string;
+	title: string;
 	status: string;
 	tldr: string;
 	currentStep: string;
@@ -397,10 +398,19 @@ export interface PlanSnapshot {
 	warning: string;
 }
 
+/** Extract the short display title from the plan heading without exposing the full summary. */
+export function planTitle(content: string): string {
+	const planHeading = /^#\s+Plan:\s*(.+)$/m.exec(content);
+	if (planHeading?.[1]) return truncateLine(planHeading[1], 120);
+	const heading = /^#\s+(.+)$/m.exec(content);
+	return heading?.[1] ? truncateLine(heading[1], 120) : "untitled";
+}
+
 /** Derive the bounded recovery view (status/TL;DR/step/counts/active task/warning) from a plan body. */
 export function planSnapshot(content: string, planPath: string): PlanSnapshot {
 	return {
 		planPath,
+		title: planTitle(content),
 		status: planStatus(content) ?? "unknown",
 		tldr: planSection(content, "TL;DR", PLAN_SNAPSHOT_SECTION_CHARS),
 		currentStep: planSection(content, "Current Step", PLAN_SNAPSHOT_SECTION_CHARS),
@@ -566,15 +576,10 @@ function planStatusText(snapshot: PlanSnapshot | undefined, blocked?: string): s
 	return truncateLine(`Plan ${snapshot.status} · ${tasks}${step ? ` · ${step}` : ""}`, 120);
 }
 
-function planWidgetLines(snapshot: PlanSnapshot | undefined, blocked?: string): string[] | undefined {
+function planWidgetLines(snapshot: PlanSnapshot | undefined, _blocked?: string): string[] | undefined {
 	if (!snapshot) return undefined;
-	const lines = [`Plan: ${snapshot.planPath} (${snapshot.status})`];
-	if (snapshot.tldr) lines.push(`TL;DR: ${truncateLine(snapshot.tldr, 90)}`);
-	if (snapshot.currentStep) lines.push(`Step: ${truncateLine(snapshot.currentStep, 90)}`);
-	lines.push(`Tasks: ${snapshot.tasks.open} open / ${snapshot.tasks.done} done (${snapshot.tasks.total} total)`);
-	const warning = blocked ?? snapshot.warning;
-	if (warning) lines.push(`Warning: ${truncateLine(warning, 90)}`);
-	return lines;
+	const title = truncateLine(snapshot.title, 64);
+	return [`Plan: ${title}${snapshot.status ? ` · ${snapshot.status}` : ""}`];
 }
 
 /** Bounded injected plan view for the system prompt: identity/status/counts/step/active task/warning only. */
@@ -636,6 +641,10 @@ async function refreshPlanUI(ctx: any, precomputed?: { snapshot?: PlanSnapshot; 
 	} catch {}
 }
 
+function shellQuote(value: string): string {
+	return `'${value.replace(/'/g, `'\\''`)}'`;
+}
+
 function planPointerRecord(pointer: Omit<PlanPointer, "v" | "updatedAt">): PlanPointer {
 	return { v: 1, ...pointer, updatedAt: new Date().toISOString() };
 }
@@ -678,6 +687,68 @@ async function confirmPlanSelection(ctx: any, operation: string, signal?: AbortS
 }
 
 export default function (pi: ExtensionAPI) {
+	pi.registerCommand("open-plan", {
+		description: "Open the active session plan in Neovim in a new Herdr pane",
+		handler: async (_args, ctx) => {
+			const resolved = await resolveActivePlan(ctx.cwd, ctx);
+			if (resolved.blocked) {
+				ctx.ui.notify(`Cannot open active plan: ${resolved.blocked}`, "error");
+				return;
+			}
+			if (!resolved.planPath || !(await isContainedRegularPlanFile(ctx.cwd, resolved.planPath))) {
+				ctx.ui.notify("No active plan is selected for this session and worktree.", "warning");
+				return;
+			}
+			if (ctx.mode !== "tui" || process.env.HERDR_ENV !== "1") {
+				ctx.ui.notify("/open-plan requires running Pi inside a Herdr pane.", "warning");
+				return;
+			}
+
+			const sourcePaneId = process.env.HERDR_PANE_ID || process.env.HERDR_ACTIVE_PANE_ID;
+			if (!sourcePaneId) {
+				ctx.ui.notify("Herdr did not provide the current pane id.", "error");
+				return;
+			}
+
+			const herdr = process.env.HERDR_BIN_PATH || "herdr";
+			const split = await runCommand(ctx.cwd, herdr, [
+				"pane",
+				"split",
+				sourcePaneId,
+				"--direction",
+				"right",
+				"--cwd",
+				ctx.cwd,
+				"--focus",
+			]);
+			if (split.code !== 0) {
+				ctx.ui.notify(`Could not create Herdr pane: ${split.stderr.trim() || split.stdout.trim() || "unknown error"}`, "error");
+				return;
+			}
+
+			let paneId: string | undefined;
+			try {
+				const response = JSON.parse(split.stdout);
+				const candidate = response?.result?.pane?.pane_id;
+				if (typeof candidate === "string" && candidate) paneId = candidate;
+			} catch {}
+			if (!paneId) {
+				ctx.ui.notify("Herdr created a pane but did not return its id.", "error");
+				return;
+			}
+
+			const planPath = path.resolve(ctx.cwd, resolved.planPath);
+			const nvimCommand = `exec zsh -lc ${shellQuote(`exec nvim -- ${shellQuote(planPath)}`)}`;
+			const opened = await runCommand(ctx.cwd, herdr, ["pane", "run", paneId, nvimCommand]);
+			if (opened.code !== 0) {
+				await runCommand(ctx.cwd, herdr, ["pane", "close", paneId]);
+				ctx.ui.notify(`Could not open Neovim in Herdr: ${opened.stderr.trim() || opened.stdout.trim() || "unknown error"}`, "error");
+				return;
+			}
+			ctx.ui.notify(`Opened ${resolved.planPath} in a new Herdr pane.`, "info");
+		},
+	});
+
 	// --- Tools ---
 
 	pi.registerTool({
@@ -991,7 +1062,7 @@ ${activeTasks}
 		try {
 			const resolved = await resolveActivePlan(ctx.cwd, ctx);
 			const content = resolved.planPath ? await readIfExists(path.join(ctx.cwd, resolved.planPath)) : "";
-			const snapshot = content ? planSnapshot(content, resolved.planPath) : undefined;
+			const snapshot = content ? planSnapshot(content, resolved.planPath!) : undefined;
 			if (!snapshot && !resolved.blocked) return;
 			return {
 				messages: [
