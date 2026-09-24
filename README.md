@@ -1,6 +1,6 @@
 # Dotfiles
 
-Configuración personal para macOS y Linux, gestionada con [GNU Stow](https://www.gnu.org/software/stow/). Incluye configuraciones para Neovim, zsh, Git, Herdr, Worktrunk, tmux, Ghostty, Yazi, ripgrep, sesh, OpenCode, Pi y Plannotator.
+Configuración personal para macOS y Linux, gestionada con [GNU Stow](https://www.gnu.org/software/stow/). Incluye configuraciones para Neovim, zsh, Git, mise, Herdr, Worktrunk, tmux, Ghostty, Yazi, ripgrep, sesh, OpenCode, Pi y Plannotator.
 
 ## Instalación
 
@@ -11,13 +11,8 @@ git clone <url-del-repositorio> ~/dev/contrib/dotfiles
 cd ~/dev/contrib/dotfiles
 
 stow --dir="$PWD" --target="$HOME" \
-  bin ghostty git herdr nvim opencode phpactor pi plannotator \
+  bin ghostty git herdr mise nvim opencode php phpactor pi plannotator \
   ripgrep sesh tmux worktrunk yazi zsh
-
-# Solo Linux: evita que PHP/Composer use el /tmp limitado.
-if [[ "$OSTYPE" == linux* ]]; then
-  stow --dir="$PWD" --target="$HOME" php
-fi
 ```
 
 El `--dir="$PWD"` hace que la instalación funcione aunque el repositorio esté en una ruta distinta de la histórica. Stow creará los enlaces en `$HOME` y `$HOME/.config`; revisa primero los conflictos si ya existen archivos en esas rutas.
@@ -31,13 +26,14 @@ Los paquetes principales son:
 | `zsh` | `~/.zshenv`, `~/.zprofile`, `~/.zshrc`, `~/.config/zsh` |
 | `nvim` | `~/.config/nvim` |
 | `herdr`, `worktrunk` | `~/.config/herdr`, `~/.config/worktrunk` |
+| `mise` | Fragmento `~/.config/mise/conf.d/php-ini.toml` (se integra con `config.toml`) |
 | `opencode`, `pi`, `plannotator` | Sus respectivos directorios de configuración en `$HOME` |
-| `php` (solo Linux) | `~/.config/php/conf.d` |
+| `php` | `~/.config/php/8.4`, `~/.config/php/8.5`, `~/.config/php/conf.d` |
 | `ghostty`, `phpactor`, `ripgrep`, `sesh`, `tmux`, `yazi` | Sus respectivos directorios o archivos en `$HOME` |
 
 `Brewfile` es un inventario del entorno Homebrew personal, con fórmulas y casks principalmente orientados a macOS. No es necesario para usar Stow ni debe ejecutarse sin revisarlo en Ubuntu Server: los casks y algunas fórmulas pueden no estar disponibles allí.
 
-En Linux, el paquete `php` configura los temporales de PHP/Composer en `~/.cache/php-tmp`, en lugar de usar `/tmp`. El paquete `zsh` añade ese directorio de configuración al escaneo de PHP únicamente en Linux, sin quitar los ajustes de mise. El directorio temporal se crea con permisos `0700`; esto solo afecta a procesos PHP CLI y no modifica PHP-FPM/Apache ni el `TMPDIR` global. En macOS no se activa ni se necesita instalar el paquete `php`.
+El fragmento de mise selecciona `~/.config/php/<versión-major.minor>/php.ini` según la versión de PHP activa y configura PCOV: usa la ruta de Homebrew en macOS y `pcov.so` en el directorio de extensiones de PHP en Linux. En Linux, instala PCOV para cada versión de PHP de mise (`mise exec php@<versión> -- pecl install pcov`). El paquete `php` se instala en ambas plataformas para proporcionar los INI versionados; en Linux, además, configura los temporales de PHP/Composer en `~/.cache/php-tmp`, en lugar de usar `/tmp`. El paquete `zsh` añade `~/.config/php/conf.d` al escaneo únicamente en Linux, sin quitar el directorio de configuración propio de PHP. El directorio temporal se crea con permisos `0700`; esto solo afecta a procesos PHP CLI y no modifica PHP-FPM/Apache ni el `TMPDIR` global.
 
 ## Archivos locales
 

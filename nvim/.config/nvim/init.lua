@@ -31,8 +31,8 @@ vim.g.maplocalleader = ' '
 if vim.fn.has 'mac' == 1 then
   vim.opt.clipboard = 'unnamedplus'
 elseif vim.fn.has 'linux' == 1 then
+  -- Keep OSC 52 explicit; unnamedplus would query the terminal when pasting.
   vim.g.clipboard = 'osc52'
-  vim.opt.clipboard = 'unnamedplus'
 end
 
 -- Experimental UI2: floating cmdline and messages

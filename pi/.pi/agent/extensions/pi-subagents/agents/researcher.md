@@ -2,7 +2,7 @@
 name: researcher
 description: Focused web research with source verification
 tools: codex-research, web_fetch
-model: openai-codex/gpt-5.6-luna
+model: openai-codex/gpt-6-luna
 thinking: high
 ---
 

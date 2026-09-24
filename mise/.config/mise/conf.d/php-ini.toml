@@ -1,0 +1,4 @@
+# Select the php.ini and PCOV binary for the PHP version chosen by mise.
+[env]
+PHPRC = { value = "{{ env.HOME }}/.config/php/{{ tools.php.version | split(pat='.') | slice(start=0, end=2) | join(sep='.') }}", tools = true }
+PHP_PCOV_EXTENSION = { value = "{{ ('/opt/homebrew/opt/pcov@' ~ (tools.php.version | split(pat='.') | slice(start=0, end=2) | join(sep='.')) ~ '/pcov.so') if os() == 'macos' else 'pcov.so' }}", tools = true }

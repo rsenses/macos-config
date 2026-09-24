@@ -28,6 +28,11 @@ If `CHANGELOG.md` exists at the project root, every user-visible change must add
 
 Use local tools directly for reads, literal searches, deterministic transforms, tests, and decisions whose evidence is already available. Delegation is optional: use it only when isolation, independent evidence, or a bounded implementation outweighs handoff, waiting, and verification costs.
 
+Before broad investigation or non-trivial implementation, identify work that can advance independently of the principal. Delegate a bounded slice when it has a clear question or acceptance check and the independence or context saved justifies handoff and review. Reassess when investigation reveals a newly separable slice; do not decide based on how small the eventual fix turns out to be. If an obvious independent slice is kept local, briefly state why; no justification is needed for trivial or inseparable work.
+
+- Prefer a read-only `scout` for one of two independent evidence domains in an open-ended diagnosis; keep the other with the principal. A scout may investigate a bounded repository question, not merely locate files.
+- Use a `worker` for an independently verifiable implementation slice with clear write scope; the principal integrates the result and runs the full validation gate. Do not delegate a surgical edit whose handoff and review cost exceeds direct work.
+- Use `researcher` for bounded external-source investigation when it can proceed independently, and `planner` for design decisions with real alternatives after evidence is summarized and its launch approval is obtained. Do not dispatch either just to meet a delegation target.
 - Normally use **0–1** subagents; use at most **2** only for genuinely independent, non-overlapping work.
 - Do not delegate merely because a task is non-trivial or touches more than one file.
 - The principal remains the coordinator and makes final scope and acceptance decisions. Children do not launch nested subagents; if evidence is missing, return `blocked` with the exact question.
@@ -56,8 +61,7 @@ Child output must start with **Status**: `complete`, `partial`, `blocked`, `fail
 
 ### Context budget
 
-- When a task has two independent evidence domains, prefer bounded read-only scouts in parallel before broad reads in the principal context.
-- Use `scout` for repository or reference investigation; use `planner` only after evidence has been summarized.
+- For independent evidence domains, give one bounded question to a scout while the principal investigates the other; use `planner` only after evidence has been summarized.
 - Never request complete files, documentation, plans, or transcripts from a child. Require concise findings with exact paths/ranges and unresolved questions.
 - Keep the principal context to the contract, summarized evidence, decisions, and deltas; do not duplicate child output in the plan or final response.
 

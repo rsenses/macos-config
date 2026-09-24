@@ -1,8 +1,8 @@
 {
-  "lastChangelogVersion": "0.85.1",
+  "lastChangelogVersion": "0.87.0",
   "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.6-luna",
-  "defaultThinkingLevel": "xhigh",
+  "defaultModel": "gpt-6-sol",
+  "defaultThinkingLevel": "medium",
   "shellPath": "/bin/zsh",
   "shellCommandPrefix": "eval \"$(mise env -s zsh)\"\nunset APP_URL APP_ENV",
   "theme": "light",
@@ -14,10 +14,9 @@
     "git:github.com/tmustier/pi-auto-compact"
   ],
   "enabledModels": [
-    "opencode-go/deepseek-v4-flash",
     "opencode-go/glm-5.3-flash",
-    "openai-codex/gpt-5.6-luna",
-    "openai-codex/gpt-5.6-sol",
+    "openai-codex/gpt-6-luna",
+    "openai-codex/gpt-6-sol",
     "openai-codex/gpt-6-astra",
     "opencode-go/deepseek-v4.1-flash"
   ],

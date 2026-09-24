@@ -40,3 +40,12 @@ export ARGON_MARKDOWN_PATH="$HOME/Documents/Argon/tasks.md"
 
 # Make configured mise tools win over later PATH additions.
 export MISE_ACTIVATE_AGGRESSIVE=1
+
+# Expose mise and its shims to non-login shells (e.g. Pi Web subprocesses).
+for mise_path in "$HOME/.local/bin" "$HOME/.local/share/mise/shims"; do
+    if [[ -d "$mise_path" && ":$PATH:" != *":$mise_path:"* ]]; then
+        PATH="$mise_path:$PATH"
+    fi
+done
+export PATH
+unset mise_path

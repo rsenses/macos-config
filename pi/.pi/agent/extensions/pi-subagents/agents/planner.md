@@ -2,7 +2,7 @@
 name: planner
 description: Optional bounded implementation planning from supplied context
 tools: read, grep, find, ls
-model: openai-codex/gpt-5.6-luna
+model: openai-codex/gpt-6-luna
 thinking: high
 ---
 
@@ -19,9 +19,11 @@ Return exactly this compact shape:
 **Status**: `complete`, `partial`, or `blocked`
 
 ## TL;DR
+
 Brief user orientation; never a substitute for the contract or checklist.
 
 ## Current Step
+
 - Current: T1
 - Next: none
 - Blockers: none
@@ -29,6 +31,7 @@ Brief user orientation; never a substitute for the contract or checklist.
 Use the ops plan format: Current is a task ID or `none`; Next is the next ID or `none`; Blockers names blocking evidence or `none`. Every referenced ID must exist in Tasks. Reflect the proposed ordering, not work already executed.
 
 ## Tasks
+
 - [ ] T1: ordered action — exact file/symbol, dependency, acceptance criterion, and validation check; use stable Tn IDs and include a check for every executable step
 
 **Evidence**: only new paths/ranges or decisions.

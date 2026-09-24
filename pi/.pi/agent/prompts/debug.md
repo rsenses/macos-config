@@ -18,10 +18,10 @@ Rules:
 3. Reproduce the reported failure, then minimise the scenario until every remaining input or step is load-bearing.
 4. Read the relevant code before editing.
 5. Redact secrets from commands, logs, traces, and captured artifacts.
-6. Keep diagnosis in the main agent if the issue is nuanced or the user has already corrected an interpretation.
-7. Use `scout` only to locate relevant files or references.
-8. Use `researcher` only if framework/library behavior matters.
-9. Use `worker` only for a clearly scoped surgical fix.
+6. Keep interpretation, hypothesis ranking, and decisions in the main agent, especially after user corrections; a scout may investigate an independent, bounded evidence question.
+7. Before broad inspection, look for separate evidence domains: delegate one to a read-only `scout` when it can return useful findings independently. If an obvious candidate stays local, say why.
+8. Use `researcher` for bounded external-source questions when needed.
+9. Use `worker` for a bounded fix with clear scope and local checks when the handoff is worthwhile; the principal integrates and validates the full result.
 10. Do not broaden scope or refactor unrelated code.
 11. If the same hypothesis fails twice, stop and reassess.
 12. Use the cheapest credible validation after the fix.
