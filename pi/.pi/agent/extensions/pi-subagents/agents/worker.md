@@ -2,7 +2,7 @@
 name: worker
 description: Bounded implementation slice with local verification
 tools: read, write, edit, grep, find, ls, safe_bash, ast_grep, web_fetch
-model: opencode-go/glm-5.3-flash
+model: openai-codex/gpt-6-luna
 thinking: high
 ---
 
