@@ -60,7 +60,7 @@ async function memoryFixture(run) {
       const registered = ext.tools.get(name);
       return (registered.definition??registered).execute('fixture',params,signal,undefined,{...ctx,...over});
     };
-    await run({dir,call,before,ctx,get sm(){return sm;},reopen(){sm=SessionManager.open(sm.getSessionFile(),join(dir,'sessions'));}});
+    await run({dir,call,before,ctx,get sm(){return sm;},prompt:()=>ext.handlers.get('before_agent_start')[0]({systemPrompt:'base'},ctx),reopen(){sm=SessionManager.open(sm.getSessionFile(),join(dir,'sessions'));}});
   } finally {await rm(dir,{recursive:true,force:true});}
 }
 
@@ -70,6 +70,11 @@ test('memory: persisted selection, full active branch, abandoned branch and read
     assert.equal(created.details.pointerPersisted,true);
     assert.match((await f.call('get_current_plan')).details.planActiveTask,/T1/);
     const a = created.details.path;
+    const plan = join(f.dir,a);
+    await writeFile(plan,(await readFile(plan,'utf8')).replace('- Status: pending','- Status: completed'));
+    const injected = await f.prompt();
+    assert.match(injected.systemPrompt,/reviewing its results continues the same plan even if its tasks are completed/);
+    assert.match(injected.systemPrompt,/Start another plan only for an independent goal or material scope change/);
     f.reopen();
     assert.equal((await f.call('get_current_plan')).details.path,a);
     const kept = f.sm.appendMessage({role:'user',content:'retained fixture',timestamp:0});

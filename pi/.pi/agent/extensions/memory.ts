@@ -1036,7 +1036,7 @@ ${snapshotBlock}
 
 ### Workflow Policy
 - **Planning**: Use \`create_session_plan\` at the start of non-trivial tasks. Update the plan file directly.
-- **Selection**: Use \`select_session_plan\` only for an explicit existing-file adoption/switch; use \`create_session_plan\` with \`newPlan=true\` to start another plan without overwriting the selected one. A blocked or missing selection is never silently recreated.
+- **Selection**: Use \`select_session_plan\` only for an explicit existing-file adoption/switch. Before \`create_session_plan\` with \`newPlan=true\`, compare the request with the active plan's goal and artifacts: showing, serving, testing, or reviewing its results continues the same plan even if its tasks are completed. Handle one-off follow-up work directly; if persistent tracking is needed, append a task to the active plan. Start another plan only for an independent goal or material scope change; ask the user if that distinction is genuinely unclear. A blocked or missing selection is never silently recreated.
 - **Inspect**: Use \`get_current_plan\` for the active plan and \`summarize_worktree\` for a compact repo snapshot.
 - **Tasks**: Use \`.ai/TASKS.md\` for work that survives sessions. Use wiki-links \`[[.ai/plan/file.md]]\` for complex tasks.
 - **Reference discipline**: When a route, component, file, or decision is already recorded, refer to the existing section or item instead of restating the whole list.

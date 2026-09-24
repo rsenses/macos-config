@@ -204,6 +204,8 @@ exec sleep 300
 
     def run_dev(self, *args, cwd=None, env_extra=None):
         env = os.environ.copy()
+        # Keep tests independent of the suffix configured in the developer's shell.
+        env["DEV_DOMAIN_SUFFIX"] = "test"
         env["PATH"] = f"{self.fakebin}{os.pathsep}{env['PATH']}"
         env["DEV_SITES_DIR"] = str(self.sites)
         env["DEV_STATE_PREFIX"] = self.state_prefix
