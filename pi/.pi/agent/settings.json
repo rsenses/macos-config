@@ -1,8 +1,8 @@
 {
-  "lastChangelogVersion": "0.87.0",
+  "lastChangelogVersion": "0.87.1",
   "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-6-sol",
-  "defaultThinkingLevel": "medium",
+  "defaultModel": "gpt-6-luna",
+  "defaultThinkingLevel": "xhigh",
   "shellPath": "/bin/zsh",
   "shellCommandPrefix": "eval \"$(mise env -s zsh)\"\nunset APP_URL APP_ENV",
   "theme": "light",
@@ -10,6 +10,7 @@
     "npm:pi-mcp-adapter@2.33.0",
     "npm:pi-lsp-bridge@2.3.0",
     "npm:pi-gpt-search@1.1.0",
+    "git:github.com/joelazar/pi-nvim",
     "npm:@plannotator/pi-extension",
     "git:github.com/tmustier/pi-auto-compact"
   ],
@@ -21,5 +22,11 @@
     "opencode-go/deepseek-v4.1-flash"
   ],
   "enableInstallTelemetry": false,
-  "npmCommand": ["mise", "exec", "node@24", "--", "npm"]
+  "npmCommand": [
+    "mise",
+    "exec",
+    "node@24",
+    "--",
+    "npm"
+  ]
 }

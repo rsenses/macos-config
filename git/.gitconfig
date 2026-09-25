@@ -34,6 +34,10 @@
 	# Neovim highlights Git output itself; do not feed it ANSI escape codes.
 	pager = false
 
+[pager]
+    diff = delta
+    show = delta
+
 [alias]
   # View the log format
     lg = log --graph --abbrev-commit --decorate --pretty=format:'%C(yellow)%h%Creset %C(cyan)%ad%Creset %C(green)%an%Creset %C(auto)%d%Creset %s' --date=short --all
@@ -63,14 +67,18 @@
 [fetch]
 	prune = true
 [diff]
-	colorMoved = default
+    algorithm = histogram
+    indentHeuristic = true
+    colorMoved = zebra
+    colorMovedWS = allow-indentation-change
 [interactive]
     diffFilter = delta --color-only
 [delta]
     navigate = true
 	light = true
-    side-by-side = true
+    side-by-side = false
     syntax-theme = GitHub
+    line-numbers = true
 [merge]
     conflictstyle = zdiff3
 	tool = vimdiff

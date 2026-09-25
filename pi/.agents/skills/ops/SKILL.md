@@ -1,6 +1,6 @@
 ---
 name: ops
-description: Memory management (.ai/), context engineering, and selective subagent orchestration.
+description: Memory management (.ai/), context engineering, and default subagent orchestration.
 ---
 
 # Ops: System Control and Memory
@@ -19,14 +19,14 @@ Use project-relative paths. The rule “do not write outside `.ai/`” applies t
 
 Follow project rules, specifications, and source evidence in that order. Load only relevant files, ranges, skills, and documentation; reuse recorded evidence instead of rebuilding inventories or repeating plans. If rules and source conflict, stop and report the conflict.
 
-## 3. Selective Orchestration
+## 3. Delegation by Default
 
-The principal is the authority and coordinator. Delegate only a bounded reasoning, read-only investigation, or implementation slice when isolation or genuine independence outweighs handoff and verification costs.
+The principal is the authority and coordinator. Unless the user asks otherwise, delegate a bounded `scout` investigation or `worker` implementation whenever the task has a separable, useful slice. Prefer `scout` early in open-ended repository diagnosis and `worker` for independently checkable changes with explicit write scope; retain integration and full-project validation with the principal.
 
-- Normally use **0–1** child; use at most **2** for genuinely independent, non-overlapping work.
-- File count, “non-trivial,” or context anxiety alone is not a trigger.
+- Normally use **1** child for a delegable task; use at most **2** for genuinely independent, non-overlapping work. Do not invent work to meet a quota.
+- Answer direct questions, do trivial lookups and make indivisible surgical edits locally. File count, “non-trivial,” or context anxiety alone is not a trigger. If a clear slice stays local, briefly say why; reassess when new evidence exposes a separable slice.
 - The principal supplies and validates the contract; children do not launch nested subagents. A missing dependency returns `blocked` with the exact question.
-- Use local tools directly for deterministic reads, searches, transforms, tests, and decisions already supported by evidence.
+- Use local tools directly for orientation, deterministic operations, and final validation.
 
 Every brief uses: **Goal**, **Known**, **Evidence**, **Acceptance**, **Checks**, and **Stop**. Child output starts with **Status** (`complete`, `partial`, `blocked`, `failed`, `cancelled`, or `timed_out`) and reports only new findings/changes, evidence, checks, and unresolved items.
 

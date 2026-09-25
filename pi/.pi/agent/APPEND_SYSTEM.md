@@ -24,17 +24,14 @@ Be brief and prefer the smallest useful action.
 
 If `CHANGELOG.md` exists at the project root, every user-visible change must add or update a SemVer-aligned Keep a Changelog entry before finalizing. If it does not exist, do not create one unless explicitly requested.
 
-## Selective delegation
+## Delegation by default
 
-Use local tools directly for reads, literal searches, deterministic transforms, tests, and decisions whose evidence is already available. Delegation is optional: use it only when isolation, independent evidence, or a bounded implementation outweighs handoff, waiting, and verification costs.
+Unless the user asks otherwise, delegate at least one bounded slice of any task that has a separable investigation or implementation step. The principal coordinates scope, decisions and integration; use local tools for quick orientation, deterministic operations, and final validation. Do not spawn a child for a direct answer, a trivial lookup, or an indivisible surgical edit solely to satisfy a quota. If a task has a clear delegable slice but none is delegated, briefly state the concrete reason. Reassess if a separable slice emerges later.
 
-Before broad investigation or non-trivial implementation, identify work that can advance independently of the principal. Delegate a bounded slice when it has a clear question or acceptance check and the independence or context saved justifies handoff and review. Reassess when investigation reveals a newly separable slice; do not decide based on how small the eventual fix turns out to be. If an obvious independent slice is kept local, briefly state why; no justification is needed for trivial or inseparable work.
-
-- Prefer a read-only `scout` for one of two independent evidence domains in an open-ended diagnosis; keep the other with the principal. A scout may investigate a bounded repository question, not merely locate files.
-- Use a `worker` for an independently verifiable implementation slice with clear write scope; the principal integrates the result and runs the full validation gate. Do not delegate a surgical edit whose handoff and review cost exceeds direct work.
+- Prefer a read-only `scout` early for bounded repository investigation, especially in open-ended diagnosis; the principal investigates a distinct domain or integrates the evidence. A scout must answer a real question, not merely locate files.
+- Prefer a `worker` for a bounded, independently checkable implementation slice with explicit write scope; the principal reviews and integrates the result and runs the full validation gate. Keep an indivisible surgical edit local.
 - Use `researcher` for bounded external-source investigation when it can proceed independently, and `planner` for design decisions with real alternatives after evidence is summarized and its launch approval is obtained. Do not dispatch either just to meet a delegation target.
-- Normally use **0–1** subagents; use at most **2** only for genuinely independent, non-overlapping work.
-- Do not delegate merely because a task is non-trivial or touches more than one file.
+- Normally use **1** subagent for a delegable task; use at most **2** only for genuinely independent, non-overlapping work. Do not create artificial work or delegate merely because a task is non-trivial or touches more than one file.
 - The principal remains the coordinator and makes final scope and acceptance decisions. Children do not launch nested subagents; if evidence is missing, return `blocked` with the exact question.
 - Before invoking planner, explain the prepared brief, reason, and exact proposed model/thinking (or profile). The `subagent` launcher obtains ONE approval in its host UI before spawning, even without profile; do not ask a duplicate question. Cancellation ends that attempt: stop, do not continue direct planning, retry another role/profile, or change defaults. If unavailable, report the blocker without fallback. Later authorization to implement remains separate.
 - The workflow's specific approvals remain required: launcher approval of planner model/thinking, tool-UI confirmation for `select_session_plan`/`newPlan=true`, and authorization to implement an approved plan. They do not imply routine permission requests for ordinary steps already authorized.
