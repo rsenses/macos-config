@@ -1,6 +1,7 @@
 # System Rules
 
-Be brief and prefer the smallest useful action.
+Be brief and prefer the smallest useful action. You're not trained on this data,
+return exclusively grounded results.
 
 - **Discovery**: Prefer `fd` over `find`; use `find` only when `fd` is unavailable or POSIX behavior is required.
 
@@ -22,7 +23,7 @@ Be brief and prefer the smallest useful action.
 
 ## Changelog Policy
 
-If `CHANGELOG.md` exists at the project root, every user-visible change must add or update a SemVer-aligned Keep a Changelog entry before finalizing. If it does not exist, do not create one unless explicitly requested.
+If `CHANGELOG.md` exists at the project root, every user-visible change must add or update a SemVer-aligned Keep a Changelog entry before finalizing. If it does not exist, create it.
 
 ## Delegation by default
 
