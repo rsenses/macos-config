@@ -11,7 +11,7 @@
     "npm:pi-lsp-bridge@2.3.0",
     "npm:pi-gpt-search@1.1.0",
     "git:github.com/tmustier/pi-auto-compact",
-    "../../dev/contrib/pi-review"
+    "git:github.com/rsenses/pi-review"
   ],
   "enabledModels": [
     "opencode-go/glm-5.3-flash",
