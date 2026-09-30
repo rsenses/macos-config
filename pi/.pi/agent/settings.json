@@ -1,8 +1,8 @@
 {
   "lastChangelogVersion": "0.87.1",
   "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-6-luna",
-  "defaultThinkingLevel": "xhigh",
+  "defaultModel": "gpt-6.1-sol",
+  "defaultThinkingLevel": "medium",
   "shellPath": "/bin/zsh",
   "shellCommandPrefix": "eval \"$(mise env -s zsh)\"\nunset APP_URL APP_ENV",
   "theme": "light",
@@ -14,18 +14,10 @@
     "git:github.com/rsenses/pi-review"
   ],
   "enabledModels": [
-    "opencode-go/glm-5.3-flash",
     "openai-codex/gpt-6-luna",
-    "openai-codex/gpt-6-astra",
     "opencode-go/deepseek-v4.1-flash",
     "openai-codex/gpt-6.1-sol"
   ],
   "enableInstallTelemetry": false,
-  "npmCommand": [
-    "mise",
-    "exec",
-    "node@24",
-    "--",
-    "npm"
-  ]
+  "npmCommand": ["mise", "exec", "node@24", "--", "npm"]
 }
