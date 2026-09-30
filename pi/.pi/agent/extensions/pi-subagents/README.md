@@ -6,7 +6,7 @@ Five bounded roles; the principal coordinates and verifies acceptance. `plan-rev
 |---|---|---|
 | scout | `opencode-go/deepseek-v4.1-flash` / **high** | read, grep, find, ls |
 | researcher | `openai-codex/gpt-5.6-luna` / **high** | codex-research, web_fetch |
-| planner (default) | `openai-codex/gpt-5.6-luna` / **high** | read, grep, find, ls — UI approval required; optional `profile` (see below) |
+| planner (default) | `openai-codex/gpt-6.1-sol` / **low** | read, grep, find, ls — UI approval required; optional `profile` (see below) |
 | worker | `opencode-go/glm-5.3-flash` / **high** | read, write, edit, grep, find, ls, safe_bash, ast_grep, web_fetch |
 | plan-reviewer | `openai-codex/gpt-6-astra` / **low** | read, grep, find, ls |
 
@@ -16,20 +16,21 @@ The `subagent` tool accepts an optional `profile` argument for the planner only.
 
 | Profile (argument) | Display label | Model | Thinking |
 |---|---|---|---|
-| `habitual` | habitual | `openai-codex/gpt-5.6-luna` | high |
-| `diseno` | diseño | `openai-codex/gpt-5.6-sol` | medium |
-| `delicado` | delicado | `openai-codex/gpt-6-astra` | low |
+| `low` | low | `openai-codex/gpt-6.1-sol` | low |
+| `medium` | medium | `openai-codex/gpt-6.1-sol` | medium |
+| `high` | high | `openai-codex/gpt-6.1-sol` | high |
 
 Profile rules:
 
-- Profiles are planner-only; passing one to any other agent fails before spawn.
+- Profiles are planner-only; passing one to any other agent fails before spawn. The old names `habitual`, `diseno`, and `delicado` are no longer accepted.
+- Omission selects `low`. Use `medium` only for material dependencies, competing designs, or unresolved trade-offs; use `high` only for substantial architectural uncertainty or high-impact risk where medium is inadequate. The coordinator must state a concrete reason for escalation; length or file count alone is insufficient. An unavailable low selection blocks launch instead of proposing a higher level.
 - Unknown profile names fail with the available list.
 - The exact model must exist in the model registry and, when the session has non-empty scoped models (`enabledModels`), must be inside that scope; an empty scope accepts any registry model. An out-of-scope or unsupported selection fails with a clear error — never a fallback.
 - The coordinator explains the brief, reason and proposed exact model/thinking; the launcher obtains the single model approval in its host UI, with options to approve, choose another available profile, or cancel. Do not ask a duplicate question in `/plan`. This applies when `profile` is omitted too; headless/print/json execution is blocked before spawn. Pre-aborted calls do not open UI; aborting a pending dialog dismisses it without launching. Cancellation returns normal `cancelled` and ends that attempt: no direct planning, alternative profile/role or retry. Implementation authorization remains separate.
 - The selected profile name/label and the exact effective model/thinking are recorded in the result details and progress UI so approval and recovery show what was requested and what launched.
-- `openai-codex/gpt-5.6-sol` is explicitly allowlisted in `pi/.pi/agent/settings.json` `enabledModels` solely to make the `diseno` profile selectable; principal defaults (`defaultProvider`/`defaultModel`/`defaultThinkingLevel`) are unchanged.
+- `openai-codex/gpt-6.1-sol` is already included in `pi/.pi/agent/settings.json` `enabledModels`; this migration does not change settings or the principal's model/thinking.
 
-**Principal stays Luna/max.** Normally use no child or one child; at most two genuinely independent tasks. File count alone is not a reason to delegate. Planner is optional. Children cannot delegate; missing substantial evidence is returned to the principal as a blocker.
+**Principal settings remain unchanged.** Normally use no child or one child; at most two genuinely independent tasks. File count alone is not a reason to delegate. Planner is optional. Children cannot delegate; missing substantial evidence is returned to the principal as a blocker.
 
 **Plan format.** The ops skill defines the canonical `## TL;DR`, `## Current Step` (Current/Next/Blockers) and top-level Tn Tasks format. The coordinator saves and updates the full plan; planner only proposes it. `select_session_plan` and `newPlan=true` confirm in their tool UI before changing selection; cancellation preserves existing state and selecting a plan does not approve implementation. The selection belongs to the full active branch, surviving compaction; legacy filename recovery is limited to sessions with no selection records anywhere.
 

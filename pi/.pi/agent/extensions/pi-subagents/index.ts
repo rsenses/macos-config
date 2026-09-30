@@ -251,9 +251,9 @@ export interface PlannerProfile {
 const PLANNER_PROFILE_AGENT = "planner";
 
 const PLANNER_PROFILES: Record<string, PlannerProfile> = {
-  habitual: { label: "habitual", model: "openai-codex/gpt-5.6-luna", thinking: "high" },
-  diseno: { label: "diseño", model: "openai-codex/gpt-5.6-sol", thinking: "medium" },
-  delicado: { label: "delicado", model: "openai-codex/gpt-6-astra", thinking: "low" },
+  low: { label: "low", model: "openai-codex/gpt-6.1-sol", thinking: "low" },
+  medium: { label: "medium", model: "openai-codex/gpt-6.1-sol", thinking: "medium" },
+  high: { label: "high", model: "openai-codex/gpt-6.1-sol", thinking: "high" },
 };
 
 function plannerProfileNames(): string {
@@ -317,21 +317,6 @@ async function approvePlannerCandidate(
   }
 
   const candidates: PlannerCandidate[] = [];
-  const configuredCandidate: PlannerCandidate = {
-    key: "configured",
-    label: "configured planner selection",
-    model: configuredAgent.model,
-    thinking: configuredAgent.thinking,
-  };
-  let configuredResolved: { candidate: PlannerCandidate; model: any } | undefined;
-  try {
-    if (requestedProfile === undefined) configuredResolved = resolveModelCandidate(configuredCandidate, ctx);
-  } catch (error) {
-    if (requestedProfile === undefined && typeof ctx.ui.notify === "function") {
-      ctx.ui.notify(`Configured planner selection unavailable (${String(error)}). Choose another available profile.`, "warning");
-    }
-    if (requestedProfile !== undefined) throw error;
-  }
 
   for (const [name, profile] of Object.entries(PLANNER_PROFILES)) {
     const candidate: PlannerCandidate = {
@@ -350,13 +335,22 @@ async function approvePlannerCandidate(
     }
   }
 
-  const configuredMatchesProfile = candidates.find((candidate) =>
-    configuredResolved && candidate.model === configuredResolved.candidate.model && candidate.thinking === configuredResolved.candidate.thinking,
-  );
-  if (configuredResolved && !configuredMatchesProfile) candidates.unshift(configuredResolved.candidate);
-  const proposed = requestedProfile
-    ? candidates.find((candidate) => candidate.profileName === requestedProfile)
-    : configuredMatchesProfile ?? candidates[0];
+  const defaultProfile = PLANNER_PROFILES.low;
+  let proposed: PlannerCandidate | undefined;
+  if (requestedProfile !== undefined) {
+    proposed = candidates.find((candidate) => candidate.profileName === requestedProfile);
+  } else {
+    proposed = candidates.find((candidate) => candidate.profileName === "low");
+    if (!proposed) {
+      // Omitted profile always means the low default. Never silently promote to
+      // medium/high when that configured default is unavailable in this session.
+      const low: PlannerCandidate = {
+        key: "low", label: defaultProfile.label, model: defaultProfile.model,
+        thinking: defaultProfile.thinking, profileName: "low", profile: defaultProfile,
+      };
+      resolveModelCandidate(low, ctx); // throws with the precise unavailable reason
+    }
+  }
   if (!proposed || candidates.length === 0) {
     throw new Error("No available planner profile satisfies the configured model, thinking level, and model scope; planner was not started");
   }
@@ -1198,7 +1192,7 @@ export default function (pi: ExtensionAPI) {
     name: "subagent",
     label: "Subagent",
     description:
-      `Delegate bounded work; no conversation is inherited. Available: ${agents.map(a => `${a.name} (${a.description})`).join("; ")}. Include goal, known evidence, constraints, acceptance, checks and stop condition. The planner accepts an optional profile: habitual (Luna/high), diseno (diseño; Sol/medium), delicado (Astra/low); profiles fail instead of falling back.`,
+      `Delegate bounded work; no conversation is inherited. Available: ${agents.map(a => `${a.name} (${a.description})`).join("; ")}. Include goal, known evidence, constraints, acceptance, checks and stop condition. The planner accepts optional low (default), medium, or high profiles, all using openai-codex/gpt-6.1-sol; choose medium/high only with concrete justification. Profiles fail instead of falling back.`,
     promptSnippet: "Run subagents for delegated tasks",
     promptGuidelines: [
       "Parallel tool calls are your primary parallelism mechanism — put multiple independent read/fetch calls in one function_calls block. Don't use subagents to parallelize simple I/O.",
@@ -1242,8 +1236,7 @@ export default function (pi: ExtensionAPI) {
       const invocationStart = Date.now();
 
       // Every planner invocation is approved in the host UI immediately before
-      // semaphore/spawn. Omitted profiles are also gated: the UI approves the
-      // configured selection or chooses one of the available named profiles.
+      // semaphore/spawn. Omitted profiles default to low and remain approval gated.
       const requestedProfile = params.profile;
       const requestedThinking = (params as { thinking?: unknown }).thinking;
       if (requestedThinking !== undefined && params.agent !== PLANNER_PROFILE_AGENT) {

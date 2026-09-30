@@ -226,9 +226,11 @@ test('actual extension loading, allowlists, protocol, usage and failure hook', {
     const MODELS = {
       deepseek: fakeModel('opencode-go/deepseek-v4.1-flash'),      // scout frontmatter
       glm: fakeModel('opencode-go/glm-5.3-flash'),                 // worker frontmatter
-      luna: fakeModel('openai-codex/gpt-5.6-luna', {max:'max'}),   // researcher/planner + habitual profile
-      sol: fakeModel('openai-codex/gpt-5.6-sol'),                  // diseno profile
-      astra: fakeModel('openai-codex/gpt-6-astra'),                // plan-reviewer + delicado profile
+      luna: fakeModel('openai-codex/gpt-5.6-luna', {max:'max'}),   // scoped-model fixture
+      roleLuna: fakeModel('openai-codex/gpt-6-luna', {max:'max'}), // researcher/worker
+      sol: fakeModel('openai-codex/gpt-5.6-sol'),                  // other configured role
+      astra: fakeModel('openai-codex/gpt-6-astra'),                // other configured role
+      planner: fakeModel('openai-codex/gpt-6.1-sol'),              // planner profiles
     };
     const byModel = new Map(Object.values(MODELS).map(m => [`${m.provider}/${m.id}`, m]));
     const scopedModels = Object.values(MODELS).map(m => ({model:{provider:m.provider, id:m.id}}));
@@ -295,9 +297,9 @@ test('actual extension loading, allowlists, protocol, usage and failure hook', {
     // ── Planner profiles: exact model/thinking per named profile, no fallback. ──
     await writeFile(process.env.PI_TEST_FIXTURE, JSON.stringify(event('stop','**Status**: complete\nProfile fixture.'))+'\n');
     const profileCases = [
-      ['habitual','habitual','openai-codex/gpt-5.6-luna','high'],
-      ['diseno','diseño','openai-codex/gpt-5.6-sol','medium'],
-      ['delicado','delicado','openai-codex/gpt-6-astra','low'],
+      ['low','low','openai-codex/gpt-6.1-sol','low'],
+      ['medium','medium','openai-codex/gpt-6.1-sol','medium'],
+      ['high','high','openai-codex/gpt-6.1-sol','high'],
     ];
     for (const [name, label, expectedModel, expectedThinking] of profileCases) {
       const run = await tool.execute('pf',{agent:'planner',task:'Profile fixture',profile:name},undefined,undefined,ctx);
@@ -315,27 +317,30 @@ test('actual extension loading, allowlists, protocol, usage and failure hook', {
     // effective profile; headless execution and cancellation cannot spawn.
     const withoutProfile = await tool.execute('np',{agent:'planner',task:'No profile fixture'},undefined,undefined,ctx);
     assert.equal(withoutProfile.details.status,'complete');
-    assert.equal(withoutProfile.details.results[0].profile,'habitual');
+    assert.equal(withoutProfile.details.results[0].profile,'low');
+    const defaultArgs = JSON.parse(await readFile(process.env.PI_TEST_FIXTURE+'.args','utf8'));
+    assert.equal(defaultArgs[defaultArgs.indexOf('--model')+1],'openai-codex/gpt-6.1-sol');
+    assert.equal(defaultArgs[defaultArgs.indexOf('--thinking')+1],'low');
     const profileArgsFile = process.env.PI_TEST_FIXTURE+'.args';
     await rm(profileArgsFile,{force:true});
     const cancelledUi = {...ctx,ui:{select:async (_title, options)=>options.at(-1), notify:()=>{}}};
-    const declined = await tool.execute('pc',{agent:'planner',task:'Cancel fixture',profile:'habitual'},undefined,undefined,cancelledUi);
+    const declined = await tool.execute('pc',{agent:'planner',task:'Cancel fixture',profile:'low'},undefined,undefined,cancelledUi);
     assert.equal(declined.details.status,'cancelled');
     assert.equal(declined.terminate,true);
     const declineHooks = await Promise.all(hooks.map(h=>h({toolName:'subagent',details:declined.details},ctx)));
     assert.ok(!declineHooks.some(x=>x?.isError===true));
     assert.equal(existsSync(profileArgsFile),false,'cancelled planner must not spawn');
-    await assert.rejects(tool.execute('ph',{agent:'planner',task:'Headless fixture',profile:'habitual'},undefined,undefined,{...ctx,hasUI:false,ui:undefined}),/no UI/);
+    await assert.rejects(tool.execute('ph',{agent:'planner',task:'Headless fixture',profile:'low'},undefined,undefined,{...ctx,hasUI:false,ui:undefined}),/no UI/);
     assert.equal(existsSync(profileArgsFile),false,'headless planner must not spawn');
     const abortedPlanner = new AbortController();
     abortedPlanner.abort();
-    const abortedPlannerResult = await tool.execute('pa',{agent:'planner',task:'Abort fixture',profile:'habitual'},abortedPlanner.signal,undefined,{...ctx,ui:{select:()=>assert.fail('already aborted invocation opened UI')}});
+    const abortedPlannerResult = await tool.execute('pa',{agent:'planner',task:'Abort fixture',profile:'low'},abortedPlanner.signal,undefined,{...ctx,ui:{select:()=>assert.fail('already aborted invocation opened UI')}});
     assert.equal(abortedPlannerResult.details.status,'cancelled');
     assert.equal(existsSync(profileArgsFile),false,'aborted planner must not spawn');
     // A genuinely pending selector: no child until a decision; abort dismisses it.
     const pending = pendingDialog();
     const waitingAbort = new AbortController();
-    const waitingRun = tool.execute('pw',{agent:'planner',task:'Pending approval',profile:'diseno'},waitingAbort.signal,undefined,{...ctx,ui:{select:pending.select}});
+    const waitingRun = tool.execute('pw',{agent:'planner',task:'Pending approval',profile:'medium'},waitingAbort.signal,undefined,{...ctx,ui:{select:pending.select}});
     await pending.opened;
     assert.equal(existsSync(profileArgsFile),false);
     waitingAbort.abort();
@@ -346,20 +351,20 @@ test('actual extension loading, allowlists, protocol, usage and failure hook', {
     assert.equal(pending.signal,waitingAbort.signal);
 
     const approval = pendingDialog();
-    const approvedRun = tool.execute('pok',{agent:'planner',task:'Pending approval',profile:'diseno'},undefined,undefined,{...ctx,ui:{select:approval.select}});
+    const approvedRun = tool.execute('pok',{agent:'planner',task:'Pending approval',profile:'medium'},undefined,undefined,{...ctx,ui:{select:approval.select}});
     await approval.opened;
     assert.equal(existsSync(profileArgsFile),false,'no child before manual decision');
-    assert.match(approval.options[0],/openai-codex\/gpt-5.6-sol @ medium/);
+    assert.match(approval.options[0],/openai-codex\/gpt-6.1-sol @ medium/);
     approval.choose(approval.options[0]);
     assert.equal((await approvedRun).details.status,'complete');
     assert.equal(approval.calls,1);
     const approvedArgs = JSON.parse(await readFile(profileArgsFile,'utf8'));
-    assert.equal(approvedArgs[approvedArgs.indexOf('--model')+1],'openai-codex/gpt-5.6-sol');
+    assert.equal(approvedArgs[approvedArgs.indexOf('--model')+1],'openai-codex/gpt-6.1-sol');
     assert.equal(approvedArgs[approvedArgs.indexOf('--thinking')+1],'medium');
 
     await rm(profileArgsFile,{force:true});
     const lastMomentAbort = new AbortController();
-    const lastMoment = await tool.execute('late',{agent:'planner',task:'Abort on approval',profile:'diseno'},lastMomentAbort.signal,undefined,
+    const lastMoment = await tool.execute('late',{agent:'planner',task:'Abort on approval',profile:'medium'},lastMomentAbort.signal,undefined,
       {...ctx,ui:{select:async(_title,options)=>{lastMomentAbort.abort();return options[0];}}});
     assert.equal(lastMoment.details.status,'cancelled');
     assert.equal(existsSync(profileArgsFile),false,'recheck abort after UI, before spawn');
@@ -369,14 +374,26 @@ test('actual extension loading, allowlists, protocol, usage and failure hook', {
     await rm(profileArgsFile,{force:true});
     const noRegistry = {...ctx, modelRegistry:{find:()=>undefined}};
     const narrowScope = {...ctx, scopedModels:[{model:{provider:'openai-codex', id:'gpt-5.6-luna'}}]};
+    const noThinking = {...ctx, modelRegistry:{find:(p,id)=>{
+      const model=byModel.get(`${p}/${id}`);
+      return model && `${p}/${id}`==='openai-codex/gpt-6.1-sol' ? {...model,thinkingLevelMap:{...model.thinkingLevelMap,high:null}} : model;
+    }}};
+    const noLowThinking = {...ctx, modelRegistry:{find:(p,id)=>{
+      const model=byModel.get(`${p}/${id}`);
+      return model && `${p}/${id}`==='openai-codex/gpt-6.1-sol' ? {...model,thinkingLevelMap:{...model.thinkingLevelMap,low:null}} : model;
+    }},ui:{select:()=>assert.fail('unavailable low must not open approval for higher levels')}};
+    await assert.rejects(tool.execute('no-low',{agent:'planner',task:'Unavailable low'},undefined,undefined,noLowThinking),/Unsupported thinking low/);
+    assert.equal(existsSync(profileArgsFile),false,'unavailable low must not spawn');
     const failFast = [
-      [{agent:'scout',task:'x',profile:'habitual'}, /only valid for the "planner" agent/],
-      [{agent:'planner',task:'x',profile:'nope'}, /Unknown profile/],
-      [{agent:'planner',task:'x',profile:'delicado'}, /Configured model unavailable: openai-codex\/gpt-6-astra/],
-      [{agent:'planner',task:'x',profile:'delicado'}, /not in this session's scoped models/],
+      [{agent:'scout',task:'x',profile:'low'}, /only valid for the "planner" agent/],
+      [{agent:'planner',task:'x',profile:'habitual'}, /Unknown profile/],
+      [{agent:'planner',task:'x',profile:'low'}, /Configured model unavailable: openai-codex\/gpt-6.1-sol/],
+      [{agent:'planner',task:'x',profile:'low'}, /not in this session's scoped models/],
+      [{agent:'planner',task:'x',profile:'high'}, /Unsupported thinking high/],
+      [{agent:'planner',task:'x'}, /Configured model unavailable: openai-codex\/gpt-6.1-sol/],
     ];
     for (const [index, [params, pattern]] of failFast.entries()) {
-      const failCtx = index === 2 ? noRegistry : index === 3 ? narrowScope : ctx;
+      const failCtx = index === 2 || index === 5 ? noRegistry : index === 3 ? narrowScope : index === 4 ? noThinking : ctx;
       await assert.rejects(tool.execute('ff'+index,{...params},undefined,undefined,failCtx), pattern);
       assert.equal(existsSync(profileArgsFile), false, `spawned despite failure ${index}`);
     }
