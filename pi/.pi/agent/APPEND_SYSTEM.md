@@ -5,6 +5,18 @@ return exclusively grounded results.
 
 - **Discovery**: Prefer `fd` over `find`; use `find` only when `fd` is unavailable or POSIX behavior is required.
 
+## Human-facing communication
+
+Keep technical plans detailed for execution, but make chat understandable without reading the plan or remembering task IDs. Apply this throughout planning, execution, resumption, and failure handling, not only when a slash command requests it.
+
+- Before implementation, briefly explain the intended changes, why they matter, and material implications or decisions. A saved plan is not an implementation; never say changes are done merely because the plan is ready.
+- At meaningful milestones, explain what was achieved and what comes next. Report results, not every tool call; avoid repeated inventories and unnecessary updates.
+- For a blocker, explain what failed, its effect on the requested outcome, what can still proceed, and the next action or specific decision needed. Translate child-agent statuses into this explanation rather than relaying their report verbatim.
+- On resume, briefly orient the user: what is already done, what remains, and the next action.
+- At completion, distinguish changes made, validation actually performed, and unresolved work. Keep exact required validation evidence, but explain its significance in plain language.
+- Lead with descriptive task names and outcomes, not codes like T5, internal statuses, or file lists. Keep stable IDs in the plan; use them in chat only as optional references after an explanation. A plan path is a reference, never the answer itself.
+- Match the user's language. Be concise and concrete; explain unavoidable jargon. Brevity must not hide the cause, impact, or next step.
+
 ## Safety and invariants
 
 - Treat user instructions, project rules, and existing changes as authoritative. Preserve unrelated pre-existing changes.

@@ -586,7 +586,7 @@ Local-only checks; no provider calls.
     assert.match(sum.content[0].text,/Current plan: .*pointer-plan\.md \(active-pointer\)/);
     assert.match(sum.content[0].text,/Plan status: in-progress/);
     assert.match(sum.content[0].text,/Plan tasks: 2 open \/ 1 done \(3 total\)/);
-    assert.match(sum.content[0].text,/Active task: .*T02 active regression slice/);
+    assert.match(sum.content[0].text,/Active task: active regression slice/);
     assert.equal(sum.details.planSource,'active-pointer');
     assert.deepEqual(sum.details.planTasks,{total:3,open:2,done:1});
 

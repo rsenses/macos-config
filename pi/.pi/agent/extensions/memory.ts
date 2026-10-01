@@ -361,6 +361,12 @@ function truncateLine(text: string, maxChars = PLAN_SNAPSHOT_LINE_CHARS): string
 	return one.length > maxChars ? `${one.slice(0, maxChars - 1)}…` : one;
 }
 
+function humanTaskName(task: { id: string; line: string }): string {
+	const match = /^- \[[ xX]\]\s+T[0-9]+\b\s*:?\s*(.*)$/.exec(task.line);
+	const name = (match?.[1] ?? "").replace(/\s*(?:[—–;|\-]\s*)?acceptance:\s*.*$/i, "").trim();
+	return !name || /^\.{3,}$/.test(name) ? "" : name;
+}
+
 /** Current task selected by `Current Step`, falling back to the first open main task. */
 export function planActiveTask(content: string, maxChars = PLAN_SNAPSHOT_LINE_CHARS): string {
 	const tasks = planTasks(content);
@@ -375,6 +381,34 @@ export function planActiveTask(content: string, maxChars = PLAN_SNAPSHOT_LINE_CH
 	}
 	const firstOpen = tasks.find((task) => !task.done);
 	return firstOpen ? truncateLine(firstOpen.line, maxChars) : "";
+}
+
+export function planHumanActiveTask(content: string): string {
+	const active = planActiveTask(content);
+	if (!active || active.startsWith("Inconsistent Current Step:")) return active;
+	return humanTaskName({ id: "", line: active });
+}
+
+/** Render structured step IDs as task names without changing the stored snapshot fields. */
+export function planHumanCurrentStep(content: string): string {
+	const lines = sectionLines(content, "Current Step");
+	const tasks = planTasks(content);
+	const structured = lines.some((line) => /^- (Current|Next|Blockers):/i.test(line));
+	if (!structured) return truncateLine(lines.join(" "));
+	const rendered = lines.flatMap((line) => {
+		const match = /^- (Current|Next|Blockers):[ \t]*(.*)$/i.exec(line);
+		if (!match) return [];
+		const label = match[1][0].toUpperCase() + match[1].slice(1).toLowerCase();
+		const value = match[2].trim();
+		if (label === "Blockers") return value && value.toLowerCase() !== "none" ? [`${label}: ${value}`] : [];
+		const id = /\b(T[0-9]+)\b/i.exec(value)?.[1]?.toUpperCase();
+		if (!id) return value && value.toLowerCase() !== "none" ? [`${label}: ${value}`] : [];
+		const task = tasks.find((candidate) => candidate.id === id);
+		if (!task) return [`${label}: Inconsistent — ${id} not found in Tasks`];
+		const name = humanTaskName(task);
+		return name ? [`${label}: ${name} (${id})`] : [`${label}: ${id} task description unavailable`];
+	});
+	return rendered.map((line) => truncateLine(line)).join(" · ");
 }
 
 /** Short latest warning: first Unresolved line, else last Validation line, else "". */
@@ -571,9 +605,8 @@ const PLAN_WIDGET_KEY = "session-plan";
 function planStatusText(snapshot: PlanSnapshot | undefined, blocked?: string): string | undefined {
 	if (blocked) return truncateLine(`Plan blocked: ${blocked}`, 120);
 	if (!snapshot) return undefined;
-	const step = truncateLine(snapshot.currentStep, 48);
 	const tasks = `${snapshot.tasks.open} open/${snapshot.tasks.done} done`;
-	return truncateLine(`Plan ${snapshot.status} · ${tasks}${step ? ` · ${step}` : ""}`, 120);
+	return truncateLine(`Plan ${snapshot.status} · ${tasks}${snapshot.activeTask ? ` · ${snapshot.activeTask.startsWith("Inconsistent Current Step:") ? snapshot.activeTask : humanTaskName({ id: "", line: snapshot.activeTask })}` : ""}`, 120);
 }
 
 function planWidgetLines(snapshot: PlanSnapshot | undefined, _blocked?: string): string[] | undefined {
@@ -583,7 +616,7 @@ function planWidgetLines(snapshot: PlanSnapshot | undefined, _blocked?: string):
 }
 
 /** Bounded injected plan view for the system prompt: identity/status/counts/step/active task/warning only. */
-function planSnapshotBlock(snapshot: PlanSnapshot | undefined, blocked?: string): string {
+function planSnapshotBlock(snapshot: PlanSnapshot | undefined, blocked?: string, humanStep?: string): string {
 	if (blocked) return `> Active plan unavailable: ${blocked}`;
 	if (!snapshot) return "_No active session plan yet. Run `create_session_plan` at the start of non-trivial tasks._";
 	const lines = [
@@ -591,8 +624,8 @@ function planSnapshotBlock(snapshot: PlanSnapshot | undefined, blocked?: string)
 		`**Tasks**: ${snapshot.tasks.open} open / ${snapshot.tasks.done} done (${snapshot.tasks.total} total)`,
 	];
 	if (snapshot.tldr) lines.push(`**TL;DR**: ${snapshot.tldr}`);
-	if (snapshot.currentStep) lines.push(`**Current Step**: ${snapshot.currentStep}`);
-	if (snapshot.activeTask) lines.push(`**Active task**: ${snapshot.activeTask}`);
+	if (humanStep) lines.push(`**Current Step**: ${humanStep}`);
+	if (snapshot.activeTask) lines.push(`**Active task**: ${snapshot.activeTask.startsWith("Inconsistent Current Step:") ? snapshot.activeTask : humanTaskName({ id: "", line: snapshot.activeTask })}`);
 	if (snapshot.warning) lines.push(`**Warning**: ${snapshot.warning}`);
 	return lines.join("\n");
 }
@@ -894,8 +927,8 @@ export default function (pi: ExtensionAPI) {
 					snapshot ? `Status: ${snapshot.status}` : undefined,
 					snapshot ? `Tasks: ${snapshot.tasks.open} open / ${snapshot.tasks.done} done (${snapshot.tasks.total} total)` : undefined,
 					snapshot?.tldr ? `TL;DR: ${truncateLine(snapshot.tldr, 200)}` : undefined,
-					snapshot?.currentStep ? `Current Step: ${truncateLine(snapshot.currentStep, 200)}` : undefined,
-					snapshot?.activeTask ? `Active task: ${truncateLine(snapshot.activeTask, 200)}` : undefined,
+					snapshot?.currentStep ? `Current Step: ${planHumanCurrentStep(content)}` : undefined,
+					snapshot?.activeTask ? `Active task: ${truncateLine(planHumanActiveTask(content), 200)}` : undefined,
 					snapshot?.warning ? `Warning: ${snapshot.warning}` : undefined,
 				].filter(Boolean);
 				const text = content
@@ -964,8 +997,8 @@ export default function (pi: ExtensionAPI) {
 			if (resolved.blocked) lines.push(`Plan warning: ${resolved.blocked}`);
 			if (snapshot) {
 				lines.push(`Plan status: ${snapshot.status}`);
-				if (snapshot.currentStep) lines.push(`Current step: ${truncateLine(snapshot.currentStep, 120)}`);
-				if (snapshot.activeTask) lines.push(`Active task: ${snapshot.activeTask}`);
+				if (snapshot.currentStep) lines.push(`Current step: ${planHumanCurrentStep(planContent)}`);
+				if (snapshot.activeTask) lines.push(`Active task: ${planHumanActiveTask(planContent)}`);
 				lines.push(`Plan tasks: ${snapshot.tasks.open} open / ${snapshot.tasks.done} done (${snapshot.tasks.total} total)`);
 				if (snapshot.warning) lines.push(`Plan warning: ${snapshot.warning}`);
 			}
@@ -1019,7 +1052,7 @@ export default function (pi: ExtensionAPI) {
 		const planContent = resolved.planPath ? await readIfExists(path.join(cwd, resolved.planPath)) : "";
 		const snapshot = planContent ? planSnapshot(planContent, resolved.planPath!) : undefined;
 		updatePlanUI(ctx, snapshot, resolved.blocked);
-		const snapshotBlock = planSnapshotBlock(snapshot, resolved.blocked);
+		const snapshotBlock = planSnapshotBlock(snapshot, resolved.blocked, planContent ? planHumanCurrentStep(planContent) : undefined);
 		const changelogPolicy = existsSync(path.join(cwd, "CHANGELOG.md"))
 			? `\n### Changelog Policy\n- This project has a \`CHANGELOG.md\`. Every job producing user-visible changes MUST add or update a SemVer-aligned Keep a Changelog entry before finalizing.\n- If the changelog is missing or stale for the current job, do not report \`ready to ship\`.`
 			: "";
@@ -1070,7 +1103,7 @@ ${activeTasks}
 					{
 						role: "custom",
 						customType: "memory.active-plan-context",
-						content: planSnapshotBlock(snapshot, resolved.blocked),
+						content: planSnapshotBlock(snapshot, resolved.blocked, content ? planHumanCurrentStep(content) : undefined),
 						display: false,
 						timestamp: Date.now(),
 					},
