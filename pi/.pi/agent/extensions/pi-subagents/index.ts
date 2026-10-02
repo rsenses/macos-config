@@ -250,6 +250,9 @@ export interface PlannerProfile {
 
 const PLANNER_PROFILE_AGENT = "planner";
 
+/** Single source of truth for the profile an omitted `profile` argument means. */
+const PLANNER_DEFAULT_PROFILE_NAME = "low";
+
 const PLANNER_PROFILES: Record<string, PlannerProfile> = {
   low: { label: "low", model: "openai-codex/gpt-6.1-sol", thinking: "low" },
   medium: { label: "medium", model: "openai-codex/gpt-6.1-sol", thinking: "medium" },
@@ -258,6 +261,11 @@ const PLANNER_PROFILES: Record<string, PlannerProfile> = {
 
 function plannerProfileNames(): string {
   return Object.keys(PLANNER_PROFILES).join(", ");
+}
+
+/** The profile an omitted `profile` argument resolves to. */
+function plannerDefaultProfileName(): string {
+  return PLANNER_DEFAULT_PROFILE_NAME;
 }
 
 interface PlannerCandidate {
@@ -335,18 +343,18 @@ async function approvePlannerCandidate(
     }
   }
 
-  const defaultProfile = PLANNER_PROFILES.low;
+  const defaultProfile = PLANNER_PROFILES[PLANNER_DEFAULT_PROFILE_NAME];
   let proposed: PlannerCandidate | undefined;
   if (requestedProfile !== undefined) {
     proposed = candidates.find((candidate) => candidate.profileName === requestedProfile);
   } else {
-    proposed = candidates.find((candidate) => candidate.profileName === "low");
+    proposed = candidates.find((candidate) => candidate.profileName === PLANNER_DEFAULT_PROFILE_NAME);
     if (!proposed) {
       // Omitted profile always means the low default. Never silently promote to
       // medium/high when that configured default is unavailable in this session.
       const low: PlannerCandidate = {
-        key: "low", label: defaultProfile.label, model: defaultProfile.model,
-        thinking: defaultProfile.thinking, profileName: "low", profile: defaultProfile,
+        key: PLANNER_DEFAULT_PROFILE_NAME, label: defaultProfile.label, model: defaultProfile.model,
+        thinking: defaultProfile.thinking, profileName: PLANNER_DEFAULT_PROFILE_NAME, profile: defaultProfile,
       };
       resolveModelCandidate(low, ctx); // throws with the precise unavailable reason
     }
@@ -1192,11 +1200,11 @@ export default function (pi: ExtensionAPI) {
     name: "subagent",
     label: "Subagent",
     description:
-      `Delegate bounded work; no conversation is inherited. Available: ${agents.map(a => `${a.name} (${a.description})`).join("; ")}. Include goal, known evidence, constraints, acceptance, checks and stop condition. The planner accepts optional low (default), medium, or high profiles, all using openai-codex/gpt-6.1-sol; choose medium/high only with concrete justification. Profiles fail instead of falling back.`,
+      `Delegate bounded work; no conversation is inherited. Available: ${agents.map(a => `${a.name} (${a.description})`).join("; ")}. Include goal, known evidence, constraints, acceptance, checks and stop condition. The planner accepts ${plannerProfileNames()} profiles, each pinning both model and thinking (${Object.entries(PLANNER_PROFILES).map(([n, p]) => `${n}: ${p.model} @ ${p.thinking}`).join("; ")}); the omitted profile means ${plannerDefaultProfileName()}, and any escalation needs concrete justification. Profiles fail instead of falling back.`,
     promptSnippet: "Run subagents for delegated tasks",
     promptGuidelines: [
       "Parallel tool calls are your primary parallelism mechanism — put multiple independent read/fetch calls in one function_calls block. Don't use subagents to parallelize simple I/O.",
-      "Delegate only when isolation or independent work outweighs handoff and verification. Normally 0–1 subagents, up to 2 disjoint tasks. Planner is optional. Never rediscover known evidence.",
+      "Delegate only when isolation or independent work outweighs handoff and verification. Normally 0–1 subagents, up to 2 disjoint tasks. The planner is optional outside a planning workflow and mandatory inside `/plan`. Never rediscover known evidence.",
       "For multiple independent subagent tasks, emit multiple `subagent` tool calls in the same turn — they run in parallel automatically.",
       "Subagents have NO context from the current conversation — include ALL necessary context in the task description",
     ],

@@ -2,6 +2,9 @@
 name: planner
 description: Optional bounded implementation planning from supplied context
 tools: read, grep, find, ls
+# Documentation only: planner launches override these with the approved
+# PLANNER_PROFILES candidate in extensions/pi-subagents/index.ts, which is the
+# single source of truth for model and thinking level. Change them there.
 model: openai-codex/gpt-6.1-sol
 thinking: low
 ---

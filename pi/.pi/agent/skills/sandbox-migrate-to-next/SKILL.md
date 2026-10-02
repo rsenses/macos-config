@@ -1,6 +1,7 @@
 ---
 name: sandbox-migrate-to-next
 description: Migrate Cloudflare Sandbox apps from stable @cloudflare/sandbox to @cloudflare/sandbox@next (SDK 1.0 preview). Use sandbox-next for apps already on the preview.
+disable-model-invocation: true
 ---
 
 # Migrate stable → Sandbox SDK 1.0 preview (`@next`)

@@ -3,6 +3,7 @@
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-6-luna",
   "defaultThinkingLevel": "xhigh",
+  "showCacheMissNotices": true,
   "defaultTools": [
     "+codemode"
   ],

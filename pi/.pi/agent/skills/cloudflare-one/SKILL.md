@@ -7,6 +7,8 @@ description: Design, configure, troubleshoot, or review Cloudflare One Zero Trus
 
 Before citing limits, settings, API fields, category IDs, or exact UI paths, retrieve current information from the [Cloudflare One docs](https://developers.cloudflare.com/cloudflare-one/), the Cloudflare docs MCP server, or the Cloudflare API schema.
 
+`cloudflare-one-migrations` is installed but hidden from automatic selection, so it costs no context until needed. Read `../cloudflare-one-migrations/SKILL.md` when the task is a migration from another vendor, or load it explicitly with `/skill:cloudflare-one-migrations`.
+
 ## Workflow
 
 1. Classify the ask: architecture, configuration, troubleshooting, migration, or review.

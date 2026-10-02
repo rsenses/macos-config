@@ -247,14 +247,7 @@ export default function astGrepExtension(pi: ExtensionAPI) {
 		label: "ast_grep",
 		description:
 			"Search, inspect, and replace code using ast-grep. Modes: pattern (simple AST pattern search), rule (YAML rule body wrapped by this tool), inspect (debug AST/CST/pattern structure), replace (AST-aware rewrite; dry-run by default, apply=true modifies files). Requires the sg CLI.",
-		promptSnippet: "Search, inspect, or rewrite code with ast-grep AST patterns and YAML rules.",
-		promptGuidelines: [
-			"Use ast_grep mode='pattern' for quick syntax-aware searches such as console.log($MSG) or async function $NAME($$$) { $$$ }.",
-			"Use ast_grep mode='rule' for relational/composite searches; pass only the YAML body under rule, not a full rule file wrapper.",
-			"Use ast_grep mode='inspect' to debug node kinds and pattern parsing before writing complex rules.",
-			"Use ast_grep mode='replace' for AST-aware rewrites; it is a dry run unless apply=true is explicitly set.",
-			"For ast_grep YAML rules with has or inside, include stopBy: end when searching the full subtree.",
-		],
+		promptSnippet: "Search, inspect, or rewrite code with ast-grep AST patterns and YAML rules. Load the `ast-grep` skill for mode selection, rule syntax, and pitfalls.",
 		parameters: Type.Object({
 			mode: Type.Union(MODES.map((mode) => Type.Literal(mode)), {
 				description: "Search mode: pattern, rule, inspect, or replace.",

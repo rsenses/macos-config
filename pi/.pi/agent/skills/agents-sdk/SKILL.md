@@ -1,6 +1,7 @@
 ---
 name: agents-sdk
 description: Build, debug, or review Cloudflare Agents SDK applications using the agents package.
+disable-model-invocation: true
 ---
 
 # Cloudflare Agents SDK

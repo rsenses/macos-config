@@ -28,9 +28,29 @@ The principal is the authority and coordinator. Unless the user asks otherwise, 
 - The principal supplies and validates the contract; children do not launch nested subagents. A missing dependency returns `blocked` with the exact question.
 - Use local tools directly for orientation, deterministic operations, and final validation.
 
-Every brief uses: **Goal**, **Known**, **Evidence**, **Acceptance**, **Checks**, and **Stop**. Child output starts with **Status** (`complete`, `partial`, `blocked`, `failed`, `cancelled`, or `timed_out`) and reports only new findings/changes, evidence, checks, and unresolved items.
+Every brief uses these headings, and the parent supplies the contract:
+
+- **Goal**: bounded outcome and scope, including write permissions when relevant.
+- **Known**: facts, decisions, invariants, and existing changes to preserve.
+- **Evidence**: exact paths, ranges, URLs, or excerpts already checked, and what remains unknown.
+- **Acceptance**: observable result, including security and changelog requirements.
+- **Checks**: specific local checks the child may run; never invent provider calls.
+- **Stop**: ambiguity, scope conflict, missing evidence, or repeated failure without new evidence.
+
+Child output starts with **Status** (`complete`, `partial`, `blocked`, `failed`, `cancelled`, or `timed_out`), followed only by new findings or changes, evidence, checks, and unresolved items.
 
 Validation policies for workers: `no-tests`, `targeted-check`, `add-test`, `test-first`, or `defer-validation`. Name the concrete command or reason; do not invent provider calls.
+
+### Context budget
+
+- For independent evidence domains, give one bounded question to a scout while the principal investigates the other; use `planner` only after evidence is summarized.
+- Never request complete files, documentation, plans, or transcripts from a child. Require concise findings with exact paths and unresolved questions.
+- Keep the principal context to the contract, summarized evidence, decisions, and deltas; do not duplicate child output in the plan or the final response.
+- Do not repeat a lookup or documentation pass whose evidence is already known; pass the delta, not the earlier plan or transcript.
+
+### Manual-only plan reviewer
+
+`plan-reviewer` is a user-invoked reviewer. Dispatch it only when the user explicitly asks to review a saved plan or invokes `/review-plan`, never from the architect, planner, `/plan`, `/run-plan`, or `/finalize` flows.
 
 ## 4. Full validation as a completion invariant
 
