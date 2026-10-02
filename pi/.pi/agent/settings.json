@@ -1,9 +1,11 @@
 {
-  "lastChangelogVersion": "0.99.1",
+  "lastChangelogVersion": "0.99.2",
   "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-6.1-sol",
-  "defaultThinkingLevel": "low",
-  "defaultTools": ["+codemode"],
+  "defaultModel": "gpt-6-luna",
+  "defaultThinkingLevel": "xhigh",
+  "defaultTools": [
+    "+codemode"
+  ],
   "shellPath": "/bin/zsh",
   "shellCommandPrefix": "eval \"$(mise env -s zsh)\"\nunset APP_URL APP_ENV",
   "theme": "light",
@@ -19,5 +21,11 @@
     "openai-codex/gpt-6.1-sol"
   ],
   "enableInstallTelemetry": false,
-  "npmCommand": ["mise", "exec", "node@24", "--", "npm"]
+  "npmCommand": [
+    "mise",
+    "exec",
+    "node@24",
+    "--",
+    "npm"
+  ]
 }

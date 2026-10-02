@@ -7,6 +7,7 @@ All notable changes to this project are documented here using Keep a Changelog a
 ### Changed
 - Pi now requires concise, plain-language plan proposals, progress, blockers, resumptions, and completion reports while retaining detailed execution plans and validation gates.
 - Planner profiles now use `openai-codex/gpt-6.1-sol` at `low` by default, with justified `medium` and `high` escalation. Profile names are now `low`, `medium`, and `high`, replacing `habitual`, `diseno`, and `delicado`.
+- `/plan` now always delegates design to the `planner` subagent; the selected model no longer writes the plan itself. Outside `/plan`, simple work may still be handled directly without a plan.
 
 ### Fixed
 - Moved memory regression tests outside Pi's extension discovery directory so they are not loaded as extension factories.
