@@ -20,6 +20,7 @@ All notable changes to this project are documented here using Keep a Changelog a
 
 ### Fixed
 - The `subagent` tool description hardcoded the planner model, which could drift from `PLANNER_PROFILES`. It is now derived from that table, whose default is the single source of truth, and the planner agent frontmatter is annotated as documentation only.
+- The memory extension suite no longer asserts the pre-humanization plan format. `Current Step` and `Active task` assertions now expect resolved descriptions with their task IDs, and the suite passes again instead of failing on stale expectations.
 - Moved memory regression tests outside Pi's extension discovery directory so they are not loaded as extension factories.
 - Plan status displays resolve task IDs to descriptions and preserve next-step and blocker explanations instead of relying on opaque task codes.
 - Planner launches without an explicit profile fail when low is unavailable instead of proposing a higher thinking level.

@@ -608,8 +608,8 @@ Local-only checks; no provider calls.
     assert.match(planInjection.systemPrompt,/in-progress/);
     assert.match(planInjection.systemPrompt,/2 open \/ 1 done \(3 total\)/);
     assert.match(planInjection.systemPrompt,/Finish the provider-free regression matrix/);
-    assert.match(planInjection.systemPrompt,/- Current: T02/);
-    assert.match(planInjection.systemPrompt,/T02 active regression slice/);
+    assert.match(planInjection.systemPrompt,/\*\*Current Step\*\*: Current: active regression slice \(T02\) · Next: pending slice \(T03\)/);
+    assert.match(planInjection.systemPrompt,/\*\*Active task\*\*: active regression slice$/m);
     assert.match(planInjection.systemPrompt,/Unresolved sentinel/);
     assert.doesNotMatch(planInjection.systemPrompt,/HIDDEN_FULL_PLAN_BODY_MARKER|## Spec \/ Contract|## Validation Policy/);
     assert.ok(planInjection.systemPrompt.length<4000);
