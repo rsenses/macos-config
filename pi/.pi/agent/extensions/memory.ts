@@ -597,22 +597,15 @@ async function resolveActivePlan(cwd: string, ctx: any): Promise<ActivePlanResol
 	return { source: "missing", currentSessionPath };
 }
 
-// --- Existing-UI progress (ctx.ui.setStatus/setWidget; TUI only, never throws) ---
+// --- Existing-UI status line (ctx.ui.setStatus; TUI only, never throws) ---
 
 const PLAN_STATUS_KEY = "session-plan";
-const PLAN_WIDGET_KEY = "session-plan";
 
 function planStatusText(snapshot: PlanSnapshot | undefined, blocked?: string): string | undefined {
 	if (blocked) return truncateLine(`Plan blocked: ${blocked}`, 120);
 	if (!snapshot) return undefined;
 	const tasks = `${snapshot.tasks.open} open/${snapshot.tasks.done} done`;
 	return truncateLine(`Plan ${snapshot.status} · ${tasks}${snapshot.activeTask ? ` · ${snapshot.activeTask.startsWith("Inconsistent Current Step:") ? snapshot.activeTask : humanTaskName({ id: "", line: snapshot.activeTask })}` : ""}`, 120);
-}
-
-function planWidgetLines(snapshot: PlanSnapshot | undefined, _blocked?: string): string[] | undefined {
-	if (!snapshot) return undefined;
-	const title = truncateLine(snapshot.title, 64);
-	return [`Plan: ${title}${snapshot.status ? ` · ${snapshot.status}` : ""}`];
 }
 
 /** Bounded injected plan view for the system prompt: identity/status/counts/step/active task/warning only. */
@@ -630,25 +623,23 @@ function planSnapshotBlock(snapshot: PlanSnapshot | undefined, blocked?: string,
 	return lines.join("\n");
 }
 
-/** Update the existing status/widget UI from a plan snapshot; no-op outside TUI and never throws. */
+/** Update the status line from a plan snapshot; no-op outside TUI and never throws. */
 function updatePlanUI(ctx: any, snapshot?: PlanSnapshot, blocked?: string): void {
 	try {
 		const ui = ctx?.ui;
-		if (!ui || typeof ui.setStatus !== "function" || typeof ui.setWidget !== "function") return;
+		if (!ui || typeof ui.setStatus !== "function") return;
 		if (ctx?.mode !== undefined && ctx.mode !== "tui") return;
 		ui.setStatus(PLAN_STATUS_KEY, planStatusText(snapshot, blocked));
-		ui.setWidget(PLAN_WIDGET_KEY, planWidgetLines(snapshot, blocked), { placement: "aboveEditor" });
 	} catch {}
 }
 
-/** Clear status/widget state before a session switch so no stale plan text lingers. */
+/** Clear the status line before a session switch so no stale plan text lingers. */
 function clearPlanUI(ctx: any): void {
 	try {
 		const ui = ctx?.ui;
-		if (!ui || typeof ui.setStatus !== "function" || typeof ui.setWidget !== "function") return;
+		if (!ui || typeof ui.setStatus !== "function") return;
 		if (ctx?.mode !== undefined && ctx.mode !== "tui") return;
 		ui.setStatus(PLAN_STATUS_KEY, undefined);
-		ui.setWidget(PLAN_WIDGET_KEY, undefined, { placement: "aboveEditor" });
 	} catch {}
 }
 

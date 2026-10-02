@@ -12,6 +12,7 @@ All notable changes to this project are documented here using Keep a Changelog a
 - The system prompt keeps a short always-on core: the delegation contract, context budget, and manual-only plan-reviewer rule moved to the `ops` skill, which `APPEND_SYSTEM.md` now points to. Planner optionality is stated once, with `/plan` as the mandatory exception.
 - `laravel-code-simplifier` is now a skill loaded on demand; the slash command is a short loader that preserves its behavior-preservation and no-commit rules.
 - Pi now reports significant prompt-cache misses (`showCacheMissNotices`) so cache behaviour can be measured while the memory extension rebuilds plan context.
+- The plan footer line is now the only plan UI: the widget above the prompt input is gone, so no plan title or status is rendered there.
 
 ### Removed
 - Duplicate changelog policy injected by the memory extension (it is already in `APPEND_SYSTEM.md`) and duplicate ast-grep usage guidelines (the `ast-grep` skill covers them).

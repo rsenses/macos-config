@@ -590,19 +590,13 @@ Local-only checks; no provider calls.
     assert.equal(sum.details.planSource,'active-pointer');
     assert.deepEqual(sum.details.planTasks,{total:3,open:2,done:1});
 
-    // TUI mode refreshes the existing status/widget surfaces; other modes do not.
+    // TUI mode refreshes the existing status surface; other modes do not.
     const uiCalls = [];
     const ui = {setStatus:(key,value)=>uiCalls.push(['status',key,value]), setWidget:(key,lines)=>uiCalls.push(['widget',key,lines])};
     await getPlanTool.execute('u',{},undefined,undefined,{...ptrCtx,mode:'tui',ui});
     const lastStatus = uiCalls.filter(c=>c[0]==='status').pop();
-    const lastWidget = uiCalls.filter(c=>c[0]==='widget').pop();
     assert.match(String(lastStatus?.[2]),/Plan in-progress · 2 open\/1 done/);
-    const widgetText = (lastWidget?.[2]||[]).join('\n');
-    assert.match(widgetText,/Plan: .*pointer-plan\.md \(in-progress\)/);
-    assert.match(widgetText,/TL;DR: Finish the provider-free regression matrix/);
-    assert.match(widgetText,/Step: - Current: T02/);
-    assert.match(widgetText,/Tasks: 2 open \/ 1 done \(3 total\)/);
-    assert.match(widgetText,/Warning: .*Unresolved sentinel/);
+    assert.equal(uiCalls.filter(c=>c[0]==='widget').length,0,'plan must not render an above-editor widget');
     const offCalls = [];
     const offUi = {setStatus:()=>offCalls.push(1), setWidget:()=>offCalls.push(1)};
     await getPlanTool.execute('u',{},undefined,undefined,{...ptrCtx,mode:'json',ui:offUi});
@@ -628,11 +622,11 @@ Local-only checks; no provider calls.
       assert.ok(memory.handlers.get(eventName)?.length, `missing refresh hook: ${eventName}`);
     }
 
-    // session_before_switch clears stale status/widget text in TUI mode only.
+    // session_before_switch clears stale status text in TUI mode only.
     uiCalls.length = 0;
     await memory.handlers.get('session_before_switch')[0]({}, {...ptrCtx,mode:'tui',ui});
     assert.equal(uiCalls.filter(c=>c[0]==='status').pop()?.[2],undefined);
-    assert.equal(uiCalls.filter(c=>c[0]==='widget').pop()?.[2],undefined);
+    assert.equal(uiCalls.filter(c=>c[0]==='widget').length,0,'clearing must not touch a widget surface');
     const offClearCalls = [];
     const offClearUi = {setStatus:()=>offClearCalls.push(1), setWidget:()=>offClearCalls.push(1)};
     await memory.handlers.get('session_before_switch')[0]({}, {...ptrCtx,mode:'json',ui:offClearUi});
