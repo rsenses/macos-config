@@ -538,6 +538,80 @@ exec sleep 300
         self.assertTrue(any("reload" in call for call in caddy_calls))
         self.assertTrue(any(call.startswith("caddy trust ") for call in caddy_calls))
 
+    def test_up_without_proxies_keeps_exact_legacy_snippet(self):
+        self.mark_caddy_running()
+        self.mark_caddy_ok()
+        (self.project / "artisan").write_text("")
+
+        result = self.run_dev("up", env_extra={"DEV_FAKE_LSOF_LISTEN_FROM": "3"})
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(
+            (self.sites / "proyecto.caddy").read_text(),
+            "proyecto.test {\n"
+            "  tls {\n"
+            "    issuer internal {\n"
+            "      lifetime 7d\n"
+            "    }\n"
+            "  }\n"
+            "reverse_proxy 127.0.0.1:8000 {\n"
+            "  header_up Host {host}\n"
+            "  header_up X-Forwarded-Proto https\n"
+            "}\n}\n",
+        )
+
+    def test_up_writes_multiple_proxy_routes(self):
+        self.mark_caddy_running()
+        self.mark_caddy_ok()
+        (self.project / "artisan").write_text("")
+        config = self.project / ".config" / "caddy"
+        config.parent.mkdir()
+        config.write_text('PROXIES="/app/*:8080,/apps/*:8080"\n')
+
+        result = self.run_dev("up", env_extra={"DEV_FAKE_LSOF_LISTEN_FROM": "3"})
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        content = (self.sites / "proyecto.caddy").read_text()
+        self.assertIn('  handle "/app/*" {\n    reverse_proxy 127.0.0.1:8080\n  }', content)
+        self.assertIn('  handle "/apps/*" {\n    reverse_proxy 127.0.0.1:8080\n  }', content)
+        self.assertIn(
+            "  handle {\n    reverse_proxy 127.0.0.1:8000 {\n"
+            "      header_up Host {host}\n"
+            "      header_up X-Forwarded-Proto https\n"
+            "    }\n  }\n}",
+            content,
+        )
+
+    def test_up_writes_single_proxy_route(self):
+        self.mark_caddy_running()
+        self.mark_caddy_ok()
+        (self.project / "artisan").write_text("")
+        config = self.project / ".config" / "caddy"
+        config.parent.mkdir()
+        config.write_text("PROXIES=/socket/*:9000\n")
+
+        result = self.run_dev("up", env_extra={"DEV_FAKE_LSOF_LISTEN_FROM": "3"})
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        content = (self.sites / "proyecto.caddy").read_text()
+        self.assertIn('  handle "/socket/*" {\n    reverse_proxy 127.0.0.1:9000\n  }', content)
+        self.assertIn("reverse_proxy 127.0.0.1:8000 {", content)
+
+    def test_up_rejects_malformed_proxy_without_publishing_snippet(self):
+        for value in ("/missing-port", ":8080", "/empty:", "/bad:nope", "/low:0", "/high:65536"):
+            with self.subTest(value=value):
+                (self.project / "artisan").write_text("")
+                config = self.project / ".config" / "caddy"
+                config.parent.mkdir(exist_ok=True)
+                config.write_text(f"PROXIES={value}\n")
+
+                result = self.run_dev("up")
+
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("Error: ", result.stderr)
+                self.assertIn("proxy", result.stderr)
+                self.assertFalse((self.sites / "proyecto.caddy").exists())
+
     def test_up_includes_aliases_and_trusts_caddy_root(self):
         self.mark_caddy_running()
         self.mark_caddy_ok()

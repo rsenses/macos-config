@@ -13,6 +13,7 @@ All notable changes to this project are documented here using Keep a Changelog a
 - `laravel-code-simplifier` is now a skill loaded on demand; the slash command is a short loader that preserves its behavior-preservation and no-commit rules.
 - Pi now reports significant prompt-cache misses (`showCacheMissNotices`) so cache behaviour can be measured while the memory extension rebuilds plan context.
 - The plan footer line is now the only plan UI: the widget above the prompt input is gone, so no plan title or status is rendered there.
+- The planner approval dialog now shows the coordinator's suggestion instead of a bare model list: the optional planner-only `subagent` argument `profileReason` carries the concrete justification, the dialog leads with `recommended <level>: <reason>` and marks that option `Approve <level> (recommended)`. Every other level stays selectable and cancel stays last; the dialog was and remains mandatory for planner launches.
 
 ### Removed
 - Duplicate changelog policy injected by the memory extension (it is already in `APPEND_SYSTEM.md`) and duplicate ast-grep usage guidelines (the `ast-grep` skill covers them).

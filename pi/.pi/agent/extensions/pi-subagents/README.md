@@ -6,7 +6,7 @@ Five bounded roles; the principal coordinates and verifies acceptance. `plan-rev
 |---|---|---|
 | scout | `opencode-go/deepseek-v4.1-flash` / **high** | read, grep, find, ls |
 | researcher | `openai-codex/gpt-5.6-luna` / **high** | codex-research, web_fetch |
-| planner (default) | `openai-codex/gpt-6.1-sol` / **low** | read, grep, find, ls — UI approval required; optional `profile` (see below) |
+| planner (default) | `openai-codex/gpt-6.1-sol` / **low** | read, grep, find, ls — UI approval required; optional `profile` and `profileReason` (see below) |
 | worker | `opencode-go/glm-5.3-flash` / **high** | read, write, edit, grep, find, ls, safe_bash, ast_grep, web_fetch |
 | plan-reviewer | `openai-codex/gpt-6-astra` / **low** | read, grep, find, ls |
 
@@ -26,8 +26,10 @@ Profile rules:
 - Omission selects `low`. Use `medium` only for material dependencies, competing designs, or unresolved trade-offs; use `high` only for substantial architectural uncertainty or high-impact risk where medium is inadequate. The coordinator must state a concrete reason for escalation; length or file count alone is insufficient. An unavailable low selection blocks launch instead of proposing a higher level.
 - Unknown profile names fail with the available list.
 - The exact model must exist in the model registry and, when the session has non-empty scoped models (`enabledModels`), must be inside that scope; an empty scope accepts any registry model. An out-of-scope or unsupported selection fails with a clear error — never a fallback.
-- The coordinator explains the brief, reason and proposed exact model/thinking; the launcher obtains the single model approval in its host UI, with options to approve, choose another available profile, or cancel. Do not ask a duplicate question in `/plan`. This applies when `profile` is omitted too; headless/print/json execution is blocked before spawn. Pre-aborted calls do not open UI; aborting a pending dialog dismisses it without launching. Cancellation returns normal `cancelled` and ends that attempt: no direct planning, alternative profile/role or retry. Implementation authorization remains separate.
-- The selected profile name/label and the exact effective model/thinking are recorded in the result details and progress UI so approval and recovery show what was requested and what launched.
+- The coordinator explains the brief, reason and proposed exact model/thinking; the launcher obtains the single model approval in its host UI, with options to approve, choose another available profile, or cancel. The dialog always opens for the planner, even without a `profile`.
+- `profileReason` is an optional planner-only string carrying the concrete justification for the suggested level. When present, the dialog leads with it (`Planner approval — recommended <level>: <reason> — …`) and marks that option `Approve <level> (recommended) — <model> @ <thinking>`; the other available levels stay plain `Choose …` and cancel stays last. The reason is collapsed to one line and capped (~240 characters); without it the title keeps its previous wording. Choosing another level is allowed — the level the user picks is the one that launches.
+- Do not ask a duplicate question in `/plan`. Headless/print/json execution is blocked before spawn. Pre-aborted calls do not open UI; aborting a pending dialog dismisses it without launching. Cancellation returns normal `cancelled` and ends that attempt: no direct planning, alternative profile/role or retry. Implementation authorization remains separate.
+- The selected profile name/label, the granted `profileReason`, and the exact effective model/thinking are recorded in the result details and progress UI so approval and recovery show what was requested and what launched.
 - `openai-codex/gpt-6.1-sol` is already included in `pi/.pi/agent/settings.json` `enabledModels`; this migration does not change settings or the principal's model/thinking.
 
 **Principal settings remain unchanged.** Normally use no child or one child; at most two genuinely independent tasks. File count alone is not a reason to delegate. Planner is optional. Children cannot delegate; missing substantial evidence is returned to the principal as a blocker.
@@ -47,7 +49,7 @@ Scout/planner deliberately lack shell, edit and mutating AST tools. Worker has l
 }
 ```
 
-`agent` and `task` are required. `cwd` is optional. Each non-planner agent always uses the model and thinking level configured in its agent definition; per-invocation thinking overrides are rejected before spawn. `profile` is optional and planner-only (see above), and is the supported way to choose the planner's exact model/thinking pair. No automatic provider fallback or paid subscription activation occurs. A planner call without an explicit profile is still an approval-gated call; omission never auto-approves or bypasses model validation.
+`agent` and `task` are required. `cwd` is optional. Each non-planner agent always uses the model and thinking level configured in its agent definition; per-invocation thinking overrides are rejected before spawn. `profile` and `profileReason` are optional and planner-only (see above), and are the supported way to choose the planner's exact model/thinking pair and to justify that choice in the approval dialog. No automatic provider fallback or paid subscription activation occurs. A planner call without an explicit profile is still an approval-gated call; omission never auto-approves or bypasses model validation.
 
 A small local smoke comparison is recorded in `.ai/audits/2026-09-06-pi-harness/IMPLEMENTATION.md`; it is not an autonomous-coding benchmark. Flash remains a candidate after Go access is restored, not a configured dependency that currently fails.
 

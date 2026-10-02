@@ -126,6 +126,8 @@ interface AgentResult {
   /** Requested planner profile (schema name and display label), when one was used. */
   profile?: string;
   profileLabel?: string;
+  /** Coordinator's justification for the suggested profile, as shown in the approval dialog. */
+  profileReason?: string;
   thinking?: string;
   totalDurationMs?: number;
   queueDurationMs?: number;
@@ -307,11 +309,18 @@ function resolveModelCandidate(
   return { candidate, model: selectedModel };
 }
 
+/** Collapse to one line and cap, so a free-text reason cannot break the dialog. */
+function oneLine(text: string, max: number): string {
+  const flat = text.replace(/\s+/g, " ").trim();
+  return flat.length > max ? flat.slice(0, max - 1).trimEnd() + "…" : flat;
+}
+
 /** Require a real UI decision for every planner launch, including omitted profiles. */
 async function approvePlannerCandidate(
   configuredAgent: AgentConfig,
   task: string,
   requestedProfile: string | undefined,
+  requestedReason: string | undefined,
   ctx: ExtensionContext,
   signal?: AbortSignal,
 ): Promise<{ candidate: PlannerCandidate; model: any } | undefined> {
@@ -367,14 +376,21 @@ async function approvePlannerCandidate(
   const optionMap = new Map<string, PlannerCandidate>();
   const options = ordered.map((candidate) => {
     const prefix = candidate === proposed ? "Approve" : "Choose";
-    const label = `${prefix} ${candidate.label} — ${candidate.model} @ ${candidate.thinking}`;
+    const suffix = candidate === proposed ? " (recommended)" : "";
+    const label = `${prefix} ${candidate.label}${suffix} — ${candidate.model} @ ${candidate.thinking}`;
     optionMap.set(label, candidate);
     return label;
   });
   options.push("Cancel planner launch");
-  const reason = task.replace(/\s+/g, " ").trim().slice(0, 180);
+  const reason = oneLine(task, 180);
+  // The coordinator's suggestion is the only recommendation the dialog can show:
+  // lead with it and its justification so the user approves on evidence, not on
+  // option order. Without a reason the title keeps its previous wording.
+  const suggestion = requestedReason?.trim()
+    ? `recommended ${proposed.label}: ${oneLine(requestedReason, 240)} — `
+    : "";
   const selected = await ctx.ui.select(
-    `Planner approval — ${configuredAgent.description || "bounded planning task"}: ${reason}`,
+    `Planner approval — ${suggestion}${configuredAgent.description || "bounded planning task"}: ${reason}`,
     options,
     { signal },
   );
@@ -1219,6 +1235,12 @@ export default function (pi: ExtensionAPI) {
           },
         ),
       ),
+      profileReason: Type.Optional(
+        Type.String({
+          description:
+            "Planner-only. The concrete reason for the suggested profile (for example the dependencies, competing designs or risk that justify it). It is shown in the approval dialog as the coordinator's recommendation; the user can still choose another level or cancel",
+        }),
+      ),
       cwd: Type.Optional(
         Type.String({ description: "Working directory for the agent process" }),
       ),
@@ -1257,13 +1279,27 @@ export default function (pi: ExtensionAPI) {
           `Profile "${requestedProfile}" is only valid for the "${PLANNER_PROFILE_AGENT}" agent, not "${params.agent}"`,
         );
       }
+      const requestedReason = (params as { profileReason?: unknown }).profileReason;
+      if (requestedReason !== undefined && params.agent !== PLANNER_PROFILE_AGENT) {
+        throw new Error(
+          `Profile reason is only valid for the "${PLANNER_PROFILE_AGENT}" agent, not "${params.agent}"`,
+        );
+      }
 
       const agent: AgentConfig = { ...configuredAgent };
       let profile: PlannerProfile | undefined;
       let profileName: string | undefined;
+      let approvedReason: string | undefined;
       let selectedModel: any;
       if (params.agent === PLANNER_PROFILE_AGENT) {
-        const approval = await approvePlannerCandidate(configuredAgent, params.task!, requestedProfile, ctx, signal);
+        const approval = await approvePlannerCandidate(
+          configuredAgent,
+          params.task!,
+          requestedProfile,
+          typeof requestedReason === "string" ? requestedReason : undefined,
+          ctx,
+          signal,
+        );
         if (!approval) {
           return {
             content: [{ type: "text", text: "Planner launch cancelled; no child was started. Stop this attempt; do not retry with another profile/role or continue direct planning." }],
@@ -1276,6 +1312,7 @@ export default function (pi: ExtensionAPI) {
         agent.thinking = approval.candidate.thinking;
         profileName = approval.candidate.profileName;
         profile = approval.candidate.profile;
+        approvedReason = typeof requestedReason === "string" ? requestedReason : undefined;
       } else {
         const parts = modelParts(agent.model);
         selectedModel = ctx.modelRegistry.find(parts.provider, parts.id);
@@ -1293,6 +1330,7 @@ export default function (pi: ExtensionAPI) {
         exitCode: -1,
         requestedModel: agent.model,
         ...(profile ? { profile: profileName, profileLabel: profile.label } : {}),
+        ...(approvedReason ? { profileReason: approvedReason } : {}),
         model: agent.model,
         contextWindow,
         usage: emptyUsage(),
@@ -1354,6 +1392,7 @@ export default function (pi: ExtensionAPI) {
         result.profile = profileName;
         result.profileLabel = profile.label;
       }
+      if (approvedReason) result.profileReason = approvedReason;
       result.totalDurationMs = Date.now() - invocationStart;
       result.queueDurationMs = queueDurationMs;
       const aggregate = toPiUsage(result.usage);

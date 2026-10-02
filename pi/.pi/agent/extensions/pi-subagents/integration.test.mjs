@@ -321,6 +321,29 @@ test('actual extension loading, allowlists, protocol, usage and failure hook', {
     const defaultArgs = JSON.parse(await readFile(process.env.PI_TEST_FIXTURE+'.args','utf8'));
     assert.equal(defaultArgs[defaultArgs.indexOf('--model')+1],'openai-codex/gpt-6.1-sol');
     assert.equal(defaultArgs[defaultArgs.indexOf('--thinking')+1],'low');
+    // ── Planner recommendation: the coordinator's level and reason reach the dialog. ──
+    let seenTitle = '';
+    let seenOptions = [];
+    const recordingUi = {...ctx,ui:{select:async (title, options)=>{seenTitle=title;seenOptions=options;return options[0];},notify:()=>{}}};
+    const suggestedReason = 'Competing designs and an unresolved trade-off';
+    const suggested = await tool.execute('pr',{agent:'planner',task:'Suggestion fixture',profile:'medium',profileReason:suggestedReason},undefined,undefined,recordingUi);
+    assert.equal(suggested.details.status,'complete');
+    assert.match(seenTitle,/^Planner approval — recommended medium: Competing designs and an unresolved trade-off — /);
+    assert.match(seenTitle,/Suggestion fixture/);
+    assert.equal(seenOptions[0],'Approve medium (recommended) — openai-codex/gpt-6.1-sol @ medium');
+    assert.ok(seenOptions.includes('Choose low — openai-codex/gpt-6.1-sol @ low'),'other available levels remain selectable');
+    assert.equal(seenOptions.at(-1),'Cancel planner launch');
+    assert.equal(suggested.details.results[0].profileReason,suggestedReason);
+    // Without a reason the dialog keeps its previous wording and records none.
+    const plainUi = {...ctx,ui:{select:async (title, options)=>{seenTitle=title;return options[0];},notify:()=>{}}};
+    const plain = await tool.execute('pu',{agent:'planner',task:'Plain title fixture',profile:'low'},undefined,undefined,plainUi);
+    assert.equal(plain.details.status,'complete');
+    assert.doesNotMatch(seenTitle,/recommended/);
+    assert.equal(plain.details.results[0].profileReason,undefined);
+    // A reason is planner-only, like the profile itself, and never spawns.
+    await rm(process.env.PI_TEST_FIXTURE+'.args',{force:true});
+    await assert.rejects(tool.execute('px',{agent:'scout',task:'Reason fixture',profileReason:'nope'},undefined,undefined,{...ctx,ui:{select:()=>assert.fail('non-planner reason opened the planner approval'),notify:()=>{}}}),/only valid for the "planner" agent/);
+    assert.equal(existsSync(process.env.PI_TEST_FIXTURE+'.args'),false,'non-planner profileReason must not spawn');
     const profileArgsFile = process.env.PI_TEST_FIXTURE+'.args';
     await rm(profileArgsFile,{force:true});
     const cancelledUi = {...ctx,ui:{select:async (_title, options)=>options.at(-1), notify:()=>{}}};

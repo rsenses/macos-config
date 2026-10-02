@@ -41,7 +41,7 @@ Unless the user asks otherwise, delegate a bounded slice when one exists: `scout
 
 - Prefer `scout` early in open-ended diagnosis and `worker` for bounded changes; the principal keeps scope, decisions, integration, and the full validation gate.
 - `planner` is optional by default: dispatch it only when design decisions have real alternatives. It is mandatory inside `/plan`, which delegates the plan itself. `plan-reviewer` is manual-only: dispatch it only when the user asks or invokes `/review-plan`.
-- Approvals: the launcher UI approves planner model/thinking once, the `select_session_plan`/`newPlan=true` UI confirms plan selection, and implementing an approved plan needs separate user authorization. Cancellation ends that attempt without fallback or retry. If a profile, model, or thinking level is unavailable, report the blocker; never fall back or change defaults silently.
+- Approvals: the launcher UI approves planner model/thinking once, showing your suggested level as the recommendation together with the `profileReason` you pass, the `select_session_plan`/`newPlan=true` UI confirms plan selection, and implementing an approved plan needs separate user authorization. Cancellation ends that attempt without fallback or retry. If a profile, model, or thinking level is unavailable, report the blocker; never fall back or change defaults silently.
 - Load the `ops` skill before delegating: it holds the brief contract, child status format, context budget, and worker validation policies.
 
 Choose clarification, direct work, or a child according to ambiguity and risk — not file count. Keep the current principal model, provider, thinking level, and settings unchanged unless the user explicitly requests otherwise.

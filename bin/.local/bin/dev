@@ -27,6 +27,7 @@ LOG_FILE=""
 STATE_FILE=""
 SERVER_TYPE=""
 declare -a ALIASES=()
+declare -a PROXIES=()
 declare -a HOSTS=()
 declare -a DOMAIN_CONFLICTS=()
 
@@ -286,8 +287,48 @@ load_alias_values() {
   done
 }
 
+load_proxy_values() {
+  local value="$1"
+  local entry path proxy_port normalized_port escaped_path
+
+  value="$(trim "$value")"
+  case "$value" in
+    '"'*) value="${value#\"}"; value="${value%\"}" ;;
+    "'"*) value="${value#\'}"; value="${value%\'}" ;;
+  esac
+
+  value="${value//,/ }"
+  for entry in $value; do
+    if [[ "$entry" != *:* ]]; then
+      echo "Error: proxy de Caddy inválido '$entry'; usa /ruta/*:PUERTO." >&2
+      return 1
+    fi
+
+    path="${entry%%:*}"
+    proxy_port="${entry#*:}"
+    if [[ -z "$path" || -z "$proxy_port" || ! "$proxy_port" =~ ^[0-9]+$ ]]; then
+      echo "Error: proxy de Caddy inválido '$entry'; la ruta y el puerto numérico son obligatorios." >&2
+      return 1
+    fi
+
+    normalized_port="${proxy_port#${proxy_port%%[!0]*}}"
+    [[ -n "$normalized_port" ]] || normalized_port=0
+    if (( ${#normalized_port} > 5 )) || (( 10#$normalized_port < 1 || 10#$normalized_port > 65535 )); then
+      echo "Error: puerto inválido en proxy de Caddy '$entry'; debe estar entre 1 y 65535." >&2
+      return 1
+    fi
+    normalized_port=$((10#$normalized_port))
+
+    # Quote the matcher as a Caddyfile token so configured paths cannot add directives.
+    escaped_path="${path//\\/\\\\}"
+    escaped_path="${escaped_path//\"/\\\"}"
+    PROXIES+=("$escaped_path:$normalized_port")
+  done
+}
+
 load_project_config() {
   ALIASES=()
+  PROXIES=()
 
   if [[ -f "$CONFIG_FILE" ]]; then
     while IFS= read -r raw; do
@@ -301,6 +342,10 @@ load_project_config() {
         [Aa][Ll][Ii][Aa][Ss][Ee][Ss]=*)
           value="${line#*=}"
           load_alias_values "$value"
+          ;;
+        [Pp][Rr][Oo][Xx][Ii][Ee][Ss]=*)
+          value="${line#*=}"
+          load_proxy_values "$value"
           ;;
       esac
     done < "$CONFIG_FILE"
@@ -329,8 +374,10 @@ write_snippet() {
   host_line="${host_line% }"
 
   local temp_file="${SNIPPET}.tmp.$$"
+  local proxy
 
-  if ! cat > "$temp_file" <<SNIP
+  if (( ${#PROXIES[@]} == 0 )); then
+    if ! cat > "$temp_file" <<SNIP
 ${host_line} {
   tls {
     issuer internal {
@@ -343,10 +390,24 @@ reverse_proxy 127.0.0.1:${PORT} {
 }
 }
 SNIP
-  then
-    rm -f "$temp_file"
-    echo "Error: no pude escribir el snippet de Caddy ${SNIPPET}." >&2
-    return 1
+    then
+      rm -f "$temp_file"
+      echo "Error: no pude escribir el snippet de Caddy ${SNIPPET}." >&2
+      return 1
+    fi
+  else
+    {
+      printf '%s {\n' "$host_line"
+      printf '  tls {\n    issuer internal {\n      lifetime 7d\n    }\n  }\n'
+      for proxy in "${PROXIES[@]}"; do
+        printf '  handle "%s" {\n    reverse_proxy 127.0.0.1:%s\n  }\n' "${proxy%:*}" "${proxy##*:}"
+      done
+      printf '  handle {\n    reverse_proxy 127.0.0.1:%s {\n      header_up Host {host}\n      header_up X-Forwarded-Proto https\n    }\n  }\n}\n' "$PORT"
+    } > "$temp_file" || {
+      rm -f "$temp_file"
+      echo "Error: no pude escribir el snippet de Caddy ${SNIPPET}." >&2
+      return 1
+    }
   fi
 
   if ! mv -f "$temp_file" "$SNIPPET"; then
