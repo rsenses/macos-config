@@ -599,25 +599,38 @@ function planStatusText(snapshot: PlanSnapshot | undefined, blocked?: string): s
 }
 
 /**
- * Minimal live plan pointer: which file is active, its status, and the current step.
- * Appended as a trailing context message because status and step change as work
- * progresses; writing them into the system prompt would truncate the cached prefix on
- * every plan edit and re-bill the whole conversation. Task counts, TL;DR, the active
- * task and the ledger's In Progress list are deliberately omitted: they are derivable
- * with `get_current_plan`, `summarize_worktree` or `read`, and the agent is normally
- * editing those files anyway.
+ * Plan state communicated to the model: which file is active, its status and the
+ * current step. Task counts, TL;DR, the active task and the ledger's In Progress list
+ * are deliberately omitted; they are derivable with `get_current_plan`,
+ * `summarize_worktree` or `read`, and the agent is normally editing those files anyway.
+ *
+ * `previouslyCommunicated` makes the loss of a plan explicit instead of leaving an
+ * earlier message describing it as valid. It is only consulted when there is no plan
+ * to describe, so a session that never had one stays silent.
  */
-export function livePlanBlock(snapshot: PlanSnapshot | undefined, blocked?: string, humanStep?: string): string {
+export function planStateBlock(
+	snapshot: PlanSnapshot | undefined,
+	blocked?: string,
+	humanStep?: string,
+	previouslyCommunicated = false,
+): string {
 	if (blocked) return `> Active plan unavailable: ${blocked}`;
-	if (!snapshot) return "";
+	if (!snapshot) {
+		return previouslyCommunicated
+			? "**Active plan**: none. The plan named earlier in this conversation is no longer available and will not be recreated."
+			: "";
+	}
 	const lines = [`**Plan**: \`${snapshot.planPath}\` — status: ${snapshot.status}`];
 	if (humanStep) lines.push(`**Current Step**: ${humanStep}`);
 	if (snapshot.warning) lines.push(`**Warning**: ${snapshot.warning}`);
 	return lines.join("\n");
 }
 
-/** Custom entry type of the non-persistent live-state message appended by the `context` hook. */
-const PLAN_CONTEXT_TYPE = "memory.active-plan-context";
+/**
+ * Custom type of the persisted plan-state message. It is a real session entry, so it
+ * stays where it was sent instead of being regenerated at the end of every request.
+ */
+const PLAN_STATE_TYPE = "memory.plan-state";
 
 /** Update the status line from a plan snapshot; no-op outside TUI and never throws. */
 function updatePlanUI(ctx: any, snapshot?: PlanSnapshot, blocked?: string): void {
@@ -1028,41 +1041,39 @@ export default function (pi: ExtensionAPI) {
 	// turn and restates the entire tool set there, discarding the incremental tool
 	// declarations. A changing head truncates the cached prompt prefix, which is what
 	// capped the cache at roughly the size of the tool block. The workflow policy
-	// therefore lives in APPEND_SYSTEM.md and the active plan reaches the model
-	// through the trailing `context` message below.
+	// therefore lives in APPEND_SYSTEM.md, and the plan reaches the model through the
+	// persisted message committed at `turn_end` below.
 	pi.on("before_agent_start", async (event, ctx) => {
 		await ensureProjectFiles(event.systemPromptOptions?.cwd ?? ctx.cwd);
 		await refreshPlanUI(ctx);
 	});
 
-	// Recompute a bounded, non-persistent live-state message before each provider
-	// request. It is appended after the cached prefix, so plan edits never invalidate
-	// what is already cached, and it is rebuilt from the current Markdown, so it
-	// cannot accumulate stale copies across turns or compaction.
-	pi.on("context", async (event, ctx) => {
+	// Communicate the plan state as a real session entry appended at the end of the
+	// turn. It is not re-derived per request, so it keeps the position it was sent
+	// at and earlier messages are never rewritten, moved or dropped to show it.
+	//
+	// `context` is deliberately not used: a request-time projection is rebuilt on every
+	// call, and returning a changed conversation from a `context` handler makes Pi
+	// restore the prompt through `restoreSystemMessages`, which rebuilds the head and
+	// can move system and tool declarations to the front.
+	pi.on("turn_end", async (event, ctx) => {
 		try {
 			const resolved = await resolveActivePlan(ctx.cwd, ctx);
 			const content = resolved.planPath ? await readIfExists(path.join(ctx.cwd, resolved.planPath)) : "";
 			const snapshot = content ? planSnapshot(content, resolved.planPath!) : undefined;
 			const humanStep = content ? planHumanCurrentStep(content) : undefined;
-			if (!snapshot && !resolved.blocked) return;
-
-			const block = livePlanBlock(snapshot, resolved.blocked, humanStep);
-			if (!block) return;
-			const injected = event.messages.findLast((message: any) => message?.customType === PLAN_CONTEXT_TYPE);
-			if (injected?.content === block) return;
+			// Compare against the last state the model actually receives, which is the
+			// active branch after compaction. A session-level marker would go stale
+			// there and would suppress a needed update; comparing with any older match
+			// would swallow a change back to a previous value.
+			const communicated = event.context.contextMessages.findLast(
+				(message: any) => message?.customType === PLAN_STATE_TYPE,
+			) as { content?: string } | undefined;
+			const block = planStateBlock(snapshot, resolved.blocked, humanStep, communicated !== undefined);
+			if (!block || block === communicated?.content) return;
 
 			return {
-				messages: [
-					...event.messages,
-					{
-						role: "custom",
-						customType: PLAN_CONTEXT_TYPE,
-						content: block,
-						display: false,
-						timestamp: Date.now(),
-					},
-				],
+				entries: [{ type: "custom_message", customType: PLAN_STATE_TYPE, content: block, display: false }],
 			};
 		} catch {
 			return;
@@ -1089,10 +1100,6 @@ export default function (pi: ExtensionAPI) {
 	});
 
 	pi.on("tool_execution_end", async (_event, ctx) => {
-		await refreshPlanUI(ctx);
-	});
-
-	pi.on("turn_end", async (_event, ctx) => {
 		await refreshPlanUI(ctx);
 	});
 

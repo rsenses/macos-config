@@ -33,7 +33,7 @@ Keep technical plans detailed for execution, but make chat understandable withou
 
 ## Project Plans and Tasks
 
-This policy lives here rather than in an extension's `before_agent_start` return value on purpose. A returned `systemPrompt` sets Pi's `forceSystemPrompt`, which rebuilds the whole request header on every turn and restates the full tool set there; any change to it truncates the cached prompt prefix and re-bills the conversation at the full input rate. A file is stable by construction. The active plan path itself is injected as a trailing context message.
+This policy lives here rather than in an extension's `before_agent_start` return value on purpose. A returned `systemPrompt` sets Pi's `forceSystemPrompt`, which rebuilds the whole request header on every turn and restates the full tool set there; any change to it truncates the cached prompt prefix and re-bills the conversation at the full input rate. A file is stable by construction. The active plan path and current step are communicated as a message appended to the conversation when they change.
 
 The current project uses local task and plan files:
 - `.ai/TASKS.md` — pending project work.
