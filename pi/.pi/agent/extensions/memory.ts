@@ -139,16 +139,6 @@ export function countOpenTasks(tasks: string): number {
 	return tasks.split("\n").filter((line) => /^- \[ \] /.test(line.trim())).length;
 }
 
-export function activeTasksPreview(tasks: string, maxLines = 8, maxChars = 900): string {
-	const heading = /^##\s+In Progress\s*$/m.exec(tasks);
-	if (!heading || heading.index === undefined) return "_No active In Progress task recorded._";
-	const rest = tasks.slice(heading.index + heading[0].length);
-	const nextHeading = /^##\s+/m.exec(rest);
-	const section = rest.slice(0, nextHeading?.index ?? rest.length);
-	const active = previewText(section, maxLines, maxChars);
-	return active || "_No active In Progress task recorded._";
-}
-
 // --- Plan identity and pointer resolution (pure helpers; no filesystem access) ---
 
 /** Custom session entry type for the versioned active-plan pointer record. */
@@ -608,20 +598,26 @@ function planStatusText(snapshot: PlanSnapshot | undefined, blocked?: string): s
 	return truncateLine(`Plan ${snapshot.status} · ${tasks}${snapshot.activeTask ? ` · ${snapshot.activeTask.startsWith("Inconsistent Current Step:") ? snapshot.activeTask : humanTaskName({ id: "", line: snapshot.activeTask })}` : ""}`, 120);
 }
 
-/** Bounded injected plan view for the system prompt: identity/status/counts/step/active task/warning only. */
-function planSnapshotBlock(snapshot: PlanSnapshot | undefined, blocked?: string, humanStep?: string): string {
+/**
+ * Minimal live plan pointer: which file is active, its status, and the current step.
+ * Appended as a trailing context message because status and step change as work
+ * progresses; writing them into the system prompt would truncate the cached prefix on
+ * every plan edit and re-bill the whole conversation. Task counts, TL;DR, the active
+ * task and the ledger's In Progress list are deliberately omitted: they are derivable
+ * with `get_current_plan`, `summarize_worktree` or `read`, and the agent is normally
+ * editing those files anyway.
+ */
+export function livePlanBlock(snapshot: PlanSnapshot | undefined, blocked?: string, humanStep?: string): string {
 	if (blocked) return `> Active plan unavailable: ${blocked}`;
-	if (!snapshot) return "_No active session plan yet. Run `create_session_plan` at the start of non-trivial tasks._";
-	const lines = [
-		`**Plan**: \`${snapshot.planPath}\` — status: ${snapshot.status}`,
-		`**Tasks**: ${snapshot.tasks.open} open / ${snapshot.tasks.done} done (${snapshot.tasks.total} total)`,
-	];
-	if (snapshot.tldr) lines.push(`**TL;DR**: ${snapshot.tldr}`);
+	if (!snapshot) return "";
+	const lines = [`**Plan**: \`${snapshot.planPath}\` — status: ${snapshot.status}`];
 	if (humanStep) lines.push(`**Current Step**: ${humanStep}`);
-	if (snapshot.activeTask) lines.push(`**Active task**: ${snapshot.activeTask.startsWith("Inconsistent Current Step:") ? snapshot.activeTask : humanTaskName({ id: "", line: snapshot.activeTask })}`);
 	if (snapshot.warning) lines.push(`**Warning**: ${snapshot.warning}`);
 	return lines.join("\n");
 }
+
+/** Custom entry type of the non-persistent live-state message appended by the `context` hook. */
+const PLAN_CONTEXT_TYPE = "memory.active-plan-context";
 
 /** Update the status line from a plan snapshot; no-op outside TUI and never throws. */
 function updatePlanUI(ctx: any, snapshot?: PlanSnapshot, blocked?: string): void {
@@ -1027,70 +1023,42 @@ export default function (pi: ExtensionAPI) {
 
 	// --- Lifecycle Hooks ---
 
+	// Deliberately returns no `systemPrompt`. Returning one sets Pi's
+	// `forceSystemPrompt`, and its projection then rebuilds the request head on every
+	// turn and restates the entire tool set there, discarding the incremental tool
+	// declarations. A changing head truncates the cached prompt prefix, which is what
+	// capped the cache at roughly the size of the tool block. The workflow policy
+	// therefore lives in APPEND_SYSTEM.md and the active plan reaches the model
+	// through the trailing `context` message below.
 	pi.on("before_agent_start", async (event, ctx) => {
-		const cwd = event.systemPromptOptions?.cwd ?? ctx.cwd;
-		const paths = await ensureProjectFiles(cwd);
-
-		const resolved = await resolveActivePlan(cwd, ctx);
-		const planPath = resolved.planPath ?? resolved.currentSessionPath;
-		const planNote = resolved.planPath
-			? ""
-			: resolved.blocked
-				? ` (blocked: ${resolved.blocked})`
-				: " (no active plan yet — run `create_session_plan`)";
-		const tasks = await readFile(paths.tasksFile, "utf8");
-		const activeTasks = activeTasksPreview(tasks, 4, 600);
-		const planContent = resolved.planPath ? await readIfExists(path.join(cwd, resolved.planPath)) : "";
-		const snapshot = planContent ? planSnapshot(planContent, resolved.planPath!) : undefined;
-		updatePlanUI(ctx, snapshot, resolved.blocked);
-		const snapshotBlock = planSnapshotBlock(snapshot, resolved.blocked, planContent ? planHumanCurrentStep(planContent) : undefined);
-
-		const workflowContext = `## Project Workflow
-
-The current project uses local task and plan files:
-- \`.ai/TASKS.md\` — pending project work.
-- \`.ai/plan/\` — task-specific implementation plans.
-
-Current session plan: \`${planPath}\`${planNote}
-
-${snapshotBlock}
-
-### Workflow Policy
-- **Planning**: Use \`create_session_plan\` at the start of non-trivial tasks. Update the plan file directly.
-- **Selection**: Use \`select_session_plan\` only for an explicit existing-file adoption/switch. Before \`create_session_plan\` with \`newPlan=true\`, compare the request with the active plan's goal and artifacts: showing, serving, testing, or reviewing its results continues the same plan even if its tasks are completed. Handle one-off follow-up work directly; if persistent tracking is needed, append a task to the active plan. Start another plan only for an independent goal or material scope change; ask the user if that distinction is genuinely unclear. A blocked or missing selection is never silently recreated.
-- **Inspect**: Use \`get_current_plan\` for the active plan and \`summarize_worktree\` for a compact repo snapshot.
-- **Tasks**: Use \`.ai/TASKS.md\` for work that survives sessions. Use wiki-links \`[[.ai/plan/file.md]]\` for complex tasks.
-- **Reference discipline**: When a route, component, file, or decision is already recorded, refer to the existing section or item instead of restating the whole list.
-- **Inventory discipline**: For route/component reports, keep one canonical list and append only new or changed entries.
-- **Delta focus**: In iterative frontend, CSS, or JS work, answer with the smallest useful delta rather than reprinting prior inventories.
-
-### Task Context (bounded; full ledger: .ai/TASKS.md):
-Active In Progress item(s):
-\`\`\`md
-${activeTasks}
-\`\`\``;
-
-		return {
-			systemPrompt: `${event.systemPrompt}\n\n${workflowContext}`,
-		};
+		await ensureProjectFiles(event.systemPromptOptions?.cwd ?? ctx.cwd);
+		await refreshPlanUI(ctx);
 	});
 
-	// Recompute a bounded, non-persistent context message before each provider
-	// request. The message is rebuilt from the current Markdown, so it cannot
-	// accumulate stale copies across turns or compaction.
+	// Recompute a bounded, non-persistent live-state message before each provider
+	// request. It is appended after the cached prefix, so plan edits never invalidate
+	// what is already cached, and it is rebuilt from the current Markdown, so it
+	// cannot accumulate stale copies across turns or compaction.
 	pi.on("context", async (event, ctx) => {
 		try {
 			const resolved = await resolveActivePlan(ctx.cwd, ctx);
 			const content = resolved.planPath ? await readIfExists(path.join(ctx.cwd, resolved.planPath)) : "";
 			const snapshot = content ? planSnapshot(content, resolved.planPath!) : undefined;
+			const humanStep = content ? planHumanCurrentStep(content) : undefined;
 			if (!snapshot && !resolved.blocked) return;
+
+			const block = livePlanBlock(snapshot, resolved.blocked, humanStep);
+			if (!block) return;
+			const injected = event.messages.findLast((message: any) => message?.customType === PLAN_CONTEXT_TYPE);
+			if (injected?.content === block) return;
+
 			return {
 				messages: [
 					...event.messages,
 					{
 						role: "custom",
-						customType: "memory.active-plan-context",
-						content: planSnapshotBlock(snapshot, resolved.blocked, content ? planHumanCurrentStep(content) : undefined),
+						customType: PLAN_CONTEXT_TYPE,
+						content: block,
 						display: false,
 						timestamp: Date.now(),
 					},

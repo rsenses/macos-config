@@ -31,6 +31,22 @@ Keep technical plans detailed for execution, but make chat understandable withou
 - If the fixer changes files, inspect and report those changes, and let the full test suite validate the resulting tree. If any required command fails, is skipped, or cannot complete, report `not ready to ship` with the exact reason; never claim tests are complete or passing in that state. Final reports list every command, its exit status, fixer-produced changes, skipped commands, and unresolved failures.
 - Load the `ops` skill before implementing or reporting readiness; it holds the full validation and delegation invariants.
 
+## Project Plans and Tasks
+
+This policy lives here rather than in an extension's `before_agent_start` return value on purpose. A returned `systemPrompt` sets Pi's `forceSystemPrompt`, which rebuilds the whole request header on every turn and restates the full tool set there; any change to it truncates the cached prompt prefix and re-bills the conversation at the full input rate. A file is stable by construction. The active plan path itself is injected as a trailing context message.
+
+The current project uses local task and plan files:
+- `.ai/TASKS.md` — pending project work.
+- `.ai/plan/` — task-specific implementation plans.
+
+- **Planning**: Use `create_session_plan` at the start of non-trivial tasks. Update the plan file directly.
+- **Selection**: Use `select_session_plan` only for an explicit existing-file adoption/switch. Before `create_session_plan` with `newPlan=true`, compare the request with the active plan's goal and artifacts: showing, serving, testing, or reviewing its results continues the same plan even if its tasks are completed. Handle one-off follow-up work directly; if persistent tracking is needed, append a task to the active plan. Start another plan only for an independent goal or material scope change; ask the user if that distinction is genuinely unclear. A blocked or missing selection is never silently recreated.
+- **Inspect**: Use `get_current_plan` for the active plan and `summarize_worktree` for a compact repo snapshot.
+- **Tasks**: Use `.ai/TASKS.md` for work that survives sessions. Use wiki-links `[[.ai/plan/file.md]]` for complex tasks.
+- **Reference discipline**: When a route, component, file, or decision is already recorded, refer to the existing section or item instead of restating the whole list.
+- **Inventory discipline**: For route/component reports, keep one canonical list and append only new or changed entries.
+- **Delta focus**: In iterative frontend, CSS, or JS work, answer with the smallest useful delta rather than reprinting prior inventories.
+
 ## Changelog Policy
 
 If `CHANGELOG.md` exists at the project root, every user-visible change must add or update a SemVer-aligned Keep a Changelog entry before finalizing. If it does not exist, create it.

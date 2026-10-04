@@ -4,6 +4,13 @@ All notable changes to this project are documented here using Keep a Changelog a
 
 ## [Unreleased]
 
+### Fixed
+- The memory extension no longer returns a `systemPrompt` at all. In Pi, a returned `systemPrompt` becomes `forceSystemPrompt`, whose projection rebuilds the head of every request and restates the whole tool set there, discarding Pi's incremental tool declarations. Any change to that head truncates the cached prompt prefix, which is what pinned `cacheRead` at roughly the size of the tool block (~17-23k tokens) for dozens of turns while the prompt grew past 200k. The workflow policy moved verbatim into `APPEND_SYSTEM.md`, where it is stable by construction, and the extension's `before_agent_start` hook now only ensures the project files exist and refreshes the status line.
+- The memory extension no longer writes live plan and `.ai/TASKS.md` state into the system prompt. That text changed on nearly every turn (task counters, `Current Step`, in-progress ledger), and because the system prompt is the head of every request, each edit truncated the cached prompt prefix and re-billed the entire conversation at the full input rate. On `gpt-6.1-sol` a cache read is up to 20x cheaper than input.
+- The system prompt now carries only the session's plan pointer plus the static workflow policy, which is byte-stable across a session; the live pointer (plan path, status, one-line `Current Step`, warnings) is appended as a non-persistent trailing context message, so it costs only its own tokens and never invalidates the cached prefix. Task counts, `TL;DR`, the active task and the ledger's `In Progress` list are no longer injected; they are derivable with `get_current_plan`, `summarize_worktree` or `read`, and the TUI status line still shows the counts.
+- The appended context message is skipped when an identical copy is already present in the request, so unchanged plan state costs nothing.
+- `chrome-devtools-mcp` is pinned to `1.10.1` instead of `@latest`. A new release can change the server's instructions and tool list, which rewrites the `mcp_servers` system-prompt section and the request's tool declarations, invalidating the prompt cache mid-session.
+
 ### Changed
 - Pi now requires concise, plain-language plan proposals, progress, blockers, resumptions, and completion reports while retaining detailed execution plans and validation gates.
 - Planner profiles now use `openai-codex/gpt-6.1-sol` at `low` by default, with justified `medium` and `high` escalation. Profile names are now `low`, `medium`, and `high`, replacing `habitual`, `diseno`, and `delicado`.

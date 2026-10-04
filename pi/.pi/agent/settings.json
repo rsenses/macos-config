@@ -4,9 +4,7 @@
   "defaultModel": "gpt-6-luna",
   "defaultThinkingLevel": "xhigh",
   "showCacheMissNotices": true,
-  "defaultTools": [
-    "+codemode"
-  ],
+  "defaultTools": ["+codemode"],
   "shellPath": "/bin/zsh",
   "shellCommandPrefix": "eval \"$(mise env -s zsh)\"\nunset APP_URL APP_ENV",
   "theme": "light",
@@ -14,7 +12,7 @@
     "npm:pi-lsp-bridge@2.3.0",
     "npm:pi-gpt-search@1.1.0",
     "git:github.com/tmustier/pi-auto-compact",
-    "git:github.com/rsenses/pi-review"
+    "../../dev/contrib/pi-review"
   ],
   "enabledModels": [
     "openai-codex/gpt-6-luna",
@@ -22,11 +20,5 @@
     "openai-codex/gpt-6.1-sol"
   ],
   "enableInstallTelemetry": false,
-  "npmCommand": [
-    "mise",
-    "exec",
-    "node@24",
-    "--",
-    "npm"
-  ]
+  "npmCommand": ["mise", "exec", "node@24", "--", "npm"]
 }
