@@ -6,8 +6,8 @@ argument-hint: "[plan path or name]"
 Run a **manual-only** review of one saved implementation plan with the `plan-reviewer` subagent.
 
 Plan selection:
-- If an argument was supplied, use that exact saved plan path or name: `${ARGUMENTS}`. Locate it if the user gave a filename/name, but do not silently substitute a different plan.
-- If no argument was supplied, call `get_current_plan` and use the path it reports. This normally resolves to the current session plan and otherwise the latest saved plan.
+- If an argument was supplied, use that exact saved plan path or name: `$ARGUMENTS`. Locate it if the user gave a filename/name, but do not silently substitute a different plan.
+- If no argument was supplied, call `get_current_plan` and use only the active selection it resolves. If it is absent, ambiguous, or blocked, explain the problem and request an explicit selection; never choose the newest saved plan or use file modification time.
 - If the selected plan does not exist, stop and report the missing path; do not review a guessed alternative.
 
 Rules:

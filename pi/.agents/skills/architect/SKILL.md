@@ -7,46 +7,36 @@ description: Specification design, behavior contracts, and risk-aware task decom
 
 ## 0. Intent Translation
 
-For an ambiguous request, translate it into a canonical brief:
-
-- **Objective**, **Non-goals**, **Constraints**, **Assumptions**, **Success Criteria**, and **Open questions**.
-- Ask one focused clarification only when different interpretations or material safety/risk would change the work.
-- For a clear, bounded request, do not add a discovery or documentation phase merely because it is multi-file.
+For an ambiguous request, prepare the ops brief: Goal (including non-goals), Known (decisions, constraints and assumptions), Evidence, Acceptance, Checks, and Stop. Ask one focused question only when different interpretations or material safety/risk would change the work. A clear bounded request does not need an extra discovery or documentation phase merely because it spans files.
 
 ## 1. Specifications and Gates
 
-Make behavior and boundaries testable before editing when ambiguity, architecture, security, data integrity, or production risk is material. For a clear low-risk change, keep specification lightweight.
+Make behavior and boundaries testable before editing when ambiguity, architecture, security, data integrity, or production risk is material. For a clear low-risk change, keep specification lightweight. Preserve user decisions, unrelated existing changes, security invariants, and the project's applicable changelog policy.
 
 ### Design lens: deep modules
 
-When a design or refactor changes module shape, use this vocabulary: **module**, **interface**, **implementation**, **seam**, **adapter**, **depth**, **leverage**, and **locality**. Prefer a small interface that hides substantial behavior behind a real seam. Apply the deletion test: if removing the abstraction makes complexity disappear, it was likely pass-through; if complexity would spread across callers, it may be earning its keep. Do not add a seam for hypothetical variation; one adapter is usually a hypothetical seam, while a real external boundary or demonstrated variation can justify one. Test behavior through the public interface rather than internal collaborators.
-
-Use a compact contract: **Goal**, **Known**, **Evidence**, **Acceptance**, **Checks**, and **Stop**. Preserve user decisions, security invariants, unrelated existing changes, and applicable changelog policy.
+Prefer a small interface that hides cohesive complexity behind a real boundary. Apply the deletion test: if removing an abstraction makes complexity disappear, it may be pass-through; if complexity spreads across callers, it may be earning its keep. Judge a seam or adapter by the boundary and behavior it handles, not its number of implementations. Do not add hypothetical variation, but do not remove a real integration or domain boundary solely because it has one implementation. Test behavior through the public interface rather than internal collaborators.
 
 ## 2. Planning and Decomposition
 
-Decompose only as much as improves execution. Use the planner subagent only when architecture/acceptance is genuinely ambiguous, risk is high, or an independent planning/investigation slice has positive net value. Do not delegate solely for file count or “non-trivial” labels. The principal owns the final plan, scope, and acceptance; planner and worker do not launch nested subagents.
+Follow the ops delegation contract. Inside `/plan`, the planner is mandatory: the coordinator gathers the brief and evidence, the planner proposes the design, and the coordinator persists the complete plan. Do not pre-write a solution or replace a blocked planner by guessing. Outside `/plan`, use a planner when unresolved design alternatives justify one; routine progress updates do not require it.
 
-`plan-reviewer` is manual-only. Never dispatch it merely because a plan exists or because an architectural review might help. Use it only after the user explicitly requests a saved-plan review or invokes `/review-plan`.
+`plan-reviewer` remains manual-only. A plan's existence or risk does not authorize invoking it without a user request.
 
-The coordinator persists one plan using the ops skill's TL;DR, Current Step and Tn Tasks format; planner only returns read-only proposals. Prefer one ordered checklist with exact files/symbols, dependencies, acceptance, and checks. Split tasks when independence or verification benefits; do not manufacture parallelism or duplicate plans. Define checkpoints around meaningful risk boundaries.
+Use the ops TL;DR, Current Step and top-level Tn Tasks format. Keep one ordered checklist with exact files/symbols, meaningful dependencies, acceptance, and checks. Decompose only when independence or verification benefits; define checkpoints around real risk boundaries without manufacturing parallelism.
 
 ## 3. Execution Coordination
 
-Give a child a single explicit slice and the compact contract. Normally use zero or one child; use at most two only for genuinely independent, non-overlapping work. Review evidence and status before integrating. A child that lacks a material prerequisite returns `blocked` rather than expanding scope.
+Give each child one explicit slice and the ops brief. Use zero or one child normally, at most two genuinely independent ones. Review evidence and status before accepting work; a missing material prerequisite returns `blocked`, not an expanded scope. Keep integration, decisions, and final validation with the coordinator.
 
-## 4. Completion Gate
+## 4. Completion and Changelog
 
-Do not accept or report overall IMPLEMENTATION readiness from targeted evidence alone. Before that completion report, discover and execute every authoritative full-project fix/format/lint and test command from the project root. Completing a planning document requires the coordinator's persistence and full read-back instead; a read-only review requires inspection checks and a worker slice its authorized checks. These outcomes do not certify implementation readiness or require the application suite just to finish a plan. If a Laravel/PHP project documents `composer fix` and `composer test`, run exactly `composer fix` followed by exactly `composer test`, without filters or substitutes. Count a command only when it reaches natural completion and exits 0; a worker's success or a targeted test does not waive this gate. If any required command is missing, skipped, interrupted, timed out, unavailable, or fails, keep the task `partial`/`blocked` and report `not ready to ship` with the exact command and reason. Record exit statuses and any files changed by fixers.
+Apply ops section 4 before reporting implementation readiness; targeted evidence alone never suffices. Planning and review use their scoped completion checks. Follow APPEND_SYSTEM's Changelog Policy rather than introducing a different rule here.
 
-## 5. Changelog Requirement
+## 5. Documentation Economy
 
-If `CHANGELOG.md` exists at the project root and the job is user-visible, include a SemVer-aligned Keep a Changelog update in the work. Do not create it when absent unless explicitly requested.
+Read only relevant versioned contracts or source sections and reuse established evidence. Do not make the coordinator, planner, and worker repeat the same documentation tour or rewrite the same plan.
 
-## 6. Documentation Economy
+## 6. Final Gate
 
-Read the relevant versioned contract or sections, not a generic transitively linked tour. Share exact evidence and reuse it; do not make principal, planner, and worker restate the same plan or documentation.
-
-## 7. Final Gate
-
-Before completion, verify acceptance and specified checks, report unresolved risk honestly, and summarize the delta once. Preserve the specific workflow approvals in APPEND_SYSTEM as well as clarification and critical-configuration gates. Do not duplicate a launcher/tool UI question or ask again for ordinary steps already authorized.
+Verify acceptance and the applicable ops checks, report unresolved risk honestly, and summarize the delta once. Preserve APPEND_SYSTEM's specific workflow approvals and critical-configuration gates. Do not duplicate a launcher/tool UI question or ask again for ordinary steps already authorized.

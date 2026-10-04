@@ -3,6 +3,10 @@
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-6-luna",
   "defaultThinkingLevel": "xhigh",
+  "modelThinkingLevels": {
+    "openai-codex/gpt-6-luna": "xhigh",
+    "openai-codex/gpt-6.1-sol": "low"
+  },
   "showCacheMissNotices": true,
   "defaultTools": ["+codemode"],
   "shellPath": "/bin/zsh",
