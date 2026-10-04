@@ -74,7 +74,8 @@ test('memory: persisted selection, full active branch, abandoned branch and read
     await writeFile(plan,(await readFile(plan,'utf8')).replace('- Status: pending','- Status: completed'));
     // Plan-continuity policy lives in the static append file, and before_agent_start
     // never forces a system prompt: both would rebuild the request head.
-    assert.equal(await f.beforeStart(), undefined, 'before_agent_start must not force the request head');
+    const startResult = await f.beforeStart();
+    assert.ok(!startResult?.systemPrompt, 'before_agent_start must not force the request head');
     const appendSystem = await readFile(join(here,'../../APPEND_SYSTEM.md'),'utf8');
     assert.match(appendSystem,/reviewing its results continues the same plan even if its tasks are completed/);
     assert.match(appendSystem,/Start another plan only for an independent goal or material scope change/);
@@ -638,8 +639,10 @@ Local-only checks; no provider calls.
       toolResults:[], messageEntryId:'entry', toolResultEntryIds:[],
       context:{contextMessages, contextEntries:[], llmMessages:[], pendingMessages:[], canContinue:true}});
     const endTurn = memory.handlers.get('turn_end')[0];
-    assert.equal(await memory.handlers.get('before_agent_start')[0]({systemPrompt:'base'}, endCtx), undefined,
-      'before_agent_start must not force the request head');
+    const startResult = await memory.handlers.get('before_agent_start')[0]({systemPrompt:'base'}, endCtx);
+    assert.ok(!startResult?.systemPrompt, 'before_agent_start must not force the request head');
+    assert.equal(startResult?.message?.customType, 'memory.plan-state',
+      'the first request of a turn carries the state through the native message field');
     const firstEnd = await endTurn(endEvent([]), endCtx);
     assert.equal(firstEnd.entries.length,1);
     assert.equal(firstEnd.entries[0].customType,'memory.plan-state');
@@ -672,8 +675,10 @@ Local-only checks; no provider calls.
     await writeFile(join(dir,'.ai/TASKS.md'),'# Tasks\n## Inbox\n- [ ] inbox sentinel\n## In Progress\n- [ ] active sentinel\n## Done\n'+('- [x] done sentinel\n'.repeat(1000)));
     // A large TASKS.md must never reach the request head: before_agent_start only
     // refreshes the status surface and returns nothing to the model.
-    assert.equal(await memory.handlers.get('before_agent_start')[0]({systemPrompt:'base'},ctx), undefined,
-      'TASKS.md content must not be injected into the request head');
+    const started = await memory.handlers.get('before_agent_start')[0]({systemPrompt:'base'},ctx);
+    assert.ok(!started?.systemPrompt, 'TASKS.md content must not reach the request head');
+    assert.doesNotMatch(JSON.stringify(started),/done sentinel|inbox sentinel|active sentinel/,
+      'no TASKS.md ledger is communicated');
 
   } finally {
     process.env.PATH=oldPath;
@@ -682,10 +687,11 @@ Local-only checks; no provider calls.
   }
 });
 
-// ── Real request journey ─────────────────────────────────────────────────────
+
+// --- Shared fixtures ---------------------------------------------------------
 // memory is loaded through Pi's real loader and driven through the installed
-// ExtensionRunner (emitContext / emitBoundary), against a real SessionManager and
-// the real convertToLlm. No provider request, no credentials, no private sessions.
+// ExtensionRunner, against a real SessionManager and the real convertToLlm. No
+// provider request, no credentials, no private sessions.
 const JOURNEY_USAGE = {input:10,output:5,cacheRead:0,cacheWrite:0,totalTokens:15,cost:{input:0,output:0,cacheRead:0,cacheWrite:0,total:0}};
 
 function bindRunner(runner, sm) {
@@ -700,6 +706,30 @@ function bindRunner(runner, sm) {
 }
 
 const sdkIndex = () => import(pathToFileURL(join(sdkRoot,'dist/index.js')));
+const sdkLoader = () => import(pathToFileURL(join(sdkRoot,'dist/core/extensions/loader.js')));
+const createAssistantMessageEventStream = sdkRoot
+  ? (await import(pathToFileURL(join(sdkRoot,'../pi-ai/dist/utils/event-stream.js')))).createAssistantMessageEventStream
+  : () => assert.fail('pi-ai is unavailable without PI_SDK_ROOT');
+
+/**
+ * Keeps the runner, the boundary context and the request history on one live
+ * SessionManager. Reassigning the manager without rebuilding the runner would
+ * leave the runner resolving plan state against a session the session file no
+ * longer represents, so `reopen` rebuilds both together.
+ */
+function liveRunner({extensions, runtime, dir, sm}, ExtensionRunner, SessionManager) {
+  let manager = sm;
+  let runner = bindRunner(new ExtensionRunner(extensions, runtime, dir, manager, {find:()=>undefined}), manager);
+  return {
+    get sm(){return manager;},
+    get runner(){return runner;},
+    // The manager the runner hands to extension handlers must be the live one.
+    get aligned(){return runner.createContext().sessionManager === manager;},
+    reopen(){manager = SessionManager.open(manager.getSessionFile(), join(dir,'sessions'));
+             runner = bindRunner(new ExtensionRunner(extensions, runtime, dir, manager, {find:()=>undefined}), manager);
+             return this;},
+  };
+}
 
 // Mirrors what AgentSession supplies to emitBoundary, built from public SDK calls.
 async function boundaryContext(sm) {
@@ -714,8 +744,9 @@ async function boundaryContext(sm) {
 function applyDrafts(sm, drafts) {
   const ids = [];
   for (const draft of drafts) {
-    assert.equal(draft.type, 'custom_message', 'memory may only append plan-state messages');
-    ids.push(sm.appendCustomMessageEntry(draft.customType, draft.content, draft.display, draft.details));
+    if (draft.type === 'custom') ids.push(sm.appendCustomEntry(draft.customType, draft.data));
+    else if (draft.type === 'custom_message') ids.push(sm.appendCustomMessageEntry(draft.customType, draft.content, draft.display, draft.details));
+    else assert.fail(`unexpected draft type: ${draft.type}`);
   }
   return ids;
 }
@@ -744,70 +775,91 @@ async function journeyTurn({runner, sm, text, withTool=false, index=0}) {
 
 const stateAt = (messages, type='memory.plan-state') => messages.findIndex(m=>m?.customType===type);
 const instructionsOf = llm => llm.filter(m=>m.role==='system').map(m=>JSON.stringify(m)).join('\n');
+const wire = messages => messages.map(m=>JSON.stringify(m));
 
-test('memory: real runner keeps sent history, instructions and incremental tool declarations', {skip: !sdkRoot}, async () => {
+// A stand-in for another extension that proposes a boundary entry before memory runs.
+const SENTINEL_EXT = `import type {ExtensionAPI} from "@earendil-works/pi-coding-agent";
+export default function (pi: ExtensionAPI) {
+  pi.on("turn_end", async (event) => ({entries:[{type:"custom",customType:"test.sentinel",data:"sentinel"}]}));
+}`;
+
+async function loadMemory(dir, extra = []) {
+  const {createExtensionRuntime} = await sdkIndex();
+  const runtime = createExtensionRuntime();
+  const {loadExtensions} = await sdkLoader();
+  const loaded = await loadExtensions([...extra, join(here,'../memory.ts')], dir, undefined, runtime);
+  assert.deepEqual(loaded.errors, []);
+  return {runtime, extensions: loaded.extensions, memory: loaded.extensions.at(-1)};
+}
+
+test('memory: the runner, its session manager and the request history stay on one live instance', {skip: !sdkRoot}, async () => {
   const {SessionManager, ExtensionRunner, createExtensionRuntime} = await sdkIndex();
-  const {loadExtensions} = await import(pathToFileURL(join(sdkRoot,'dist/core/extensions/loader.js')));
   const dir = await mkdtemp(join(tmpdir(),'pi-memory-journey-'));
   try {
-    let sm = SessionManager.create(dir, join(dir,'sessions'));
-    sm.appendMessage({role:'assistant',content:[],api:'fixture',provider:'fixture',model:'fixture',stopReason:'stop',timestamp:0,usage:JOURNEY_USAGE});
-    const runtime = createExtensionRuntime();
-    const loaded = await loadExtensions([join(here,'../memory.ts')], dir, undefined, runtime);
-    assert.deepEqual(loaded.errors, []);
-    const runner = bindRunner(new ExtensionRunner(loaded.extensions, runtime, dir, sm, {find:()=>undefined}), sm);
-    const memory = loaded.extensions[0];
+    const sm0 = SessionManager.create(dir, join(dir,'sessions'));
+    sm0.appendMessage({role:'assistant',content:[],api:'fixture',provider:'fixture',model:'fixture',stopReason:'stop',timestamp:0,usage:JOURNEY_USAGE});
+    const {runtime, extensions, memory} = await loadMemory(dir);
+    const live = liveRunner({extensions, runtime, dir, sm: sm0}, ExtensionRunner, SessionManager);
+    assert.equal(live.aligned, true, 'the runner hands handlers the live session manager');
+    let sm = live.sm;
     const call = (name, params={}) => {
       const registered = memory.tools.get(name);
-      return (registered.definition??registered).execute('fixture',params,undefined,undefined,{cwd:dir,sessionManager:sm});
+      return (registered.definition??registered).execute('fixture',params,undefined,undefined,
+        {cwd:dir, sessionManager:sm, hasUI:true, ui:{confirm:async()=>true}});
     };
     const created = await call('create_session_plan',{slug:'journey'});
     const planRel = created.details.path;
     const planAbs = join(dir, planRel);
     const planBody = () => readFile(planAbs,'utf8');
     const setStep = async (step) => writeFile(planAbs,(await planBody()).replace(/## Current Step\n[\s\S]*?\n\n/, `## Current Step\n${step}\n\n`));
+    const runnerFor = () => live.runner;
+    // A leaf reached before any state was communicated: navigating back to it must
+    // re-communicate, because that branch never received the state.
+    const earlyLeaf = sm.getLeafId();
+    const startOfTurn = async () => (await runnerFor().emitBeforeAgentStart('go', undefined, {})).messages;
 
-    // ── Case 1: unchanged plan across three requests with intermediate tools ──
-    const first = await journeyTurn({runner,sm,text:'one',withTool:true,index:1});
-    assert.equal(stateAt(first.requestMessages),-1,'nothing is communicated before the turn ends');
+    // ── R1.1: a plan exists and nothing was communicated yet ──
+    const coldStart = await startOfTurn();
+    assert.equal(coldStart.length,1,'the first request of a turn carries the state');
+    assert.equal(coldStart[0].customType,'memory.plan-state');
+    assert.match(coldStart[0].content,/journey/);
+    // The hook itself persists nothing: AgentSession is what appends and stores these
+    // messages, so the dedup only becomes effective once the entry is in the session.
+    // That round trip is covered by the AgentSession cycle test below.
+
+    // ── The head and the already-sent history survive plan progress ──
+    const first = await journeyTurn({runner:runnerFor(),sm,text:'one',withTool:true,index:1});
     assert.equal(first.drafts.length,1);
     const firstState = first.drafts[0].content;
-    assert.match(firstState,/memory\.plan-state|journey/);
-
-    const second = await journeyTurn({runner,sm,text:'two',withTool:true,index:2});
-    assert.equal(second.drafts.length,0,'unchanged state must not be communicated again');
-    // Everything turn 1 already sent is still present, by identity and in order.
-    const wire = messages => messages.map(m=>JSON.stringify(m));
+    const second = await journeyTurn({runner:runnerFor(),sm,text:'two',withTool:true,index:2});
+    assert.equal(second.drafts.length,0,'an unchanged plan must not be communicated again');
     assert.deepEqual(wire(second.requestMessages).slice(0,first.requestMessages.length), wire(first.requestMessages),
       'turn 1 history was rewritten, reordered or dropped');
     const idx2 = stateAt(second.requestMessages);
-    assert.ok(idx2 >= first.requestMessages.length,'state lives after the already-sent history');
-    assert.equal(second.requestMessages[idx2].content,firstState,'communicated state is unchanged');
-    assert.ok(idx2 < second.requestMessages.length-1,'state is not re-appended at the end of the request');
+    assert.ok(idx2 >= first.requestMessages.length,'the state lives after the already-sent history');
+    assert.equal(second.requestMessages[idx2].content,firstState,'the communicated state is unchanged');
+    assert.ok(idx2 < second.requestMessages.length-1,'the state is not re-appended at the end of the request');
 
-    const third = await journeyTurn({runner,sm,text:'three',index:3});
-    assert.equal(third.drafts.length,0);
-    assert.deepEqual(wire(third.requestMessages).slice(0,second.requestMessages.length), wire(second.requestMessages),
-      'turn 2 history was rewritten, reordered or dropped');
-    const keptIndex = stateAt(third.requestMessages);
-    assert.equal(third.requestMessages[keptIndex].content,firstState);
-    assert.ok(keptIndex < third.requestMessages.length-1,'state is not re-appended at the end');
-
-    // ── Case 2: T1 advances to T2 without rewriting the header or prior content ──
     const beforeAdvance = sm.buildSessionProjection().messages;
     await setStep('- Current: T2\n- Next: none\n- Blockers: none');
-    const advanced = await journeyTurn({runner,sm,text:'advance',index:4});
+    const advanced = await journeyTurn({runner:runnerFor(),sm,text:'advance',index:3});
     assert.equal(advanced.drafts.length,1,'a relevant change is communicated');
     assert.match(advanced.drafts[0].content,/\*\*Current Step\*\*:.*T2/);
     const afterAdvance = sm.buildSessionProjection().messages;
-    assert.equal(afterAdvance.length, beforeAdvance.length+3,'only the turn messages and the new state were added');
     assert.equal(afterAdvance.at(-1).customType,'memory.plan-state','the new state lands at the end of the conversation');
     assert.deepEqual(wire(afterAdvance.slice(0,beforeAdvance.length)), wire(beforeAdvance),
       'previously sent history moved or changed when the plan advanced');
     const {convertToLlm:toLlm} = await sdkIndex();
     assert.equal(instructionsOf(toLlm(beforeAdvance)),instructionsOf(toLlm(afterAdvance)),'instructions must not change');
 
-    // ── Case 3: a tool added mid-conversation keeps the incremental representation ──
+    // A → B → A must communicate both changes: the comparison is with the last
+    // communicated value, not with anything ever seen in this session.
+    await setStep('- Current: T1\n- Next: none\n- Blockers: none');
+    const back = await journeyTurn({runner:runnerFor(),sm,text:'back to T1',index:4});
+    assert.equal(back.drafts.length,1,'returning to a previous value is still a change');
+    assert.match(back.drafts[0].content,/Current: T1/);
+
+    // ── Incremental tools and later system-prompt sections keep their position ──
     const toolA = {name:'alpha',description:'a',parameters:{type:'object',properties:{}}};
     const toolB = {name:'beta',description:'b',parameters:{type:'object',properties:{}}};
     const incremental = [
@@ -816,57 +868,234 @@ test('memory: real runner keeps sent history, instructions and incremental tool 
       {role:'system',content:'',toolsAdded:[toolB],timestamp:2},
       {role:'assistant',content:[{type:'text',text:'ok'}],api:'fixture',provider:'fixture',model:'fixture',stopReason:'stop',timestamp:3,usage:JOURNEY_USAGE},
     ];
-    const withMemory = await runner.emitContext(incremental);
-    assert.equal(withMemory[0].role,'system');
+    const withMemory = await runnerFor().emitContext(incremental);
     assert.deepEqual(withMemory[0].toolsAdded.map(t=>t.name),['alpha'],'initial tool declarations stay at the head');
     assert.equal(withMemory[2].role,'system','the mid-conversation tool addition is not moved to the head');
-    assert.deepEqual(withMemory[2].toolsAdded.map(t=>t.name),['beta'],'incremental tool declaration survives in place');
-    // ── Case 4: a later system-prompt section update is not relocated either ──
-    const sections = [
+    assert.deepEqual(withMemory[2].toolsAdded.map(t=>t.name),['beta'],'the incremental tool declaration survives in place');
+    const sectioned = await runnerFor().emitContext([
       {role:'system',content:'SYSTEM',toolsAdded:[toolA],timestamp:0},
       {role:'user',content:[{type:'text',text:'go'}],timestamp:1},
       {role:'system',content:'',sections:{'mcp_servers':'> updated section'},timestamp:2},
-    ];
-    const sectioned = await runner.emitContext(sections);
+    ]);
     assert.equal(sectioned[2].role,'system','the section update is not moved to the head');
     assert.equal(sectioned[2].sections['mcp_servers'],'> updated section');
 
-    // ── Case 5: a UI-only refresh changes neither instructions nor messages ──
+    // ── A UI-only refresh changes neither instructions nor messages ──
     const uiStatus = [];
-    const uiCtx = {cwd:dir, sessionManager:sm, mode:'tui', ui:{setStatus:(k,v)=>uiStatus.push([k,v]), setWidget:()=>{}}};
     const snapshot = sm.buildSessionProjection().messages;
     const snapshotEntries = sm.getEntries().length;
-    await Promise.all(memory.handlers.get('agent_settled').map(h=>h({}, uiCtx)));
-    assert.deepEqual(sm.buildSessionProjection().messages, snapshot, 'UI refresh must not alter the conversation');
-    assert.equal(sm.getEntries().length, snapshotEntries, 'UI refresh must not append entries');
+    await Promise.all(memory.handlers.get('agent_settled').map(h=>h({}, {cwd:dir, sessionManager:sm, mode:'tui', ui:{setStatus:(k,v)=>uiStatus.push([k,v]), setWidget:()=>{}}})));
+    assert.deepEqual(wire(sm.buildSessionProjection().messages), wire(snapshot), 'a UI refresh must not alter the conversation');
+    assert.equal(sm.getEntries().length, snapshotEntries, 'a UI refresh must not append entries');
     assert.ok(uiStatus.length>0,'the status surface still refreshes');
 
-    // ── Case 6: reopen, branch and compaction recover the right state ──
-    sm = SessionManager.open(sm.getSessionFile(), join(dir,'sessions'));
-    assert.ok(stateAt(sm.buildSessionProjection().messages)>=0,'state survives reopening');
-    const afterReopen = await journeyTurn({runner,sm,text:'reopened',index:5});
-    assert.equal(afterReopen.drafts.length,0,'reopening does not re-communicate an unchanged plan');
+    // ── Reopen: the runner is rebuilt on the live manager ──
+    live.reopen();
+    sm = live.sm;
+    assert.equal(live.aligned, true, 'reopening must leave the runner on the live manager');
+    assert.notEqual(sm, sm0, 'reopening replaces the manager instance');
+    assert.ok(stateAt(sm.buildSessionProjection().messages)>=0,'the state survives reopening');
+    const afterReopen = await journeyTurn({runner:runnerFor(),sm,text:'reopened',index:5});
+    assert.equal(afterReopen.drafts.length,0,'an unchanged plan is not re-communicated after reopening');
 
-    // Compaction that drops the communicated state must be recovered, not skipped.
+    // ── R1.2: the document changed externally while the session was closed ──
+    const beforeEdit = sm.buildSessionProjection().messages.findLast(m=>m?.customType==='memory.plan-state').content;
+    await setStep('- Current: T2\n- Next: none\n- Blockers: none');
+    const afterExternalEdit = await startOfTurn();
+    assert.equal(afterExternalEdit.length,1,'the first request after reopening reports the external change');
+    assert.notEqual(afterExternalEdit[0].content, beforeEdit, 'the communicated state reflects the edit');
+    assert.match(afterExternalEdit[0].content,/\*\*Current Step\*\*:/);
+    await journeyTurn({runner:runnerFor(),sm,text:'sync',index:5});
+
+    // ── A real selection/branch change, not merely the same plan on both sides ──
+    const secondPlan = join(dir,'.ai','plan','2026-01-01-00000000-0000-0000-0000-000000000000-other.md');
+    await writeFile(secondPlan,(await planBody()).replace('# Plan: journey','# Plan: other'));
+    const branchLeaf = sm.getLeafId();
+    const other = await call('select_session_plan',{path:'.ai/plan/2026-01-01-00000000-0000-0000-0000-000000000000-other.md'});
+    assert.equal(other.details.selected,true,'the fixture must really switch selection');
+    const switched = await journeyTurn({runner:runnerFor(),sm,text:'switch plan',index:6});
+    assert.equal(switched.drafts.length,1,'the new selection is communicated');
+    assert.match(switched.drafts[0].content,/other\.md/);
+    sm.branch(branchLeaf);
+    const backOnFirst = await journeyTurn({runner:runnerFor(),sm,text:'back',index:7});
+    assert.equal(backOnFirst.drafts.length,0,'this branch already carries the state for its own selection');
+    assert.doesNotMatch(JSON.stringify(backOnFirst.drafts),/other\.md/,'the other branch state does not leak');
+
+    sm.branch(earlyLeaf);
+    assert.equal(stateAt(sm.buildSessionProjection().messages),-1,'the earlier branch never received the state');
+    const onEarlier = await journeyTurn({runner:runnerFor(),sm,text:'other branch',index:8});
+    assert.equal(onEarlier.drafts.length,1,'a branch without the state gets it communicated again');
+    assert.match(onEarlier.drafts[0].content,/journey/);
+    const onEarlierStart = await startOfTurn();
+    assert.equal(onEarlierStart.length,0,'the branch now carries the state already');
+
+    // ── Compaction that drops the state must be recovered ──
     const kept = sm.appendMessage({role:'user',content:[{type:'text',text:'kept after compaction'}],timestamp:400});
     sm.appendCompaction('fixture summary', kept, 100);
     assert.equal(stateAt(sm.buildSessionProjection().messages),-1,'compaction dropped the communicated state');
-    const afterCompaction = await journeyTurn({runner,sm,text:'post-compaction',index:6});
-    assert.equal(afterCompaction.drafts.length,1,'state is communicated again after compaction dropped it');
-    assert.match(afterCompaction.drafts[0].content,/Current Step/);
+    const afterCompactionStart = await startOfTurn();
+    assert.equal(afterCompactionStart.length,1,'the first request after compaction carries the state again');
+    assert.match(afterCompactionStart[0].content,/Current Step/);
+    const afterCompaction = await journeyTurn({runner:runnerFor(),sm,text:'post-compaction',index:9});
+    assert.equal(afterCompaction.drafts.length,1,'turn_end communicates it too: only AgentSession persists the start-of-turn message');
+    assert.deepEqual(await startOfTurn(), [], 'once the entry is in the session, neither hook repeats it');
 
-    // ── Case 7: a missing selected plan is reported, never recreated ──
-    const leaf = sm.getLeafId();
+    // ── A missing selected plan is reported, never recreated ──
     await rm(planAbs);
-    const missing = await journeyTurn({runner,sm,text:'plan gone',index:7});
+    const missingStart = await startOfTurn();
+    assert.equal(missingStart.length,1,'the first request reports the loss instead of silently keeping the old state');
+    assert.match(missingStart[0].content,/Active plan unavailable/);
+    const missing = await journeyTurn({runner:runnerFor(),sm,text:'plan gone',index:10});
     assert.equal(missing.drafts.length,1);
     assert.match(missing.drafts[0].content,/Active plan unavailable/);
     assert.equal(existsSync(planAbs),false,'the plan file must not be recreated');
     await assert.rejects(call('get_current_plan'),/missing, non-file, or out-of-scope|no active plan selection/,
       'the tools report the dangling selection instead of inventing a plan');
-    sm.branch(leaf);
-    assert.ok(stateAt(sm.buildSessionProjection().messages)>=0,'switching back restores that branch state');
   } finally {
     await rm(dir,{recursive:true,force:true});
+  }
+});
+
+test('memory: turn_end preserves entries proposed by earlier handlers', {skip: !sdkRoot}, async () => {
+  const {SessionManager, ExtensionRunner, createExtensionRuntime} = await sdkIndex();
+  const dir = await mkdtemp(join(tmpdir(),'pi-memory-sentinel-'));
+  try {
+    const sm = SessionManager.create(dir, join(dir,'sessions'));
+    sm.appendMessage({role:'assistant',content:[],api:'fixture',provider:'fixture',model:'fixture',stopReason:'stop',timestamp:0,usage:JOURNEY_USAGE});
+    const sentinelPath = join(dir,'sentinel.ts');
+    await writeFile(sentinelPath, SENTINEL_EXT);
+    const {runtime, extensions} = await loadMemory(dir, [sentinelPath]);
+    const live = liveRunner({extensions, runtime, dir, sm}, ExtensionRunner, SessionManager);
+    const call = (name, params={}) => {
+      const registered = extensions.at(-1).tools.get(name);
+      return (registered.definition??registered).execute('fixture',params,undefined,undefined,{cwd:dir,sessionManager:sm});
+    };
+    await call('create_session_plan',{slug:'sentinel'});
+
+    // Memory has something to say: the sentinel entry must survive, once, in order.
+    const talking = await journeyTurn({runner:live.runner,sm,text:'first',index:1});
+    assert.deepEqual(talking.drafts.map(d=>d.customType), ['test.sentinel','memory.plan-state'],
+      'both entries survive, in handler order');
+    assert.equal(sm.getBranch().filter(e=>e.customType==='test.sentinel').length,1,'the sentinel is stored exactly once');
+    assert.equal(sm.getBranch().filter(e=>e.customType==='memory.plan-state').length,1);
+
+    // Memory has nothing to say: returning nothing must leave the accumulator intact.
+    const quiet = await journeyTurn({runner:live.runner,sm,text:'second',index:2});
+    assert.deepEqual(quiet.drafts.map(d=>d.customType), ['test.sentinel'],
+      'memory adds nothing but must not drop the earlier handler entry');
+  } finally {
+    await rm(dir,{recursive:true,force:true});
+  }
+});
+
+// --- Real AgentSession cycle -------------------------------------------------
+// Drives the installed AgentSession with a fake provider and fake local tools.
+// Observed boundary: the transcript handed to the provider layer
+// (`Models.streamSimple`, already converted by the agent) plus the real
+// `convertToLlm` applied to the session projection. The provider-specific
+// converter and the transport payload are NOT exercised here.
+const FAKE_USAGE = {input:1,output:1,cacheRead:0,cacheWrite:0,totalTokens:2,cost:{input:0,output:0,cacheRead:0,cacheWrite:0,total:0}};
+
+/** Fake provider queue: each entry is the reply for one request, in order. */
+function fakeProviderRuntime(replies) {
+  const requests = [];
+  const model = {id:'fake-1', name:'Fake', provider:'fake', api:'openai-completions', baseUrl:'',
+    reasoning:false, input:['text'], cost:{input:0,output:0,cacheRead:0,cacheWrite:0},
+    contextWindow:200000, maxTokens:4096};
+  // The agent's streamFn calls `modelRuntime.streamSimple`, so this is where the
+  // real request transcript is observed. Recorded before the fake reply is built.
+  const stream = (m, ctx) => {
+    requests.push(structuredClone(ctx.messages));
+    const reply = replies.shift() ?? {text:'(sin respuesta preparada)', tool:null};
+    const s = createAssistantMessageEventStream();
+    const toolCall = reply.tool
+      ? {type:'toolCall', id:`tc${requests.length}`, name:reply.tool.name, arguments:reply.tool.arguments}
+      : null;
+    const message = {role:'assistant',
+      content: toolCall ? [{type:'text',text:reply.text}, toolCall] : [{type:'text',text:reply.text}],
+      api:m.api, provider:m.provider, model:m.id, stopReason: toolCall?'toolUse':'stop',
+      timestamp:Date.now(), usage:FAKE_USAGE};
+    s.push({type:'start', message});
+    s.push({type:'text_start', contentIndex:0});
+    s.push({type:'text_delta', contentIndex:0, delta:reply.text});
+    s.push({type:'text_end', contentIndex:0});
+    if (toolCall) { s.push({type:'toolcall_start', contentIndex:1, toolCall}); s.push({type:'toolcall_end', contentIndex:1, toolCall}); }
+    s.push({type:'done', reason: toolCall?'toolUse':'stop', message});
+    s.resolveFinalResult(message);
+    s.end();
+    return s;
+  };
+  const provider = {id:'fake', name:'Fake', baseUrl:'', auth:{type:'none'}, getModels:()=>[model], stream, streamSimple:stream};
+  return {model, requests, runtime: {
+    getProviders:()=>[provider], getProvider:(id)=>id==='fake'?provider:undefined,
+    getModels:(p)=>!p||p==='fake'?[model]:[], getModel:(p,id)=>p==='fake'&&id===model.id?model:undefined,
+    getAvailable:()=>[model], getModelOfType:()=>undefined, getModelsOfType:()=>[],
+    getAllModels:()=>[], getAllAvailable:()=>[], getAuth:()=>({type:'none'}),
+    getAuthStatus:()=>({authenticated:true}), hasConfiguredAuth:()=>true,
+    refresh:async()=>({}), listCredentials:()=>[], setApiKey:async()=>{},
+    stream, streamSimple:stream,
+  }};
+}
+
+async function openSession({dir, agentDir, replies}) {
+  const sdk = await sdkIndex();
+  const resourceLoader = new sdk.DefaultResourceLoader({
+    cwd:dir, agentDir,
+    additionalExtensionPaths:[join(here,'../memory.ts')],
+    appendSystemPrompt:['STATIC POLICY LINE'],
+  });
+  await resourceLoader.reload();
+  const {model, requests, runtime} = fakeProviderRuntime(replies);
+  const tools = [{name:'nota', description:'registra una nota local',
+    parameters:{type:'object', properties:{text:{type:'string'}}, required:['text']},
+    execute:async ()=>'nota registrada'}];
+  const {session} = await sdk.createAgentSession({
+    cwd:dir, agentDir, resourceLoader, modelRuntime:runtime, model, thinkingLevel:'off', customTools:tools,
+  });
+  return {session, requests};
+}
+
+const PLAN_TEXT = t => JSON.stringify(t).includes('**Plan**:');
+const containsText = (messages, needle) => messages.filter(m=>JSON.stringify(m.content).includes(needle)).length;
+
+test('memory: a real AgentSession turn carries the plan state from the tool call to the next request', {skip: !sdkRoot}, async () => {
+  const dir = await mkdtemp(join(tmpdir(),'pi-memory-cycle-'));
+  const agentDir = await mkdtemp(join(tmpdir(),'pi-memory-agentdir-'));
+  // Request 1 creates the plan; request 2 is the follow-up after the tool result.
+  const replies = [
+    {text:'creo el plan', tool:{name:'create_session_plan', arguments:{slug:'via-ciclo'}}},
+    {text:'plan creado', tool:null},
+    {text:'sigo', tool:null},
+  ];
+  try {
+    const {session, requests} = await openSession({dir, agentDir, replies});
+    await session.prompt('empieza');
+    assert.equal(session.isIdle, true, 'the turn settled');
+
+    assert.equal(requests.length, 2,'one request, one tool result, one follow-up request, no extra turn');
+    const [first, second] = requests;
+    assert.deepEqual(first.map(m=>m.role), ['system','user'],'the first request is the user turn on its own');
+    assert.ok(!PLAN_TEXT(first),'no plan existed when this request was built');
+
+    const toolIndex = second.findIndex(m=>m.role==='toolResult');
+    assert.ok(toolIndex>=0,'the plan tool really ran');
+    assert.match(JSON.stringify(second[toolIndex].content),/Created session plan at:/, 'the plan tool really ran');
+    assert.ok(/\.ai\/plan\//.test(JSON.stringify(second[toolIndex].content)), 'the tool reports the plan path');
+    assert.equal(containsText(second,'empieza'), 1,'no extra user message was inserted for the continuation');
+    assert.ok(PLAN_TEXT(second.at(-1)),'the state reaches the follow-up request');
+    assert.equal(toolIndex, second.length-2,'the state is placed after the tool result, not before it');
+
+    // The next turn needs no new copy: the state is already in the effective context.
+    await session.prompt('sigue');
+    assert.equal(requests.length, 3,'the second turn takes a single request');
+    const third = requests[2];
+    assert.equal(containsText(third,'**Plan**:'), 1,'exactly one copy of the state is present');
+    assert.ok(!PLAN_TEXT(third.at(-1)),'the state is not re-appended at the end of the later request');
+    const stateIndex = third.findIndex(m=>PLAN_TEXT(m));
+    const lastUser = third.findLastIndex(m=>m.role==='user');
+    assert.ok(stateIndex < lastUser,'the state keeps its historical position instead of moving to the head');
+  } finally {
+    await rm(dir,{recursive:true,force:true});
+    await rm(agentDir,{recursive:true,force:true});
   }
 });

@@ -52,12 +52,30 @@ test("workflow policy lives in APPEND_SYSTEM.md so no extension rebuilds the pro
 
 test("no extension rewrites the request head: no systemPrompt, no context projection", () => {
 	const source = readFileSync(new URL("../pi/.pi/agent/extensions/memory.ts", import.meta.url), "utf8");
-	const start = source.indexOf('pi.on("before_agent_start"');
-	assert.ok(start >= 0, "before_agent_start hook must exist");
-	const body = source.slice(start, source.indexOf('\n\tpi.on(', start + 1)).replace(/\/\/[^\n]*/g, "");
-	assert.ok(!/\bsystemPrompt\s*:/.test(body), "before_agent_start must not return a systemPrompt");
+	const hookBody = (event: string) => {
+		const start = source.indexOf(`pi.on("${event}"`);
+		assert.ok(start >= 0, `${event} hook must exist`);
+		return source.slice(start, source.indexOf('\n\tpi.on(', start + 1)).replace(/\/\/[^\n]*/g, "");
+	};
+	const beforeStart = hookBody("before_agent_start");
+	assert.ok(!/\bsystemPrompt\s*:/.test(beforeStart), "before_agent_start must not return a systemPrompt");
+	assert.ok(
+		/\{\s*message:\s*\{/.test(beforeStart),
+		"before_agent_start must use the native message field, which is persisted rather than projected",
+	);
 	assert.ok(!source.includes('pi.on("context"'), "a context projection would rebuild the head on every request");
-	assert.ok(source.includes('pi.on("turn_end"'), "the state must be communicated at turn_end");
+});
+
+test("turn_end keeps entries proposed by earlier handlers and never asks for another turn", () => {
+	const source = readFileSync(new URL("../pi/.pi/agent/extensions/memory.ts", import.meta.url), "utf8");
+	const start = source.indexOf('pi.on("turn_end"');
+	assert.ok(start >= 0, "turn_end hook must exist");
+	const body = source.slice(start, source.indexOf('\n\tpi.on(', start + 1)).replace(/\/\/[^\n]*/g, "");
+	assert.ok(
+		/\.\.\.\(event\.entries \?\? \[\]\)/.test(body),
+		"emitBoundary replaces the accumulated array, so turn_end must carry event.entries over",
+	);
+	assert.ok(!/\bcontinue\s*:/.test(body), "publishing state must not change another handler's continue decision");
 });
 
 test("plan state block carries path, status and current step, and omits derivable detail", () => {

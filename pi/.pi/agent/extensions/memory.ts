@@ -632,6 +632,53 @@ export function planStateBlock(
  */
 const PLAN_STATE_TYPE = "memory.plan-state";
 
+/**
+ * Last plan-state block present in the messages the model actually receives, or
+ * undefined when it has never been communicated in the applicable context.
+ */
+function lastCommunicatedPlanState(messages: unknown): { content?: string } | undefined {
+	if (!Array.isArray(messages)) return undefined;
+	return messages.findLast((message: any) => message?.customType === PLAN_STATE_TYPE) as
+		| { content?: string }
+		| undefined;
+}
+
+/**
+ * Messages the model is about to receive, used by `before_agent_start` where the
+ * boundary preview does not exist. The session projection is branch-aware and
+ * reflects the compaction that Pi runs before this hook, so it is the applicable
+ * context rather than the whole session.
+ */
+function effectiveContextMessages(ctx: any): unknown {
+	try {
+		return ctx?.sessionManager?.buildSessionProjection?.().messages;
+	} catch {
+		return undefined;
+	}
+}
+
+/**
+ * Plan state that still has to be communicated, or undefined when the model already
+ * receives exactly this block.
+ *
+ * The comparison is with the last communicated value, not with anything ever seen:
+ * A → B → A communicates both changes, while a branch or compaction that dropped the
+ * entry re-communicates it instead of staying silent.
+ *
+ * Returning undefined means no second copy is added; it says nothing about cost, and a
+ * persisted entry is not an entry the model has already processed.
+ */
+async function pendingPlanState(cwd: string, ctx: any, applicableMessages: unknown): Promise<string | undefined> {
+	const resolved = await resolveActivePlan(cwd, ctx);
+	const content = resolved.planPath ? await readIfExists(path.join(cwd, resolved.planPath)) : "";
+	const snapshot = content ? planSnapshot(content, resolved.planPath!) : undefined;
+	const humanStep = content ? planHumanCurrentStep(content) : undefined;
+	const communicated = lastCommunicatedPlanState(applicableMessages);
+	const block = planStateBlock(snapshot, resolved.blocked, humanStep, communicated !== undefined);
+	if (!block || block === communicated?.content) return undefined;
+	return block;
+}
+
 /** Update the status line from a plan snapshot; no-op outside TUI and never throws. */
 function updatePlanUI(ctx: any, snapshot?: PlanSnapshot, blocked?: string): void {
 	try {
@@ -1039,41 +1086,54 @@ export default function (pi: ExtensionAPI) {
 	// Deliberately returns no `systemPrompt`. Returning one sets Pi's
 	// `forceSystemPrompt`, and its projection then rebuilds the request head on every
 	// turn and restates the entire tool set there, discarding the incremental tool
-	// declarations. A changing head truncates the cached prompt prefix, which is what
-	// capped the cache at roughly the size of the tool block. The workflow policy
+	// declarations. A changing head invalidates whatever the provider had cached of the
+	// prefix, which is the mechanism behind the observed `cacheRead` freeze. That link
+	// is an inference from local request traces, not a provider-confirmed cause, and no
+	// saving is claimed here. The workflow policy
 	// therefore lives in APPEND_SYSTEM.md, and the plan reaches the model through the
-	// persisted message committed at `turn_end` below.
+	// persisted messages below.
+	//
+	// `context` is deliberately not used either: a request-time projection is rebuilt
+	// on every call, and returning a changed conversation from a `context` handler
+	// makes Pi restore the prompt through `restoreSystemMessages`, which rebuilds the
+	// head and can move system and tool declarations to the front.
 	pi.on("before_agent_start", async (event, ctx) => {
 		await ensureProjectFiles(event.systemPromptOptions?.cwd ?? ctx.cwd);
 		await refreshPlanUI(ctx);
+		try {
+			// `BeforeAgentStartEventResult.message` is the native field for this. It is
+			// not `systemPrompt`, so nothing about the request head changes, and unlike
+			// a `context` projection the entry is appended to the conversation and
+			// persisted, so the first request of the turn carries it.
+			//
+			// This runs once per agent loop, not once per provider call, so automatic
+			// compaction *during* a run does not reach it; `turn_end` covers that case
+			// because both hooks compare against the context the model actually gets.
+			const block = await pendingPlanState(ctx.cwd, ctx, effectiveContextMessages(ctx));
+			if (!block) return;
+			return { message: { customType: PLAN_STATE_TYPE, content: block, display: false } };
+		} catch {
+			return;
+		}
 	});
 
-	// Communicate the plan state as a real session entry appended at the end of the
-	// turn. It is not re-derived per request, so it keeps the position it was sent
-	// at and earlier messages are never rewritten, moved or dropped to show it.
-	//
-	// `context` is deliberately not used: a request-time projection is rebuilt on every
-	// call, and returning a changed conversation from a `context` handler makes Pi
-	// restore the prompt through `restoreSystemMessages`, which rebuilds the head and
-	// can move system and tool declarations to the front.
+	// Communicate ordinary progress as a real session entry appended at the end of the
+	// turn. It is not re-derived per request, so it keeps the position it was sent at
+	// and earlier messages are never rewritten, moved or dropped to show it.
 	pi.on("turn_end", async (event, ctx) => {
 		try {
-			const resolved = await resolveActivePlan(ctx.cwd, ctx);
-			const content = resolved.planPath ? await readIfExists(path.join(ctx.cwd, resolved.planPath)) : "";
-			const snapshot = content ? planSnapshot(content, resolved.planPath!) : undefined;
-			const humanStep = content ? planHumanCurrentStep(content) : undefined;
-			// Compare against the last state the model actually receives, which is the
-			// active branch after compaction. A session-level marker would go stale
-			// there and would suppress a needed update; comparing with any older match
-			// would swallow a change back to a previous value.
-			const communicated = event.context.contextMessages.findLast(
-				(message: any) => message?.customType === PLAN_STATE_TYPE,
-			) as { content?: string } | undefined;
-			const block = planStateBlock(snapshot, resolved.blocked, humanStep, communicated !== undefined);
-			if (!block || block === communicated?.content) return;
+			const block = await pendingPlanState(ctx.cwd, ctx, event.context.contextMessages);
+			if (!block) return;
 
+			// `emitBoundary` replaces the accumulated array with whatever a handler
+			// returns, so entries proposed by earlier handlers are carried over in
+			// order. `continue` is deliberately untouched: publishing state is not a
+			// reason to ask for another turn.
 			return {
-				entries: [{ type: "custom_message", customType: PLAN_STATE_TYPE, content: block, display: false }],
+				entries: [
+					...(event.entries ?? []),
+					{ type: "custom_message", customType: PLAN_STATE_TYPE, content: block, display: false },
+				],
 			};
 		} catch {
 			return;
