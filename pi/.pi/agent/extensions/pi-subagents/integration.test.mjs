@@ -997,11 +997,11 @@ test('memory: turn_end preserves entries proposed by earlier handlers', {skip: !
 const FAKE_USAGE = {input:1,output:1,cacheRead:0,cacheWrite:0,totalTokens:2,cost:{input:0,output:0,cacheRead:0,cacheWrite:0,total:0}};
 
 /** Fake provider queue: each entry is the reply for one request, in order. */
-function fakeProviderRuntime(replies) {
+function fakeProviderRuntime(replies, {contextWindow = 200000} = {}) {
   const requests = [];
   const model = {id:'fake-1', name:'Fake', provider:'fake', api:'openai-completions', baseUrl:'',
     reasoning:false, input:['text'], cost:{input:0,output:0,cacheRead:0,cacheWrite:0},
-    contextWindow:200000, maxTokens:4096};
+    contextWindow, maxTokens:4096};
   // The agent's streamFn calls `modelRuntime.streamSimple`, so this is where the
   // real request transcript is observed. Recorded before the fake reply is built.
   const stream = (m, ctx) => {
@@ -1037,18 +1037,21 @@ function fakeProviderRuntime(replies) {
   }};
 }
 
-async function openSession({dir, agentDir, replies}) {
+async function openSession({dir, agentDir, replies, extensions = [], contextWindow, toolResult = 'nota registrada'}) {
   const sdk = await sdkIndex();
   const resourceLoader = new sdk.DefaultResourceLoader({
     cwd:dir, agentDir,
     additionalExtensionPaths:[join(here,'../memory.ts')],
+    // Inline factories load beside memory.ts in the same runner, so the probe observes
+    // the same live runner and session manager the extension under test uses.
+    extensionFactories:extensions,
     appendSystemPrompt:['STATIC POLICY LINE'],
   });
   await resourceLoader.reload();
-  const {model, requests, runtime} = fakeProviderRuntime(replies);
+  const {model, requests, runtime} = fakeProviderRuntime(replies, {contextWindow});
   const tools = [{name:'nota', description:'registra una nota local',
     parameters:{type:'object', properties:{text:{type:'string'}}, required:['text']},
-    execute:async ()=>'nota registrada'}];
+    execute:async ()=>({content:[{type:'text', text:toolResult}]})}];
   const {session} = await sdk.createAgentSession({
     cwd:dir, agentDir, resourceLoader, modelRuntime:runtime, model, thinkingLevel:'off', customTools:tools,
   });
@@ -1094,6 +1097,173 @@ test('memory: a real AgentSession turn carries the plan state from the tool call
     const stateIndex = third.findIndex(m=>PLAN_TEXT(m));
     const lastUser = third.findLastIndex(m=>m.role==='user');
     assert.ok(stateIndex < lastUser,'the state keeps its historical position instead of moving to the head');
+  } finally {
+    await rm(dir,{recursive:true,force:true});
+    await rm(agentDir,{recursive:true,force:true});
+  }
+});
+
+// --- Compaction inside a run -------------------------------------------------
+// `AgentSession` runs `agent.finishTurn` (which dispatches the `turn_end` boundary)
+// and only afterwards `agent.prepareNextTurnWithContext`, whose
+// `_compactBeforeNextAssistantResponse` may compact and then rebuild the context from the
+// session projection. `before_agent_start` belongs to `prompt()`, so it does not run again
+// on that continuation: a compaction that drops the state message leaves the next request
+// without it, and `turn_end` for that request only runs afterwards.
+//
+// The compaction itself is supplied through the SDK's own interception point
+// (`session_before_compact` returning `compaction`), so no provider is involved and the
+// kept-entry selection is exact. The fictitious summary mentions nothing about the plan,
+// so nothing rebuilds the state by accident.
+
+const FICTIVE_SUMMARY = 'RESUMEN FICTICIO DE PRUEBA. Trabajo en curso, sin detalle de plan.';
+
+/**
+ * Inline extension that records the real event order and decides, deterministically,
+ * which entries the compaction keeps.
+ *
+ * `keep: 'drop-state'` keeps everything from the entry after the state message, which
+ * removes it from the context on purpose. `keep: 'keep-state'` keeps from the state
+ * message itself. `cancel: true` refuses the compaction instead of replacing it.
+ */
+function compactionProbe({keep = 'drop-state', cancel = false} = {}) {
+  const order = [];
+  const compactions = [];
+  const extension = {name:'compaction-probe', factory:pi=>{
+    pi.on('before_agent_start', ()=>{ order.push('before_agent_start'); });
+    pi.on('turn_end', ()=>{ order.push('turn_end'); });
+    pi.on('session_compact', ()=>{ order.push('session_compact'); });
+    pi.on('session_before_compact', event=>{
+      order.push('session_before_compact');
+      const stateAt = event.branchEntries.findIndex(e=>e.type==='custom_message' && e.customType==='memory.plan-state');
+      const from = keep==='keep-state' ? stateAt : stateAt+1;
+      compactions.push({reason:event.reason, stateEntryIndex:stateAt});
+      if (cancel) return {cancel:true};
+      return {compaction:{
+        summary:FICTIVE_SUMMARY,
+        firstKeptEntryId:event.branchEntries[from].id,
+        tokensBefore:event.preparation?.tokensBefore ?? 0,
+      }};
+    });
+  }};
+  return {extension, order, compactions};
+}
+
+/** One tool result large enough to cross the real threshold between two requests. */
+const BIG_TOOL_RESULT = 'Y'.repeat(20000);
+// The fake model reports `input:1`, so Pi's own estimate for a projection ending in an
+// assistant message is that usage plus the trailing messages. This result is therefore
+// the only thing that pushes the projection past `contextWindow - reserveTokens`, and the
+// reserve below keeps the threshold well clear of the turns that must not compact.
+async function compactingSession({dir, agentDir, probe}) {
+  await writeFile(join(agentDir,'settings.json'), JSON.stringify({
+    compaction:{enabled:true, reserveTokens:18000, keepRecentTokens:500},
+  }));
+  return openSession({
+    dir, agentDir, extensions:[probe.extension], contextWindow:20000, toolResult:BIG_TOOL_RESULT,
+    // Turn 1 communicates the state; turn 2 makes the tool call that crosses the threshold.
+    replies:[
+      {text:'creo el plan', tool:{name:'create_session_plan', arguments:{slug:'via-compactacion'}}},
+      {text:'plan creado', tool:null},
+      {text:'herramienta grande', tool:{name:'nota', arguments:{text:'grande'}}},
+      {text:'fin', tool:null},
+    ],
+  });
+}
+
+const stateEntries = session =>
+  session.sessionManager.getBranch().filter(e=>e.type==='custom_message' && e.customType==='memory.plan-state');
+
+test('memory: the first request after a mid-turn compaction carries the plan state again', {skip: !sdkRoot}, async () => {
+  const dir = await mkdtemp(join(tmpdir(),'pi-memory-compact-'));
+  const agentDir = await mkdtemp(join(tmpdir(),'pi-memory-agentdir-'));
+  const probe = compactionProbe({keep:'drop-state'});
+  try {
+    const {session, requests} = await compactingSession({dir, agentDir, probe});
+    await session.prompt('empieza');
+    assert.equal(probe.compactions.length, 0, 'turn 1 does not compact: the state is communicated there');
+
+    await session.prompt('sigue');
+    assert.equal(session.isIdle, true, 'the second turn settled');
+
+    // --- Where the compaction sits relative to turn_end and the next request ---
+    assert.equal(probe.compactions.length, 1, 'exactly one compaction, and it happens during turn 2');
+    assert.equal(probe.compactions[0].reason, 'threshold', 'the real context threshold triggered it, not a manual /compact');
+    assert.ok(probe.compactions[0].stateEntryIndex>=0, 'the state entry existed and the compaction removed it');
+    assert.deepEqual(
+      probe.order.slice(probe.order.indexOf('session_before_compact')-1, probe.order.indexOf('session_before_compact')+1),
+      ['turn_end','session_before_compact'],
+      'the compaction runs after turn_end has already run for that turn',
+    );
+    assert.equal(probe.order.filter(e=>e==='before_agent_start').length, 2,
+      'before_agent_start fires once per prompt, not on the continuation');
+    assert.equal(probe.order.filter(e=>e==='turn_end').length, 4,
+      'turn_end runs once per assistant message, so the compaction falls between two of them');
+
+    // --- The first request built after that compaction ---
+    assert.equal(requests.length, 4, 'two requests per turn: the compaction does not start a new turn');
+    const after = requests[3];
+    assert.equal(containsText(after,'sigue'), 1, 'no extra user message was inserted for the continuation');
+    assert.equal(containsText(after,FICTIVE_SUMMARY), 1, 'the compaction summary is in the context');
+    assert.equal(containsText(after,'**Plan**:'), 1, 'the first request after the compaction carries the state again');
+    const summaryIndex = after.findIndex(m=>JSON.stringify(m.content).includes(FICTIVE_SUMMARY));
+    const stateIndex = after.findIndex(m=>PLAN_TEXT(m));
+    assert.ok(summaryIndex>=0 && stateIndex > summaryIndex,
+      'the recovered state keeps its position after the summary instead of moving to the head');
+
+    // --- It is really in the session, not queued for a later turn ---
+    const branch = session.sessionManager.getBranch();
+    const compactionAt = branch.findIndex(e=>e.type==='compaction');
+    const recoveredAt = branch.findIndex((e,i)=>i>compactionAt && e.type==='custom_message' && e.customType==='memory.plan-state');
+    assert.ok(recoveredAt>compactionAt, 'the recovered state is persisted after the compaction, before the answer to that request');
+    const finalAssistant = branch.findIndex(e=>e.type==='message' && e.message.role==='assistant' && e.message.content?.some?.(c=>c.text==='fin'));
+    assert.ok(recoveredAt < finalAssistant, 'and not appended afterwards by the next turn_end');
+    assert.equal(stateEntries(session).length, 2, 'the state is communicated once per applicable context, never twice');
+  } finally {
+    await rm(dir,{recursive:true,force:true});
+    await rm(agentDir,{recursive:true,force:true});
+  }
+});
+
+test('memory: a compaction that keeps the state does not duplicate it', {skip: !sdkRoot}, async () => {
+  const dir = await mkdtemp(join(tmpdir(),'pi-memory-compact-keep-'));
+  const agentDir = await mkdtemp(join(tmpdir(),'pi-memory-agentdir-'));
+  const probe = compactionProbe({keep:'keep-state'});
+  try {
+    const {session, requests} = await compactingSession({dir, agentDir, probe});
+    await session.prompt('empieza');
+    await session.prompt('sigue');
+    assert.equal(session.isIdle, true, 'the second turn settled');
+    assert.equal(probe.compactions.length, 1, 'the same real threshold compaction ran');
+
+    const after = requests[3];
+    assert.equal(containsText(after,'**Plan**:'), 1,
+      'the state that survived the compaction is still the only copy: no second one is appended');
+    assert.ok(!probe.order.includes('session_compact') || stateEntries(session).length===1,
+      'session_compact ran and still added nothing, because the comparison is against the compacted projection');
+    assert.equal(containsText(after,'sigue'), 1, 'no extra user message was inserted for the continuation');
+  } finally {
+    await rm(dir,{recursive:true,force:true});
+    await rm(agentDir,{recursive:true,force:true});
+  }
+});
+
+test('memory: a cancelled compaction neither duplicates the state nor claims it was checked', {skip: !sdkRoot}, async () => {
+  const dir = await mkdtemp(join(tmpdir(),'pi-memory-compact-cancel-'));
+  const agentDir = await mkdtemp(join(tmpdir(),'pi-memory-agentdir-'));
+  const probe = compactionProbe({cancel:true});
+  try {
+    const {session, requests} = await compactingSession({dir, agentDir, probe});
+    await session.prompt('empieza');
+    const afterTurn1 = stateEntries(session).length;
+    await session.prompt('sigue');
+    assert.equal(session.isIdle, true, 'the second turn settled');
+
+    assert.equal(probe.compactions.length, 1, 'the threshold compaction was attempted');
+    assert.ok(!probe.order.includes('session_compact'),
+      'a cancelled compaction never emits session_compact, so nothing is re-communicated for a compaction that did not happen');
+    assert.equal(stateEntries(session).length, afterTurn1, 'the state is not duplicated or rewritten');
+    assert.ok(requests.every(r=>containsText(r,'**Plan**:')<=1), 'no request ever carries two copies of the state');
   } finally {
     await rm(dir,{recursive:true,force:true});
     await rm(agentDir,{recursive:true,force:true});

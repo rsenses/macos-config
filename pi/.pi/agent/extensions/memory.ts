@@ -1106,9 +1106,11 @@ export default function (pi: ExtensionAPI) {
 			// a `context` projection the entry is appended to the conversation and
 			// persisted, so the first request of the turn carries it.
 			//
-			// This runs once per agent loop, not once per provider call, so automatic
-			// compaction *during* a run does not reach it; `turn_end` covers that case
-			// because both hooks compare against the context the model actually gets.
+			// This runs once per agent loop, not once per provider call, so an automatic
+			// compaction *between two calls of the same run* does not reach it. `turn_end`
+			// covers the ordinary progress within a run, and `session_compact` covers the
+			// compaction that happens after it, because all three compare against the
+			// context the model actually receives.
 			const block = await pendingPlanState(ctx.cwd, ctx, effectiveContextMessages(ctx));
 			if (!block) return;
 			return { message: { customType: PLAN_STATE_TYPE, content: block, display: false } };
@@ -1157,6 +1159,32 @@ export default function (pi: ExtensionAPI) {
 
 	pi.on("session_compact", async (_event, ctx) => {
 		await refreshPlanUI(ctx);
+		// A compaction that keeps a recent slice can drop the state entry. Pi runs it
+		// from `prepareNextTurnWithContext`, that is after `finishTurn` has already
+		// dispatched `turn_end` for this turn and before the next request is rebuilt
+		// from the compacted projection, and `before_agent_start` belongs to `prompt()`,
+		// so neither of the other two hooks can refill that gap.
+		//
+		// The comparison is against the projection *after* the compaction, so this is
+		// also the deduplication: a state message that survived is still the last one
+		// communicated and nothing is sent. `sendMessage` is the native action and, with
+		// no `deliverAs`, it appends the message as a real session entry while Pi is
+		// between provider calls — which is exactly the state it is in while compacting
+		// mid-run — so the projection rebuilt afterwards already contains it. The
+		// regression checks the persisted entry in the branch and in the next request
+		// rather than trusting that internal branch. It is a session message, not a
+		// per-request projection, and it costs no extra model call.
+		//
+		// A failed or cancelled compaction emits `session_compact_failed` instead and
+		// never reaches this handler, so nothing is re-sent for a compaction that did not
+		// happen.
+		try {
+			const block = await pendingPlanState(ctx.cwd, ctx, effectiveContextMessages(ctx));
+			if (!block) return;
+			pi.sendMessage({ customType: PLAN_STATE_TYPE, content: block, display: false });
+		} catch {
+			return;
+		}
 	});
 
 	pi.on("tool_execution_end", async (_event, ctx) => {
