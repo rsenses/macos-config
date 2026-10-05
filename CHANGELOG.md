@@ -4,6 +4,9 @@ All notable changes to this project are documented here using Keep a Changelog a
 
 ## [Unreleased]
 
+### Added
+- Silent Pi cache diagnostics record per-run keyed request fingerprints, input-block fingerprints, response request IDs and token usage without saving prompts, tool content or credentials. Logs rotate locally; the extension adds no tools, notices, model calls or payload changes.
+
 ### Fixed
 - Legacy plan recovery no longer treats a modern full-UUID plan from another session as a short-ID legacy candidate when sessions share an eight-character prefix; genuine legacy recovery and identity checks remain intact.
 - The memory extension suite no longer asserts the pre-humanization plan format. `Current Step` and `Active task` assertions now expect resolved descriptions with their task IDs, and the suite passes again instead of failing on stale expectations.

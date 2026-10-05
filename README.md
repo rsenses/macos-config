@@ -113,6 +113,15 @@ Los estados generados por las herramientas —por ejemplo, historial de zsh, cac
 - Git usa un hook global de mensajes Conventional Commits, rebase al hacer pull, limpieza de referencias remotas y firma SSH.
 - Worktrunk prepara los worktrees con los archivos ignorados y, si está disponible, instala las herramientas declaradas por mise.
 
+## Diagnóstico temporal de caché de Pi
+
+`cache-diagnostics.ts` se carga como extensión local tras `/reload` o al reiniciar Pi. No cambia peticiones ni añade avisos o herramientas.
+Guarda `~/.pi/agent/cache-diagnostics/requests.jsonl` y una copia rotada `.1` (unos 2 MiB cada una; respeta `PI_CODING_AGENT_DIR`). Son archivos privados e ignorados por Git.
+Solo guarda huellas con una clave aleatoria no persistida, metadatos y uso de tokens; no guarda conversaciones ni credenciales.
+Las huellas se comparan dentro del mismo `run`; `request` enlaza petición, respuesta y uso. Los bloques de entrada permiten localizar cambios de prefijo.
+Observa el payload en su posición dentro de los hooks, no garantiza los bytes finales enviados ni identifica causas internas del proveedor. Las cabeceras de respuesta dependen del transporte.
+Si falla el almacenamiento, deja de registrar sin interrumpir Pi. Para desactivarla, retirar la extensión y recargar; los logs se pueden borrar.
+
 ## Pruebas
 
 Las pruebas se ejecutan sin tocar el estado personal:

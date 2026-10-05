@@ -5,32 +5,44 @@
   "defaultThinkingLevel": "xhigh",
   "modelThinkingLevels": {
     "openai-codex/gpt-6-luna": "xhigh",
-    "openai-codex/gpt-6.1-sol": "low"
+    "openai-codex/gpt-6.1-sol": "low",
+    "opencode-go/deepseek-v4.1-flash": "high",
+    "opencode-go/space-bunny-free": "max"
   },
   "showCacheMissNotices": true,
-  "defaultTools": [
-    "+codemode"
-  ],
+  "defaultTools": ["+codemode"],
   "shellPath": "/bin/zsh",
   "shellCommandPrefix": "eval \"$(mise env -s zsh)\"\nunset APP_URL APP_ENV",
   "theme": "light",
   "packages": [
     "npm:pi-lsp-bridge@2.3.0",
     "npm:pi-gpt-search@1.1.0",
-    "git:github.com/tmustier/pi-auto-compact",
-    "../../dev/contrib/pi-review"
+    "../../dev/contrib/pi-review",
+    "npm:@pinet/model-aware-compaction"
   ],
   "enabledModels": [
     "openai-codex/gpt-6-luna",
     "opencode-go/deepseek-v4.1-flash",
-    "openai-codex/gpt-6.1-sol"
+    "openai-codex/gpt-6.1-sol",
+    "opencode-go/space-bunny-free"
   ],
   "enableInstallTelemetry": false,
-  "npmCommand": [
-    "mise",
-    "exec",
-    "node@24",
-    "--",
-    "npm"
-  ]
+  "compaction": {
+    "enabled": true,
+    "keepRecentTokens": 20000,
+    "modelOverrides": {
+      "openai-codex/gpt-6-luna": {
+        "reserveTokens": 72000
+      },
+      "openai-codex/gpt-6.1-sol": {
+        "reserveTokens": 72000
+      }
+    }
+  },
+  "model-aware-compaction": {
+    "enabled": false,
+    "compactionModel": "openai-codex/gpt-6-luna:low",
+    "summaryReserveTokens": 16384
+  },
+  "npmCommand": ["mise", "exec", "node@24", "--", "npm"]
 }
