@@ -116,7 +116,7 @@ Los estados generados por las herramientas —por ejemplo, historial de zsh, cac
 ## Diagnóstico temporal de caché de Pi
 
 `cache-diagnostics.ts` se carga como extensión local tras `/reload` o al reiniciar Pi. No cambia peticiones ni añade avisos o herramientas.
-Guarda `~/.pi/agent/cache-diagnostics/requests.jsonl` y una copia rotada `.1` (unos 2 MiB cada una; respeta `PI_CODING_AGENT_DIR`). Son archivos privados e ignorados por Git.
+Guarda un archivo por ejecución, `~/.pi/agent/cache-diagnostics/requests.<run>.jsonl`, y su copia rotada `.1` (unos 2 MiB cada uno; respeta `PI_CODING_AGENT_DIR`). Son archivos privados e ignorados por Git.
 Solo guarda huellas con una clave aleatoria no persistida, metadatos y uso de tokens; no guarda conversaciones ni credenciales.
 Las huellas se comparan dentro del mismo `run`; `request` enlaza petición, respuesta y uso. Los bloques de entrada permiten localizar cambios de prefijo.
 Observa el payload en su posición dentro de los hooks, no garantiza los bytes finales enviados ni identifica causas internas del proveedor. Las cabeceras de respuesta dependen del transporte.

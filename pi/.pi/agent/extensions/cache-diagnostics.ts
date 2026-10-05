@@ -1,7 +1,7 @@
 import { createHmac, randomBytes, randomUUID } from "node:crypto";
 import { appendFileSync, mkdirSync, renameSync, statSync } from "node:fs";
 import { homedir } from "node:os";
-import { dirname, join } from "node:path";
+import { basename, dirname, join } from "node:path";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
 // Observation only: no payload/header changes, tools, prompts, notices or model calls.
@@ -9,26 +9,28 @@ import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 export function createRecorder(file: string, limit = 2 * 1024 * 1024) {
 	const key = randomBytes(32); // Never persisted; prevents guessing content from hashes.
 	const run = randomUUID();
+	const logFile = join(dirname(file), `${basename(file, ".jsonl")}.${run}.jsonl`);
 	const hash = (value: unknown) => createHmac("sha256", key).update(JSON.stringify(value) ?? "undefined").digest("hex");
 	let request = 0;
 	let disabled = false;
 	function write(type: string, data: Record<string, unknown>) {
 		if (disabled) return;
 		try {
-			mkdirSync(dirname(file), { recursive: true, mode: 0o700 });
+			mkdirSync(dirname(logFile), { recursive: true, mode: 0o700 });
 			const line = JSON.stringify({ time: new Date().toISOString(), run, request, type, ...data }) + "\n";
 			let size = 0;
-			try { size = statSync(file).size; } catch (error) {
+			try { size = statSync(logFile).size; } catch (error) {
 				if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
 			}
-			if (size + Buffer.byteLength(line) > limit) renameSync(file, file + ".1");
-			appendFileSync(file, line, { mode: 0o600 });
+			if (size + Buffer.byteLength(line) > limit) renameSync(logFile, logFile + ".1");
+			appendFileSync(logFile, line, { mode: 0o600 });
 		} catch {
 			// Diagnostics must never break inference; stop recording on storage failure.
 			disabled = true;
 		}
 	}
 	return {
+		file: logFile,
 		request(payload: unknown, session: string, model: { provider?: string; id?: string; api?: string; baseUrl?: string } | undefined) {
 			request++;
 			const body = payload as Record<string, unknown>;
