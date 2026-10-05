@@ -3,25 +3,18 @@ description: Review a saved implementation plan manually
 argument-hint: "[plan path or name]"
 ---
 
-Run a **manual-only** review of one saved implementation plan with the `plan-reviewer` subagent.
+Perform a manual-only, read-only review with exactly one `plan-reviewer` subagent. Load `ops` for the delegation contract.
 
-Plan selection:
-- If an argument was supplied, use that exact saved plan path or name: `$ARGUMENTS`. Locate it if the user gave a filename/name, but do not silently substitute a different plan.
-- If no argument was supplied, call `get_current_plan` and use only the active selection it resolves. If it is absent, ambiguous, or blocked, explain the problem and request an explicit selection; never choose the newest saved plan or use file modification time.
-- If the selected plan does not exist, stop and report the missing path; do not review a guessed alternative.
+Resolve the target:
+- With an argument, use the exact path/name: $ARGUMENTS. Locate a supplied filename without substituting another plan.
+- Otherwise use only the active selection from `get_current_plan`. An absent, ambiguous, blocked, or missing target requires an explicit selection or an actionable blocker; never choose the newest file.
 
-Rules:
-1. This workflow is activated only because the user invoked `/review-plan` or explicitly asked for a saved-plan review.
-2. Dispatch exactly one `plan-reviewer` subagent. Do not ask the architect or planner to perform this review, and do not let the architect invoke `plan-reviewer` merely because a review could be useful.
-3. Pass the reviewer a compact contract containing: the exact target path; the goal of challenging the saved plan against the codebase and domain documentation; the fact that the review is read-only; the requirement to use `grill-with-docs`; and the acceptance/output shape from the agent definition.
-4. After the reviewer returns, present its verdict, evidence, focused questions, and proposed plan amendments. Do not edit the plan or implementation as part of this prompt.
-5. Keep the review bounded to the selected plan and relevant evidence. Do not create a second plan.
+Send the canonical ops brief:
+- **Goal**: Challenge the exact saved plan against code and domain documentation: terminology, behavior, scope, risks, acceptance, and validation.
+- **Known**: Read-only, manual-only; use `grill-with-docs` as the review lens.
+- **Evidence**: Read the complete target, then only relevant code/docs; cite exact paths/lines.
+- **Acceptance**: The agent's required verdict and severity-ranked findings, focused one-at-a-time questions with recommended answers, and concrete proposed amendments.
+- **Checks**: Verify existence, complete reading, and source-backed claims; report actual checks.
+- **Stop**: Missing target, material ambiguity, or insufficient evidence; return `blocked` with the exact unresolved item.
 
-**Reviewer task contract**:
-
-- **Goal**: Adversarially review the saved plan at the exact selected path for coherence, domain terminology, codebase fit, scope, risks, acceptance, and validation.
-- **Known**: The plan is the canonical saved artifact; use the `grill-with-docs` skill as the review lens; this is read-only and manual-only.
-- **Evidence**: Read the complete target plan, then inspect only relevant repository files and documentation. Cite exact paths/lines.
-- **Acceptance**: Return the required `plan-reviewer` shape with a verdict, severity-ranked findings, one-at-a-time questions with recommended answers, and concrete plan amendments without editing files.
-- **Checks**: Confirm the target exists, read the full plan, verify claims against relevant code/docs, and report checks actually performed.
-- **Stop**: Missing target, material ambiguity, or insufficient repository evidence; return `blocked` with the exact unresolved item.
+Present the verdict, evidence, questions, and amendments. Do not edit the plan or implementation, create another plan, or replace this reviewer with architect/planner.

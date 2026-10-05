@@ -2,11 +2,6 @@
 description: Review whether current changes are properly grouped for commit
 ---
 
-Use the `ops` and `dev` skills.
+Read-only: inspect git status, staged, and unstaged changes without modifying files or committing.
 
-1. **Inspect**: Check git status, staged, and unstaged changes.
-2. **Analysis**: Determine if there's a single coherent intention or mixed concerns.
-3. **Group**: Propose clean commit groupings and which files belong to each.
-4. **Messages**: Suggest 2-3 precise Conventional Commit messages based on the goal.
-
-_Note: Be strict about logical separation. Do not modify files._
+Identify whether they express one coherent intention or mixed concerns. Propose clean commit groups with their files and 2-3 precise Conventional Commit messages. Use direct tools; no implementation workflow or skill load is needed merely to inspect Git.
