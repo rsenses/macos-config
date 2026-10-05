@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "1.0.1",
+  "lastChangelogVersion": "1.0.2",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-6-luna",
   "defaultThinkingLevel": "xhigh",
@@ -29,13 +29,12 @@
   "enableInstallTelemetry": false,
   "compaction": {
     "enabled": true,
-    "keepRecentTokens": 20000,
     "modelOverrides": {
-      "openai-codex/gpt-6-luna": {
-        "reserveTokens": 72000
+      "opencode-go/space-bunny-free": {
+        "reserveTokens": 750000
       },
-      "openai-codex/gpt-6.1-sol": {
-        "reserveTokens": 72000
+      "opencode-go/deepseek-v4.1-flash": {
+        "reserveTokens": 750000
       }
     }
   },
