@@ -5,10 +5,12 @@ All notable changes to this project are documented here using Keep a Changelog a
 ## [Unreleased]
 
 ### Fixed
+- Legacy plan recovery no longer treats a modern full-UUID plan from another session as a short-ID legacy candidate when sessions share an eight-character prefix; genuine legacy recovery and identity checks remain intact.
 - The memory extension suite no longer asserts the pre-humanization plan format. `Current Step` and `Active task` assertions now expect resolved descriptions with their task IDs, and the suite passes again instead of failing on stale expectations.
 - `chrome-devtools-mcp` is pinned to `1.10.1` instead of `@latest`. A new release can change the server's instructions and tool list, which rewrites the `mcp_servers` system-prompt section and the request's tool declarations, invalidating the prompt cache mid-session.
 
 ### Changed
+- Planner guidance no longer sets an output-length target and favors verifiable outcomes with only the execution detail needed, while retaining decisions, acceptance, risks and pending work.
 - The memory extension now treats the Markdown plan as the sole source of progress. Plan contents are available through explicit tools; remaining lifecycle hooks maintain only the existing status UI and never publish plan text. Session/branch-scoped selection and its confirmations remain intact. Coordinators consult the document at start or resume and update it after accepting verified work, with bounded task briefs for workers.
 - Consolidated Pi's full implementation validation contract in `ops` while keeping its fix-then-full-test gate and explicit approvals. `/plan` now records only the brief before invoking its mandatory planner; `/review-plan` uses the supported argument placeholder and never falls back to the newest file. General delegation is benefit-driven, changelog creation follows explicit project/user requirements, and debugging no longer requires a fixed hypothesis count or an arbitrary refactor-size threshold. Per-model startup thinking now records Luna `xhigh` and Sol 6.1 `low` without changing the selected default model or child profiles.
 - Pi now requires concise, plain-language plan proposals, progress, blockers, resumptions, and completion reports while retaining detailed execution plans and validation gates.

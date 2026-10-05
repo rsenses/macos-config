@@ -187,10 +187,9 @@ test("JSONL fixture preserves large events and distinguishes intermediate recove
   ];
   const state = createChildEventState();
   const parser = new JsonLineParser((line) => consumeChildEvent(state, JSON.parse(line)));
-  const prefix = [...fixture.slice(0, 4), fixture[5]].map(JSON.stringify);
-  const finalMessage = JSON.stringify(fixture[6]);
-  const childScript = `const lines = ${JSON.stringify(prefix)}; lines.push(${JSON.stringify(finalMessage)}); process.stdout.write(lines.join(String.fromCharCode(10)) + String.fromCharCode(10));`;
-  const child = spawn(process.execPath, ["-e", childScript], { stdio: ["ignore", "pipe", "ignore"] });
+  const lines = [...fixture.slice(0, 4), fixture[5], fixture[6]].map(JSON.stringify);
+  const child = spawn(process.execPath, ["-e", "process.stdin.pipe(process.stdout)"], { stdio: ["pipe", "pipe", "ignore"] });
+  child.stdin!.end(lines.join("\n") + "\n");
   for await (const chunk of child.stdout!) parser.push(chunk);
   parser.end();
   await once(child, "close");

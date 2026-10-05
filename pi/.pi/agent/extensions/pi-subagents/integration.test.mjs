@@ -41,26 +41,30 @@ async function settles(promise) {
   } finally { clearTimeout(timer); }
 }
 
-async function memoryFixture(run) {
+async function createMemorySessionFixture(dir, sessionId) {
   const {SessionManager} = await import(pathToFileURL(join(sdkRoot,'dist/index.js')));
   const {loadExtensions,createExtensionRuntime} = await import(pathToFileURL(join(sdkRoot,'dist/core/extensions/loader.js')));
+  let sm = SessionManager.create(dir,join(dir,'sessions'),sessionId ? {id:sessionId} : undefined);
+  // Real persistence starts after an assistant message; this one is entirely fictitious.
+  const before = sm.appendMessage({role:'assistant',content:[],api:'fixture',provider:'fixture',model:'fixture',stopReason:'stop',timestamp:0,
+    usage:{input:0,output:0,cacheRead:0,cacheWrite:0,totalTokens:0,cost:{input:0,output:0,cacheRead:0,cacheWrite:0,total:0}}});
+  const runtime = createExtensionRuntime();
+  runtime.appendEntry = (type,data)=>sm.appendCustomEntry(type,data);
+  const loaded = await loadExtensions([join(here,'../memory.ts')],dir,undefined,runtime);
+  assert.deepEqual(loaded.errors,[]);
+  const ext = loaded.extensions[0];
+  const ctx = {cwd:dir,hasUI:true,ui:{confirm:async()=>true},get sessionManager(){return sm;}};
+  const call = (name,params={},signal,over={}) => {
+    const registered = ext.tools.get(name);
+    return (registered.definition??registered).execute('fixture',params,signal,undefined,{...ctx,...over});
+  };
+  return {dir,call,before,ctx,get sm(){return sm;},reopen(){sm=SessionManager.open(sm.getSessionFile(),join(dir,'sessions'));}};
+}
+
+async function memoryFixture(run) {
   const dir = await mkdtemp(join(tmpdir(),'pi-memory-regression-'));
   try {
-    let sm = SessionManager.create(dir,join(dir,'sessions'));
-    // Real persistence starts after an assistant message; this one is entirely fictitious.
-    const before = sm.appendMessage({role:'assistant',content:[],api:'fixture',provider:'fixture',model:'fixture',stopReason:'stop',timestamp:0,
-      usage:{input:0,output:0,cacheRead:0,cacheWrite:0,totalTokens:0,cost:{input:0,output:0,cacheRead:0,cacheWrite:0,total:0}}});
-    const runtime = createExtensionRuntime();
-    runtime.appendEntry = (type,data)=>sm.appendCustomEntry(type,data);
-    const loaded = await loadExtensions([join(here,'../memory.ts')],dir,undefined,runtime);
-    assert.deepEqual(loaded.errors,[]);
-    const ext = loaded.extensions[0];
-    const ctx = {cwd:dir,hasUI:true,ui:{confirm:async()=>true},get sessionManager(){return sm;}};
-    const call = (name,params={},signal,over={}) => {
-      const registered = ext.tools.get(name);
-      return (registered.definition??registered).execute('fixture',params,signal,undefined,{...ctx,...over});
-    };
-    await run({dir,call,before,ctx,get sm(){return sm;},reopen(){sm=SessionManager.open(sm.getSessionFile(),join(dir,'sessions'));}});
+    await run(await createMemorySessionFixture(dir));
   } finally {await rm(dir,{recursive:true,force:true});}
 }
 
@@ -82,10 +86,6 @@ test('memory: persisted selection, full active branch, abandoned branch and read
     const appendSystem = await readFile(join(here,'../../APPEND_SYSTEM.md'),'utf8');
     assert.match(appendSystem,/reviewing its results continues the same plan even if its tasks are completed/);
     assert.match(appendSystem,/Start another plan only for an independent goal or material scope change/);
-    const {SessionManager} = await import(pathToFileURL(join(sdkRoot,'dist/index.js')));
-    const otherSession = SessionManager.create(f.dir,join(f.dir,'sessions'));
-    await assert.rejects(f.call('get_current_plan',{},undefined,{sessionManager:otherSession}),/different session/,
-      'a different session fails closed instead of adopting this plan');
     f.reopen();
     assert.equal((await f.call('get_current_plan')).details.path,a);
     const kept = f.sm.appendMessage({role:'user',content:'retained fixture',timestamp:0});
@@ -133,7 +133,64 @@ test('memory: legacy recovery and coherent real tasks / explicit IDs',{skip:!sdk
       assert.match(got.details.planActiveTask,expected);
       assert.doesNotMatch(got.details.planActiveTask,/T99/);
     }
+
+    const foreignMetadata = body('').replace('## Tasks', '- Session ID: 019eaabc-1111-7000-8000-000000000001\n## Tasks');
+    await writeFile(join(f.dir,a),foreignMetadata);
+    await assert.rejects(f.call('get_current_plan'),/Plan metadata belongs to a different session/,
+      'a genuine abbreviated filename with incompatible identity metadata remains blocked');
+
+    const ambiguous = `.ai/plan/2020-01-03-${f.sm.getSessionId().slice(0,8)}-legacy-b.md`;
+    await writeFile(join(f.dir,ambiguous),body(''));
+    await assert.rejects(f.call('get_current_plan'),/Multiple current-session plan candidates/,
+      'multiple genuine legacy names remain ambiguous');
+    await rm(join(f.dir,ambiguous));
   });
+});
+
+test('memory: shared 8-character prefixes do not make modern plans legacy candidates',{skip:!sdkRoot},async()=>{
+  const dir = await mkdtemp(join(tmpdir(),'pi-memory-prefix-isolation-'));
+  const idA = '019eaabc-1111-7000-8000-000000000001';
+  const idB = '019eaabc-2222-7000-8000-000000000002';
+  try {
+    const a = await createMemorySessionFixture(dir,idA);
+    const b = await createMemorySessionFixture(dir,idB);
+    assert.equal(a.sm.getSessionId(),idA);
+    assert.equal(b.sm.getSessionId(),idB);
+    const worktree = (await realpath(dir)).replace(/[\\/]+$/,'');
+    const planA = `.ai/plan/2026-10-05-${idA}-plan-a.md`;
+    await mkdir(join(dir,'.ai/plan'),{recursive:true});
+    const bodyA = `# Plan: plan-a\n- Status: in-progress\n- Session ID: ${idA}\n- Worktree: ${worktree}\n\n## Tasks\n- [ ] T1: Keep A's work\n`;
+    await writeFile(join(dir,planA),bodyA);
+
+    const selectedA = await a.call('select_session_plan',{path:planA});
+    assert.equal(selectedA.details.selected,true);
+    assert.equal((await a.call('get_current_plan')).details.path,planA);
+
+    const pointerA = a.sm.getBranch().find(entry=>entry.customType==='memory.active-plan');
+    assert.ok(pointerA,'A has a real persisted pointer');
+    const c = await createMemorySessionFixture(dir,'019eaabd-3333-7000-8000-000000000003');
+    c.sm.appendCustomEntry(pointerA.customType,pointerA.data);
+    await assert.rejects(c.call('get_current_plan'),/different session/,
+      'a real pointer copied from A into C remains a fail-closed session mismatch');
+
+    const initialB = await b.call('get_current_plan');
+    assert.equal(initialB.details.exists,false,'B reports no plan instead of treating A’s modern filename as legacy');
+    assert.match(initialB.content[0].text,/No plan file found/);
+    assert.doesNotMatch(initialB.content[0].text,/blocked|different session/i);
+
+    const createdB = await b.call('create_session_plan',{slug:'plan-b'});
+    assert.equal(createdB.details.created,true,'B creates its first plan without newPlan=true');
+    assert.ok(createdB.details.path.includes(idB));
+    assert.notEqual(createdB.details.path,planA);
+    assert.equal((await b.call('get_current_plan')).details.path,createdB.details.path);
+    assert.equal((await a.call('get_current_plan')).details.path,planA,'B’s new pointer does not alter A’s selection');
+    assert.equal(await readFile(join(dir,planA),'utf8'),bodyA,'A’s plan remains unchanged');
+    const pointerFor = fixture => fixture.sm.getBranch().find(entry=>entry.customType==='memory.active-plan')?.data;
+    assert.equal(pointerFor(a)?.sessionId,idA);
+    assert.equal(pointerFor(a)?.planPath,planA);
+    assert.equal(pointerFor(b)?.sessionId,idB);
+    assert.equal(pointerFor(b)?.planPath,createdB.details.path);
+  } finally {await rm(dir,{recursive:true,force:true});}
 });
 
 test('memory: confirm selection/newPlan before mutation; cancel, abort and reopen',{skip:!sdkRoot},async()=>{
@@ -600,6 +657,7 @@ Local-only checks; no provider calls.
 
     // Fail-closed blockers: worktree/session mismatch, traversal, and missing file.
     await assert.rejects(getPlanTool.execute('b',{},undefined,undefined,ctxWithPointers([[pointerRel,{worktree:'/elsewhere/worktree'}]])),/different worktree/);
+    // A genuine shaped pointer belonging to another session remains blocked independently of filename recovery.
     await assert.rejects(getPlanTool.execute('b',{},undefined,undefined,ctxWithPointers([[pointerRel,{sessionId:'other-session-9999'}]])),/different session/);
     await assert.rejects(getPlanTool.execute('b',{},undefined,undefined,ctxWithPointers([[pointerRel,{worktree:undefined}]])),/latest active-plan pointer is malformed/);
     assert.equal(existsSync(join(dir,pointerRel)),true,'a malformed pointer does not recreate or delete the selected Markdown file');
@@ -826,10 +884,6 @@ test('memory: explicit reads follow Markdown edits, branch selection and compact
     sm.branch(firstPlanLeaf);
     assert.equal((await call('get_current_plan')).details.path,planRel,
       'returning to the earlier branch restores its own selection');
-
-    const otherSession = SessionManager.create(dir,join(dir,'sessions'));
-    await assert.rejects(call('get_current_plan',{},otherSession),/different session/,
-      'a separate session fails closed instead of adopting this session’s plan');
 
     const kept = sm.appendMessage({role:'user',content:[{type:'text',text:'kept after compaction'}],timestamp:400});
     sm.appendCompaction('fixture summary',kept,100);

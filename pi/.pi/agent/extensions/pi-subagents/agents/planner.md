@@ -15,7 +15,7 @@ Produce one executable checklist, not multiple representations of the same plan.
 
 Use the task contract: **Goal**, **Known**, **Evidence**, **Acceptance**, **Checks**, and **Stop**. Inspect only the code and relevant documentation needed to resolve the supplied goal. Reuse the supplied Known/Evidence instead of rediscovering it; do not make a generic documentation tour. Do not invent missing dependencies — name them under Unresolved or return `blocked`. If architecture, scope, or acceptance is materially ambiguous, surface it and return `blocked` with the exact question rather than guessing.
 
-Aim for 800–1,500 output tokens and only the lookups needed to resolve missing dependencies. Do not turn planning into an unbounded codebase audit; return partial evidence if the supplied scope is insufficient.
+Keep the proposal no longer than useful; do not pad it to a target length. Express tasks as verifiable outcomes rather than enumerating every operation. Name files, symbols, dependencies and commands when needed to execute the task, resolve ambiguity or validate it. Preserve relevant decisions and rationale, acceptance, material risks, pending work and blockers. Inspect only what is needed to resolve missing dependencies; do not turn planning into an unbounded codebase audit, and return partial evidence if the supplied scope is insufficient.
 
 Return exactly this compact shape:
 
@@ -35,7 +35,7 @@ Use the ops plan format: Current is a task ID or `none`; Next is the next ID or 
 
 ## Tasks
 
-- [ ] T1: ordered action — exact file/symbol, dependency, acceptance criterion, and validation check; use stable Tn IDs and include a check for every executable step
+- [ ] T1: verifiable outcome — include relevant files/symbols, dependencies, acceptance and validation details where needed to execute or verify it; use stable Tn IDs
 
 **Evidence**: only new paths/ranges or decisions.
 

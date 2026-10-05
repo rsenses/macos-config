@@ -463,17 +463,21 @@ function escapedRegex(value: string): string {
 	return value.replace(/[.*+?^${}()|[\\]\\]/g, "\\$&");
 }
 
-/** Legacy recovery accepts any date, but only the current full ID or old short-ID format. */
+/** Legacy recovery accepts any date, but never treats another full modern UUID filename as legacy. */
 async function findSessionPlanFiles(cwd: string, sessionId: string): Promise<string[]> {
 	const paths = projectPaths(cwd);
 	const fullId = escapedRegex(sessionId);
 	const shortId = escapedRegex(legacySessionId(sessionId));
 	const fullPattern = new RegExp(`^\\d{4}-\\d{2}-\\d{2}-${fullId}-.+\\.md$`);
 	const shortPattern = new RegExp(`^\\d{4}-\\d{2}-\\d{2}-${shortId}-.+\\.md$`);
+	const modernSessionPlanPattern = /^\d{4}-\d{2}-\d{2}-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}-.+\.md$/i;
 	try {
 		const files = (await readdir(paths.planDir)).filter((file) => file.endsWith(".md"));
 		const fullMatches = files.filter((file) => fullPattern.test(file)).sort();
-		const matches = fullMatches.length ? fullMatches : files.filter((file) => shortPattern.test(file)).sort();
+		const shortMatches = files
+			.filter((file) => shortPattern.test(file) && !modernSessionPlanPattern.test(file))
+			.sort();
+		const matches = fullMatches.length ? fullMatches : shortMatches;
 		return matches.map((file) => `.ai/plan/${file}`);
 	} catch {
 		return [];
