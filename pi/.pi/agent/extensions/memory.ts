@@ -598,87 +598,6 @@ function planStatusText(snapshot: PlanSnapshot | undefined, blocked?: string): s
 	return truncateLine(`Plan ${snapshot.status} · ${tasks}${snapshot.activeTask ? ` · ${snapshot.activeTask.startsWith("Inconsistent Current Step:") ? snapshot.activeTask : humanTaskName({ id: "", line: snapshot.activeTask })}` : ""}`, 120);
 }
 
-/**
- * Plan state communicated to the model: which file is active, its status and the
- * current step. Task counts, TL;DR, the active task and the ledger's In Progress list
- * are deliberately omitted; they are derivable with `get_current_plan`,
- * `summarize_worktree` or `read`, and the agent is normally editing those files anyway.
- *
- * `previouslyCommunicated` makes the loss of a plan explicit instead of leaving an
- * earlier message describing it as valid. It is only consulted when there is no plan
- * to describe, so a session that never had one stays silent.
- */
-export function planStateBlock(
-	snapshot: PlanSnapshot | undefined,
-	blocked?: string,
-	humanStep?: string,
-	previouslyCommunicated = false,
-): string {
-	if (blocked) return `> Active plan unavailable: ${blocked}`;
-	if (!snapshot) {
-		return previouslyCommunicated
-			? "**Active plan**: none. The plan named earlier in this conversation is no longer available and will not be recreated."
-			: "";
-	}
-	const lines = [`**Plan**: \`${snapshot.planPath}\` — status: ${snapshot.status}`];
-	if (humanStep) lines.push(`**Current Step**: ${humanStep}`);
-	if (snapshot.warning) lines.push(`**Warning**: ${snapshot.warning}`);
-	return lines.join("\n");
-}
-
-/**
- * Custom type of the persisted plan-state message. It is a real session entry, so it
- * stays where it was sent instead of being regenerated at the end of every request.
- */
-const PLAN_STATE_TYPE = "memory.plan-state";
-
-/**
- * Last plan-state block present in the messages the model actually receives, or
- * undefined when it has never been communicated in the applicable context.
- */
-function lastCommunicatedPlanState(messages: unknown): { content?: string } | undefined {
-	if (!Array.isArray(messages)) return undefined;
-	return messages.findLast((message: any) => message?.customType === PLAN_STATE_TYPE) as
-		| { content?: string }
-		| undefined;
-}
-
-/**
- * Messages the model is about to receive, used by `before_agent_start` where the
- * boundary preview does not exist. The session projection is branch-aware and
- * reflects the compaction that Pi runs before this hook, so it is the applicable
- * context rather than the whole session.
- */
-function effectiveContextMessages(ctx: any): unknown {
-	try {
-		return ctx?.sessionManager?.buildSessionProjection?.().messages;
-	} catch {
-		return undefined;
-	}
-}
-
-/**
- * Plan state that still has to be communicated, or undefined when the model already
- * receives exactly this block.
- *
- * The comparison is with the last communicated value, not with anything ever seen:
- * A → B → A communicates both changes, while a branch or compaction that dropped the
- * entry re-communicates it instead of staying silent.
- *
- * Returning undefined means no second copy is added; it says nothing about cost, and a
- * persisted entry is not an entry the model has already processed.
- */
-async function pendingPlanState(cwd: string, ctx: any, applicableMessages: unknown): Promise<string | undefined> {
-	const resolved = await resolveActivePlan(cwd, ctx);
-	const content = resolved.planPath ? await readIfExists(path.join(cwd, resolved.planPath)) : "";
-	const snapshot = content ? planSnapshot(content, resolved.planPath!) : undefined;
-	const humanStep = content ? planHumanCurrentStep(content) : undefined;
-	const communicated = lastCommunicatedPlanState(applicableMessages);
-	const block = planStateBlock(snapshot, resolved.blocked, humanStep, communicated !== undefined);
-	if (!block || block === communicated?.content) return undefined;
-	return block;
-}
-
 /** Update the status line from a plan snapshot; no-op outside TUI and never throws. */
 function updatePlanUI(ctx: any, snapshot?: PlanSnapshot, blocked?: string): void {
 	try {
@@ -1083,68 +1002,16 @@ export default function (pi: ExtensionAPI) {
 
 	// --- Lifecycle Hooks ---
 
-	// Deliberately returns no `systemPrompt`. Returning one sets Pi's
-	// `forceSystemPrompt`, and its projection then rebuilds the request head on every
-	// turn and restates the entire tool set there, discarding the incremental tool
-	// declarations. A changing head invalidates whatever the provider had cached of the
-	// prefix, which is the mechanism behind the observed `cacheRead` freeze. That link
-	// is an inference from local request traces, not a provider-confirmed cause, and no
-	// saving is claimed here. The workflow policy
-	// therefore lives in APPEND_SYSTEM.md, and the plan reaches the model through the
-	// persisted messages below.
-	//
-	// `context` is deliberately not used either: a request-time projection is rebuilt
-	// on every call, and returning a changed conversation from a `context` handler
-	// makes Pi restore the prompt through `restoreSystemMessages`, which rebuilds the
-	// head and can move system and tool declarations to the front.
+	// Lifecycle events refresh only the existing status line. Plan contents reach the
+	// conversation only when an explicit tool result is returned.
 	pi.on("before_agent_start", async (event, ctx) => {
 		await ensureProjectFiles(event.systemPromptOptions?.cwd ?? ctx.cwd);
 		await refreshPlanUI(ctx);
-		try {
-			// `BeforeAgentStartEventResult.message` is the native field for this. It is
-			// not `systemPrompt`, so nothing about the request head changes, and unlike
-			// a `context` projection the entry is appended to the conversation and
-			// persisted, so the first request of the turn carries it.
-			//
-			// This runs once per agent loop, not once per provider call, so an automatic
-			// compaction *between two calls of the same run* does not reach it. `turn_end`
-			// covers the ordinary progress within a run, and `session_compact` covers the
-			// compaction that happens after it, because all three compare against the
-			// context the model actually receives.
-			const block = await pendingPlanState(ctx.cwd, ctx, effectiveContextMessages(ctx));
-			if (!block) return;
-			return { message: { customType: PLAN_STATE_TYPE, content: block, display: false } };
-		} catch {
-			return;
-		}
 	});
 
-	// Communicate ordinary progress as a real session entry appended at the end of the
-	// turn. It is not re-derived per request, so it keeps the position it was sent at
-	// and earlier messages are never rewritten, moved or dropped to show it.
-	pi.on("turn_end", async (event, ctx) => {
-		try {
-			const block = await pendingPlanState(ctx.cwd, ctx, event.context.contextMessages);
-			if (!block) return;
-
-			// `emitBoundary` replaces the accumulated array with whatever a handler
-			// returns, so entries proposed by earlier handlers are carried over in
-			// order. `continue` is deliberately untouched: publishing state is not a
-			// reason to ask for another turn.
-			return {
-				entries: [
-					...(event.entries ?? []),
-					{ type: "custom_message", customType: PLAN_STATE_TYPE, content: block, display: false },
-				],
-			};
-		} catch {
-			return;
-		}
-	});
-
-	// Refresh the existing status/widget UI on startup, branch/compaction changes,
-	// tool-driven Markdown edits, and settled turns. There is no polling and no
-	// full-plan copy in these handlers.
+	// Refresh the existing status line on startup, branch/compaction changes,
+	// tool-driven Markdown edits, and settled turns. No lifecycle hook publishes plan
+	// state to the conversation or rewrites instructions.
 	pi.on("session_start", async (_event, ctx) => {
 		await refreshPlanUI(ctx);
 	});
@@ -1159,32 +1026,6 @@ export default function (pi: ExtensionAPI) {
 
 	pi.on("session_compact", async (_event, ctx) => {
 		await refreshPlanUI(ctx);
-		// A compaction that keeps a recent slice can drop the state entry. Pi runs it
-		// from `prepareNextTurnWithContext`, that is after `finishTurn` has already
-		// dispatched `turn_end` for this turn and before the next request is rebuilt
-		// from the compacted projection, and `before_agent_start` belongs to `prompt()`,
-		// so neither of the other two hooks can refill that gap.
-		//
-		// The comparison is against the projection *after* the compaction, so this is
-		// also the deduplication: a state message that survived is still the last one
-		// communicated and nothing is sent. `sendMessage` is the native action and, with
-		// no `deliverAs`, it appends the message as a real session entry while Pi is
-		// between provider calls — which is exactly the state it is in while compacting
-		// mid-run — so the projection rebuilt afterwards already contains it. The
-		// regression checks the persisted entry in the branch and in the next request
-		// rather than trusting that internal branch. It is a session message, not a
-		// per-request projection, and it costs no extra model call.
-		//
-		// A failed or cancelled compaction emits `session_compact_failed` instead and
-		// never reaches this handler, so nothing is re-sent for a compaction that did not
-		// happen.
-		try {
-			const block = await pendingPlanState(ctx.cwd, ctx, effectiveContextMessages(ctx));
-			if (!block) return;
-			pi.sendMessage({ customType: PLAN_STATE_TYPE, content: block, display: false });
-		} catch {
-			return;
-		}
 	});
 
 	pi.on("tool_execution_end", async (_event, ctx) => {
