@@ -72,7 +72,7 @@ settings = ["prefix+s", "cmd+,"]
 # workspace_picker = "alt+w"
 goto = "prefix+space"
 new_workspace = "prefix+w"
-new_worktree = "prefix+g"
+new_worktree = ""
 # open_worktree = ""    # optional, unset by default
 # remove_worktree = ""  # optional, unset by default; opens confirmation
 # rename_workspace = "prefix+shift+w"
@@ -103,7 +103,7 @@ split_vertical = ["prefix+|", "cmd+d"]
 split_horizontal = ["prefix+minus", "cmd+shift+d"]
 # close_pane = "prefix+x"
 # zoom = "prefix+z"       # legacy alias: fullscreen
-# resize_mode = "prefix+r"
+resize_mode = ""
 # toggle_sidebar = "prefix+b"
 
 # Navigate-mode movement. These local shortcuts win while navigate mode is open.
@@ -148,26 +148,19 @@ description = "herdr-plus: quick actions"
 # Override herdr's built-in "new worktree" key (prefix+shift+g) with worktrunk's
 # default-branch switch/create picker:
 [[keys.command]]
-key = "prefix+ctrl+g"
+key = ["prefix+g", "cmd+shift+g"]
 type = "plugin_action"
 command = "worktrunk.open"
 description = "Worktree: switch / create from default branch"
 
-# Optional: bind current-branch creation separately.
 [[keys.command]]
-key = "prefix+ctrl+c"
-type = "plugin_action"
-command = "worktrunk.open-current"
-description = "Worktree: switch / create from current branch"
-
-[[keys.command]]
-key = "prefix+ctrl+d"
+key = ["prefix+r", "cmd+shift+r"]
 type = "plugin_action"
 command = "worktrunk.remove"
 description = "Worktree: remove"
 
 [[keys.command]]
-key = "prefix+ctrl+m"
+key = ["prefix+m", "cmd+shift+m"]
 type = "plugin_action"
 command = "worktrunk.merge"
 description = "Worktree: merge into the target branch"
