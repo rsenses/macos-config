@@ -10,7 +10,9 @@
     "opencode-go/space-bunny-free": "max"
   },
   "showCacheMissNotices": true,
-  "defaultTools": ["+codemode"],
+  "defaultTools": [
+    "+codemode"
+  ],
   "shellPath": "/bin/zsh",
   "shellCommandPrefix": "eval \"$(mise env -s zsh)\"\nunset APP_URL APP_ENV",
   "theme": "light",
@@ -43,5 +45,11 @@
     "compactionModel": "openai-codex/gpt-6-luna:low",
     "summaryReserveTokens": 16384
   },
-  "npmCommand": ["mise", "exec", "node@24", "--", "npm"]
+  "npmCommand": [
+    "mise",
+    "exec",
+    "node@24",
+    "--",
+    "npm"
+  ]
 }
