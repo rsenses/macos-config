@@ -121,7 +121,7 @@ resize_mode = ""
 [[keys.command]]
 key = "prefix+shift+g"
 type = "pane"
-command = "zsh -lc 'exec lazygit'"
+command = "lazygit"
 
 [[keys.command]]
 key = "prefix+shift+n"
@@ -130,8 +130,16 @@ command = "notes"
 
 [[keys.command]]
 key = "prefix+shift+f"
+type = "popup"
+command = "herdr-sessionizer"
+
+[[keys.command]]
+key = "prefix+e"
 type = "pane"
-command = "zsh -lc 'exec herdr-sessionizer'"
+command = """
+pane=$(herdr pane split --direction right --ratio 0.5 --focus | jq -r '.result.pane.pane_id')
+herdr pane run "$pane" "nvim ; exit"
+"""
 
 # Override herdr's built-in "new worktree" key (prefix+shift+g) with worktrunk's
 # default-branch switch/create picker:
@@ -152,12 +160,6 @@ key = ["prefix+m", "cmd+shift+m"]
 type = "plugin_action"
 command = "worktrunk.merge"
 description = "Worktree: merge into the target branch"
-
-[[keys.command]]
-key = "prefix+e"
-type = "plugin_action"
-command = "chmarax.herdr-nvim.toggle"
-description = "nvim sidebar"
 
 # Legacy indexed shortcut config is still parsed for compatibility.
 # Prefer switch_tab, switch_workspace, and focus_agent for new configs.
