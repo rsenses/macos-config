@@ -8,11 +8,13 @@ All notable changes to this project are documented here using Keep a Changelog a
 - Silent Pi cache diagnostics record per-run keyed request fingerprints, input-block fingerprints, response request IDs and token usage without saving prompts, tool content or credentials. Each run writes and rotates its own local log; the extension adds no tools, notices, model calls or payload changes.
 
 ### Fixed
+- Ghostty now releases Cmd+1…9 so Herdr can receive the direct tab-switch shortcuts instead of Ghostty intercepting them.
 - Legacy plan recovery no longer treats a modern full-UUID plan from another session as a short-ID legacy candidate when sessions share an eight-character prefix; genuine legacy recovery and identity checks remain intact.
 - The memory extension suite no longer asserts the pre-humanization plan format. `Current Step` and `Active task` assertions now expect resolved descriptions with their task IDs, and the suite passes again instead of failing on stale expectations.
 - `chrome-devtools-mcp` is pinned to `1.10.1` instead of `@latest`. A new release can change the server's instructions and tool list, which rewrites the `mcp_servers` system-prompt section and the request's tool declarations, invalidating the prompt cache mid-session.
 
 ### Changed
+- Herdr's keymap now pairs prefixed tab and pane-split actions with Cmd shortcuts, while workspace navigation uses prefixed arrows and indexed jumps.
 - Pi's always-on instructions now make token efficiency explicit and point to `ops` for the canonical plan, handoff, and validation contracts. Planning/execution/review/finalization prompts reuse those contracts instead of restating them; read-only Git inspection no longer forces implementation skills, and focused security review uses guidance mode with benefit-driven delegation.
 - Planner guidance no longer sets an output-length target and favors verifiable outcomes with only the execution detail needed, while retaining decisions, acceptance, risks and pending work.
 - The memory extension now treats the Markdown plan as the sole source of progress. Plan contents are available through explicit tools; remaining lifecycle hooks maintain only the existing status UI and never publish plan text. Session/branch-scoped selection and its confirmations remain intact. Coordinators consult the document at start or resume and update it after accepting verified work, with bounded task briefs for workers.
