@@ -138,7 +138,7 @@ key = "prefix+e"
 type = "pane"
 command = """
 pane=$(herdr pane split --direction right --ratio 0.5 --focus | jq -r '.result.pane.pane_id')
-herdr pane run "$pane" "nvim ; exit"
+herdr pane run "$pane" " nvim ; exit"
 """
 
 # Override herdr's built-in "new worktree" key (prefix+shift+g) with worktrunk's

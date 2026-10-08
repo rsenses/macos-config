@@ -9,6 +9,7 @@ All notable changes to this project are documented here using Keep a Changelog a
 
 ### Fixed
 - Replaced the Herdr Neovim sidebar plugin action with `prefix+shift+e`, which opens a right-side Neovim pane using the platform's `nvim` from `PATH`.
+- Herdr's `prefix+e` Neovim command now starts with a space so zsh's `HIST_IGNORE_SPACE` keeps it out of history.
 - Ghostty now releases Cmd+1…9 so Herdr can receive the direct tab-switch shortcuts instead of Ghostty intercepting them.
 - Legacy plan recovery no longer treats a modern full-UUID plan from another session as a short-ID legacy candidate when sessions share an eight-character prefix; genuine legacy recovery and identity checks remain intact.
 - The memory extension suite no longer asserts the pre-humanization plan format. `Current Step` and `Active task` assertions now expect resolved descriptions with their task IDs, and the suite passes again instead of failing on stale expectations.
