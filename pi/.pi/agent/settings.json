@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "1.0.3",
+  "lastChangelogVersion": "1.1.0",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-6-luna",
   "defaultThinkingLevel": "xhigh",
@@ -7,12 +7,10 @@
     "openai-codex/gpt-6-luna": "xhigh",
     "openai-codex/gpt-6.1-sol": "low",
     "opencode-go/deepseek-v4.1-flash": "high",
-    "opencode-go/space-bunny-free": "max"
+    "opencode-go/claude-haiku-5-5": "xhigh"
   },
   "showCacheMissNotices": true,
-  "defaultTools": [
-    "+codemode"
-  ],
+  "defaultTools": ["+codemode"],
   "shellPath": "/bin/zsh",
   "shellCommandPrefix": "eval \"$(mise env -s zsh)\"\nunset APP_URL APP_ENV",
   "theme": "light",
@@ -26,14 +24,14 @@
     "openai-codex/gpt-6-luna",
     "opencode-go/deepseek-v4.1-flash",
     "openai-codex/gpt-6.1-sol",
-    "opencode-go/space-bunny-free"
+    "opencode-go/claude-haiku-5-5"
   ],
   "enableInstallTelemetry": false,
   "compaction": {
     "enabled": true,
     "modelOverrides": {
-      "opencode-go/space-bunny-free": {
-        "reserveTokens": 750000
+      "opencode-go/claude-haiku-5-5": {
+        "reserveTokens": 910000
       },
       "opencode-go/deepseek-v4.1-flash": {
         "reserveTokens": 750000
@@ -45,11 +43,5 @@
     "compactionModel": "openai-codex/gpt-6-luna:low",
     "summaryReserveTokens": 16384
   },
-  "npmCommand": [
-    "mise",
-    "exec",
-    "node@24",
-    "--",
-    "npm"
-  ]
+  "npmCommand": ["mise", "exec", "node@24", "--", "npm"]
 }

@@ -20,9 +20,9 @@ Keep execution plans detailed enough to resume, but make chat understandable wit
 - Preserve security, data integrity, validation, and changelog requirements. `safe_bash` is a command filter, not a sandbox.
 - Before changing critical local/system configuration, follow the backup and explicit-approval gate in `ops`.
 
-## Completion and validation gate
+## Validation reporting
 
-Load `ops` before implementing, delegating, or reporting readiness. Its section 4 is authoritative: complete project fix/format/lint, then complete tests, with actual successful completion and evidence. Targeted checks and child success never certify application readiness; planning, read-only review, and worker slices use scoped checks.
+Load `ops` before implementing, delegating, or reporting readiness. Its section 4 governs what a readiness report states: the checks actually run with their results, and those not run. Full project validation (fix/format/lint, then tests) runs only when the user requests it or runs it themselves. Targeted checks and child success never certify application readiness; planning, read-only review, and worker slices use scoped checks.
 
 ## Project Plans and Tasks
 

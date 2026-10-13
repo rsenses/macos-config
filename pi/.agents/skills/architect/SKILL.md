@@ -31,7 +31,7 @@ Give each child one explicit slice and the ops brief. Use zero or one child norm
 
 ## 4. Completion and Changelog
 
-Apply ops section 4 before reporting implementation readiness; targeted evidence alone never suffices. Planning and review use their scoped completion checks. Follow APPEND_SYSTEM's Changelog Policy rather than introducing a different rule here.
+Apply ops section 4 when reporting implementation status: name the checks actually run and those not run. Targeted evidence never certifies readiness. Planning and review use their scoped completion checks. Follow APPEND_SYSTEM's Changelog Policy rather than introducing a different rule here.
 
 ## 5. Documentation Economy
 

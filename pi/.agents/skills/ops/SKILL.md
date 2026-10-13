@@ -36,6 +36,8 @@ Before a planner returns, record only the brief and evidence. The planner is rea
 
 ### Progress and handoff
 
+When a later user decision supersedes the design, consolidate the current TL;DR, task contract, acceptance, Current Step, and blockers. Preserve earlier evidence as explicitly historical; do not leave contradictory instructions active. Record user-confirmed checks as user-confirmed, with their scope and timing, not as checks the agent ran.
+
 The coordinator alone writes plan progress after verifying acceptance. Check only accepted tasks; a child's success is not acceptance. Update Current Step, concise evidence, checks/results, and blockers. Routine progress updates do not require a planner.
 
 Give a worker its plan path/task ID as references plus the bounded brief below, writable files, established decisions, permitted checks, and stop condition. Do not pass the full plan or conversation by default. Integrate its result once after local verification.
@@ -56,7 +58,7 @@ The principal owns scope, decisions, integration, and final validation. Delegate
 - Handle direct questions, trivial lookups, and indivisible edits locally without routinely explaining why no child was used.
 - `/plan` requires a planner design; preparation gathers evidence without pre-solving it. Elsewhere use a planner for material alternatives, not routine status updates.
 - Children cannot delegate. Missing material prerequisites return `blocked` with the exact question. Use direct tools for orientation, deterministic operations, and final validation.
-- `plan-reviewer` is manual-only: invoke it only when explicitly requested for a saved plan or through `/review-plan`, never automatically from architect, planner, `/plan`, `/run-plan`, or `/finalize`.
+- `plan-reviewer` is manual-only: invoke it only when explicitly requested for a saved plan or through `/review-plan`, never automatically from architect, planner, `/plan`, or `/run-plan`.
 
 ### Brief and output contracts
 
@@ -77,17 +79,13 @@ Child output starts with **Status** (`complete`, `partial`, `blocked`, `failed`,
 
 The launcher approves planner model/thinking once, showing `profileReason`; the user may choose another available profile. Selection tools confirm adoption or `newPlan=true`; implementation still needs separate user authorization. Never duplicate UI questions. Cancellation ends the attempt without retry/fallback; report unavailable profiles, models, or thinking instead of silently changing them. Keep principal model/provider/thinking/settings unchanged unless explicitly requested.
 
-## 4. Full validation as a completion invariant
+## 4. Validation reporting
 
-This gate certifies overall IMPLEMENTATION readiness, not a plan, read-only review, or worker slice. Planning requires full persistence/read-back; review requires inspection checks; workers require their permitted scoped checks. None certifies application readiness.
+Full project validation (for documented Laravel/PHP projects: `composer fix`, then `composer test`, from the project root) runs only when the user explicitly requests it or runs it themselves. The agent does not run it or require it as a gate before other work.
 
-Before reporting overall implementation readiness:
+Any implementation status report states which checks ran (command, exit result, notable output) and which did not. Targeted checks, dry runs, and child success are reported as targeted, never as full validation. Do not say tests pass or that work is ready to ship unless the relevant checks ran and succeeded; name the unverified remainder instead.
 
-1. Discover authoritative full-project validation commands from project instructions/scripts. Apply required changelog entries using APPEND_SYSTEM's policy before final validation.
-2. From the project root, run complete fix/format/lint, then complete tests. For Laravel/PHP projects documenting them, run exactly `composer fix` then exactly `composer test`. File filters, selectors, dry runs, and targeted substitutes never satisfy this gate.
-3. Count only commands that reach natural completion and exit successfully. Timeouts, interruptions, partial output, child success, and unrun commands are not passes. Inspect fixer changes and run the full suite against the post-fix tree.
-4. If a required command is unsafe, unavailable, missing, skipped, interrupted, timed out, or failing, retain evidence and report implementation `partial`/`blocked` and `not ready to ship` with the exact reason. Do not run unsafe commands or expand scope to fix unrelated failures. User acceptance does not make an unrun check pass.
-5. Record commands, exit results, fixer changes, skips, and unresolved failures in the plan or completion report. Distinguish targeted checks from complete tests; only the latter supports saying the project's tests passed.
+Planning, read-only review, and worker slices use their scoped checks. Changelog entries follow APPEND_SYSTEM's Changelog Policy.
 
 ## 5. Direct Questions
 

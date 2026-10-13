@@ -6,6 +6,7 @@ All notable changes to this project are documented here using Keep a Changelog a
 
 ### Added
 - Silent Pi cache diagnostics record per-run keyed request fingerprints, input-block fingerprints, response request IDs and token usage without saving prompts, tool content or credentials. Each run writes and rotates its own local log; the extension adds no tools, notices, model calls or payload changes.
+- A read-only Pi session usage analyzer reports local role/model token and historical-cost aggregates without exporting conversation or tool content, or modifying Pi's runtime behavior.
 
 ### Fixed
 - Replaced the Herdr Neovim sidebar plugin action with `prefix+shift+e`, which opens a right-side Neovim pane using the platform's `nvim` from `PATH`.

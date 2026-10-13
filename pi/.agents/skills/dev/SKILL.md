@@ -29,9 +29,15 @@ Reproduce, localize, reduce, and fix the cause. Add behavioral regression covera
 
 ## 5. Completion and Verification
 
-Load and follow ops section 4 for overall implementation readiness: complete authoritative fix/format/lint followed by complete tests. Targeted checks and worker success remain interim evidence, never substitutes. Planning, read-only review, and worker outcomes use the scoped checks defined there.
+Follow ops section 4 when reporting overall implementation status: name the full checks that ran (fix/format/lint, tests) and those that did not. Targeted checks and worker success remain interim evidence, never substitutes for readiness. Planning, read-only review, and worker outcomes use the scoped checks defined there.
 
 Before completion, also verify scope, security, invariants, observable acceptance, and relevant build/UI checks. Inspect the diff for unused code caused by this change and unrelated edits; do not broaden scope to clean up pre-existing issues. Apply APPEND_SYSTEM's Changelog Policy before final validation. Report only checks actually performed, including every skip or blocker.
+
+### Consumer acceptance
+
+For changed persisted data or generated outputs, trace the actual consumers (editor, writer, rendered report, download, email, and cache where applicable). Check optional/partial structures and stable associations, not only the producer's test. Verify cache invalidation on successful persistence and preservation on rollback; account for test transaction managers that run commit callbacks differently from production.
+
+UI limits must agree with server validation and the current contract. For requested layout, order, or pagination changes, presence assertions are insufficient: inspect the rendered result with the actual layout engine and short/long inputs. Record what was observed and which downstream/physical checks remain unverified.
 
 ## 6. Editing Discipline
 
