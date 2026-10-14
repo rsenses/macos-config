@@ -31,7 +31,7 @@ vim.lsp.config('stylelint_lsp', {
 })
 
 vim.lsp.enable {
-  'laravel_lsp',
+  -- 'laravel_lsp',
   'phpantom_lsp',
   'html',
   'lua_ls',
