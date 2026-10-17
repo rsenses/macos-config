@@ -5,6 +5,7 @@ import { test } from 'node:test';
 import { mkdir, mkdtemp, writeFile, rm, readFile, realpath } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { execFile } from 'node:child_process';
+import { findPackageJSON } from 'node:module';
 import { tmpdir, homedir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -285,7 +286,7 @@ test('actual extension loading, allowlists, protocol, usage and failure hook', {
     const tool = registered.definition ?? registered;
     assert.equal(tool.parameters.properties.thinking, undefined, 'thinking is not a generic subagent argument');
     // Fake registry covering every configured agent/profile model. All are reasoning
-    // models supporting off/minimal/low/medium/high; only Luna maps `max`.
+    // models supporting off/minimal/low/medium/high, with role-specific extended levels.
     const thinkMap = {off:'off',minimal:'minimal',low:'low',medium:'medium',high:'high'};
     const fakeModel = (providerModel, extraMap = {}) => {
       const [provider, id] = providerModel.split('/');
@@ -293,9 +294,9 @@ test('actual extension loading, allowlists, protocol, usage and failure hook', {
     };
     const MODELS = {
       deepseek: fakeModel('opencode-go/deepseek-v4.1-flash'),      // scout frontmatter
-      glm: fakeModel('opencode-go/glm-5.3-flash'),                 // worker frontmatter
+      worker: fakeModel('opencode-go/claude-haiku-5-5', {xhigh:'xhigh'}), // worker frontmatter
       luna: fakeModel('openai-codex/gpt-5.6-luna', {max:'max'}),   // scoped-model fixture
-      roleLuna: fakeModel('openai-codex/gpt-6-luna', {max:'max'}), // researcher/worker
+      roleLuna: fakeModel('openai-codex/gpt-6-luna', {max:'max'}), // researcher frontmatter
       sol: fakeModel('openai-codex/gpt-5.6-sol'),                  // other configured role
       astra: fakeModel('openai-codex/gpt-6-astra'),                // other configured role
       planner: fakeModel('openai-codex/gpt-6.1-sol'),              // planner profiles
@@ -340,7 +341,11 @@ test('actual extension loading, allowlists, protocol, usage and failure hook', {
       const allowed=roleArgs[roleArgs.indexOf('--tools')+1].split(',');
       assert.ok(!allowed.includes('subagent'));
       if(role==='researcher') { assert.deepEqual(allowed,['codex-research','web_fetch']); }
-      else { for(const t of ['safe_bash','ast_grep','web_fetch','grep','write'])assert.ok(allowed.includes(t)); }
+      else {
+        for(const t of ['safe_bash','ast_grep','web_fetch','grep','write'])assert.ok(allowed.includes(t));
+        assert.equal(roleArgs[roleArgs.indexOf('--model')+1], 'opencode-go/claude-haiku-5-5');
+        assert.equal(roleArgs[roleArgs.indexOf('--thinking')+1], 'xhigh');
+      }
     }
     await writeFile(process.env.PI_TEST_FIXTURE,[event('toolUse','Partial evidence'),event('error','',{errorMessage:'fixture quota'})].map(JSON.stringify).join('\n')+'\n');
     const failed = await tool.execute('f',{agent:'scout',task:'Failure'},undefined,undefined,ctx);
@@ -751,8 +756,10 @@ function bindRunner(runner, sm) {
 
 const sdkIndex = () => import(pathToFileURL(join(sdkRoot,'dist/index.js')));
 const sdkLoader = () => import(pathToFileURL(join(sdkRoot,'dist/core/extensions/loader.js')));
+// Resolve from the SDK: npm may nest pi-ai rather than install it as a sibling.
 const createAssistantMessageEventStream = sdkRoot
-  ? (await import(pathToFileURL(join(sdkRoot,'../pi-ai/dist/utils/event-stream.js')))).createAssistantMessageEventStream
+  ? (await import(pathToFileURL(join(dirname(findPackageJSON('@earendil-works/pi-ai',
+      pathToFileURL(join(sdkRoot, 'package.json')))), 'dist/utils/event-stream.js')))).createAssistantMessageEventStream
   : () => assert.fail('pi-ai is unavailable without PI_SDK_ROOT');
 
 /**
@@ -858,7 +865,9 @@ test('memory: explicit reads follow Markdown edits, branch selection and compact
     assert.deepEqual(firstRead.details.planTasks,{total:1,open:0,done:1});
 
     const priorEntries = structuredClone(sm.getEntries());
-    const startResult = await live.runner.emitBeforeAgentStart('go',undefined,{});
+    const startResult = await live.runner.emitBeforeAgentStart(
+      {messageType:'user', prompt:'go'}, {cwd:dir},
+    );
     assert.ok(!JSON.stringify(startResult.messages).includes('Explicit Markdown status'),
       'starting an agent does not publish the plan document');
     assert.deepEqual(sm.getEntries(),priorEntries,'the start event does not append a plan message');

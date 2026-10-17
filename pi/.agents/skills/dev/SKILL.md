@@ -31,6 +31,8 @@ Reproduce, localize, reduce, and fix the cause. Add behavioral regression covera
 
 Follow ops section 4 when reporting overall implementation status: name the full checks that ran (fix/format/lint, tests) and those that did not. Targeted checks and worker success remain interim evidence, never substitutes for readiness. Planning, read-only review, and worker outcomes use the scoped checks defined there.
 
+For relevant implementations, including direct principal work, follow ops' **Integrated code review** contract after implementation/targeted checks and before authorized final validation. Resolve accepted findings first; this does not prohibit development tests or authorize full suites.
+
 Before completion, also verify scope, security, invariants, observable acceptance, and relevant build/UI checks. Inspect the diff for unused code caused by this change and unrelated edits; do not broaden scope to clean up pre-existing issues. Apply APPEND_SYSTEM's Changelog Policy before final validation. Report only checks actually performed, including every skip or blocker.
 
 ### Consumer acceptance

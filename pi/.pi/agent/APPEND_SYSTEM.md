@@ -39,6 +39,7 @@ Follow `ops` for benefit-driven delegation and bounded briefs. Handle direct que
 
 - `planner` is mandatory inside `/plan`; outside it, use one for material design alternatives, not routine progress. Gather evidence without pre-solving its design.
 - `plan-reviewer` is manual-only: invoke it only on an explicit saved-plan review request or `/review-plan`.
+- For relevant integrated implementations, including the principal's direct work, follow ops' **Integrated code review** contract with `code-reviewer` before authorized final validation. Ops also defines explicit skill references for workers; loaded skills are not inherited.
 - Launcher UI approves planner model/thinking once; selection UI confirms adoption or `newPlan=true`. Implementation of an approved plan needs separate user authorization. Never duplicate an approval question. Cancellation ends the attempt; unavailable selections never authorize silent fallback.
 - Choose clarification, direct work, or a child by ambiguity, risk, and concrete benefit. Keep the principal model, provider, thinking level, and settings unchanged unless explicitly requested.
 

@@ -75,6 +75,35 @@ Pass established evidence and the remaining question, not a transcript or a requ
 
 Child output starts with **Status** (`complete`, `partial`, `blocked`, `failed`, `cancelled`, `timed_out`), then its role's findings/changes, evidence, checks, and unresolved items. Workers return **Status / Changes / Evidence / Checks / Unresolved**. Name their validation policy (`no-tests`, `targeted-check`, `add-test`, `test-first`, `defer-validation`) and the concrete command or reason.
 
+### Skill references for children
+
+Children run with `--no-skills`: neither skill discovery nor the principal's loaded skills/conversation are inherited. In **Evidence**, identify each applicable skill by name and readable path, and require explicit reading before work. For applicable PHP/Laravel changes, workers must read `laravel-simplicity` (`~/.pi/agent/skills/laravel-simplicity/SKILL.md`, or its checked repository path) and relevant references; pass domain/consumer evidence rather than assuming inherited context. Workers never write plan progress; only the coordinator accepts work and updates it.
+
+### Integrated code review
+
+Use `code-reviewer` after a relevant implementation, including work done directly by the principal, not only delegated slices. Relevant means changed behavior/integration, security/data integrity, or non-trivial logic/abstractions. Questions, read-only work and trivial non-behavioral edits do not require it. Explicit user prohibitions on delegation/provider calls take precedence: report review as not run, never label self-inspection an independent review. No plan is required: without one, review against the user's assignment.
+
+Sequence: implementation and targeted checks → independent review of the integrated change → coordinator verifies findings → accepted corrections → final validation when authorized → user report. Targeted tests remain allowed during development. Freeze the reviewed portion first: no workers or coordinator writing it concurrently.
+
+Use the standard brief headings above, supplying:
+
+- **Goal/Known**: the original user request and relevant clarifications; approved decisions clearly separated from agent assumptions. Later user clarifications can legitimately supersede the plan.
+- **Evidence**: current plan/contract when one exists, the actual relevant diff, and paths/ranges for related producers, consumers and domain rules. The implementer's summary is not the sole evidence; the reviewer must compare it with code.
+- The coordinator prepares Git evidence: inspect status, staged and unstaged diffs and pertinent new/untracked files. Include new-file contents/diffs and relevant uncommitted work, excluding unrelated/pre-existing work. Identify the baseline, included paths/hunks and preserved changes so attribution is explicit; if attribution is unclear, resolve it before review. Pass excerpts or a readable artifact with enough context, not only a diffstat. The reviewer needs no shell.
+- **Acceptance/Checks/Stop**: restrictions, observable acceptance, checks already performed with results, unrun checks, applicable skill paths (including this contract), and exact missing evidence that should block a conclusion. Do not pass the whole conversation by default.
+
+Require this review order:
+
+1. **Fidelity**: omitted requirements, unsolicited changes and lost constraints against the current assignment/approved decisions, not blind adherence to a superseded plan.
+2. **Behavior and integration**: trace relevant producers and consumers, permissions, persistence and observable effects. Apply `dev`'s Consumer acceptance criteria for persisted/generated outputs and UI; supply its readable path and require that section to be read when relevant. Source inspection alone cannot establish that a UI works; mark rendering/runtime checks not performed as unverified.
+3. **Simplicity**: flag unnecessary abstractions, branches or mechanisms only with evidence that they add no required benefit. For PHP/Laravel, require explicit reading of `laravel-simplicity` and its relevant references; reuse its contract/consumer reasoning rather than copying the skill.
+
+Reviewer output: **Status / Findings / Evidence / Checks / Unresolved**. Each finding identifies `confirmed defect`, `open question`, or `optional suggestion`, plus severity, location, evidence, impact and the minimal correction (or precise missing fact for a question). No minimum findings; `none` is valid. No style-only recommendations, speculative complexity claims, or preferred alternative architectures. Read-only review neither implements nor approves more work or changes scope.
+
+The coordinator checks findings against code, request and approved decisions; accepts or rejects recommendations with evidence. Ask the user about ambiguous decisions that change behavior. Apply only accepted, authorized corrections. Use one initial review and, for substantive corrections, one focused `code-reviewer` follow-up on the corrected portion; unresolved issues become explicit blockers/questions, not indefinite review/rewrite loops. If a later fixer changes behavior, review that affected portion; formatting alone does not restart review.
+
+Keep findings in the child's result (recover its full output artifact if clipped). Do not mandate a separate review document. In an existing plan record only material accepted/rejected decisions, corrections, unresolved risks and review/check evidence needed for continuity. Child completion is not acceptance or application readiness.
+
 ### Approval boundaries
 
 The launcher approves planner model/thinking once, showing `profileReason`; the user may choose another available profile. Selection tools confirm adoption or `newPlan=true`; implementation still needs separate user authorization. Never duplicate UI questions. Cancellation ends the attempt without retry/fallback; report unavailable profiles, models, or thinking instead of silently changing them. Keep principal model/provider/thinking/settings unchanged unless explicitly requested.

@@ -1,14 +1,15 @@
 # Pi subagents
 
-Five bounded roles; the principal coordinates and verifies acceptance. `plan-reviewer` is manual-only and must never be dispatched solely by the architect's own decision.
+Six bounded roles; the principal coordinates and verifies acceptance. `plan-reviewer` is manual-only and must never be dispatched solely by the architect's own decision.
 
 | Agent | Model / thinking | Tools |
 |---|---|---|
 | scout | `opencode-go/deepseek-v4.1-flash` / **high** | read, grep, find, ls |
-| researcher | `openai-codex/gpt-5.6-luna` / **high** | codex-research, web_fetch |
+| researcher | `openai-codex/gpt-6-luna` / **high** | codex-research, web_fetch |
 | planner (default) | `openai-codex/gpt-6.1-sol` / **low** | read, grep, find, ls — UI approval required; optional `profile` and `profileReason` (see below) |
-| worker | `opencode-go/glm-5.3-flash` / **high** | read, write, edit, grep, find, ls, safe_bash, ast_grep, web_fetch |
-| plan-reviewer | `openai-codex/gpt-6-astra` / **low** | read, grep, find, ls |
+| worker | `opencode-go/claude-haiku-5-5` / **xhigh** | read, write, edit, grep, find, ls, safe_bash, ast_grep, web_fetch |
+| plan-reviewer | `openai-codex/gpt-6.1-sol` / **medium** | read, grep, find, ls — manual-only saved-plan review |
+| code-reviewer | `openai-codex/gpt-6.1-sol` / **medium** | read, grep, find, ls — independent integrated-code review |
 
 ### Planner profiles
 
@@ -32,13 +33,21 @@ Profile rules:
 - The selected profile name/label, the granted `profileReason`, and the exact effective model/thinking are recorded in the result details and progress UI so approval and recovery show what was requested and what launched.
 - `openai-codex/gpt-6.1-sol` is already included in `pi/.pi/agent/settings.json` `enabledModels`; this migration does not change settings or the principal's model/thinking.
 
-**Principal settings remain unchanged.** Normally use no child or one child; at most two genuinely independent tasks. File count alone is not a reason to delegate. Planner is optional. Children cannot delegate; missing substantial evidence is returned to the principal as a blocker.
+**Principal settings remain unchanged.** Normally use no child or one child; at most two genuinely independent tasks. File count alone is not a reason to delegate. Planner is optional outside `/plan`. Children cannot delegate; missing substantial evidence is returned to the principal as a blocker.
 
 **Plan format.** The ops skill defines the canonical `## TL;DR`, `## Current Step` (Current/Next/Blockers) and top-level Tn Tasks format. The Markdown plan is the sole source of progress: the coordinator reads it explicitly at start/resume and updates it only after accepting verified work; planner only proposes, and workers receive bounded task briefs rather than managing the full plan. No lifecycle hook synchronizes plan contents into the conversation. `select_session_plan` and `newPlan=true` confirm in their tool UI before changing selection; cancellation preserves existing state and selecting a plan does not approve implementation. The selection belongs to the full active branch, surviving compaction; legacy filename recovery is limited to sessions with no selection records anywhere.
 
 **Role contracts.** Planner is read-only: no edits, provider calls, or nested delegation; it reuses the supplied Known/Evidence and returns one executable checklist (exact files/symbols, dependencies, acceptance, checks) with explicit unresolved questions or `blocked` instead of guesses. Worker executes one bounded implementation slice: it preserves unrelated changes, security/data-integrity invariants, user decisions and changelog policy, never delegates or invents missing dependencies, and returns exactly `Status`, `Changes`, `Evidence`, `Checks`, `Unresolved`. The `execution=` prefix below describes the process/protocol; it never certifies task acceptance — the principal verifies acceptance locally, and `blocked` is a recoverable outcome, not success.
 
-Scout/planner deliberately lack shell, edit and mutating AST tools. Worker has local discovery, execution, structural editing and documentation retrieval. Researcher has real search, not merely URL extraction. LSP is not injected into every child: use the principal's configured server when semantic evidence is needed, and pass that evidence in the brief.
+Scout/planner and both reviewers deliberately lack shell, edit and mutating AST tools. Worker has local discovery, execution, structural editing and documentation retrieval. Researcher has real search, not merely URL extraction. LSP is not injected into every child: use the principal's configured server when semantic evidence is needed, and pass that evidence in the brief.
+
+## Integrated code review
+
+`ops`' **Integrated code review** section is the canonical contract. For relevant implementations, whether direct or delegated: implementation/targeted checks → review of stable integrated code → coordinator verifies findings → accepted corrections → authorized final validation → report. Questions, read-only work and trivial non-behavioral edits do not require review; full suites still require user authorization.
+
+The coordinator supplies the original request/clarifications, approved decisions separately from assumptions, current plan/contract if any, actual scoped Git diff including pertinent new/uncommitted files, related code, constraints, acceptance and checks/results. No full conversation by default, no plan requirement and no implementer-only evidence. Review fidelity first, then behavior/integration, then evidenced simplicity. The read-only reviewer does not approve changes; the coordinator accepts/rejects recommendations with evidence. Findings stay in the child result, with only necessary continuity recorded in an existing plan. `plan-reviewer` remains a distinct manual-only saved-plan role.
+
+Definitions are discovered from `agents/*.md` beside `index.ts`; adding `code-reviewer.md` needs no launcher change or new plugin.
 
 ## Usage
 
@@ -51,7 +60,7 @@ Scout/planner deliberately lack shell, edit and mutating AST tools. Worker has l
 
 `agent` and `task` are required. `cwd` is optional. Each non-planner agent always uses the model and thinking level configured in its agent definition; per-invocation thinking overrides are rejected before spawn. `profile` and `profileReason` are optional and planner-only (see above), and are the supported way to choose the planner's exact model/thinking pair and to justify that choice in the approval dialog. No automatic provider fallback or paid subscription activation occurs. A planner call without an explicit profile is still an approval-gated call; omission never auto-approves or bypasses model validation.
 
-A small local smoke comparison is recorded in `.ai/audits/2026-09-06-pi-harness/IMPLEMENTATION.md`; it is not an autonomous-coding benchmark. Flash remains a candidate after Go access is restored, not a configured dependency that currently fails.
+A small historical local smoke comparison is recorded in `.ai/audits/2026-09-06-pi-harness/IMPLEMENTATION.md`; it is not an autonomous-coding benchmark or evidence of current provider availability.
 
 ## Dependencies and tool loading
 
@@ -68,7 +77,7 @@ Children run with `--mode json -p --no-session --no-skills --no-extensions`, sel
 
 The shared `SYSTEM.md` replaces Pi's generic default only when neither the project's `.pi/SYSTEM.md` nor the global `~/.pi/agent/SYSTEM.md` exists. Explicit custom system prompts remain authoritative. Role text is appended; AGENTS.md/CLAUDE.md discovery remains enabled. The lean prompt avoids mandatory tours through unrelated Pi manuals.
 
-Briefs must include relevant user decisions, existing changes, invariants, validation/changelog requirements and applicable skill references. Children share filesystem and inherited process environment; cwd and allowlists are **not security isolation**.
+Briefs must include relevant user decisions, existing changes, invariants, validation/changelog requirements and applicable skills by name and readable path, requiring explicit reading. Neither skill discovery nor the principal's loaded skills are inherited (`--no-skills`). For applicable PHP/Laravel work, worker briefs must identify `laravel-simplicity` and require its reading, including relevant references. Only the coordinator writes plan progress after verifying acceptance; worker completion is not acceptance. Children share filesystem and inherited process environment; cwd and allowlists are **not security isolation**.
 
 ## Limits and observability
 
@@ -98,6 +107,15 @@ Ctrl+O toggles a compact progress display and expanded task/output. Progress inc
 Extensions may register definitions via `globalThis.__pi_subagents.registerAgent(config)` and remove them with `unregisterAgent(name)`. Required fields: name, description, tools, explicit provider/model, thinking, systemPrompt, filePath. Names must be simple alphanumeric/hyphen/underscore segments. Tool mappings must exist; nested `subagent` is rejected, including for dynamically registered definitions.
 
 ## Tests (no provider calls)
+
+The isolated configuration check verifies the new reviewer's real frontmatter, installed native tools and agent discovery without launching any child or calling a provider:
+
+```sh
+PI_SDK_ROOT=/absolute/path/to/pi-coding-agent \
+  node --test pi/tests/code-reviewer.test.mjs
+```
+
+Existing broader harness checks:
 
 ```sh
 node --experimental-strip-types --test pi/.pi/agent/extensions/pi-subagents/helpers.test.ts

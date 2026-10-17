@@ -5,10 +5,12 @@ All notable changes to this project are documented here using Keep a Changelog a
 ## [Unreleased]
 
 ### Added
+- Pi now has a read-only `code-reviewer` for relevant integrated implementations before authorized final validation, with the review/evidence contract centralized in `ops` and explicit skill-reading requirements for workers. `plan-reviewer` remains manual-only.
 - Silent Pi cache diagnostics record per-run keyed request fingerprints, input-block fingerprints, response request IDs and token usage without saving prompts, tool content or credentials. Each run writes and rotates its own local log; the extension adds no tools, notices, model calls or payload changes.
 - A read-only Pi session usage analyzer reports local role/model token and historical-cost aggregates without exporting conversation or tool content, or modifying Pi's runtime behavior.
 
 ### Fixed
+- Pi's integration tests now resolve `pi-ai` from the installed SDK instead of assuming a sibling package, allowing the event-stream fixture to load with nested npm dependencies. Fixtures also match the configured worker model/thinking and the SDK's current `emitBeforeAgentStart` contract.
 - Replaced the Herdr Neovim sidebar plugin action with `prefix+shift+e`, which opens a right-side Neovim pane using the platform's `nvim` from `PATH`.
 - Herdr's `prefix+e` Neovim command now starts with a space so zsh's `HIST_IGNORE_SPACE` keeps it out of history.
 - Ghostty now releases Cmd+1…9 so Herdr can receive the direct tab-switch shortcuts instead of Ghostty intercepting them.
