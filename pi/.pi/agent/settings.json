@@ -1,18 +1,16 @@
 {
-  "lastChangelogVersion": "1.2.0",
+  "lastChangelogVersion": "1.3.0",
   "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-6-luna",
-  "defaultThinkingLevel": "xhigh",
+  "defaultModel": "gpt-6.1-sol",
+  "defaultThinkingLevel": "low",
   "modelThinkingLevels": {
     "openai-codex/gpt-6-luna": "xhigh",
     "openai-codex/gpt-6.1-sol": "low",
-    "opencode-go/deepseek-v4.1-flash": "high",
+    "opencode-go/deepseek-v4.1-flash": "max",
     "opencode-go/claude-haiku-5-5": "xhigh"
   },
   "showCacheMissNotices": true,
-  "defaultTools": [
-    "+codemode"
-  ],
+  "defaultTools": ["+codemode"],
   "shellPath": "/bin/zsh",
   "shellCommandPrefix": "eval \"$(mise env -s zsh)\"\nunset APP_URL APP_ENV",
   "theme": "light",
@@ -45,11 +43,5 @@
     "compactionModel": "openai-codex/gpt-6-luna:low",
     "summaryReserveTokens": 16384
   },
-  "npmCommand": [
-    "mise",
-    "exec",
-    "node@24",
-    "--",
-    "npm"
-  ]
+  "npmCommand": ["mise", "exec", "node@24", "--", "npm"]
 }
