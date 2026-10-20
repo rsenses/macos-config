@@ -26,6 +26,7 @@ scrollbar = "system"
 # Let Herdr receive Cmd+COSAS instead of switching Ghostty things.
 keybind = cmd+t=unbind
 keybind = cmd+w=unbind
+keybind = cmd+x=unbind
 keybind = cmd+digit_1=unbind
 keybind = cmd+digit_2=unbind
 keybind = cmd+digit_3=unbind
