@@ -89,7 +89,7 @@ previous_tab = ["prefix+p", "cmd+shift+["]
 next_tab = ["prefix+n", "cmd+shift+]"]
 switch_tab = ["prefix+1..9", "cmd+1..9"]
 switch_workspace = "prefix+shift+1..9"
-close_tab = ["prefix+shift+x", "cmd+w"]
+close_tab = "prefix+shift+x"
 # rename_pane = "prefix+shift+p"
 # edit_scrollback = "prefix+e"
 # focus_pane_left = "prefix+h"
@@ -101,7 +101,8 @@ close_tab = ["prefix+shift+x", "cmd+w"]
 # last_pane = ""          # optional, unset by default; bind e.g. "prefix+tab" for global back-and-forth
 split_vertical = ["prefix+|", "cmd+d"]
 split_horizontal = ["prefix+minus", "cmd+shift+d"]
-close_pane = ["prefix+x", "cmd+x"]
+# Close the focused pane, then its tab/workspace when nothing remains.
+close_pane = ["prefix+x", "cmd+w"]
 # zoom = "prefix+z"       # legacy alias: fullscreen
 resize_mode = ""
 # toggle_sidebar = "prefix+b"
@@ -119,7 +120,7 @@ resize_mode = ""
 # type = "shell" runs detached in the background.
 # type = "pane" opens a temporary pane and closes it when the command exits.
 [[keys.command]]
-key = "prefix+shift+g"
+key = ["prefix+shift+g", "cmd+shift+g"]
 type = "pane"
 command = "lazygit"
 
@@ -129,12 +130,17 @@ type = "pane"
 command = "notes"
 
 [[keys.command]]
-key = "prefix+shift+f"
+key = ["prefix+shift+f", "cmd+shift+f"]
 type = "popup"
 command = "herdr-sessionizer"
 
 [[keys.command]]
-key = "prefix+e"
+key = ["prefix+j", "cmd+j"]
+type = "popup"
+command = "exec \"$SHELL\" -i"
+
+[[keys.command]]
+key = ["prefix+e", "cmd+e"]
 type = "pane"
 command = """
 pane=$(herdr pane split --direction right --ratio 0.5 --focus | jq -r '.result.pane.pane_id')
@@ -144,19 +150,19 @@ herdr pane run "$pane" " nvim ; exit"
 # Override herdr's built-in "new worktree" key (prefix+shift+g) with worktrunk's
 # default-branch switch/create picker:
 [[keys.command]]
-key = ["prefix+g", "cmd+shift+g"]
+key = ["prefix+g", "cmd+g"]
 type = "plugin_action"
 command = "worktrunk.open"
 description = "Worktree: switch / create from default branch"
 
 [[keys.command]]
-key = ["prefix+r", "cmd+shift+r"]
+key = ["prefix+r", "cmd+r"]
 type = "plugin_action"
 command = "worktrunk.remove"
 description = "Worktree: remove"
 
 [[keys.command]]
-key = ["prefix+m", "cmd+shift+m"]
+key = ["prefix+m", "cmd+m"]
 type = "plugin_action"
 command = "worktrunk.merge"
 description = "Worktree: merge into the target branch"

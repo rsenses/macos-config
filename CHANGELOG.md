@@ -5,6 +5,7 @@ All notable changes to this project are documented here using Keep a Changelog a
 ## [Unreleased]
 
 ### Added
+- Herdr opens an interactive popup shell with `prefix+j` or `cmd+j`, closing when the shell exits.
 - Silent Pi cache diagnostics record per-run keyed request fingerprints, input-block fingerprints, response request IDs and token usage without saving prompts, tool content or credentials. Each run writes and rotates its own local log; the extension adds no tools, notices, model calls or payload changes.
 - A read-only Pi session usage analyzer reports local role/model token and historical-cost aggregates without exporting conversation or tool content, or modifying Pi's runtime behavior.
 
@@ -17,6 +18,8 @@ All notable changes to this project are documented here using Keep a Changelog a
 - `chrome-devtools-mcp` is pinned to `1.10.1` instead of `@latest`. A new release can change the server's instructions and tool list, which rewrites the `mcp_servers` system-prompt section and the request's tool declarations, invalidating the prompt cache mid-session.
 
 ### Changed
+- Herdr's Worktrunk plugin now requests popup pickers instead of split panes.
+- Herdr's Cmd+W now closes the focused pane, cascading to its tab and workspace when empty, replacing Cmd+X for pane closure.
 - Herdr's keymap now pairs prefixed tab and pane-split actions with Cmd shortcuts, while workspace navigation uses prefixed arrows and indexed jumps.
 - Pi's always-on instructions now make token efficiency explicit and point to `ops` for the canonical plan, handoff, and validation contracts. Planning/execution/review/finalization prompts reuse those contracts instead of restating them; read-only Git inspection no longer forces implementation skills, and focused security review uses guidance mode with benefit-driven delegation.
 - Planner guidance no longer sets an output-length target and favors verifiable outcomes with only the execution detail needed, while retaining decisions, acceptance, risks and pending work.
