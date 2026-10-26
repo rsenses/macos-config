@@ -50,6 +50,7 @@ fi
 path=(
   "$HOME/.cargo/bin"
   "$HOME/.local/bin"
+  "$HOME/.config/composer/vendor/bin"
   "$HOME/.composer/vendor/bin"
   $path
 )

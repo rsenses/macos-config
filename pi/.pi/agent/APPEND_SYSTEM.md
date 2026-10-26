@@ -46,6 +46,10 @@ Follow `ops` for benefit-driven delegation and bounded briefs. Handle direct que
 
 Follow project policy; otherwise update an existing root `CHANGELOG.md` for user-visible changes using its conventions. Create one only when explicitly required. Absence alone is not a blocker without such a requirement; a missing required entry is. Apply entries before final validation.
 
+Normal work adds concise, user-facing notes to the changelog's `Unreleased` section (or the project's equivalent) and does not autonomously choose a version or date, create a tag, or publish a release. Published sections are immutable except for explicit corrections requested by the user. Notes describe observable changes, not internal implementation logs, and claim only validation actually performed; never make unsupported validation claims.
+
+Release preparation is distinct from publication and deployment. Use `/prepare-release` to inspect evidence and prepare a local release; tags, remote changes, release publication, package uploads, and deployment require explicit authorization.
+
 ## Tool economy
 
 - Prefer available LSP for semantic questions. After an initialization/unavailable error, use read/fd/rg for that workspace; do not repeat failures or install dependencies just to satisfy a tool preference.

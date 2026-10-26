@@ -10,6 +10,7 @@ All notable changes to this project are documented here using Keep a Changelog a
 - A read-only Pi session usage analyzer reports local role/model token and historical-cost aggregates without exporting conversation or tool content, or modifying Pi's runtime behavior.
 
 ### Fixed
+- Global Composer packages now use a stable `~/.config/composer` home across mise PHP versions, with their executables available in zsh's PATH.
 - Replaced the Herdr Neovim sidebar plugin action with `prefix+shift+e`, which opens a right-side Neovim pane using the platform's `nvim` from `PATH`.
 - Herdr's `prefix+e` Neovim command now starts with a space so zsh's `HIST_IGNORE_SPACE` keeps it out of history.
 - Ghostty now releases Cmd+1…9 so Herdr can receive the direct tab-switch shortcuts instead of Ghostty intercepting them.

@@ -36,6 +36,12 @@ Los paquetes principales son:
 
 El fragmento de mise selecciona `~/.config/php/<versión-major.minor>/php.ini` según la versión de PHP activa y configura PCOV: usa la ruta de Homebrew en macOS y `pcov.so` en el directorio de extensiones de PHP en Linux. En Linux, instala PCOV para cada versión de PHP de mise (`mise exec php@<versión> -- pecl install pcov`). El paquete `php` se instala en ambas plataformas para proporcionar los INI versionados; en Linux, además, configura los temporales de PHP/Composer en `~/.cache/php-tmp`, en lugar de usar `/tmp`. El paquete `zsh` añade `~/.config/php/conf.d` al escaneo únicamente en Linux, sin quitar el directorio de configuración propio de PHP. El directorio temporal se crea con permisos `0700`; esto solo afecta a procesos PHP CLI y no modifica PHP-FPM/Apache ni el `TMPDIR` global.
 
+### Paquetes globales de Composer
+
+El fragmento de mise fija `COMPOSER_HOME` en `~/.config/composer`, compartido entre las versiones de PHP. Zsh añade `~/.config/composer/vendor/bin` al `PATH`. Los paquetes deben ser compatibles con la versión de PHP activa.
+
+Los paquetes, `composer.json`, `composer.lock` y las credenciales de Composer son datos locales: no se guardan ni se enlazan desde este repositorio. Si ya tienes paquetes en una carpeta `.composer` dentro de una instalación de PHP de mise, migra su contenido a `~/.config/composer` antes de ejecutar `composer global update`; no sobrescribas una instalación de destino existente.
+
 ## Archivos locales
 
 Estos archivos se excluyen deliberadamente del repositorio. Contienen secretos, identidad, rutas o ajustes específicos de cada máquina. Créelos directamente en las rutas indicadas; no los añadas al repositorio.
