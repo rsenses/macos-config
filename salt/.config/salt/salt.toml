@@ -1,6 +1,6 @@
 # Opciones de apertura. Las reglas de imágenes vienen de tu configuración de Yazi.
 [ui]
-footer_position = "top"
+footer_position = "bottom"
 
 [opener]
 finder = [

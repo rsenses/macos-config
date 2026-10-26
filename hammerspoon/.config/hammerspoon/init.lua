@@ -11,6 +11,8 @@ Install:andUse("ReloadConfiguration", {
 local excludedApps = {
   ["System Settings"] = true,
   ["Calculator"] = true,
+  ["Finder"] = true,
+  ["Raycast"] = true,
 }
 
 local filter = hs.window.filter.new()

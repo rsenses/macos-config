@@ -140,6 +140,14 @@ type = "popup"
 command = "exec \"$SHELL\" -i"
 
 [[keys.command]]
+key = ["prefix+shift+s", "cmd+shift+s"]
+type = "popup"
+command = "exec \"$HOME/.local/bin/salt\" \"${HERDR_ACTIVE_PANE_CWD:-.}\""
+description = "Salt: explorar archivos del panel activo"
+width = "90%"
+height = "90%"
+
+[[keys.command]]
 key = ["prefix+e", "cmd+e"]
 type = "pane"
 command = """
