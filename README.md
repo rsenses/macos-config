@@ -1,6 +1,6 @@
 # Dotfiles
 
-Configuración personal para macOS y Linux, gestionada con [GNU Stow](https://www.gnu.org/software/stow/). Incluye configuraciones para Neovim, zsh, Git, mise, Herdr, Worktrunk, tmux, Ghostty, Yazi, ripgrep, sesh, OpenCode, Pi y Plannotator.
+Configuración personal para macOS y Linux, gestionada con [GNU Stow](https://www.gnu.org/software/stow/). Incluye configuraciones para Neovim, zsh, Git, mise, Herdr, Worktrunk, tmux, Ghostty, Yazi, Salt, ripgrep, sesh, OpenCode, Pi y Plannotator.
 
 ## Instalación
 
@@ -12,7 +12,7 @@ cd ~/dev/contrib/dotfiles
 
 stow --dir="$PWD" --target="$HOME" \
   bin ghostty git herdr mise nvim opencode php phpactor pi plannotator \
-  ripgrep sesh tmux worktrunk yazi zsh
+  ripgrep salt sesh tmux worktrunk yazi zsh
 ```
 
 El `--dir="$PWD"` hace que la instalación funcione aunque el repositorio esté en una ruta distinta de la histórica. Stow creará los enlaces en `$HOME` y `$HOME/.config`; revisa primero los conflictos si ya existen archivos en esas rutas.
@@ -25,6 +25,7 @@ Los paquetes principales son:
 | `git` | `~/.gitconfig`, `~/.gitignore`, `~/.githooks` |
 | `zsh` | `~/.zshenv`, `~/.zprofile`, `~/.zshrc`, `~/.config/zsh` |
 | `nvim` | `~/.config/nvim` |
+| `salt` | `~/.config/salt/salt.toml` |
 | `herdr`, `worktrunk` | `~/.config/herdr`, `~/.config/worktrunk` |
 | `mise` | Fragmento `~/.config/mise/conf.d/php-ini.toml` (se integra con `config.toml`) |
 | `opencode`, `pi`, `plannotator` | Sus respectivos directorios de configuración en `$HOME` |

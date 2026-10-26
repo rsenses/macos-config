@@ -1,0 +1,49 @@
+# Opciones de apertura. Las reglas de imágenes vienen de tu configuración de Yazi.
+[ui]
+footer_position = "top"
+
+[opener]
+finder = [
+  { command = ["open", "-a", "Finder", "{file}"], desc = "Finder", for = "macos" },
+]
+nvim = [
+  { command = ["nvim", "{file}"], desc = "Neovim", block = true },
+]
+vscode = [
+  { command = ["code", "{file}"], desc = "VS Code" },
+]
+textedit = [
+  { command = ["open", "-e", "{file}"], desc = "TextEdit", for = "macos" },
+]
+image-preview = [
+  { command = ["open", "-a", "Preview.app", "{file}"], desc = "Vista Previa", for = "macos" },
+]
+image-optim = [
+  { command = ["open", "-a", "ImageOptim.app", "{file}"], desc = "ImageOptim", for = "macos" },
+]
+
+[[open.rules]]
+kind = "directory"
+use = ["finder", "nvim", "vscode"]
+
+[[open.rules]]
+mime = "image/*"
+use = ["image-preview", "image-optim"]
+
+[[open.rules]]
+glob = "*.{rs,md,txt,toml,json,yaml,yml,py,js,ts,tsx,jsx,sh}"
+use = ["nvim", "vscode", "textedit"]
+
+[[open.rules]]
+glob = "*.csv"
+use = ["nvim", "vscode"]
+
+[sort]
+by = "name"
+directories_first = true
+
+[[sort.rules]]
+path = "~/Downloads"
+by = "mtime"
+reverse = true
+directories_first = true
