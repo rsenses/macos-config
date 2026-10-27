@@ -20,7 +20,7 @@ Save a plan when durable decisions, related phases, resumption, or a handoff nee
 
 ### Canonical plan
 
-Use the existing `## TL;DR`, `## Current Step`, and `## Tasks` structure with stable top-level `Tn` IDs; do not introduce another template or migrate old plans just to shorten them.
+Use the existing `## TL;DR`, `## Current Step`, and `## Tasks` structure with stable top-level `Tn` IDs. Under `## Tasks`, write unindented checklist items as `- [ ] T1: Observable outcome` (accepted: `- [x] T1: Observable outcome`); put supporting details beneath each item. This is the format recognized by the plan reader. Do not introduce another template or migrate old plans just to shorten them.
 
 Current Step has three lines:
 
@@ -40,7 +40,7 @@ When a later user decision supersedes the design, consolidate the current TL;DR,
 
 The coordinator alone writes plan progress after verifying acceptance. Check only accepted tasks; a child's success is not acceptance. Update Current Step, concise evidence, checks/results, and blockers. Routine progress updates do not require a planner.
 
-Give a worker its plan path/task ID as references plus the bounded brief below, writable files, established decisions, permitted checks, and stop condition. Do not pass the full plan or conversation by default. Integrate its result once after local verification.
+Give each worker one bounded task, its plan path/task ID as references, and the brief below with writable files, established decisions, permitted checks, and a stop condition after that task. Do not assign the remaining plan or ask the worker to advance to the next task. The coordinator inspects the diff for scope and the smallest sufficient change, verifies acceptance with the permitted checks, and records the result before assigning the next dependent task. This is task-by-task sequencing, not a request for one worker to execute the plan sequentially. Independent tasks may run concurrently only when the plan expressly permits it, within section 3's limits. Do not pass the full plan or conversation by default. Integrate each result once after local verification.
 
 Markdown is the sole editable source of plan content. The extension resolves selection and serves explicit reads; lifecycle events do not synchronize document contents into prompts. Do not call unavailable memory tools or create a second daily log by default. Put only stable lessons in `MEMORY.md`; keep `TASKS.md` focused on pending work and link complex plans.
 

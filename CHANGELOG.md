@@ -24,6 +24,7 @@ All notable changes to this project are documented here using Keep a Changelog a
 - `chrome-devtools-mcp` is pinned to `1.10.1` instead of `@latest`. A new release can change the server's instructions and tool list, which rewrites the `mcp_servers` system-prompt section and the request's tool declarations, invalidating the prompt cache mid-session.
 
 ### Changed
+- Pi's execution guidance now makes one-task worker handoffs and coordinator acceptance explicit, favors the smallest sufficient change, and documents the checklist syntax recognized by the plan reader.
 - `/run-plan` now explicitly checks the current plan against later user decisions already available in context, stopping only for material contradictions without adding a new phase or historical search.
 - Pi's preparation now makes material ambiguities explicit without adding routine confirmations; coordinators assess review findings against user intent and evidence rather than applying recommendations automatically. Selective pstack sources and MIT attribution are recorded in `pi/PSTACK-NOTICE.md`; the read-only consumer-impact lens is available through the separately requested, manual-only code reviewer.
 - Pi skill descriptions now state concrete usage triggers and distinguish overlapping development, Laravel simplification, and dashboard design workflows without changing their instructions or invocation settings.

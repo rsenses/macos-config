@@ -9,7 +9,7 @@ description: "Use when implementing code changes, reproducing and fixing bugs, a
 
 Build in thin vertical slices. Each increment should leave the system working and testable.
 
-- **Scope Discipline**: Touch only what the task requires. Record unrelated improvements for later.
+- **Scope Discipline**: Make the smallest sufficient change that meets the objective and preserves security, data integrity, and required validation. Reuse existing behavior and abstractions; add an abstraction only for a concrete benefit required by the task. Touch only what the task requires, not adjacent cleanup. Keep unrelated improvements separate from required work.
 - **Automation**: Use scripts or codemods for repetitive, structurally verifiable changes when they reduce risk or manual work. Changed line count alone neither requires nor rules out automation.
 
 ## 2. Pragmatic Testing
