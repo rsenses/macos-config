@@ -1,6 +1,6 @@
 ---
 name: workers-profiling
-description: Profile or debug CPU usage and memory allocation in deployed Cloudflare Workers and Durable Objects. Then use this information to optimize your code.
+description: "Use when diagnosing or optimizing CPU usage or memory allocation in deployed Cloudflare Workers or Durable Objects through profiling."
 ---
 
 # Workers profiling

@@ -1,6 +1,6 @@
 # Pi subagents
 
-Five bounded roles; the principal coordinates and verifies acceptance. `plan-reviewer` is manual-only and must never be dispatched solely by the architect's own decision.
+Six bounded roles; the principal coordinates and verifies acceptance. `plan-reviewer` and `code-reviewer` are manual-only; neither may be dispatched solely by the coordinator's own decision.
 
 | Agent | Model / thinking | Tools |
 |---|---|---|
@@ -9,6 +9,7 @@ Five bounded roles; the principal coordinates and verifies acceptance. `plan-rev
 | planner (default) | `openai-codex/gpt-6.1-sol` / **low** | read, grep, find, ls — UI approval required; optional `profile` and `profileReason` (see below) |
 | worker | `opencode-go/glm-5.3-flash` / **high** | read, write, edit, grep, find, ls, safe_bash, ast_grep, web_fetch |
 | plan-reviewer | `openai-codex/gpt-6-astra` / **low** | read, grep, find, ls |
+| code-reviewer (manual-only) | `openai-codex/gpt-6.1-sol` / **medium** | read, grep, find, ls |
 
 ### Planner profiles
 
@@ -50,6 +51,18 @@ Scout/planner deliberately lack shell, edit and mutating AST tools. Worker has l
 ```
 
 `agent` and `task` are required. `cwd` is optional. Each non-planner agent always uses the model and thinking level configured in its agent definition; per-invocation thinking overrides are rejected before spawn. `profile` and `profileReason` are optional and planner-only (see above), and are the supported way to choose the planner's exact model/thinking pair and to justify that choice in the approval dialog. No automatic provider fallback or paid subscription activation occurs. A planner call without an explicit profile is still an approval-gated call; omission never auto-approves or bypasses model validation.
+
+### Manual implementation review
+
+In a Pi conversation, explicitly ask:
+
+> Invoke `code-reviewer` with the existing subagent tool to review this implementation. Use my original request and subsequent clarifications, the current contract/plan if any, and the diff for this work. Review only; do not apply fixes.
+
+The coordinator calls `subagent` with `agent: "code-reviewer"`, `task` containing the existing Goal/Known/Evidence/Acceptance/Checks/Stop brief, and optionally `cwd` pointing at the target repository. Include the original request, clarifications and decisions, the scoped diff (or a readable artifact, including relevant untracked files), plan/contract if present, and readable project/skill paths. Children do not inherit conversation history. Do not pass planner profiles or a thinking override.
+
+The agent returns Status / Findings / Evidence / Checks / Unresolved, distinguishing supported defects, pending hypotheses, and optional improvements, with priority, impact, locations, evidence, and minimum corrections. It reviews fidelity, bugs/integration, simplicity, then maintainability. For PHP/Laravel it explicitly reads `laravel-simplicity`. It can return no findings; it cannot edit, run code, delegate, or instruct a worker. The coordinator decides what to do with its recommendations.
+
+This is not a new slash command or automatic stage. Worker completion, `/run-plan`, planning, tests, acceptance, and task closure do not invoke it. Manual-only routing is an instruction contract, not a new launcher authorization gate. As with other agent definitions, discovery occurs when the extension next initializes; adding the file does not update a running registry by itself.
 
 A small local smoke comparison is recorded in `.ai/audits/2026-09-06-pi-harness/IMPLEMENTATION.md`; it is not an autonomous-coding benchmark. Flash remains a candidate after Go access is restored, not a configured dependency that currently fails.
 

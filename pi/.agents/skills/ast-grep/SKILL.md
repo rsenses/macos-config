@@ -1,6 +1,6 @@
 ---
 name: ast-grep
-description: Guide for using the ast_grep Pi tool for structural code search, AST inspection, YAML rule queries, and AST-aware rewrites. Use when searching code by syntax/structure, debugging ast-grep patterns, or safely replacing code with dry-run/apply workflow.
+description: "Use when searching code by syntax or AST structure, debugging ast-grep patterns or YAML rules, or performing structural rewrites with the ast_grep tool's dry-run/apply workflow."
 ---
 
 # ast-grep Structural Search and Rewrite

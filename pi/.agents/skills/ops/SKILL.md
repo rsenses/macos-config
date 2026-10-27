@@ -1,6 +1,6 @@
 ---
 name: ops
-description: Memory management (.ai/), context engineering, selective subagent coordination, and implementation validation.
+description: "Use before implementing, delegating work, or reporting implementation readiness; also when managing .ai/ plans and tasks, resuming saved work, coordinating subagents, or deciding validation scope and approval boundaries."
 ---
 
 # Ops: System Control and Memory
@@ -59,6 +59,7 @@ The principal owns scope, decisions, integration, and final validation. Delegate
 - `/plan` requires a planner design; preparation gathers evidence without pre-solving it. Elsewhere use a planner for material alternatives, not routine status updates.
 - Children cannot delegate. Missing material prerequisites return `blocked` with the exact question. Use direct tools for orientation, deterministic operations, and final validation.
 - `plan-reviewer` is manual-only: invoke it only when explicitly requested for a saved plan or through `/review-plan`, never automatically from architect, planner, `/plan`, or `/run-plan`.
+- `code-reviewer` is manual-only: invoke it through `subagent` only when the user explicitly requests that agent to review an existing implementation. It is not a post-worker, pre-test, `/run-plan`, planning, acceptance, or task-closing stage. Supply the original request, clarifications, decisions, current contract/plan if any, scoped diff, and readable project/skill references in the existing brief. Its recommendations do not authorize fixes or change the current validation policy.
 
 ### Brief and output contracts
 
@@ -71,9 +72,24 @@ Every brief uses these headings:
 - **Checks**: concrete permitted checks; never invent provider calls.
 - **Stop**: ambiguity, scope conflict, missing evidence, or repeated failure without new evidence.
 
-Pass established evidence and the remaining question, not a transcript or a request to rediscover facts. Request concise evidence, but preserve the complete actionable design when planning. Keep one canonical plan; integrate results once instead of copying reports across artifacts and chat.
+Pass established evidence and the remaining question, not a transcript or a request to rediscover facts. Separate user decisions, verified facts, and assumptions in Known/Evidence. Include the relevant request and later clarifications, not just the plan or implementer's explanation. Supply readable paths to applicable skills and references; children do not inherit the principal's loaded skills. Request concise evidence, but preserve the complete actionable design when planning. Keep one canonical plan; integrate results once instead of copying reports across artifacts and chat.
 
 Child output starts with **Status** (`complete`, `partial`, `blocked`, `failed`, `cancelled`, `timed_out`), then its role's findings/changes, evidence, checks, and unresolved items. Workers return **Status / Changes / Evidence / Checks / Unresolved**. Name their validation policy (`no-tests`, `targeted-check`, `add-test`, `test-first`, `defer-validation`) and the concrete command or reason.
+
+### Assessing review findings
+
+When an existing review returns findings, the coordinator checks them against the user's request and clarifications, the current contract, and the implementation, in that order. A plan or implementer's explanation alone does not establish acceptance. Check the cited evidence and material affected consumers; neither disagreement with the implementer nor another model's authority decides a finding.
+
+Use these distinctions within the existing handoff, without requiring empty sections or a finding quota:
+
+- **Supported defect**: concrete evidence, observable impact, and the smallest justified correction.
+- **Pending hypothesis**: the missing fact and minimum check, including what result would confirm or refute it. Do not report proposed execution or browser checks as performed.
+- **Optional improvement**: outside acceptance requirements; keep separate from required corrections.
+- **Dismissed finding**: give the concrete reason when communicating the dismissal matters.
+
+Apply justified corrections within scope. Reject preferences and abstractions without demonstrated benefit; consult the user for changes to intent or scope. For PHP/Laravel, use `laravel-simplicity` rather than class, layer, or consumer counts; one implementation does not invalidate an abstraction.
+
+Use the initial review and, when substantive corrections warrant it, a focused check of those corrections. No indefinite rounds, additional judge, or extra routine model call. No findings is valid; partial coverage is not full approval. This contract interprets existing reviews; it does not add a review stage, alter permissions, or replace the current validation policy.
 
 ### Approval boundaries
 
@@ -93,7 +109,11 @@ Answer conceptual questions directly. Inspect files or delegate only when reposi
 
 ## 6. Clarification and Risk Gate
 
-Ask one focused question for material ambiguity, preference, or safety/data/production risk. Otherwise perform authorized bounded work without routine confirmation. Preserve APPEND_SYSTEM's specific workflow gates once each; do not repeat launcher, selection, or implementation approvals.
+When material ambiguity could change behavior, briefly state the understood outcome, what must remain unchanged, and any open decision before that interpretation is consolidated in a plan or implementation. Use APPEND_SYSTEM's existing communication rule, not a second specification or approval step. Distinguish user decisions, verified facts, and assumptions; do not invent a solution to fill a material gap.
+
+Ask one focused question for material ambiguity, preference, or safety/data/production risk. Otherwise perform authorized bounded work without routine confirmation or restating a clear request. Preserve APPEND_SYSTEM's specific workflow gates once each; do not repeat launcher, selection, or implementation approvals.
+
+`/sharpen` manually reformulates a request using the brief in section 3; `/grill-me` supports clarification through conversation when needed; `/plan` designs and persists a plan through its existing planner flow. Do not chain them automatically. Deepening a brief does not expand its scope: separate unrequested improvements as optional. Direct work needs none of these commands as a prerequisite.
 
 ## 7. Critical Configuration Safety
 

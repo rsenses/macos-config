@@ -1,6 +1,6 @@
 ---
 name: security-audit
-description: Security guidance and vulnerability review for codebases, APIs, services, CLI tools, libraries, and daemons. Use for security questions, focused reviews, vulnerability research, security audits, or pen tests. Run the complete workflow only for explicit codebase audit or pen-test requests, full/comprehensive/end-to-end reviews, or requested report artifacts.
+description: "Use for security questions, focused vulnerability reviews, vulnerability research, codebase audits, or pen tests involving codebases, APIs, services, CLI tools, libraries, or daemons. Run the complete workflow only for explicit codebase audit or pen-test requests, full/comprehensive/end-to-end reviews, or requested report artifacts."
 ---
 
 # Security Audit

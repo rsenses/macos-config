@@ -5,11 +5,14 @@ All notable changes to this project are documented here using Keep a Changelog a
 ## [Unreleased]
 
 ### Added
+- Pi's manual-only `code-reviewer` subagent reviews existing implementations for fidelity, bugs and integration, simplicity, and maintainability using read-only tools; it does not add an automatic development or validation stage.
+- Pi's manual `/sharpen` command turns an imprecise request into the existing task brief without implementing, saving a plan, or launching subagents.
 - Herdr opens an interactive popup shell with `prefix+j` or `cmd+j`, closing when the shell exits.
 - Silent Pi cache diagnostics record per-run keyed request fingerprints, input-block fingerprints, response request IDs and token usage without saving prompts, tool content or credentials. Each run writes and rotates its own local log; the extension adds no tools, notices, model calls or payload changes.
 - A read-only Pi session usage analyzer reports local role/model token and historical-cost aggregates without exporting conversation or tool content, or modifying Pi's runtime behavior.
 
 ### Fixed
+- Pi's provider-free integration tests now model the configured scout/worker `max` thinking level and use the installed SDK's current agent-start event signature.
 - Global Composer packages now use a stable `~/.config/composer` home across mise PHP versions, with their executables available in zsh's PATH.
 - Replaced the Herdr Neovim sidebar plugin action with `prefix+shift+e`, which opens a right-side Neovim pane using the platform's `nvim` from `PATH`.
 - Herdr's `prefix+e` Neovim command now starts with a space so zsh's `HIST_IGNORE_SPACE` keeps it out of history.
@@ -19,6 +22,8 @@ All notable changes to this project are documented here using Keep a Changelog a
 - `chrome-devtools-mcp` is pinned to `1.10.1` instead of `@latest`. A new release can change the server's instructions and tool list, which rewrites the `mcp_servers` system-prompt section and the request's tool declarations, invalidating the prompt cache mid-session.
 
 ### Changed
+- Pi's preparation now makes material ambiguities explicit without adding routine confirmations; coordinators assess review findings against user intent and evidence rather than applying recommendations automatically. Selective pstack sources and MIT attribution are recorded in `pi/PSTACK-NOTICE.md`; the read-only consumer-impact lens is available through the separately requested, manual-only code reviewer.
+- Pi skill descriptions now state concrete usage triggers and distinguish overlapping development, Laravel simplification, and dashboard design workflows without changing their instructions or invocation settings.
 - Herdr's Worktrunk plugin now requests popup pickers instead of split panes.
 - Herdr's Cmd+W now closes the focused pane, cascading to its tab and workspace when empty, replacing Cmd+X for pane closure.
 - Herdr's keymap now pairs prefixed tab and pane-split actions with Cmd shortcuts, while workspace navigation uses prefixed arrows and indexed jumps.

@@ -1,6 +1,6 @@
 ---
 name: cloudflare
-description: Discover and choose Cloudflare products for apps, APIs, AI agents, storage, networking, and security. Use for architecture and product selection, including when the user describes a need without naming a Cloudflare product; then find the relevant skill or documentation.
+description: "Use when choosing Cloudflare products or designing Cloudflare architecture for apps, APIs, agents, storage, networking, or security, including needs stated without a product name. Route product-specific work to the relevant skill or documentation."
 ---
 
 # Discover and build with Cloudflare

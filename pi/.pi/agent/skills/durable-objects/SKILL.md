@@ -1,6 +1,6 @@
 ---
 name: durable-objects
-description: Build, debug, or review Cloudflare Durable Objects code for persistent state and coordination.
+description: "Use when building, debugging, or reviewing Cloudflare Durable Objects code for persistent state or coordination."
 ---
 
 # Durable Objects

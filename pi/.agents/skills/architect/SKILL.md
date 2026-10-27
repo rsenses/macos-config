@@ -1,6 +1,6 @@
 ---
 name: architect
-description: Specification design, behavior contracts, and risk-aware task decomposition.
+description: "Use when defining specifications, behavior contracts, or implementation plans, especially when ambiguous requirements, competing designs, security, data integrity, or production risk require explicit boundaries and acceptance criteria."
 ---
 
 # Architect: Design and Planning

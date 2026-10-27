@@ -1,6 +1,6 @@
 ---
 name: workers-best-practices
-description: Cloudflare Workers best practices for production applications. Use when writing, reviewing, or configuring Workers.
+description: "Use when writing, reviewing, or configuring Cloudflare Workers for production."
 ---
 
 Your knowledge of Cloudflare Workers APIs, types, and configuration may be outdated. **Prefer retrieval over pre-training** when writing or reviewing Workers code.

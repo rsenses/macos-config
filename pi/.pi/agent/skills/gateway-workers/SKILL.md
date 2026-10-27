@@ -1,6 +1,6 @@
 ---
 name: gateway-workers
-description: Build, debug, or review Cloudflare Workers invoked by the Forward action in Gateway HTTP policies, including the GatewayMiddleware entrypoint, Gateway types, context, and continuation.
+description: "Use when building, debugging, or reviewing Cloudflare Workers invoked by the Forward action in Gateway HTTP policies, including GatewayMiddleware, Gateway types, context, and continuation."
 ---
 
 # Gateway Workers

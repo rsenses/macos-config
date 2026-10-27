@@ -262,6 +262,50 @@ test('memory: confirm selection/newPlan before mutation; cancel, abort and reope
     assert.equal(await readFile(join(f.dir,b),'utf8'),'# Plan: B\n');
   });
 });
+test('code-reviewer: discovered definition and read-only manual invocation without providers', {skip: !sdkRoot}, async () => {
+  const { DefaultResourceLoader, SettingsManager, SessionManager } = await import(pathToFileURL(join(sdkRoot, 'dist/index.js')));
+  const { parseFrontmatter } = await import(pathToFileURL(join(sdkRoot, 'dist/utils/frontmatter.js')));
+  const { frontmatter } = parseFrontmatter(await readFile(join(here,'agents/code-reviewer.md'),'utf8'));
+  assert.equal(frontmatter.name,'code-reviewer');
+  assert.equal(frontmatter.model,'openai-codex/gpt-6.1-sol');
+  assert.equal(frontmatter.thinking,'medium');
+  assert.deepEqual(frontmatter.tools.split(',').map(t=>t.trim()),['read','grep','find','ls']);
+  const dir = await mkdtemp(join(tmpdir(),'pi-code-reviewer-fixture-'));
+  const oldPath = process.env.PATH;
+  const argsPath = join(dir,'argv.json');
+  try {
+    const script = `#!${process.execPath}\nconst fs=require('node:fs');fs.writeFileSync(${JSON.stringify(argsPath)},JSON.stringify(process.argv.slice(2)));console.log(JSON.stringify({type:'message_end',message:{role:'assistant',provider:'openai-codex',model:'gpt-6.1-sol',stopReason:'stop',content:[{type:'text',text:'**Status**: complete\\n**Findings**: none (fixture only)'}]}}));\n`;
+    await writeFile(join(dir,'pi'),script,{mode:0o700});
+    process.env.PATH = `${dir}:${oldPath}`;
+    const loader = new DefaultResourceLoader({cwd:dir,agentDir:join(dir,'agent'),settingsManager:SettingsManager.inMemory({packages:[]}),noExtensions:true,noSkills:true,noPromptTemplates:true,noThemes:true,additionalExtensionPaths:[join(here,'index.ts')]});
+    await loader.reload();
+    assert.deepEqual(loader.getExtensions().errors,[]);
+    const ext = loader.getExtensions().extensions.find(e=>e.tools.has('subagent'));
+    assert.ok(ext);
+    const registered = ext.tools.get('subagent');
+    const tool = registered.definition ?? registered;
+    assert.match(tool.description,/code-reviewer.*Manual-only/);
+    assert.equal(existsSync(argsPath),false,'loading definitions alone must not launch a reviewer');
+    const model = {provider:'openai-codex',id:'gpt-6.1-sol',reasoning:true,contextWindow:272000,thinkingLevelMap:{medium:'medium'}};
+    const ctx = {cwd:dir,sessionManager:SessionManager.inMemory(dir),scopedModels:[{model}],modelRegistry:{find:(p,id)=>p===model.provider&&id===model.id?model:undefined},hasUI:false};
+    const result = await tool.execute('manual-review-fixture',{agent:'code-reviewer',task:'Goal: Explicit user-requested fixture review. Known: No real implementation. Evidence: Fixture only. Acceptance: Return no findings. Checks: Read-only. Stop: Missing evidence.'},undefined,undefined,ctx);
+    assert.equal(result.details.status,'complete');
+    assert.equal(result.details.results[0].thinking,'medium');
+    const argv = JSON.parse(await readFile(argsPath,'utf8'));
+    assert.equal(argv[argv.indexOf('--model')+1],'openai-codex/gpt-6.1-sol');
+    assert.equal(argv[argv.indexOf('--thinking')+1],'medium');
+    assert.equal(argv[argv.indexOf('--tools')+1],'read,grep,find,ls');
+    assert.ok(argv.includes('--no-extensions'));
+    assert.ok(argv.includes('--no-skills'));
+    assert.ok(!argv.includes('--extension'),'reviewer must not load custom execution or delegation tools');
+    assert.equal(argv.includes('--profile'),false);
+    await assert.rejects(tool.execute('override',{agent:'code-reviewer',task:'fixture',thinking:'high'},undefined,undefined,ctx),/Thinking overrides are only valid for the "planner" agent/);
+  } finally {
+    process.env.PATH = oldPath;
+    await rm(dir,{recursive:true,force:true});
+  }
+});
+
 test('actual extension loading, allowlists, protocol, usage and failure hook', {skip: !sdkRoot}, async () => {
   const { DefaultResourceLoader, SettingsManager, SessionManager } = await import(pathToFileURL(join(sdkRoot, 'dist/index.js')));
   const dir = await mkdtemp(join(tmpdir(), 'pi-subagent-integration-'));
@@ -285,14 +329,14 @@ test('actual extension loading, allowlists, protocol, usage and failure hook', {
     const tool = registered.definition ?? registered;
     assert.equal(tool.parameters.properties.thinking, undefined, 'thinking is not a generic subagent argument');
     // Fake registry covering every configured agent/profile model. All are reasoning
-    // models supporting off/minimal/low/medium/high; only Luna maps `max`.
+    // models supporting off/minimal/low/medium/high; configured max roles map it explicitly.
     const thinkMap = {off:'off',minimal:'minimal',low:'low',medium:'medium',high:'high'};
     const fakeModel = (providerModel, extraMap = {}) => {
       const [provider, id] = providerModel.split('/');
       return {provider, id, reasoning:true, contextWindow:272000, thinkingLevelMap:{...thinkMap, ...extraMap}};
     };
     const MODELS = {
-      deepseek: fakeModel('opencode-go/deepseek-v4.1-flash'),      // scout frontmatter
+      deepseek: fakeModel('opencode-go/deepseek-v4.1-flash', {max:'max'}), // scout/worker frontmatter
       glm: fakeModel('opencode-go/glm-5.3-flash'),                 // worker frontmatter
       luna: fakeModel('openai-codex/gpt-5.6-luna', {max:'max'}),   // scoped-model fixture
       roleLuna: fakeModel('openai-codex/gpt-6-luna', {max:'max'}), // researcher/worker
@@ -318,7 +362,7 @@ test('actual extension loading, allowlists, protocol, usage and failure hook', {
     assert.equal(success.details.status,'complete');
     assert.equal(success.usage.input,10);
     assert.equal(success.usage.cost.total,.03);
-    assert.equal(success.details.results[0].thinking,'high');
+    assert.equal(success.details.results[0].thinking,'max');
     const argv = JSON.parse(await readFile(process.env.PI_TEST_FIXTURE+'.args','utf8'));
     // Scout frontmatter pins opencode-go/deepseek-v4.1-flash; no fallback to Luna.
     assert.equal(argv[argv.indexOf('--model')+1],'opencode-go/deepseek-v4.1-flash');
@@ -858,7 +902,7 @@ test('memory: explicit reads follow Markdown edits, branch selection and compact
     assert.deepEqual(firstRead.details.planTasks,{total:1,open:0,done:1});
 
     const priorEntries = structuredClone(sm.getEntries());
-    const startResult = await live.runner.emitBeforeAgentStart('go',undefined,{});
+    const startResult = await live.runner.emitBeforeAgentStart({messageType:'user',prompt:'go'}, {cwd:dir});
     assert.ok(!JSON.stringify(startResult.messages).includes('Explicit Markdown status'),
       'starting an agent does not publish the plan document');
     assert.deepEqual(sm.getEntries(),priorEntries,'the start event does not append a plan message');

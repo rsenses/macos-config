@@ -1,6 +1,6 @@
 ---
 name: laravel-simplicity
-description: "Prevent unnecessary complexity when writing, reviewing or refactoring PHP/Laravel code. Use before adding defensive checks, nullable fallbacks, wrappers, helpers, interfaces, DTOs, Actions or reusable abstractions, and when investigating overengineering, duplicated validation or reimplemented framework features. Trace real contracts and consumers; distinguish simplify, preserve and investigate. Complements project conventions rather than replacing them."
+description: "Use when writing, reviewing, or refactoring PHP/Laravel code to assess whether defensive checks, nullable fallbacks, wrappers, helpers, interfaces, DTOs, Actions, or reusable abstractions are necessary, or whether validation or framework behavior is duplicated. Stay within the requested scope; use laravel-code-simplifier for an explicitly requested application-wide simplification."
 ---
 
 # Laravel Simplicity

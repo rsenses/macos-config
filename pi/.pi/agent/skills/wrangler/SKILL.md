@@ -1,6 +1,6 @@
 ---
 name: wrangler
-description: Run or troubleshoot Wrangler CLI commands in projects that have a wrangler.jsonc, wrangler.json, or wrangler.toml file, including local development, Previews, deployment, and resource management. For new projects and projects without a Wrangler configuration file, use the cf CLI instead.
+description: "Use when running or troubleshooting Wrangler CLI commands in projects with wrangler.jsonc, wrangler.json, or wrangler.toml, including local development, Previews, deployment, and resource management. For new projects or projects without Wrangler configuration, use cf-cli."
 ---
 
 # Wrangler CLI

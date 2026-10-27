@@ -1,6 +1,6 @@
 ---
 name: argon-cli
-description: Operate Argon projects and tasks through the argon CLI, including project resolution, direct task mutations, Markdown synchronization, conflicts, and the local operation ledger. Use when a user asks to inspect, create, edit, delete, prepare, or synchronize Argon work.
+description: "Use when the user asks to inspect, create, edit, delete, prepare, or synchronize Argon projects or tasks through the argon CLI, including Markdown sync conflicts and the local operation ledger."
 compatibility: Requires the argon launcher, mise with PHP 8.4, and ARGON_API_URL, ARGON_API_KEY, and ARGON_MARKDOWN_PATH in the process environment.
 ---
 

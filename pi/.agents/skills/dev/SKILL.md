@@ -1,6 +1,6 @@
 ---
 name: dev
-description: Implementation, testing, framework documentation, and systematic debugging.
+description: "Use when implementing code changes, reproducing and fixing bugs, adding behavioral tests, or resolving framework API uncertainty during development. For the bin/.local/bin/dev server command and its Caddy routes, use local-dev-server."
 ---
 
 # Dev: Execution and Verification

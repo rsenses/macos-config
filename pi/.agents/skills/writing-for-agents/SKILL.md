@@ -1,6 +1,6 @@
 ---
 name: writing-for-agents
-description: Write and maintain skills, Pi prompts, system guidance, and other documents consumed by agents. Use when creating or editing agent-facing instructions or reviewing their structure and triggering behavior.
+description: "Use when creating, editing, or reviewing skills, Pi prompts, system guidance, AGENTS.md, or other agent-facing instructions, including their descriptions, trigger conditions, structure, and invocation behavior."
 ---
 
 # Writing for Agents

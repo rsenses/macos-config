@@ -1,6 +1,6 @@
 ---
 name: k2
-description: Build and troubleshoot Cloudflare K2 or K2 Streams durable logs. Use for stream setup, producing from Workers or HTTP, configuring retention and inputs, and consuming through subscriptions.
+description: "Use when setting up or troubleshooting Cloudflare K2 or K2 Streams durable logs, producing from Workers or HTTP, configuring retention or inputs, or consuming through subscriptions."
 ---
 
 # Cloudflare K2

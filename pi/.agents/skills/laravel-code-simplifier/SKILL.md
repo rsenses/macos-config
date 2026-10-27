@@ -1,6 +1,6 @@
 ---
 name: laravel-code-simplifier
-description: Systematically review and simplify project-owned PHP/Laravel code while preserving observable behavior. Use when reviewing or refactoring Laravel or PHP code for overengineering, duplicated framework behavior, fictitious uncertainty, or needless wrappers, helpers, interfaces, DTOs, or Actions.
+description: "Use when the user requests a systematic, application-wide review and simplification of project-owned PHP/Laravel code while preserving observable behavior. For local complexity decisions during ordinary implementation or review, use laravel-simplicity."
 ---
 
 Use the `ops`, `dev` and `laravel-simplicity` skills.

@@ -1,6 +1,6 @@
 ---
 name: local-dev-server
-description: Operate, debug, test, or modify the repository's `bin/.local/bin/dev` command and its local PHP/Node servers behind Caddy.
+description: "Use when operating, debugging, testing, or modifying bin/.local/bin/dev, tests/test_dev.py, its local PHP/Node server lifecycle, or its Caddy routes. Not for general development tasks unrelated to this command."
 ---
 
 # Local development server: `dev`
