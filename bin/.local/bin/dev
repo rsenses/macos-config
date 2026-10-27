@@ -33,16 +33,33 @@ declare -a DOMAIN_CONFLICTS=()
 
 usage() {
   echo "Uso:"
-  echo "  dev up [nombre_carpeta]"
+  echo "  dev up [nombre_carpeta] [--no-reload]"
   echo "  dev down [nombre_carpeta]"
-  echo "  dev reload [nombre_carpeta]"
+  echo "  dev reload [nombre_carpeta] [--no-reload]"
   echo "  dev status [nombre_carpeta]"
   echo "  dev down-all"
   exit 1
 }
 
 cmd="${1:-}"
-name="${2:-}"
+name=""
+NO_RELOAD=0
+if (( $# > 0 )); then shift; fi
+for arg in "$@"; do
+  case "$arg" in
+    --no-reload)
+      case "$cmd" in
+        up|reload) NO_RELOAD=1 ;;
+        *) usage ;;
+      esac
+      ;;
+    --*) usage ;;
+    *)
+      if [[ -n "$name" ]]; then usage; fi
+      name="$arg"
+      ;;
+  esac
+done
 
 trim() {
   local s="$1"
@@ -768,6 +785,9 @@ start_server() {
   case "$SERVER_TYPE" in
     laravel)
       server_command=(php artisan serve --host=127.0.0.1 --port="${PORT}")
+      if (( NO_RELOAD )); then
+        server_command+=(--no-reload)
+      fi
       ;;
     php)
       # Drupal resuelve algunos servicios con rutas relativas a su docroot.
@@ -1206,6 +1226,10 @@ case "${cmd}" in
   up)
     resolve_project
     load_project_config
+    if (( NO_RELOAD )) && [[ "$SERVER_TYPE" != "laravel" ]]; then
+      echo "Error: --no-reload solo está disponible para Laravel." >&2
+      exit 1
+    fi
     acquire_mutation_lock || exit 1
 
     routes_changed=0
@@ -1336,13 +1360,25 @@ case "${cmd}" in
     ;;
 
   reload)
+    if (( NO_RELOAD )); then
+      resolve_project
+      load_project_config
+      if [[ "$SERVER_TYPE" != "laravel" ]]; then
+        echo "Error: --no-reload solo está disponible para Laravel." >&2
+        exit 1
+      fi
+    fi
     # Do not start a replacement while the old route/process could still be
     # active: a failed down must remain visible to the caller.
     if ! "$0" down "${name:-}"; then
       echo "Error: no se inicia el reemplazo porque 'down' no terminó correctamente." >&2
       exit 1
     fi
-    "$0" up "${name:-}"
+    if (( NO_RELOAD )); then
+      "$0" up "${name:-}" --no-reload
+    else
+      "$0" up "${name:-}"
+    fi
     ;;
 
   status)

@@ -5,6 +5,7 @@ All notable changes to this project are documented here using Keep a Changelog a
 ## [Unreleased]
 
 ### Added
+- `dev up` and `dev reload` accept an explicit `--no-reload` for Laravel, allowing installers to update `.env` without interrupting their requests; default startup behavior is unchanged.
 - Pi's manual-only `code-reviewer` subagent reviews existing implementations for fidelity, bugs and integration, simplicity, and maintainability using read-only tools; it does not add an automatic development or validation stage.
 - Pi's manual `/sharpen` command turns an imprecise request into the existing task brief without implementing, saving a plan, or launching subagents.
 - Herdr opens an interactive popup shell with `prefix+j` or `cmd+j`, closing when the shell exits.
