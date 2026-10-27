@@ -336,13 +336,13 @@ test('actual extension loading, allowlists, protocol, usage and failure hook', {
       return {provider, id, reasoning:true, contextWindow:272000, thinkingLevelMap:{...thinkMap, ...extraMap}};
     };
     const MODELS = {
-      deepseek: fakeModel('opencode-go/deepseek-v4.1-flash', {max:'max'}), // scout/worker frontmatter
-      glm: fakeModel('opencode-go/glm-5.3-flash'),                 // worker frontmatter
+      deepseek: fakeModel('opencode-go/deepseek-v4.1-flash', {max:'max'}), // scout/researcher/worker frontmatter
+      glm: fakeModel('opencode-go/glm-5.3-flash'),                 // additional fixture model, not an agent assignment
       luna: fakeModel('openai-codex/gpt-5.6-luna', {max:'max'}),   // scoped-model fixture
-      roleLuna: fakeModel('openai-codex/gpt-6-luna', {max:'max'}), // researcher/worker
-      sol: fakeModel('openai-codex/gpt-5.6-sol'),                  // other configured role
-      astra: fakeModel('openai-codex/gpt-6-astra'),                // other configured role
-      planner: fakeModel('openai-codex/gpt-6.1-sol'),              // planner profiles
+      roleLuna: fakeModel('openai-codex/gpt-6-luna', {max:'max'}), // additional fixture model with max support
+      sol: fakeModel('openai-codex/gpt-5.6-sol'),                  // additional fixture model
+      astra: fakeModel('openai-codex/gpt-6-astra'),                // additional fixture model
+      planner: fakeModel('openai-codex/gpt-6.1-sol'),              // planner profiles and both reviewers
     };
     const byModel = new Map(Object.values(MODELS).map(m => [`${m.provider}/${m.id}`, m]));
     const scopedModels = Object.values(MODELS).map(m => ({model:{provider:m.provider, id:m.id}}));

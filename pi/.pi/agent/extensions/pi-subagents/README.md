@@ -4,11 +4,11 @@ Six bounded roles; the principal coordinates and verifies acceptance. `plan-revi
 
 | Agent | Model / thinking | Tools |
 |---|---|---|
-| scout | `opencode-go/deepseek-v4.1-flash` / **high** | read, grep, find, ls |
-| researcher | `openai-codex/gpt-5.6-luna` / **high** | codex-research, web_fetch |
+| scout | `opencode-go/deepseek-v4.1-flash` / **max** | read, grep, find, ls |
+| researcher | `opencode-go/deepseek-v4.1-flash` / **max** | codex-research, web_fetch |
 | planner (default) | `openai-codex/gpt-6.1-sol` / **low** | read, grep, find, ls — UI approval required; optional `profile` and `profileReason` (see below) |
-| worker | `opencode-go/glm-5.3-flash` / **high** | read, write, edit, grep, find, ls, safe_bash, ast_grep, web_fetch |
-| plan-reviewer | `openai-codex/gpt-6-astra` / **low** | read, grep, find, ls |
+| worker | `opencode-go/deepseek-v4.1-flash` / **max** | read, write, edit, grep, find, ls, safe_bash, ast_grep, web_fetch |
+| plan-reviewer (manual-only) | `openai-codex/gpt-6.1-sol` / **medium** | read, grep, find, ls |
 | code-reviewer (manual-only) | `openai-codex/gpt-6.1-sol` / **medium** | read, grep, find, ls |
 
 ### Planner profiles
