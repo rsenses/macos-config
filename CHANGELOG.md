@@ -13,6 +13,7 @@ All notable changes to this project are documented here using Keep a Changelog a
 - A read-only Pi session usage analyzer reports local role/model token and historical-cost aggregates without exporting conversation or tool content, or modifying Pi's runtime behavior.
 
 ### Fixed
+- `dev` now recognizes versioned PHP executables such as `php7.4`, avoiding false startup failures and stale-process warnings for mise-linked system PHP.
 - Pi's subagent model table now matches the agent definitions; test comments distinguish extra fixture models from actual role assignments.
 - Pi's provider-free integration tests now model the configured scout/worker `max` thinking level and use the installed SDK's current agent-start event signature.
 - Global Composer packages now use a stable `~/.config/composer` home across mise PHP versions, with their executables available in zsh's PATH.

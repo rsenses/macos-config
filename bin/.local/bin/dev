@@ -585,8 +585,15 @@ php_command_matches() {
         *"--port=$port "*|*"--port=$port") return 0 ;;
       esac
       ;;
-    *"php -S 127.0.0.1:$port "*|*"php -S 127.0.0.1:$port")
-      return 0
+    *)
+      local executable="${command_line%% *}"
+      local arguments="${command_line#* }"
+      executable="${executable##*/}"
+      if [[ "$executable" =~ ^php([0-9]+(\.[0-9]+)*)?$ ]]; then
+        case "$arguments" in
+          "-S 127.0.0.1:$port "*|"-S 127.0.0.1:$port") return 0 ;;
+        esac
+      fi
       ;;
   esac
 

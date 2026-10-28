@@ -40,6 +40,24 @@ class DevOptionsTests(unittest.TestCase):
             with self.subTest(args=args):
                 self.assertNotEqual(self.run_fragment(args, ':').returncode, 0)
 
+    def test_php_server_identity_accepts_versioned_executables(self):
+        for executable in ('php', '/usr/bin/php', '/usr/bin/php7.4', '/opt/php8.4/bin/php'):
+            with self.subTest(executable=executable):
+                result = self.run_fragment(['status'],
+                    f'php_command_matches "{executable} -S 127.0.0.1:8123 -t /project/public" 8123',
+                    definitions=True)
+                self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_php_server_identity_rejects_unrelated_commands_and_ports(self):
+        for command in ('/usr/bin/php7.4 -S 127.0.0.1:8124',
+                        '/usr/bin/notphp7.4 -S 127.0.0.1:8123',
+                        'echo php -S 127.0.0.1:8123',
+                        '/usr/bin/php7.4 script.php'):
+            with self.subTest(command=command):
+                result = self.run_fragment(['status'],
+                    f'php_command_matches "{command}" 8123', definitions=True)
+                self.assertNotEqual(result.returncode, 0)
+
     def test_laravel_command_only_gets_flag_when_requested(self):
         for args, expected in ((['up'], False), (['up', '--no-reload'], True)):
             with self.subTest(args=args):
