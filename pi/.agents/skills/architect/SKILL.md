@@ -19,24 +19,10 @@ Prefer a small interface that hides cohesive complexity behind a real boundary. 
 
 ## 2. Planning and Decomposition
 
-Follow the ops delegation contract. Inside `/plan`, the planner is mandatory: the coordinator gathers the brief and evidence, the planner proposes the design, and the coordinator persists the complete plan. Do not pre-write a solution or replace a blocked planner by guessing. Outside `/plan`, use a planner when unresolved design alternatives justify one; routine progress updates do not require it.
+Use `ops` for the brief, canonical plan format, persistence, delegation, approvals, acceptance and validation reporting; follow APPEND_SYSTEM for changelog and global safety gates. These contracts apply to planning and execution, including mandatory planner use in `/plan` and manual-only reviewers.
 
-`plan-reviewer` remains manual-only. A plan's existence or risk does not authorize invoking it without a user request.
+Keep one ordered checklist with exact files/symbols, meaningful dependencies, acceptance and checks. Decompose only when independence or verification benefits; place checkpoints at real risk boundaries without manufacturing parallelism.
 
-Use the ops TL;DR, Current Step and top-level Tn Tasks format. Keep one ordered checklist with exact files/symbols, meaningful dependencies, acceptance, and checks. Decompose only when independence or verification benefits; define checkpoints around real risk boundaries without manufacturing parallelism.
+## 3. Evidence and Completion
 
-## 3. Execution Coordination
-
-Give each child one explicit slice and the ops brief. Use zero or one child normally, at most two genuinely independent ones. Review evidence and status before accepting work; a missing material prerequisite returns `blocked`, not an expanded scope. Keep integration, decisions, and final validation with the coordinator.
-
-## 4. Completion and Changelog
-
-Apply ops section 4 when reporting implementation status: name the checks actually run and those not run. Targeted evidence never certifies readiness. Planning and review use their scoped completion checks. Follow APPEND_SYSTEM's Changelog Policy rather than introducing a different rule here.
-
-## 5. Documentation Economy
-
-Read only relevant versioned contracts or source sections and reuse established evidence. Do not make the coordinator, planner, and worker repeat the same documentation tour or rewrite the same plan.
-
-## 6. Final Gate
-
-Verify acceptance and the applicable ops checks, report unresolved risk honestly, and summarize the delta once. Preserve APPEND_SYSTEM's specific workflow approvals and critical-configuration gates. Do not duplicate a launcher/tool UI question or ask again for ordinary steps already authorized.
+Read relevant versioned contracts/source sections and reuse established evidence across coordinator, planner and worker; do not repeat documentation tours or plan rewrites. Verify acceptance with the applicable scoped ops checks, report unresolved risk honestly, and summarize the delta once.

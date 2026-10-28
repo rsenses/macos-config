@@ -11,7 +11,7 @@ Use project-relative paths. The restriction to `.ai/` applies to memory artifact
 
 ### Persistence and selection
 
-Save a plan when durable decisions, related phases, resumption, or a handoff need it. Explaining a proposal, file count, and multiple steps alone do not require persistence. Outside `/plan`, do not routinely create a plan or ask whether to create one. `/plan` explicitly requests persistence and retains its mandatory planner and approval gates.
+Persist a plan when durable decisions, related phases, resumption or handoff need it. Explaining proposals, file count or multiple steps alone do not require persistence. Outside `/plan`, do not routinely create or offer a plan. `/plan` requires persistence, its planner and approval gates.
 
 - Reuse the active selection. Showing, serving, testing, or reviewing completed work continues its plan. Handle one-off follow-ups directly; append a task if tracking is useful. A new plan needs an independent goal or material scope change; compare the current goal/artifacts before `newPlan=true`, asking only if the distinction is unclear.
 - `select_session_plan` is for explicit existing-file adoption/switch. It and `create_session_plan(newPlan=true)` obtain their own UI confirmation; do not ask again. Cancellation preserves the previous selection and ends the attempt. Selection never authorizes implementation.
@@ -38,9 +38,9 @@ Before a planner returns, record only the brief and evidence. The planner is rea
 
 When a later user decision supersedes the design, consolidate the current TL;DR, task contract, acceptance, Current Step, and blockers. Preserve earlier evidence as explicitly historical; do not leave contradictory instructions active. Record user-confirmed checks as user-confirmed, with their scope and timing, not as checks the agent ran.
 
-The coordinator alone writes plan progress after verifying acceptance. Check only accepted tasks; a child's success is not acceptance. Update Current Step, concise evidence, checks/results, and blockers. Routine progress updates do not require a planner.
+Only the coordinator writes progress after verifying acceptance: check accepted tasks and update Current Step, concise evidence, checks/results and blockers. Child success is not acceptance; routine updates need no planner.
 
-Give each worker one bounded task, its plan path/task ID as references, and the brief below with writable files, established decisions, permitted checks, and a stop condition after that task. Do not assign the remaining plan or ask the worker to advance to the next task. The coordinator inspects the diff for scope and the smallest sufficient change, verifies acceptance with the permitted checks, and records the result before assigning the next dependent task. This is task-by-task sequencing, not a request for one worker to execute the plan sequentially. Independent tasks may run concurrently only when the plan expressly permits it, within section 3's limits. Do not pass the full plan or conversation by default. Integrate each result once after local verification.
+Assign each worker one bounded task, plan path/task ID and the section 3 brief: writable files, established decisions, permitted checks and a stop after that task. Never assign the remaining plan or autonomous advancement. Before assigning the next dependent task, the coordinator inspects the diff for scope and smallest sufficient change, verifies acceptance with permitted checks and records the result. Parallelize independent tasks only with express plan permission and section 3's limits. Do not pass the full plan/conversation by default; integrate each result once after local verification.
 
 Markdown is the sole editable source of plan content. The extension resolves selection and serves explicit reads; lifecycle events do not synchronize document contents into prompts. Do not call unavailable memory tools or create a second daily log by default. Put only stable lessons in `MEMORY.md`; keep `TASKS.md` focused on pending work and link complex plans.
 
@@ -78,7 +78,7 @@ Child output starts with **Status** (`complete`, `partial`, `blocked`, `failed`,
 
 ### Assessing review findings
 
-When an existing review returns findings, the coordinator checks them against the user's request and clarifications, the current contract, and the implementation, in that order. A plan or implementer's explanation alone does not establish acceptance. Check the cited evidence and material affected consumers; neither disagreement with the implementer nor another model's authority decides a finding.
+Assess existing review findings against the user's request/clarifications, current contract, then implementation—in that order. Verify cited evidence and materially affected consumers. A plan or implementer's explanation alone does not establish acceptance; neither disagreement with the implementer nor model authority decides a finding.
 
 Use these distinctions within the existing handoff, without requiring empty sections or a finding quota:
 
@@ -89,7 +89,7 @@ Use these distinctions within the existing handoff, without requiring empty sect
 
 Apply justified corrections within scope. Reject preferences and abstractions without demonstrated benefit; consult the user for changes to intent or scope. For PHP/Laravel, use `laravel-simplicity` rather than class, layer, or consumer counts; one implementation does not invalidate an abstraction.
 
-Use the initial review and, when substantive corrections warrant it, a focused check of those corrections. No indefinite rounds, additional judge, or extra routine model call. No findings is valid; partial coverage is not full approval. This contract interprets existing reviews; it does not add a review stage, alter permissions, or replace the current validation policy.
+Use the initial review and, when substantive corrections warrant it, a focused correction check; no indefinite rounds, extra judge or routine model call. No findings is valid; partial coverage is not full approval. This interprets existing reviews, not a new stage, permission or validation policy.
 
 ### Approval boundaries
 
@@ -111,7 +111,7 @@ Answer conceptual questions directly. Inspect files or delegate only when reposi
 
 When material ambiguity could change behavior, briefly state the understood outcome, what must remain unchanged, and any open decision before that interpretation is consolidated in a plan or implementation. Use APPEND_SYSTEM's existing communication rule, not a second specification or approval step. Distinguish user decisions, verified facts, and assumptions; do not invent a solution to fill a material gap.
 
-Ask one focused question for material ambiguity, preference, or safety/data/production risk. Otherwise perform authorized bounded work without routine confirmation or restating a clear request. Preserve APPEND_SYSTEM's specific workflow gates once each; do not repeat launcher, selection, or implementation approvals.
+Ask one focused question for material ambiguity, preference or safety/data/production risk; otherwise execute authorized bounded work without routine confirmation or restating clear requests. Apply APPEND_SYSTEM's workflow gates once, without repeating launcher, selection or implementation approvals.
 
 `/sharpen` manually reformulates a request using the brief in section 3; `/grill-me` supports clarification through conversation when needed; `/plan` designs and persists a plan through its existing planner flow. Do not chain them automatically. Deepening a brief does not expand its scope: separate unrequested improvements as optional. Direct work needs none of these commands as a prerequisite.
 

@@ -29,9 +29,9 @@ Reproduce, localize, reduce, and fix the cause. Add behavioral regression covera
 
 ## 5. Completion and Verification
 
-Follow ops section 4 when reporting overall implementation status: name the full checks that ran (fix/format/lint, tests) and those that did not. Targeted checks and worker success remain interim evidence, never substitutes for readiness. Planning, read-only review, and worker outcomes use the scoped checks defined there.
+Use `ops` section 4 for validation scope and reporting: distinguish targeted/scoped evidence from full validation and readiness; report checks run and not run.
 
-Before completion, also verify scope, security, invariants, observable acceptance, and relevant build/UI checks. Inspect the diff for unused code caused by this change and unrelated edits; do not broaden scope to clean up pre-existing issues. Apply APPEND_SYSTEM's Changelog Policy before final validation. Report only checks actually performed, including every skip or blocker.
+Before completion, verify scope, security, invariants, observable acceptance and relevant build/UI checks. Inspect the diff for newly unused code and unrelated edits; leave pre-existing issues outside scope. Apply APPEND_SYSTEM's Changelog Policy before final validation; report skips and blockers.
 
 ### Consumer acceptance
 
@@ -41,7 +41,7 @@ UI limits must agree with server validation and the current contract. For reques
 
 ## 6. Editing Discipline
 
-Read relevant code before editing. Prefer surgical edits over full-file rewrites, preserve unrelated existing changes, and keep edits within the requested slice. Do not claim a check or evidence that was not performed.
+Read relevant code first; prefer surgical edits over full rewrites, preserve unrelated changes and stay within the assigned slice.
 
 ## 7. UI/CSS Refactor Discipline
 

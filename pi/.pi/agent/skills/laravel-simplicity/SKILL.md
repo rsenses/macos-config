@@ -29,27 +29,13 @@ If no benefit remains, use the direct expression. If evidence is missing, invest
 
 ## Evaluate necessity before syntax
 
-When reviewing a defensive check, first decide whether the condition
-needs to be checked at this point.
+First decide whether a defensive condition is needed here. Remove checks resolved by an established contract, preserving separate authorization/domain decisions; keep checks distinguishing reachable states. For a proven `T|null`, rewriting a required `instanceof` check as a null comparison is not simplification; leave equivalent syntax to project conventions/tooling.
 
-If an established contract already resolves it, remove the redundant
-check while preserving any remaining authorization or domain decision.
-
-If the condition distinguishes reachable states, preserve it. Rewriting
-an equivalent required check, such as `instanceof` versus a null
-comparison for a proven `T|null` value, is not by itself a simplification.
-Leave equivalent syntax to project conventions and tooling.
-
-For every proposed change, identify the unnecessary condition, work,
-duplication or indirection actually removed. Do not narrow a supported
-contract, hide a check in a wrapper, or change failure behavior merely
-to make code appear simpler.
-
-No change is a valid outcome.
+Identify the unnecessary condition, work, duplication or indirection each change removes. Do not narrow supported contracts, hide checks in wrappers or change failure behavior to appear simpler. No change is a valid outcome.
 
 ## Trace the real flow
 
-For a candidate, follow callers to the point being reviewed:
+Trace candidate callers through:
 
 - Routes, middleware order, binding declarations and scoped relationships.
 - Authentication guard/provider and authorization boundary; authentication alone does not prove a particular application User class.
@@ -80,7 +66,7 @@ An abstraction can earn its place through **any** concrete benefit:
 
 Do not introduce speculative consumers, configuration knobs or generic frameworks. One implementation is not proof an interface is unnecessary; several callers are not proof a helper is useful. Existing Actions, Queries and Transformers may intentionally establish boundaries even with short bodies.
 
-Prefer native enums, casts, Collections, relationship APIs and framework extension points when they preserve semantics. A wrapper around `cases()` with no added meaning is suspect; a domain subset, labels or a mapping can be meaningful. Do not replace a domain workflow with a familiar API until restoration, events, counters, ordering and failure behavior have been compared.
+Prefer native enums, casts, Collections, relationship APIs and public framework/package APIs or extension points when they preserve semantics. A wrapper around `cases()` with no added meaning is suspect; a domain subset, labels or a mapping can be meaningful. Do not replace a domain workflow with a familiar API until restoration, events, counters, ordering and failure behavior have been compared.
 
 ## Final removal pass
 
@@ -93,7 +79,7 @@ For the changed flow, ask:
 - Does a new indirection merely rename an existing operation?
 - Did narrowing a contract leave obsolete branches or transformations?
 
-Compare the simplest alternative against observable behavior: responses, errors, authorization, persistence, events, transactions, side effects and supported consumers. Avoid cosmetic rewrites and unrelated cleanup.
+Compare alternatives against observable responses, errors, authorization, persistence, events, transactions, side effects and supported consumers; avoid cosmetic rewrites and unrelated cleanup.
 
 ## Review output
 
@@ -119,4 +105,4 @@ Only record durable guidance when requested or required by the project's workflo
 
 ## Calibration
 
-Read [the calibration cases](references/calibration.md) when reviewing suspected complexity or evaluating changes to these instructions. They include both simplifications and necessary safeguards. For evaluation, decide from the scenario before reading its expected result. Passing these examples checks reasoning coverage, not guaranteed behavior on future projects or models.
+Read [calibration cases](references/calibration.md) for suspected-complexity reviews or changes to these instructions. They cover simplifications and necessary safeguards. In evaluations, decide from the scenario before reading the expected result. Passing these cases checks reasoning coverage, not guaranteed future project/model behavior.
