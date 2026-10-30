@@ -7,7 +7,7 @@ description: "Use before implementing, delegating work, or reporting implementat
 
 ## 1. Memory Management (.ai/)
 
-Use project-relative paths: `.ai/TASKS.md` holds pending work and `.ai/plan/` implementation plans. The `.ai/` restriction covers memory artifacts (`MEMORY.md`, tasks, plans, daily notes), not authorized implementation files.
+Use project-relative paths: `.ai/TASKS.md` holds pending work and `.ai/plan/` implementation plans. A backlog item captures the problem and intended outcome, with priority when useful; link its canonical plan for complex work rather than copying the checklist/progress. The plan owns the technical contract and task acceptance; a worker brief carries one authorized task. The `.ai/` restriction covers memory artifacts (`MEMORY.md`, tasks, plans, daily notes), not authorized implementation files.
 
 ### Persistence and selection
 
@@ -34,6 +34,8 @@ Capture objective, constraints, behavior, material decisions/reasons, implemente
 
 Before a planner returns, record only the brief and evidence. The planner is read-only; it supplies the design, then the coordinator saves the complete proposal and reads it back in full. Preserve partial/blocked results and unresolved questions rather than designing missing pieces yourself. Persistence or read-back failure is blocked, not completed planning.
 
+Present all proposed tasks in chat as a concise numbered list in execution order, retaining Tn IDs. For each show the title, observable delivery and dependencies (or none). Invite the user to confirm or add, remove, merge, split or reorder tasks before implementation; record adjustments in the same plan under the existing revision rules. This proposal exchange adds no approval gate; implementation authorization remains separate.
+
 ### Progress and handoff
 
 When a later user decision supersedes the design, consolidate the current TL;DR, task contract, acceptance, Current Step, and blockers. Preserve earlier evidence as explicitly historical; do not leave contradictory instructions active. Record user-confirmed checks as user-confirmed, with their scope and timing, not as checks the agent ran.
@@ -42,7 +44,7 @@ Only the coordinator writes progress after verifying acceptance: check accepted 
 
 Assign each worker one bounded task, plan path/task ID and the section 3 brief; stop after that task, never advance autonomously through the plan. Before the next dependent task, the coordinator inspects the diff for scope and smallest sufficient change, verifies acceptance with permitted checks and records the result. Parallelize only independent tasks expressly permitted by the plan, within section 3's limits, without overlapping writes or checks requiring a stable tree.
 
-Markdown is the sole editable source of plan content. The extension resolves selection and serves explicit reads; lifecycle events do not synchronize document contents into prompts. Do not call unavailable memory tools or create a second daily log by default. Put only stable lessons in `MEMORY.md`; keep `TASKS.md` focused on pending work and link complex plans.
+Markdown is the sole editable source of plan content. The extension resolves selection and serves explicit reads; lifecycle events do not synchronize document contents into prompts. Do not call unavailable memory tools or create a second daily log by default. Put only stable lessons in `MEMORY.md`; keep the backlog focused on pending work.
 
 ## 2. Context Engineering
 
@@ -72,7 +74,7 @@ Every brief uses these headings:
 - **Checks**: concrete permitted checks; never invent provider calls.
 - **Stop**: ambiguity, scope conflict, missing evidence, or repeated failure without new evidence.
 
-Pass established evidence and the remaining question, not a transcript or rediscovery request. Separate user decisions, verified facts, and assumptions in Known/Evidence; include the request and later clarifications, not just the plan or implementer's explanation. Supply readable paths to applicable skills/references: children do not inherit loaded skills. Request concise evidence but complete actionable planning designs. Integrate each locally verified result once into the canonical plan, not duplicate reports.
+Pass established evidence and the remaining question, not a transcript or rediscovery request. Separate user decisions, verified facts, and assumptions in Known/Evidence; include the request and later clarifications, not just the plan or implementer's explanation. Children run with `--no-skills`: include task-relevant skill criteria in Known as short excerpts, or exact readable paths/sections with explicit instructions to read them when needed. Prefer excerpts when sufficient; do not require full-skill reads for trivial work. Request concise evidence but complete actionable planning designs. Integrate each locally verified result once into the canonical plan, not duplicate reports.
 
 Child output starts with **Status** (`complete`, `partial`, `blocked`, `failed`, `cancelled`, `timed_out`), then its role's findings/changes, evidence, checks, and unresolved items. Workers return **Status / Changes / Evidence / Checks / Unresolved**. Name their validation policy (`no-tests`, `targeted-check`, `add-test`, `test-first`, `defer-validation`) and the concrete command or reason.
 
@@ -99,7 +101,7 @@ In `/run-plan`, obtain implementation approval once through the question tool/UI
 
 ## 4. Validation reporting
 
-APPEND_SYSTEM controls full-validation authorization: run the project's fix/format/lint, then tests, only on explicit user request, or record the user's own run. Use project-specific commands; never require the suite as a gate before other work.
+Run full project validation (fix/format/lint, then tests) only on explicit user request, using project-specific commands under APPEND_SYSTEM's policy. A user's own run may be recorded as user-confirmed evidence, with scope and timing, never as an agent execution or authorization to rerun it. Never require the suite as a gate before other work.
 
 Any implementation status report states which checks ran (command, exit result, notable output) and which did not. Targeted checks, dry runs, and child success are reported as targeted, never as full validation. Do not say tests pass or that work is ready to ship unless the relevant checks ran and succeeded; name the unverified remainder instead.
 

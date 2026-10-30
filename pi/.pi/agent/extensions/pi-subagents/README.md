@@ -4,7 +4,7 @@ Six bounded roles; the principal coordinates and verifies acceptance. `plan-revi
 
 | Agent | Model / thinking | Tools |
 |---|---|---|
-| scout | `opencode-go/deepseek-v4.1-flash` / **max** | read, grep, find, ls |
+| scout | `openai-codex/gpt-6.1-terra` / **medium** | read, grep, find, ls |
 | researcher | `opencode-go/deepseek-v4.1-flash` / **max** | codex-research, web_fetch |
 | planner (default) | `openai-codex/gpt-6.1-sol` / **low** | read, grep, find, ls — UI approval required; optional `profile` and `profileReason` (see below) |
 | worker | `opencode-go/deepseek-v4.1-flash` / **max** | read, write, edit, grep, find, ls, safe_bash, ast_grep, web_fetch |

@@ -11,7 +11,7 @@ Pending project work that should survive across sessions.
 
 ## Inbox
 
-- [ ] Add pending tasks here. Keep one-line tasks inline; link complex work with wiki links like [[.ai/plan/<file>.md]].
+Add pending tasks here as checklist items. Keep one-line tasks inline; link complex work with wiki links like [[.ai/plan/<file>.md]].
 
 ## In Progress
 
@@ -953,7 +953,7 @@ export default function (pi: ExtensionAPI) {
 			const snapshot = planContent ? planSnapshot(planContent, planPath) : undefined;
 			const statusLines = status.stdout.trim().split("\n").filter(Boolean);
 			const branchLine = statusLines[0]?.replace(/^##\s*/, "") || "unknown";
-			const dirtyFiles = statusLines.slice(1).map((line) => line.replace(/^[ MADRCU?!]+/, "").trim()).filter(Boolean);
+			const dirtyFiles = statusLines.slice(1).map((line) => line.slice(3)).filter(Boolean);
 			const lastCommit = log.stdout.trim() || "unavailable";
 			const planNote = resolved.blocked ? " (blocked)" : ` (${resolved.source})`;
 			const lines = [

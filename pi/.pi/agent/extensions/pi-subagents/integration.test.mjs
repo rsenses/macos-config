@@ -68,6 +68,33 @@ async function memoryFixture(run) {
   } finally {await rm(dir,{recursive:true,force:true});}
 }
 
+test('memory: new backlogs contain no pending placeholder',{skip:!sdkRoot},async()=>{
+  await memoryFixture(async f=>{
+    await new Promise((res,rej)=>execFile('git',['init','-q'],{cwd:f.dir},e=>e?rej(e):res()));
+    const summary = await f.call('summarize_worktree');
+    assert.equal(summary.details.openTasks,0);
+    assert.doesNotMatch(await readFile(join(f.dir,'.ai/TASKS.md'),'utf8'),/^- \[ \] /m);
+  });
+});
+
+test('memory: worktree summaries preserve Git paths',{skip:!sdkRoot},async()=>{
+  await memoryFixture(async f=>{
+    const git = args=>new Promise((res,rej)=>execFile('git',args,{cwd:f.dir},e=>e?rej(e):res()));
+    await git(['init','-q']);
+    await writeFile(join(f.dir,'.gitignore'),'/.ai/\n/sessions/\n');
+    for (const name of ['CHANGELOG.md','README.md','DATA.md','My file.md']) await writeFile(join(f.dir,name),'original\n');
+    await git(['add','--','.gitignore','CHANGELOG.md','README.md','DATA.md','My file.md']);
+    await writeFile(join(f.dir,'CHANGELOG.md'),'modified\n');
+    await writeFile(join(f.dir,'ADDED.md'),'untracked\n');
+    const summary = await f.call('summarize_worktree');
+    assert.deepEqual(summary.details.dirtyFiles.sort(),[
+      '.gitignore','CHANGELOG.md','README.md','DATA.md','"My file.md"','ADDED.md',
+    ].sort());
+    assert.equal(summary.details.dirtyCount,6);
+    assert.match(summary.content[0].text,/- CHANGELOG\.md/);
+  });
+});
+
 test('memory: persisted selection, full active branch, abandoned branch and read errors',{skip:!sdkRoot},async()=>{
   await memoryFixture(async f=>{
     const created = await f.call('create_session_plan',{slug:'a'});
@@ -83,9 +110,9 @@ test('memory: persisted selection, full active branch, abandoned branch and read
     assert.equal(refreshed.details.path,a);
     assert.equal(refreshed.details.planStatus,'completed');
     assert.deepEqual(refreshed.details.planTasks,{total:1,open:0,done:1},'a new explicit query reads edited task state');
-    const appendSystem = await readFile(join(here,'../../APPEND_SYSTEM.md'),'utf8');
-    assert.match(appendSystem,/reviewing its results continues the same plan even if its tasks are completed/);
-    assert.match(appendSystem,/Start another plan only for an independent goal or material scope change/);
+    const continued = await f.call('create_session_plan',{slug:'follow-up'});
+    assert.equal(continued.details.path,a,'follow-ups reuse the completed plan without explicit newPlan');
+    assert.equal(continued.details.created,false);
     f.reopen();
     assert.equal((await f.call('get_current_plan')).details.path,a);
     const kept = f.sm.appendMessage({role:'user',content:'retained fixture',timestamp:0});
@@ -336,7 +363,8 @@ test('actual extension loading, allowlists, protocol, usage and failure hook', {
       return {provider, id, reasoning:true, contextWindow:272000, thinkingLevelMap:{...thinkMap, ...extraMap}};
     };
     const MODELS = {
-      deepseek: fakeModel('opencode-go/deepseek-v4.1-flash', {max:'max'}), // scout/researcher/worker frontmatter
+      scout: fakeModel('openai-codex/gpt-6.1-terra'),             // scout frontmatter
+      deepseek: fakeModel('opencode-go/deepseek-v4.1-flash', {max:'max'}), // researcher/worker frontmatter
       glm: fakeModel('opencode-go/glm-5.3-flash'),                 // additional fixture model, not an agent assignment
       luna: fakeModel('openai-codex/gpt-5.6-luna', {max:'max'}),   // scoped-model fixture
       roleLuna: fakeModel('openai-codex/gpt-6-luna', {max:'max'}), // additional fixture model with max support
@@ -355,17 +383,17 @@ test('actual extension loading, allowlists, protocol, usage and failure hook', {
       ui:{select:async (_title, options)=>options[0], confirm:async()=>true, notify:()=>{}},
     };
     const usage = {input:10,output:2,cacheRead:5,cacheWrite:0,totalTokens:17,cost:{input:.01,output:.02,cacheRead:0,cacheWrite:0,total:.03}};
-    const scoutModel = MODELS.deepseek;
+    const scoutModel = MODELS.scout;
     const event = (reason,text,extra={})=>({type:'message_end',message:{role:'assistant',provider:scoutModel.provider,model:scoutModel.id,stopReason:reason,content:[{type:'text',text}],usage,...extra}});
     await writeFile(process.env.PI_TEST_FIXTURE,JSON.stringify(event('stop','**Status**: complete\nVerified.'))+'\n');
     const success = await tool.execute('s',{agent:'scout',task:'Locate fixture'},undefined,undefined,ctx);
     assert.equal(success.details.status,'complete');
     assert.equal(success.usage.input,10);
     assert.equal(success.usage.cost.total,.03);
-    assert.equal(success.details.results[0].thinking,'max');
+    assert.equal(success.details.results[0].thinking,'medium');
     const argv = JSON.parse(await readFile(process.env.PI_TEST_FIXTURE+'.args','utf8'));
-    // Scout frontmatter pins opencode-go/deepseek-v4.1-flash; no fallback to Luna.
-    assert.equal(argv[argv.indexOf('--model')+1],'opencode-go/deepseek-v4.1-flash');
+    // Scout frontmatter pins Terra; the fixture must not introduce a fallback.
+    assert.equal(argv[argv.indexOf('--model')+1],'openai-codex/gpt-6.1-terra');
     assert.equal(argv[argv.indexOf('--tools')+1],'read,grep,find,ls');
     assert.ok(!argv.includes('--no-context-files'));
     assert.equal(argv[argv.indexOf('--system-prompt')+1], join(here, 'SYSTEM.md'));

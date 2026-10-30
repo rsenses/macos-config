@@ -14,6 +14,9 @@ All notable changes to this project are documented here using Keep a Changelog a
 - `dev` accepts repeated `EXTRAS=` commands in a project's `.config/caddy` and manages them through `up`, `down`, `reload`, `status`, and `down-all`. Each command gets an independent log/state file and verified process ownership; startup failures roll back already-started extras, the main server, and Caddy routes, and lifecycle commands stop recorded extras even after the configuration changes.
 
 ### Fixed
+- Pi worktree summaries preserve Git pathnames, and new backlogs no longer count their instructional placeholder as pending work.
+- Pi's provider-free regressions now verify completed-plan reuse without depending on obsolete system-prompt wording, and the scout fixture and model table match its current configuration.
+- Pi planning and execution briefs now pass task-relevant skill criteria to children running with skills disabled; full-validation guidance uses project-specific commands and distinguishes user-confirmed checks from agent runs.
 - `dev` now recognizes versioned PHP executables such as `php7.4`, avoiding false startup failures and stale-process warnings for mise-linked system PHP.
 - Pi's subagent model table now matches the agent definitions; test comments distinguish extra fixture models from actual role assignments.
 - Pi's provider-free integration tests now model the configured scout/worker `max` thinking level and use the installed SDK's current agent-start event signature.
@@ -26,6 +29,8 @@ All notable changes to this project are documented here using Keep a Changelog a
 - `chrome-devtools-mcp` is pinned to `1.10.1` instead of `@latest`. A new release can change the server's instructions and tool list, which rewrites the `mcp_servers` system-prompt section and the request's tool declarations, invalidating the prompt cache mid-session.
 
 ### Changed
+- Pi plan proposals present every task in order with its outcome and dependencies, inviting confirmation or adjustments within the existing planning exchange; backlog, plan and worker-brief responsibilities are explicit.
+- Pi's existing `grill-with-docs` skill follows decision dependencies, avoids redundant questioning and parallel glossaries, and respects read-only review roles without importing new skills or approval phases.
 - PHP and Composer use the system temporary directory again instead of `~/.cache/php-tmp`; zsh no longer adds the temporary-directory INI to PHP's scan path.
 - Pi's execution guidance now makes one-task worker handoffs and coordinator acceptance explicit, favors the smallest sufficient change, and documents the checklist syntax recognized by the plan reader.
 - `/run-plan` now explicitly checks the current plan against later user decisions already available in context, stopping only for material contradictions without adding a new phase or historical search.

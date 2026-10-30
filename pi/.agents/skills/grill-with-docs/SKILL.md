@@ -5,11 +5,13 @@ description: "Use when the user requests an interactive, question-by-question ch
 
 <what-to-do>
 
-Interview me relentlessly about every aspect of this plan until we reach a shared understanding. Walk down each branch of the design tree, resolving dependencies between decisions one-by-one. For each question, provide your recommended answer.
+Work through the plan's material decisions and their dependencies until we reach a shared understanding. Resolve prerequisites before dependent questions; after each answer retain settled decisions and update what remains open.
 
-Ask the questions one at a time, waiting for feedback on each question before continuing.
+Ask one focused question at a time, with a recommended answer and a brief reason; wait for feedback before continuing. Discover repository facts yourself rather than asking the user, using ops' selective-delegation limits.
 
-If a question can be answered by exploring the codebase, explore the codebase instead.
+Stop once behavior, constraints, non-goals, data implications and acceptance are clear enough. Summarize decisions and unresolved questions in the existing ops brief; do not automatically plan or implement.
+
+Honor the invoking role's permissions and output contract. In read-only reviews, propose documentation updates instead of editing files or starting an interview.
 
 </what-to-do>
 
@@ -17,7 +19,7 @@ If a question can be answered by exploring the codebase, explore the codebase in
 
 ## Domain awareness
 
-During codebase exploration, also look for existing documentation:
+During codebase exploration, use existing glossary and ADR locations rather than creating parallel documents. Otherwise use the conventions below:
 
 ### File structure
 
@@ -49,7 +51,7 @@ If a `CONTEXT-MAP.md` exists at the root, the repo has multiple contexts. The ma
 │       └── docs/adr/
 ```
 
-Create files lazily — only when you have something to write. If no `CONTEXT.md` exists, create one when the first term is resolved. If no `docs/adr/` exists, create it when the first ADR is needed.
+Create files lazily — only when you have something to write. If no glossary exists, create `CONTEXT.md` when the first domain term is resolved. If no ADR location exists, create `docs/adr/` when the first ADR is needed.
 
 ## During the session
 
@@ -71,7 +73,7 @@ When the user states how something works, check whether the code agrees. If you 
 
 ### Update CONTEXT.md inline
 
-When a term is resolved, update `CONTEXT.md` right there. Don't batch these up — capture them as they happen. Use the format in [CONTEXT-FORMAT.md](./CONTEXT-FORMAT.md).
+When a term is resolved, update the relevant glossary right there; do not batch resolved terms. Preserve its existing format, or use [CONTEXT-FORMAT.md](./CONTEXT-FORMAT.md) for a new `CONTEXT.md`.
 
 `CONTEXT.md` should be totally devoid of implementation details. Do not treat `CONTEXT.md` as a spec, a scratch pad, or a repository for implementation decisions. It is a glossary and nothing else.
 
