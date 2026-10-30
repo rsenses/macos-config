@@ -42,12 +42,11 @@ _Avoid_: Client, buyer, account
 # Context Map
 
 ## Contexts
-- [A](./src/a/CONTEXT.md) — responsibility
-- [B](./src/b/CONTEXT.md) — responsibility
+- [Ordering](./src/ordering/CONTEXT.md) — accepts customer orders
+- [Billing](./src/billing/CONTEXT.md) — issues invoices
 
 ## Relationships
-- **A → B**: events produced by A and consumed by B
-- **A ↔ B**: shared types
+- **Ordering → Billing**: `OrderPlaced` triggers invoice creation.
 ```
 
 Read an existing `CONTEXT-MAP.md` to locate contexts; root `CONTEXT.md` alone means single context. If neither exists, create root `CONTEXT.md` only when the first term is resolved. For multiple contexts, infer the relevant one; ask if unclear.
