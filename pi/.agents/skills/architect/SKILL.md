@@ -3,26 +3,25 @@ name: architect
 description: "Use when defining specifications, behavior contracts, or implementation plans, especially when ambiguous requirements, competing designs, security, data integrity, or production risk require explicit boundaries and acceptance criteria."
 ---
 
-# Architect: Design and Planning
+# Architect: Design and Contracts
 
-## 0. Intent Translation
+## 1. Problem and Behavior
 
-For an ambiguous request, prepare the ops brief: Goal (including non-goals), Known (decisions, constraints and assumptions), Evidence, Acceptance, Checks, and Stop. Ask one focused question only when different interpretations or material safety/risk would change the work. A clear bounded request does not need an extra discovery or documentation phase merely because it spans files.
+Identify the desired outcome, non-goals, constraints, existing behavior to preserve, and unresolved requirements. Separate decisions, verified facts and assumptions. Make behavior and boundaries testable before editing when ambiguity, architecture, security, data integrity or production risk is material; keep clear low-risk specifications lightweight. Use `ops` for clarification and orchestration contracts.
 
-## 1. Specifications and Gates
+## 2. Interfaces and Alternatives
 
-Make behavior and boundaries testable before editing when ambiguity, architecture, security, data integrity, or production risk is material. For a clear low-risk change, keep specification lightweight. Preserve user decisions, unrelated existing changes, security invariants, and the project's applicable changelog policy.
+Prefer deep modules: small interfaces hiding cohesive complexity behind real boundaries. Favor locality: concentrate complexity, knowledge and related changes behind the interface rather than distributing them across consumers.
 
-### Design lens: deep modules
+Apply the deletion test: if removing an abstraction makes complexity disappear, it may be pass-through; if complexity spreads across callers, it may be earning its keep. Judge seams/adapters by their boundary and behavior, not implementation count. Avoid hypothetical variation, but preserve real integration or domain boundaries even with one implementation. Define observable behavior through public interfaces, not internal collaborators.
 
-Prefer a small interface that hides cohesive complexity behind a real boundary. Apply the deletion test: if removing an abstraction makes complexity disappear, it may be pass-through; if complexity spreads across callers, it may be earning its keep. Judge a seam or adapter by the boundary and behavior it handles, not its number of implementations. Do not add hypothetical variation, but do not remove a real integration or domain boundary solely because it has one implementation. Test behavior through the public interface rather than internal collaborators.
+Compare material alternatives against requirements, dependencies and risks; record decisions and reasons using relevant versioned contracts/source and established evidence.
 
-## 2. Planning and Decomposition
+## 3. Verifiable Decomposition
 
-Use `ops` for the brief, canonical plan format, persistence, delegation, approvals, acceptance and validation reporting; follow APPEND_SYSTEM for changelog and global safety gates. These contracts apply to planning and execution, including mandatory planner use in `/plan` and manual-only reviewers.
+Decompose only when independence or verification benefits. Specify ordered outcomes, relevant files/symbols, dependencies, acceptance and checks; place checkpoints at real risk boundaries without manufacturing parallelism.
 
-Keep one ordered checklist with exact files/symbols, meaningful dependencies, acceptance and checks. Decompose only when independence or verification benefits; place checkpoints at real risk boundaries without manufacturing parallelism.
+- **Tracer bullets**: when splitting a feature, prefer vertical tasks delivering verifiable behavior over artificial layer-by-layer tasks.
+- **Expand–contract**: for broad refactors that cannot keep each isolated change functional, introduce the new contract, migrate consumers, then remove the old contract.
 
-## 3. Evidence and Completion
-
-Read relevant versioned contracts/source sections and reuse established evidence across coordinator, planner and worker; do not repeat documentation tours or plan rewrites. Verify acceptance with the applicable scoped ops checks, report unresolved risk honestly, and summarize the delta once.
+Apply these strategies where useful, not as mandatory phases for small changes. Leave unresolved design risks explicit; `ops` owns plan format, persistence and acceptance.

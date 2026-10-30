@@ -7,7 +7,7 @@ description: "Use before implementing, delegating work, or reporting implementat
 
 ## 1. Memory Management (.ai/)
 
-Use project-relative paths. The restriction to `.ai/` applies to memory artifacts (`MEMORY.md`, `TASKS.md`, plans, daily notes), not authorized implementation files.
+Use project-relative paths: `.ai/TASKS.md` holds pending work and `.ai/plan/` implementation plans. The `.ai/` restriction covers memory artifacts (`MEMORY.md`, tasks, plans, daily notes), not authorized implementation files.
 
 ### Persistence and selection
 
@@ -38,15 +38,15 @@ Before a planner returns, record only the brief and evidence. The planner is rea
 
 When a later user decision supersedes the design, consolidate the current TL;DR, task contract, acceptance, Current Step, and blockers. Preserve earlier evidence as explicitly historical; do not leave contradictory instructions active. Record user-confirmed checks as user-confirmed, with their scope and timing, not as checks the agent ran.
 
-Only the coordinator writes progress after verifying acceptance: check accepted tasks and update Current Step, concise evidence, checks/results and blockers. Child success is not acceptance; routine updates need no planner.
+Only the coordinator writes progress after verifying acceptance: check accepted tasks and update Current Step, concise evidence, checks/results and blockers. Child success is not acceptance; routine updates need no planner. Preserve resumable evidence for partial/blocked/cancelled/timed-out work; on resume, skip only still-valid acceptance and recheck stale evidence.
 
-Assign each worker one bounded task, plan path/task ID and the section 3 brief: writable files, established decisions, permitted checks and a stop after that task. Never assign the remaining plan or autonomous advancement. Before assigning the next dependent task, the coordinator inspects the diff for scope and smallest sufficient change, verifies acceptance with permitted checks and records the result. Parallelize independent tasks only with express plan permission and section 3's limits. Do not pass the full plan/conversation by default; integrate each result once after local verification.
+Assign each worker one bounded task, plan path/task ID and the section 3 brief; stop after that task, never advance autonomously through the plan. Before the next dependent task, the coordinator inspects the diff for scope and smallest sufficient change, verifies acceptance with permitted checks and records the result. Parallelize only independent tasks expressly permitted by the plan, within section 3's limits, without overlapping writes or checks requiring a stable tree.
 
 Markdown is the sole editable source of plan content. The extension resolves selection and serves explicit reads; lifecycle events do not synchronize document contents into prompts. Do not call unavailable memory tools or create a second daily log by default. Put only stable lessons in `MEMORY.md`; keep `TASKS.md` focused on pending work and link complex plans.
 
 ## 2. Context Engineering
 
-Load relevant project rules, source ranges, and versioned contracts; reuse evidence. Minimize total tokens needed for a verified outcome, not merely one request. Bound/filter tool output before it enters context; recover only needed ranges. Keep changing state out of reusable system/tool prefixes and append explicit results instead.
+Load relevant project rules, source ranges, and versioned contracts. Keep changing state out of reusable system/tool prefixes; append explicit results instead. APPEND_SYSTEM governs evidence reuse and bounded tool output.
 
 When a clear contract conflicts with code, investigate and fix within scope. If competing rules make intended behavior undecidable, report the exact conflict and ask before changing it.
 
@@ -72,7 +72,7 @@ Every brief uses these headings:
 - **Checks**: concrete permitted checks; never invent provider calls.
 - **Stop**: ambiguity, scope conflict, missing evidence, or repeated failure without new evidence.
 
-Pass established evidence and the remaining question, not a transcript or a request to rediscover facts. Separate user decisions, verified facts, and assumptions in Known/Evidence. Include the relevant request and later clarifications, not just the plan or implementer's explanation. Supply readable paths to applicable skills and references; children do not inherit the principal's loaded skills. Request concise evidence, but preserve the complete actionable design when planning. Keep one canonical plan; integrate results once instead of copying reports across artifacts and chat.
+Pass established evidence and the remaining question, not a transcript or rediscovery request. Separate user decisions, verified facts, and assumptions in Known/Evidence; include the request and later clarifications, not just the plan or implementer's explanation. Supply readable paths to applicable skills/references: children do not inherit loaded skills. Request concise evidence but complete actionable planning designs. Integrate each locally verified result once into the canonical plan, not duplicate reports.
 
 Child output starts with **Status** (`complete`, `partial`, `blocked`, `failed`, `cancelled`, `timed_out`), then its role's findings/changes, evidence, checks, and unresolved items. Workers return **Status / Changes / Evidence / Checks / Unresolved**. Name their validation policy (`no-tests`, `targeted-check`, `add-test`, `test-first`, `defer-validation`) and the concrete command or reason.
 
@@ -95,23 +95,25 @@ Use the initial review and, when substantive corrections warrant it, a focused c
 
 The launcher approves planner model/thinking once, showing `profileReason`; the user may choose another available profile. Selection tools confirm adoption or `newPlan=true`; implementation still needs separate user authorization. Never duplicate UI questions. Cancellation ends the attempt without retry/fallback; report unavailable profiles, models, or thinking instead of silently changing them. Keep principal model/provider/thinking/settings unchanged unless explicitly requested.
 
+In `/run-plan`, obtain implementation approval once through the question tool/UI before any worker or implementation. Only after approval set `in-progress` and record the current task; execute task by task under section 1. Cancellation preserves the plan and ends the attempt.
+
 ## 4. Validation reporting
 
-Full project validation (for documented Laravel/PHP projects: `composer fix`, then `composer test`, from the project root) runs only when the user explicitly requests it or runs it themselves. The agent does not run it or require it as a gate before other work.
+APPEND_SYSTEM controls full-validation authorization: run the project's fix/format/lint, then tests, only on explicit user request, or record the user's own run. Use project-specific commands; never require the suite as a gate before other work.
 
 Any implementation status report states which checks ran (command, exit result, notable output) and which did not. Targeted checks, dry runs, and child success are reported as targeted, never as full validation. Do not say tests pass or that work is ready to ship unless the relevant checks ran and succeeded; name the unverified remainder instead.
 
-Planning, read-only review, and worker slices use their scoped checks. Changelog entries follow APPEND_SYSTEM's Changelog Policy.
+Planning, read-only review, and worker slices use their scoped checks.
 
 ## 5. Direct Questions
 
-Answer conceptual questions directly. Inspect files or delegate only when repository-specific evidence is needed, using the smallest useful lookup.
+Answer conceptual questions directly; gather repository-specific evidence only when needed, within section 3's delegation limits.
 
 ## 6. Clarification and Risk Gate
 
-When material ambiguity could change behavior, briefly state the understood outcome, what must remain unchanged, and any open decision before that interpretation is consolidated in a plan or implementation. Use APPEND_SYSTEM's existing communication rule, not a second specification or approval step. Distinguish user decisions, verified facts, and assumptions; do not invent a solution to fill a material gap.
+Before consolidating a materially ambiguous interpretation, state the outcome, invariants and open decision under APPEND_SYSTEM's communication rule, not a second specification/approval step. Distinguish decisions, facts and assumptions; do not invent missing intent.
 
-Ask one focused question for material ambiguity, preference or safety/data/production risk; otherwise execute authorized bounded work without routine confirmation or restating clear requests. Apply APPEND_SYSTEM's workflow gates once, without repeating launcher, selection or implementation approvals.
+Ask one focused question for material ambiguity, preference or safety/data/production risk; otherwise execute authorized bounded work without routine confirmation or restating clear requests. Apply section 3's approval gates once.
 
 `/sharpen` manually reformulates a request using the brief in section 3; `/grill-me` supports clarification through conversation when needed; `/plan` designs and persists a plan through its existing planner flow. Do not chain them automatically. Deepening a brief does not expand its scope: separate unrequested improvements as optional. Direct work needs none of these commands as a prerequisite.
 

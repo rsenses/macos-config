@@ -18,29 +18,19 @@ Keep execution plans detailed enough to resume, but make chat understandable wit
 - Respect user instructions, project rules, existing changes, and requested scope. Preserve unrelated changes; do not expand a fix into adjacent cleanup.
 - Keep secrets out of prompts, outputs, logs, and commits.
 - Preserve security, data integrity, validation, and changelog requirements. `safe_bash` is a command filter, not a sandbox.
-- Before changing critical local/system configuration, follow the backup and explicit-approval gate in `ops`.
+- Before changing critical local/system configuration, explain the change, create a timestamped backup, and obtain explicit approval; `ops` defines the scope of this gate.
 
 ## Validation reporting
 
 Load `ops` before implementing, delegating, or reporting readiness. Its section 4 governs what a readiness report states: the checks actually run with their results, and those not run. Full project validation (fix/format/lint, then tests) runs only when the user requests it or runs it themselves. Targeted checks and child success never certify application readiness; planning, read-only review, and worker slices use scoped checks.
 
-## Project Plans and Tasks
+## Orchestration and approvals
 
-`ops` owns the plan format, persistence, progress, and delegation contracts. `.ai/TASKS.md` holds pending work; `.ai/plan/` holds implementation plans.
+Load `ops` for plans, memory, resumption, delegation, acceptance, and recovery; it owns these procedures and harness formats. Persist only for durable continuity or explicit `/plan`, not file count or multiple steps. Missing or blocked selections never permit guessing another plan or silently recreating it.
 
-- Save a plan only when it adds durable continuity; file count or multiple steps alone are not reasons. `/plan` explicitly requests persisted planning with its mandatory planner and approvals. Before that planner returns, record only the brief and evidence, not your own solution.
-- Resolve the selection with `get_current_plan` at start/resume; read the Markdown contract, Current Step, authorized work, acceptance, and validation. After compaction, consult it again only if retained context is insufficient. Reuse evidence within a task; recheck at task changes or material discrepancies, not before every tool call. Use `summarize_worktree` for a compact repo snapshot.
-- Use `select_session_plan` only for explicit adoption/switch. Showing, serving, testing, or reviewing its results continues the same plan even if its tasks are completed. Start another plan only for an independent goal or material scope change; compare the active goal/artifacts before `newPlan=true`. A missing or blocked selection never permits guessing the newest file or silently recreating it.
-- The coordinator alone updates progress after verifying acceptance; child completion is not acceptance. Markdown is the source of truth, not lifecycle messages. Keep pending tasks and evidence concise; link complex plans instead of duplicating them.
-
-## Delegation and approvals
-
-Follow `ops` for benefit-driven delegation and bounded briefs. Handle direct questions and trivial or indivisible edits locally; normally use zero or one child, at most two genuinely independent ones. Children never delegate.
-
-- `planner` is mandatory inside `/plan`; outside it, use one for material design alternatives, not routine progress. Gather evidence without pre-solving its design.
-- `plan-reviewer` is manual-only: invoke it only on an explicit saved-plan review request or `/review-plan`.
-- Launcher UI approves planner model/thinking once; selection UI confirms adoption or `newPlan=true`. Implementation of an approved plan needs separate user authorization. Never duplicate an approval question. Cancellation ends the attempt; unavailable selections never authorize silent fallback.
-- Choose clarification, direct work, or a child by ambiguity, risk, and concrete benefit. Keep the principal model, provider, thinking level, and settings unchanged unless explicitly requested.
+- `/plan` requires its planner. Both reviewers are manual-only: `plan-reviewer` needs an explicit saved-plan review request or `/review-plan`; `code-reviewer` needs an explicit request for that agent.
+- Delegate only for concrete benefit: normally zero or one child, at most two independent tasks; children never delegate. Only the coordinator accepts and records progress. Follow `ops` for bounded briefs and task-by-task execution; parallel tasks require express plan permission.
+- Launcher/selection UI approvals occur once. Plan approval or selection does not authorize implementation; obtain separate authorization. Cancellation ends the attempt; unavailable selections never permit fallback. Keep principal model/provider/thinking/settings unchanged unless explicitly requested.
 
 ## Changelog Policy
 
