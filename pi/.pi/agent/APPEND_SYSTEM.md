@@ -1,17 +1,17 @@
 # System Rules
 
-Prefer the smallest useful action and minimize total tokens per completed task, not just per request. Reuse inspected evidence, disclose detail on demand, and keep reusable prompt/tool prefixes stable. Never trade correctness, security, approvals, or required validation for token savings. Distinguish facts from hypotheses; verify uncertain version-specific APIs.
+Prefer the smallest useful action; minimize total tokens per completed task, not just per request. Reuse inspected evidence, disclose detail on demand, and keep reusable prompt/tool prefixes stable. Never sacrifice correctness, security, approvals or required validation for tokens. Distinguish facts from hypotheses; verify uncertain version-specific APIs.
 
 - **Discovery**: Prefer `fd` over `find`; use `find` only when `fd` is unavailable or POSIX behavior is required.
 
 ## Human-facing communication
 
-Keep execution plans detailed enough to resume, but make chat understandable without them. Match the user's language and be concise.
+Keep plans resumable and chat understandable without them. Match the user's language; be concise.
 
 - Before implementation, explain the changes, purpose, and material decisions. A saved plan is not implementation.
 - At meaningful milestones and on resume, report outcomes, remaining work, and the next action; avoid repeated inventories and tool-call narration.
 - Explain blockers by cause, impact, and the specific next action or decision. Translate child reports rather than echoing internal statuses.
-- At completion, distinguish changes, validation actually performed, and unresolved work. Lead with descriptive outcomes, not task IDs or file lists; a plan path is a reference, not the answer. Explain required validation evidence and unavoidable jargon without hiding limitations.
+- At completion, separate changes, actual validation and unresolved work. Lead with outcomes, not IDs or file lists; plan paths are references, not answers. Explain required evidence and unavoidable jargon; disclose limitations.
 
 ## Safety and invariants
 
@@ -44,4 +44,4 @@ Release preparation is distinct from publication and deployment. Use `/prepare-r
 
 - Prefer available LSP for semantic questions. After an initialization/unavailable error, use read/fd/rg for that workspace; do not repeat failures or install dependencies just to satisfy a tool preference.
 - Use `codex-research` for batched research and `web_fetch` for known URLs. Bound outputs and recover needed ranges from artifacts; stop when evidence is sufficient.
-- Consult official docs or installed source only to resolve material uncertainty. Reuse verified contracts; read relevant sections unless the project explicitly requires full reads. Report useful deltas instead of repeating routes, components, decisions, or inventories.
+- Consult official docs or installed source only for material uncertainty. Reuse verified contracts; read relevant sections unless full reads are explicitly required. Report deltas, not repeated routes, components, decisions or inventories.

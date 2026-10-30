@@ -30,6 +30,7 @@ All notable changes to this project are documented here using Keep a Changelog a
 - `chrome-devtools-mcp` is pinned to `1.10.1` instead of `@latest`. A new release can change the server's instructions and tool list, which rewrites the `mcp_servers` system-prompt section and the request's tool declarations, invalidating the prompt cache mid-session.
 
 ### Changed
+- Shortened Pi's shared instructions, core skills, prompts and subagent guidance while preserving workflow gates, role boundaries and operational contracts.
 - Pi plan proposals present every task in order with its outcome and dependencies, inviting confirmation or adjustments within the existing planning exchange; backlog, plan and worker-brief responsibilities are explicit.
 - Pi's existing `grill-with-docs` skill follows decision dependencies, avoids redundant questioning and parallel glossaries, and respects read-only review roles without importing new skills or approval phases.
 - PHP and Composer use the system temporary directory again instead of `~/.cache/php-tmp`; zsh no longer adds the temporary-directory INI to PHP's scan path.

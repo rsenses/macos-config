@@ -11,9 +11,9 @@ Identify the desired outcome, non-goals, constraints, existing behavior to prese
 
 ## 2. Interfaces and Alternatives
 
-Prefer deep modules: small interfaces hiding cohesive complexity behind real boundaries. Favor locality: concentrate complexity, knowledge and related changes behind the interface rather than distributing them across consumers.
+Prefer deep modules: small interfaces hiding cohesive complexity at real boundaries. Favor locality: concentrate complexity, knowledge and related changes behind interfaces, not across consumers.
 
-Apply the deletion test: if removing an abstraction makes complexity disappear, it may be pass-through; if complexity spreads across callers, it may be earning its keep. Judge seams/adapters by their boundary and behavior, not implementation count. Avoid hypothetical variation, but preserve real integration or domain boundaries even with one implementation. Define observable behavior through public interfaces, not internal collaborators.
+Deletion test: if removing an abstraction eliminates complexity, it may be pass-through; if complexity spreads across callers, it may earn its keep. Judge seams/adapters by boundary and behavior, not implementation count. Avoid hypothetical variation; preserve real integration/domain boundaries even with one implementation. Define observable behavior through public interfaces, not internal collaborators.
 
 Compare material alternatives against requirements, dependencies and risks; record decisions and reasons using relevant versioned contracts/source and established evidence.
 

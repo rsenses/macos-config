@@ -7,11 +7,11 @@ description: "Use before implementing, delegating work, or reporting implementat
 
 ## 1. Memory Management (.ai/)
 
-Use project-relative paths: `.ai/TASKS.md` holds pending work and `.ai/plan/` implementation plans. A backlog item captures the problem and intended outcome, with priority when useful; link its canonical plan for complex work rather than copying the checklist/progress. The plan owns the technical contract and task acceptance; a worker brief carries one authorized task. The `.ai/` restriction covers memory artifacts (`MEMORY.md`, tasks, plans, daily notes), not authorized implementation files.
+Use project-relative paths. `.ai/TASKS.md` holds pending problems/outcomes, with priority when useful; link complex work to its canonical plan, not a duplicate checklist/progress. `.ai/plan/` holds technical contracts and task acceptance; each worker brief carries one authorized task. The `.ai/` restriction covers memory artifacts (`MEMORY.md`, tasks, plans, daily notes), not implementation files.
 
 ### Persistence and selection
 
-Persist a plan when durable decisions, related phases, resumption or handoff need it. Explaining proposals, file count or multiple steps alone do not require persistence. Outside `/plan`, do not routinely create or offer a plan. `/plan` requires persistence, its planner and approval gates.
+Persist for durable decisions, related phases, resumption or handoff—not merely proposals, file count or multiple steps. Outside `/plan`, do not routinely create or offer plans. `/plan` requires persistence, its planner and approval gates.
 
 - Reuse the active selection. Showing, serving, testing, or reviewing completed work continues its plan. Handle one-off follow-ups directly; append a task if tracking is useful. A new plan needs an independent goal or material scope change; compare the current goal/artifacts before `newPlan=true`, asking only if the distinction is unclear.
 - `select_session_plan` is for explicit existing-file adoption/switch. It and `create_session_plan(newPlan=true)` obtain their own UI confirmation; do not ask again. Cancellation preserves the previous selection and ends the attempt. Selection never authorizes implementation.
@@ -30,21 +30,21 @@ Current Step has three lines:
 
 An explicit nonexistent ID is an inconsistency, not permission to substitute a task. Keep old free-form steps readable.
 
-Capture objective, constraints, behavior, material decisions/reasons, implemented-versus-verified work, pending checks, blockers, and next action. Tasks are verifiable outcomes, not a log of tool calls. Include exact files, symbols, dependencies, acceptance, and checks only when execution or verification needs them. Record checks actually run; refer to existing inventories instead of copying them.
+Capture objective, constraints, behavior, material decisions/reasons, implemented-versus-verified work, pending checks, blockers and next action. Tasks are verifiable outcomes, not tool-call logs. Name exact files, symbols, dependencies, acceptance and checks where execution/verification needs them. Record actual checks; reference existing inventories rather than copying them.
 
-Before a planner returns, record only the brief and evidence. The planner is read-only; it supplies the design, then the coordinator saves the complete proposal and reads it back in full. Preserve partial/blocked results and unresolved questions rather than designing missing pieces yourself. Persistence or read-back failure is blocked, not completed planning.
+Before the read-only planner returns its design, record only the brief and evidence. The coordinator then saves and reads back the complete proposal. Preserve partial/blocked results and unresolved questions; do not design missing pieces yourself. Persistence/read-back failure blocks planning completion.
 
 Present all proposed tasks in chat as a concise numbered list in execution order, retaining Tn IDs. For each show the title, observable delivery and dependencies (or none). Invite the user to confirm or add, remove, merge, split or reorder tasks before implementation; record adjustments in the same plan under the existing revision rules. This proposal exchange adds no approval gate; implementation authorization remains separate.
 
 ### Progress and handoff
 
-When a later user decision supersedes the design, consolidate the current TL;DR, task contract, acceptance, Current Step, and blockers. Preserve earlier evidence as explicitly historical; do not leave contradictory instructions active. Record user-confirmed checks as user-confirmed, with their scope and timing, not as checks the agent ran.
+When a user decision supersedes the design, reconcile TL;DR, task contract, acceptance, Current Step and blockers; mark earlier evidence historical rather than leaving contradictions active. Attribute user-confirmed checks with scope and timing, never as agent executions.
 
 Only the coordinator writes progress after verifying acceptance: check accepted tasks and update Current Step, concise evidence, checks/results and blockers. Child success is not acceptance; routine updates need no planner. Preserve resumable evidence for partial/blocked/cancelled/timed-out work; on resume, skip only still-valid acceptance and recheck stale evidence.
 
 Assign each worker one bounded task, plan path/task ID and the section 3 brief; stop after that task, never advance autonomously through the plan. Before the next dependent task, the coordinator inspects the diff for scope and smallest sufficient change, verifies acceptance with permitted checks and records the result. Parallelize only independent tasks expressly permitted by the plan, within section 3's limits, without overlapping writes or checks requiring a stable tree.
 
-Markdown is the sole editable source of plan content. The extension resolves selection and serves explicit reads; lifecycle events do not synchronize document contents into prompts. Do not call unavailable memory tools or create a second daily log by default. Put only stable lessons in `MEMORY.md`; keep the backlog focused on pending work.
+Markdown is the sole editable plan source. The extension resolves selection and serves explicit reads; lifecycle events do not synchronize content into prompts. Do not call unavailable memory tools or create a second daily log by default. `MEMORY.md` holds only stable lessons; the backlog holds pending work.
 
 ## 2. Context Engineering
 
@@ -54,7 +54,7 @@ When a clear contract conflicts with code, investigate and fix within scope. If 
 
 ## 3. Selective Delegation
 
-The principal owns scope, decisions, integration, and final validation. Delegate only when specialization, isolation, or independently verifiable work outweighs briefing and integration overhead; separability or file count alone is insufficient.
+The principal owns scope, decisions, integration and final validation. Delegate only when specialization, isolation or independently verifiable work outweighs briefing/integration overhead—not mere separability or file count.
 
 - Normally use zero or one child, at most two genuinely independent, non-overlapping tasks. Do not manufacture work to fill a quota.
 - Handle direct questions, trivial lookups, and indivisible edits locally without routinely explaining why no child was used.
@@ -74,15 +74,15 @@ Every brief uses these headings:
 - **Checks**: concrete permitted checks; never invent provider calls.
 - **Stop**: ambiguity, scope conflict, missing evidence, or repeated failure without new evidence.
 
-Pass established evidence and the remaining question, not a transcript or rediscovery request. Separate user decisions, verified facts, and assumptions in Known/Evidence; include the request and later clarifications, not just the plan or implementer's explanation. Children run with `--no-skills`: include task-relevant skill criteria in Known as short excerpts, or exact readable paths/sections with explicit instructions to read them when needed. Prefer excerpts when sufficient; do not require full-skill reads for trivial work. Request concise evidence but complete actionable planning designs. Integrate each locally verified result once into the canonical plan, not duplicate reports.
+Pass established evidence, the remaining question, original request and later clarifications—not a transcript, rediscovery request or only the plan/implementer's account. Separate decisions, verified facts and assumptions in Known/Evidence. Children run with `--no-skills`: put relevant skill criteria in Known as short excerpts, or exact readable paths/sections with explicit read instructions when needed. Prefer sufficient excerpts; do not require full-skill reads for trivial work. Request concise evidence but complete actionable planning designs; integrate each locally verified result once into the canonical plan, without duplicate reports.
 
 Child output starts with **Status** (`complete`, `partial`, `blocked`, `failed`, `cancelled`, `timed_out`), then its role's findings/changes, evidence, checks, and unresolved items. Workers return **Status / Changes / Evidence / Checks / Unresolved**. Name their validation policy (`no-tests`, `targeted-check`, `add-test`, `test-first`, `defer-validation`) and the concrete command or reason.
 
 ### Assessing review findings
 
-Assess existing review findings against the user's request/clarifications, current contract, then implementation—in that order. Verify cited evidence and materially affected consumers. A plan or implementer's explanation alone does not establish acceptance; neither disagreement with the implementer nor model authority decides a finding.
+Assess findings against the user's request/clarifications, current contract, then implementation. Verify evidence and materially affected consumers. A plan/implementer's account alone does not establish acceptance; disagreement or model authority does not decide a finding.
 
-Use these distinctions within the existing handoff, without requiring empty sections or a finding quota:
+Use these distinctions in the existing handoff; no empty sections or finding quota:
 
 - **Supported defect**: concrete evidence, observable impact, and the smallest justified correction.
 - **Pending hypothesis**: the missing fact and minimum check, including what result would confirm or refute it. Do not report proposed execution or browser checks as performed.
@@ -91,7 +91,7 @@ Use these distinctions within the existing handoff, without requiring empty sect
 
 Apply justified corrections within scope. Reject preferences and abstractions without demonstrated benefit; consult the user for changes to intent or scope. For PHP/Laravel, use `laravel-simplicity` rather than class, layer, or consumer counts; one implementation does not invalidate an abstraction.
 
-Use the initial review and, when substantive corrections warrant it, a focused correction check; no indefinite rounds, extra judge or routine model call. No findings is valid; partial coverage is not full approval. This interprets existing reviews, not a new stage, permission or validation policy.
+Use the initial review; add a focused correction check only when substantive corrections warrant it; no indefinite rounds, extra judge or routine model call. No findings is valid; partial coverage is not full approval. This adds no stage, permission or validation policy.
 
 ### Approval boundaries
 

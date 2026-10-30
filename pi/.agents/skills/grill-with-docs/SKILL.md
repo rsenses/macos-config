@@ -21,35 +21,9 @@ Honor the invoking role's permissions and output contract. In read-only reviews,
 
 During codebase exploration, use existing glossary and ADR locations rather than creating parallel documents. Otherwise use the conventions below:
 
-### File structure
+### Default layout
 
-Most repos have a single context:
-
-```
-/
-├── CONTEXT.md
-├── docs/
-│   └── adr/
-│       ├── 0001-event-sourced-orders.md
-│       └── 0002-postgres-for-write-model.md
-└── src/
-```
-
-If a `CONTEXT-MAP.md` exists at the root, the repo has multiple contexts. The map points to where each one lives:
-
-```
-/
-├── CONTEXT-MAP.md
-├── docs/
-│   └── adr/                          ← system-wide decisions
-├── src/
-│   ├── ordering/
-│   │   ├── CONTEXT.md
-│   │   └── docs/adr/                 ← context-specific decisions
-│   └── billing/
-│       ├── CONTEXT.md
-│       └── docs/adr/
-```
+Single context: root `CONTEXT.md` and `docs/adr/`. A root `CONTEXT-MAP.md` indicates multiple contexts; read it to locate each context's glossary and ADRs. Root `docs/adr/` holds system-wide decisions.
 
 Create files lazily — only when you have something to write. If no glossary exists, create `CONTEXT.md` when the first domain term is resolved. If no ADR location exists, create `docs/adr/` when the first ADR is needed.
 
@@ -57,25 +31,25 @@ Create files lazily — only when you have something to write. If no glossary ex
 
 ### Challenge against the glossary
 
-When the user uses a term that conflicts with the project's established glossary, call it out immediately. "Your glossary defines 'cancellation' as X, but you seem to mean Y — which is it?"
+Immediately flag conflicts with the project's glossary and ask which meaning is intended.
 
 ### Sharpen fuzzy language
 
-When the user uses vague or overloaded terms, propose a precise canonical term. "You're saying 'account' — do you mean the Customer or the User? Those are different things."
+For vague or overloaded language, propose a precise canonical term.
 
 ### Discuss concrete scenarios
 
-When domain relationships are being discussed, stress-test them with specific scenarios. Invent scenarios that probe edge cases and force the user to be precise about the boundaries between concepts.
+Stress-test domain relationships with concrete edge-case scenarios that clarify concept boundaries.
 
 ### Cross-reference with code
 
-When the user states how something works, check whether the code agrees. If you find a contradiction, surface it: "Your code cancels entire Orders, but you just said partial cancellation is possible — which is right?"
+Check claimed behavior against code; surface contradictions and ask which behavior is intended.
 
 ### Update the glossary inline
 
 When a term is resolved, update the relevant glossary right there; do not batch resolved terms. Preserve its existing format, or use [CONTEXT-FORMAT.md](./CONTEXT-FORMAT.md) for a new `CONTEXT.md`.
 
-Keep the glossary free of implementation details. Do not treat it as a spec, a scratch pad, or a repository for implementation decisions. It is a glossary and nothing else.
+Keep the glossary domain-only: no implementation details, specs, scratch notes or implementation decisions.
 
 ### Offer ADRs sparingly
 

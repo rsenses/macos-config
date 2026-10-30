@@ -5,7 +5,7 @@ description: "Use when creating, editing, or reviewing skills, Pi prompts, syste
 
 # Writing for Agents
 
-Use this skill when changing a skill, prompt template, `APPEND_SYSTEM.md`, `AGENTS.md`, or another document an agent reaches through a pointer. The goal is predictable behavior with the smallest useful context load.
+For skills, prompts, `APPEND_SYSTEM.md`, `AGENTS.md` and agent-referenced documents, aim for predictable behavior with minimal useful context.
 
 ## 1. Identify the contract
 
@@ -16,7 +16,7 @@ Before editing, inspect the harness contract and the current document:
 - Which tools, arguments, files, and project conventions does it actually have?
 - Which existing document is the source of truth for the behavior being described?
 
-A user-invoked document should have a human-facing description and an explicit entry point. A model-invoked document should state concrete trigger conditions. Do not silently change invocation mode.
+User-invoked documents need a human-facing description and explicit entry point; model-invoked documents need concrete triggers. Do not silently change invocation mode.
 
 ## 2. Put information at the right level
 
@@ -26,11 +26,11 @@ Keep the main workflow in the document and disclose branch-specific reference ma
 - **Cognitive load** is the human's cost of remembering which document to use.
 - **Progressive disclosure** keeps branch-specific detail out of the common path.
 
-Do not repeat facts the environment already exposes reliably, such as a package script or directory listing. Preserve a short cache only for conventions, rationale, or failure modes that are otherwise expensive to rediscover.
+Do not repeat reliably exposed facts such as scripts or directory listings. Keep a short cache only for conventions, rationale or failure modes expensive to rediscover.
 
 ## 3. Prune and sharpen
 
-Review each sentence for a behavior change, a real branch, or a necessary guardrail. Delete no-ops, duplicated rules, stale commands, and conflicting fallbacks. Prefer positive instructions that name the desired behavior; keep a prohibition only when it protects a hard invariant and pair it with the safe action.
+Keep sentences that change behavior, distinguish a branch or protect a guardrail. Remove no-ops, duplicate rules, stale commands and conflicting fallbacks. Prefer positive instructions; retain prohibitions protecting hard invariants and pair them with safe actions.
 
 Use precise leading words such as **tight loop**, **public seam**, **vertical slice**, and **single source of truth** when they replace repeated explanations. Keep one meaning in one authoritative place and point to it from other documents.
 

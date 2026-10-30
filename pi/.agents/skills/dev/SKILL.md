@@ -10,7 +10,7 @@ description: "Use when implementing code changes, reproducing and fixing bugs, a
 Build in thin vertical slices. Each increment should leave the system working and testable.
 
 - **Scope Discipline**: Make the smallest sufficient change; reuse behavior and abstractions, adding one only for a concrete task benefit. Follow APPEND_SYSTEM's global invariants.
-- **Automation**: Use scripts or codemods for repetitive, structurally verifiable changes when they reduce risk or manual work. Changed line count alone neither requires nor rules out automation.
+- **Automation**: Use scripts/codemods for repetitive, structurally verifiable changes when they reduce risk or manual work—not based on changed line count alone.
 
 ## 2. Pragmatic Testing
 
@@ -21,7 +21,7 @@ Use the cheapest credible verification during development. Durable tests are man
 
 ## 3. Source-Driven Development
 
-Check installed dependency versions and reuse verified contracts. Resolve uncertain, non-obvious, or version-sensitive framework behavior with official documentation or installed source; cite the evidence used. Do not repeat an external lookup for every operation already established by that evidence. Use nearby code to understand project conventions, not as proof of undocumented framework behavior.
+Check installed dependency versions; reuse verified contracts. Resolve uncertain, non-obvious or version-sensitive framework behavior with official docs or installed source; cite the evidence. Do not repeat lookups for established behavior. Nearby code establishes project conventions, not undocumented framework contracts.
 
 ## 4. Debugging and Error Recovery
 

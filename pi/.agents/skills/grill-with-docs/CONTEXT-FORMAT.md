@@ -36,28 +36,18 @@ _Avoid_: Client, buyer, account
 
 **Single context (most repos):** One `CONTEXT.md` at the repo root.
 
-**Multiple contexts:** A `CONTEXT-MAP.md` at the repo root lists the contexts, where they live, and how they relate to each other:
+**Multiple contexts:** Root `CONTEXT-MAP.md` lists context paths, responsibilities and relationships:
 
 ```md
 # Context Map
 
 ## Contexts
-
-- [Ordering](./src/ordering/CONTEXT.md) — receives and tracks customer orders
-- [Billing](./src/billing/CONTEXT.md) — generates invoices and processes payments
-- [Fulfillment](./src/fulfillment/CONTEXT.md) — manages warehouse picking and shipping
+- [A](./src/a/CONTEXT.md) — responsibility
+- [B](./src/b/CONTEXT.md) — responsibility
 
 ## Relationships
-
-- **Ordering → Fulfillment**: Ordering emits `OrderPlaced` events; Fulfillment consumes them to start picking
-- **Fulfillment → Billing**: Fulfillment emits `ShipmentDispatched` events; Billing consumes them to generate invoices
-- **Ordering ↔ Billing**: Shared types for `CustomerId` and `Money`
+- **A → B**: events produced by A and consumed by B
+- **A ↔ B**: shared types
 ```
 
-The skill infers which structure applies:
-
-- If `CONTEXT-MAP.md` exists, read it to find contexts
-- If only a root `CONTEXT.md` exists, single context
-- If neither exists, create a root `CONTEXT.md` lazily when the first term is resolved
-
-When multiple contexts exist, infer which one the current topic relates to. If unclear, ask.
+Read an existing `CONTEXT-MAP.md` to locate contexts; root `CONTEXT.md` alone means single context. If neither exists, create root `CONTEXT.md` only when the first term is resolved. For multiple contexts, infer the relevant one; ask if unclear.
