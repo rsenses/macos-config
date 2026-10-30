@@ -11,6 +11,7 @@ All notable changes to this project are documented here using Keep a Changelog a
 - Herdr opens an interactive popup shell with `prefix+j` or `cmd+j`, closing when the shell exits.
 - Silent Pi cache diagnostics record per-run keyed request fingerprints, input-block fingerprints, response request IDs and token usage without saving prompts, tool content or credentials. Each run writes and rotates its own local log; the extension adds no tools, notices, model calls or payload changes.
 - A read-only Pi session usage analyzer reports local role/model token and historical-cost aggregates without exporting conversation or tool content, or modifying Pi's runtime behavior.
+- `dev` accepts repeated `EXTRAS=` commands in a project's `.config/caddy` and manages them through `up`, `down`, `reload`, `status`, and `down-all`. Each command gets an independent log/state file and verified process ownership; startup failures roll back already-started extras, the main server, and Caddy routes, and lifecycle commands stop recorded extras even after the configuration changes.
 
 ### Fixed
 - `dev` now recognizes versioned PHP executables such as `php7.4`, avoiding false startup failures and stale-process warnings for mise-linked system PHP.
@@ -25,6 +26,7 @@ All notable changes to this project are documented here using Keep a Changelog a
 - `chrome-devtools-mcp` is pinned to `1.10.1` instead of `@latest`. A new release can change the server's instructions and tool list, which rewrites the `mcp_servers` system-prompt section and the request's tool declarations, invalidating the prompt cache mid-session.
 
 ### Changed
+- PHP and Composer use the system temporary directory again instead of `~/.cache/php-tmp`; zsh no longer adds the temporary-directory INI to PHP's scan path.
 - Pi's execution guidance now makes one-task worker handoffs and coordinator acceptance explicit, favors the smallest sufficient change, and documents the checklist syntax recognized by the plan reader.
 - `/run-plan` now explicitly checks the current plan against later user decisions already available in context, stopping only for material contradictions without adding a new phase or historical search.
 - Pi's preparation now makes material ambiguities explicit without adding routine confirmations; coordinators assess review findings against user intent and evidence rather than applying recommendations automatically. Selective pstack sources and MIT attribution are recorded in `pi/PSTACK-NOTICE.md`; the read-only consumer-impact lens is available through the separately requested, manual-only code reviewer.

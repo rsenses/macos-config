@@ -25,11 +25,20 @@ WEB_ROOT=""
 PORT=""
 LOG_FILE=""
 STATE_FILE=""
+EXTRAS_DIR=""
 SERVER_TYPE=""
 declare -a ALIASES=()
 declare -a PROXIES=()
+declare -a EXTRA_COMMANDS=()
 declare -a HOSTS=()
 declare -a DOMAIN_CONFLICTS=()
+
+# Los extras son comandos declarados en .config/caddy. El supervisor es un
+# proceso bash propio que se queda en primer plano para poder verificar su
+# identidad (marcador, arranque, cwd y grupo) y terminar todo su árbol.
+EXTRA_SUPERVISOR_TOKEN="dev-extra-supervisor"
+EXTRA_IDENTITY_ATTEMPTS=10
+EXTRA_STARTUP_GRACE_ATTEMPTS=10
 
 usage() {
   echo "Uso:"
@@ -250,6 +259,9 @@ resolve_project() {
   PROJECT_ID="$(hash_path "$PROJECT_DIR")"
   STATE_FILE="${STATE_PREFIX}-${PROJECT_ID}.state"
   LOG_FILE="${STATE_PREFIX}-${PROJECT_ID}.log"
+  # Un directorio propio evita que los estados de extras coincidan con el
+  # glob de estados principales usado por down-all y por los conflictos.
+  EXTRAS_DIR="${STATE_PREFIX}-${PROJECT_ID}.extras"
 
   if [[ -d "$PROJECT_DIR/public" ]]; then
     WEB_ROOT="$PROJECT_DIR/public"
@@ -346,6 +358,7 @@ load_proxy_values() {
 load_project_config() {
   ALIASES=()
   PROXIES=()
+  EXTRA_COMMANDS=()
 
   if [[ -f "$CONFIG_FILE" ]]; then
     while IFS= read -r raw; do
@@ -363,6 +376,16 @@ load_project_config() {
         [Pp][Rr][Oo][Xx][Ii][Ee][Ss]=*)
           value="${line#*=}"
           load_proxy_values "$value"
+          ;;
+        [Ee][Xx][Tt][Rr][Aa][Ss]=*)
+          # Para un comando se conserva el texto original: un '#' puede
+          # formar parte de la orden. No se interpreta ni se ejecuta aquí.
+          value="$(trim "${raw#*=}")"
+          if [[ -z "$value" ]]; then
+            echo "Aviso: EXTRAS= vacío en ${CONFIG_FILE}; se ignora." >&2
+            continue
+          fi
+          EXTRA_COMMANDS+=("$value")
           ;;
       esac
     done < "$CONFIG_FILE"
@@ -1138,6 +1161,441 @@ stop_state_file() {
   return "$status"
 }
 
+extra_state_file() {
+  printf '%s/%s.state\n' "$EXTRAS_DIR" "$1"
+}
+
+extra_log_file() {
+  printf '%s/%s.log\n' "$EXTRAS_DIR" "$1"
+}
+
+# Identidad de un extra: el supervisor debe llevar el marcador exacto, estar
+# en el directorio del proyecto, ser líder de su propio grupo de procesos y,
+# cuando se exige, coincidir con la hora de arranque registrada. Se exige
+# lsof para el cwd: si no se puede comprobar, la identidad no se acepta.
+extra_process_signature_matches() {
+  local pid="$1"
+  local workdir="$2"
+  local marker="$3"
+  local expected_start="${4:-}"
+  local require_group="${5:-yes}"
+  local command_line=""
+  local actual_start=""
+  local actual_cwd=""
+  local actual_group=""
+
+  [[ "$pid" =~ ^[0-9]+$ ]] || return 1
+  (( 10#$pid > 1 )) || return 1
+  [[ -n "$workdir" && -n "$marker" ]] || return 1
+
+  command_line="$(ps_command_for_pid "$pid" 2>/dev/null)" || return 1
+  [[ -n "$command_line" ]] || return 1
+  case " $command_line " in
+    *" ${EXTRA_SUPERVISOR_TOKEN} ${marker} "*) ;;
+    *) return 1 ;;
+  esac
+
+  if [[ -n "$expected_start" ]]; then
+    actual_start="$(ps_start_for_pid "$pid" 2>/dev/null)" || return 1
+    [[ "$actual_start" == "$expected_start" ]] || return 1
+  fi
+
+  actual_cwd="$(process_cwd_for_pid "$pid" 2>/dev/null)" || return 1
+  [[ "$actual_cwd" == "$workdir" ]] || return 1
+
+  if [[ "$require_group" != "no" ]]; then
+    actual_group="$(ps_group_for_pid "$pid" 2>/dev/null)" || return 1
+    [[ "$actual_group" == "$pid" ]] || return 1
+  fi
+
+  return 0
+}
+
+extra_pid_belongs() {
+  local pid="$1"
+  local start="$2"
+  local workdir="$3"
+  local marker="$4"
+
+  # La hora de arranque es obligatoria para un estado persistido: sin ella
+  # el PID no se considera propio aunque el comando parezca correcto.
+  [[ -n "$start" ]] || return 1
+  server_pid_is_running "$pid" || return 1
+  extra_process_signature_matches "$pid" "$workdir" "$marker" "$start"
+}
+
+# Detiene un supervisor ya verificado. El grupo propio (PGID == PID) es la
+# vía normal; si no está disponible, se recorren primero los descendientes.
+stop_extra_owned_pid() {
+  local pid="$1"
+  local start="$2"
+  local workdir="$3"
+  local marker="$4"
+  local process_group=""
+  local status=0
+
+  server_pid_is_running "$pid" || return 0
+  if ! extra_process_signature_matches "$pid" "$workdir" "$marker" "$start"; then
+    echo "Aviso: el PID ${pid} no corresponde al extra de ${workdir}; no se detiene." >&2
+    return 1
+  fi
+
+  process_group="$(ps_group_for_pid "$pid" 2>/dev/null || true)"
+  if process_group_belongs_to "$pid" "$process_group"; then
+    stop_process_group "$pid" "$process_group" || status=1
+  else
+    stop_descendant_processes "$pid" "$pid"
+    stop_process "$pid" || status=1
+  fi
+
+  return "$status"
+}
+
+# Limpieza de un supervisor recién lanzado cuando todavía no se pudo crear o
+# verificar su grupo. Se exige marcador, cwd y hora de arranque, pero no el
+# grupo: así un fallo al crear el grupo no deja vivo el proceso que acabamos
+# de lanzar. No se usa para estados persistidos.
+stop_extra_spawned_pid() {
+  local pid="$1"
+  local start="$2"
+  local workdir="$3"
+  local marker="$4"
+
+  server_pid_is_running "$pid" || return 0
+  if ! extra_process_signature_matches "$pid" "$workdir" "$marker" "$start" no; then
+    echo "Aviso: el PID ${pid} no corresponde al extra recién lanzado; no se detiene." >&2
+    return 1
+  fi
+
+  stop_descendant_processes "$pid" "$pid"
+  stop_process "$pid"
+}
+
+# Para y elimina el estado de un extra. Nunca se señaliza un PID solo porque
+# exista: se exige marcador, cwd, grupo y hora de arranque del estado.
+stop_extra_state_file() {
+  local state_file="$1"
+  local extras_dir=""
+  local pid=""
+  local start=""
+  local workdir=""
+  local marker=""
+  local command=""
+  local process_group=""
+  local owner_verified=0
+  local status=0
+
+  extras_dir="$(dirname "$state_file")"
+  pid="$(read_state_value PID "$state_file" 2>/dev/null)" || pid=""
+  start="$(read_state_value PID_START "$state_file" 2>/dev/null)" || start=""
+  workdir="$(read_state_value WORK_DIR "$state_file" 2>/dev/null)" || workdir=""
+  marker="$(read_state_value MARKER "$state_file" 2>/dev/null)" || marker=""
+  command="$(read_state_value COMMAND "$state_file" 2>/dev/null)" || command=""
+  process_group="$(read_state_value PGID "$state_file" 2>/dev/null)" || process_group=""
+
+  if [[ "$pid" =~ ^[0-9]+$ ]] && server_pid_is_running "$pid"; then
+    if extra_pid_belongs "$pid" "$start" "$workdir" "$marker"; then
+      owner_verified=1
+      if ! stop_extra_owned_pid "$pid" "$start" "$workdir" "$marker"; then
+        echo "Aviso: no pude terminar por completo el extra '${command}' (PID ${pid})." >&2
+        status=1
+      fi
+    else
+      echo "Aviso: el PID ${pid} del extra '${command}' no corresponde a este proyecto (¿PID reutilizado?); no se detiene." >&2
+      status=1
+    fi
+  fi
+
+  # Si el supervisor ya no existe pero su grupo registrado sigue con vida, no
+  # hay forma conservadora de atribuirlo: se avisa y se deja intacto.
+  if (( owner_verified == 0 )) && [[ "$process_group" =~ ^[0-9]+$ ]] && process_group_is_running "$process_group"; then
+    echo "Aviso: el grupo ${process_group} del extra '${command}' sigue activo pero no pude verificar su identidad; no se detiene." >&2
+    status=1
+  fi
+
+  rm -f "$state_file"
+  rmdir -- "$extras_dir" 2>/dev/null || true
+
+  return "$status"
+}
+
+stop_extras_in_dir() {
+  local extras_dir="$1"
+  local status=0
+  local state_file
+
+  [[ -d "$extras_dir" ]] || return 0
+  for state_file in "$extras_dir"/*.state; do
+    [[ -f "$state_file" ]] || continue
+    stop_extra_state_file "$state_file" || status=1
+  done
+
+  return "$status"
+}
+
+stop_project_extras() {
+  stop_extras_in_dir "$EXTRAS_DIR"
+}
+
+stop_extras_for_project_dir() {
+  local project_dir="$1"
+  local project_id=""
+
+  [[ -n "$project_dir" ]] || return 0
+  project_id="$(hash_path "$project_dir")" || return 1
+  stop_extras_in_dir "${STATE_PREFIX}-${project_id}.extras"
+}
+
+stop_all_extras() {
+  local status=0
+  local extras_dir
+
+  for extras_dir in "${STATE_PREFIX}"-*.extras; do
+    [[ -d "$extras_dir" ]] || continue
+    stop_extras_in_dir "$extras_dir" || status=1
+  done
+
+  return "$status"
+}
+
+write_extra_state() {
+  local index="$1"
+  local pid="$2"
+  local start="$3"
+  local process_group="$4"
+  local workdir="$5"
+  local marker="$6"
+  local command="$7"
+  local state_file=""
+  local temp_file=""
+
+  state_file="$(extra_state_file "$index")"
+  temp_file="${state_file}.tmp.$$"
+
+  {
+    printf 'KIND=extra\n'
+    printf 'PROJECT_DIR=%s\n' "$PROJECT_DIR"
+    printf 'INDEX=%s\n' "$index"
+    printf 'COMMAND=%s\n' "$command"
+    printf 'PID=%s\n' "$pid"
+    printf 'PID_START=%s\n' "$start"
+    printf 'PGID=%s\n' "$process_group"
+    printf 'WORK_DIR=%s\n' "$workdir"
+    printf 'MARKER=%s\n' "$marker"
+    printf 'LOG_FILE=%s\n' "$(extra_log_file "$index")"
+  } > "$temp_file" || {
+    rm -f "$temp_file"
+    return 1
+  }
+
+  if ! mv -f "$temp_file" "$state_file"; then
+    rm -f "$temp_file"
+    return 1
+  fi
+}
+
+show_extra_log() {
+  local log_file="$1"
+
+  [[ -f "$log_file" ]] || return 0
+  echo "Log del extra: ${log_file}" >&2
+  tail -n 40 "$log_file" >&2 || true
+}
+
+# Arranca un extra con un supervisor bash que permanece en primer plano. El
+# grupo propio se crea con 'set -m' en el subshell, sin depender de setsid.
+start_extra() {
+  local index="$1"
+  local command="$2"
+  local state_file=""
+  local log_file=""
+  local marker=""
+  local workdir="$PROJECT_DIR"
+  local pid=""
+  local pid_start=""
+  local process_group=""
+  local attempts=0
+  local supervisor_script='
+trap "" TERM
+cd "$2" || exit 1
+bash -c "$3" &
+child=$!
+wait "$child"
+status=$?
+# El comando debe permanecer en primer plano. Si dejó descendientes en
+# segundo plano, el supervisor (líder del grupo) termina todo el grupo
+# antes de desaparecer, para que un arranque fallido no deje procesos.
+if [[ "$(ps -ww -p $$ -o pgid= 2>/dev/null | tr -d "[:space:]")" == "$$" ]]; then
+  kill -TERM -- "-$$" >/dev/null 2>&1 || true
+  sleep 0.2
+  kill -KILL -- "-$$" >/dev/null 2>&1 || true
+fi
+exit "$status"
+'
+
+  state_file="$(extra_state_file "$index")"
+  log_file="$(extra_log_file "$index")"
+  marker="${EXTRA_SUPERVISOR_TOKEN}:${PROJECT_ID}:${index}"
+
+  if ! mkdir -p "$EXTRAS_DIR"; then
+    echo "Error: no pude crear el directorio de extras ${EXTRAS_DIR}." >&2
+    return 1
+  fi
+  if ! : > "$log_file"; then
+    echo "Error: no pude preparar el log del extra ${index}." >&2
+    return 1
+  fi
+
+  # El proceso de arranque crea el grupo con 'set -m' y termina enseguida;
+  # el supervisor queda reparentado, pero conserva su grupo. Así no hay
+  # mensajes de trabajos terminados mientras se verifica el arranque.
+  pid="$(
+    set -m
+    cd "$workdir" || exit 1
+    nohup bash -c "$supervisor_script" "$EXTRA_SUPERVISOR_TOKEN" "$marker" "$workdir" "$command" \
+      >"$log_file" 2>&1 </dev/null &
+    printf '%s\n' "$!"
+  )" 2>>"$log_file" || {
+    echo "Error: no pude lanzar el extra ${index} (${command})." >&2
+    show_extra_log "$log_file"
+    return 1
+  }
+
+  if [[ ! "$pid" =~ ^[0-9]+$ ]]; then
+    echo "Error: no pude obtener el PID del extra ${index} (${command})." >&2
+    return 1
+  fi
+
+  while (( attempts < EXTRA_IDENTITY_ATTEMPTS )); do
+    server_pid_is_running "$pid" || break
+    pid_start="$(ps_start_for_pid "$pid" 2>/dev/null || true)"
+    process_group="$(ps_group_for_pid "$pid" 2>/dev/null || true)"
+    if [[ -n "$pid_start" ]] && extra_process_signature_matches "$pid" "$workdir" "$marker" "$pid_start"; then
+      break
+    fi
+    sleep 0.1
+    attempts=$((attempts + 1))
+  done
+
+  if ! server_pid_is_running "$pid"; then
+    echo "Error: el extra ${index} terminó inmediatamente: ${command}" >&2
+    show_extra_log "$log_file"
+    return 1
+  fi
+
+  if (( attempts >= EXTRA_IDENTITY_ATTEMPTS )) || [[ -z "$pid_start" ]] \
+      || ! extra_process_signature_matches "$pid" "$workdir" "$marker" "$pid_start"; then
+    echo "Error: no pude verificar el proceso del extra ${index} (${command})." >&2
+    stop_extra_spawned_pid "$pid" "$pid_start" "$workdir" "$marker" || true
+    return 1
+  fi
+
+  if ! write_extra_state "$index" "$pid" "$pid_start" "$process_group" "$workdir" "$marker" "$command"; then
+    echo "Error: no pude registrar el estado del extra ${index}." >&2
+    stop_extra_owned_pid "$pid" "$pid_start" "$workdir" "$marker" || true
+    return 1
+  fi
+
+  # Un comando que falla al arrancar no debe quedar como extra activo ni
+  # dejar vivo al servidor principal o a los extras ya iniciados.
+  attempts=0
+  while (( attempts < EXTRA_STARTUP_GRACE_ATTEMPTS )); do
+    if ! server_pid_is_running "$pid" || ! extra_pid_belongs "$pid" "$pid_start" "$workdir" "$marker"; then
+      break
+    fi
+    sleep 0.1
+    attempts=$((attempts + 1))
+  done
+
+  if ! server_pid_is_running "$pid" || ! extra_pid_belongs "$pid" "$pid_start" "$workdir" "$marker"; then
+    echo "Error: el extra ${index} terminó inmediatamente: ${command}" >&2
+    stop_extra_state_file "$state_file" || true
+    show_extra_log "$log_file"
+    return 1
+  fi
+}
+
+start_extras() {
+  local index
+  local command
+
+  (( ${#EXTRA_COMMANDS[@]} > 0 )) || return 0
+  for index in "${!EXTRA_COMMANDS[@]}"; do
+    command="${EXTRA_COMMANDS[index]}"
+    if ! start_extra "$((index + 1))" "$command"; then
+      echo "Error: falló el extra '$command'; se revierte el arranque." >&2
+      return 1
+    fi
+  done
+}
+
+# Los extras y el servidor principal se revierten juntos: un fallo posterior
+# no debe dejar procesos auxiliares vivos ni rutas publicadas.
+cleanup_started_services() {
+  stop_project_extras || true
+  stop_state_file "$STATE_FILE" || true
+}
+
+show_extras_status() {
+  local state_file=""
+  local index=""
+  local command=""
+  local pid=""
+  local start=""
+  local workdir=""
+  local marker=""
+  local log_file=""
+  local configured_index
+  local state_command
+  local found=0
+  local i
+
+  echo "Extras:"
+  if [[ -d "$EXTRAS_DIR" ]]; then
+    for state_file in "$EXTRAS_DIR"/*.state; do
+      [[ -f "$state_file" ]] || continue
+      found=1
+      index="$(basename "$state_file" .state)"
+      command="$(read_state_value COMMAND "$state_file" 2>/dev/null || true)"
+      pid="$(read_state_value PID "$state_file" 2>/dev/null || true)"
+      start="$(read_state_value PID_START "$state_file" 2>/dev/null || true)"
+      workdir="$(read_state_value WORK_DIR "$state_file" 2>/dev/null || true)"
+      marker="$(read_state_value MARKER "$state_file" 2>/dev/null || true)"
+      log_file="$(read_state_value LOG_FILE "$state_file" 2>/dev/null || true)"
+      [[ -n "$log_file" ]] || log_file="$(extra_log_file "$index")"
+
+      printf '  Extra %s: %s\n' "$index" "${command:-(comando desconocido)}"
+      if [[ "$pid" =~ ^[0-9]+$ ]] && server_pid_is_running "$pid"; then
+        if extra_pid_belongs "$pid" "$start" "$workdir" "$marker"; then
+          printf '    Estado: activo (PID %s)\n' "$pid"
+        else
+          printf '    Estado: PID %s vivo pero no verificado; no se detendrá\n' "$pid"
+        fi
+      else
+        echo "    Estado: inactivo"
+      fi
+      echo "    Log: $log_file"
+    done
+  fi
+
+  if (( ${#EXTRA_COMMANDS[@]} > 0 )); then
+    for i in "${!EXTRA_COMMANDS[@]}"; do
+      configured_index=$((i + 1))
+      if [[ -f "$(extra_state_file "$configured_index")" ]]; then
+        state_command="$(read_state_value COMMAND "$(extra_state_file "$configured_index")" 2>/dev/null || true)"
+        if [[ -n "$state_command" && "$state_command" != "${EXTRA_COMMANDS[i]}" ]]; then
+          printf '    Configurado ahora: %s\n' "${EXTRA_COMMANDS[i]}"
+        fi
+        continue
+      fi
+      found=1
+      printf '  Extra %s: %s (configurado; no iniciado)\n' "$configured_index" "${EXTRA_COMMANDS[i]}"
+    done
+  fi
+
+  (( found == 1 )) || echo "  (ninguno)"
+}
+
 hosts_overlap() {
   local other_hosts="$1"
   local current_host
@@ -1256,6 +1714,10 @@ case "${cmd}" in
         if [[ -n "$conflict_dir" && -n "$conflict_domain" ]]; then
           purge_snippet_for_host "$SITES_DIR/$(basename "$conflict_dir").caddy" "$conflict_domain"
         fi
+        if ! stop_extras_for_project_dir "$conflict_dir"; then
+          echo "Error: no pude detener los extras de la instancia en conflicto." >&2
+          exit 1
+        fi
         if ! stop_state_file "$state_file"; then
           echo "Error: no pude detener por completo la instancia en conflicto." >&2
           exit 1
@@ -1281,6 +1743,10 @@ case "${cmd}" in
       }
     fi
 
+    if ! stop_project_extras; then
+      echo "Error: no pude detener los extras de la instancia anterior." >&2
+      exit 1
+    fi
     if ! stop_state_file "$STATE_FILE"; then
       echo "Error: no pude detener por completo la instancia anterior." >&2
       exit 1
@@ -1303,17 +1769,24 @@ case "${cmd}" in
     if ! wait_for_port "$PORT" 10 \
         "$(read_state_value PID "$STATE_FILE" 2>/dev/null || true)" \
         "$(read_state_value PID_START "$STATE_FILE" 2>/dev/null || true)"; then
-      stop_state_file "$STATE_FILE" || true
+      cleanup_started_services
       reload_caddy no || true
       echo "Error: $(server_type_label "$SERVER_TYPE") no quedó escuchando en el puerto $PORT para ${DOMAIN}." >&2
       show_server_log
       exit 1
     fi
 
+    if ! start_extras; then
+      cleanup_started_services
+      reload_caddy no || true
+      echo "Error: no pude iniciar todos los extras de ${DOMAIN}; arranque revertido." >&2
+      exit 1
+    fi
+
     if ! write_snippet; then
       # El servidor ya está controlado por un estado; no lo dejes huérfano si
       # falla la publicación del snippet.
-      stop_state_file "$STATE_FILE" || true
+      cleanup_started_services
       reload_caddy no || true
       echo "Error: no pude escribir el snippet de Caddy para ${DOMAIN}." >&2
       exit 1
@@ -1323,7 +1796,7 @@ case "${cmd}" in
       rm -f "$SNIPPET"
       # Mejor esfuerzo: saca el snippet recién escrito de la config en memoria.
       reload_caddy no || true
-      stop_state_file "$STATE_FILE" || true
+      cleanup_started_services
       echo "Error: no pude recargar Caddy para ${DOMAIN}." >&2
       exit 1
     fi
@@ -1336,6 +1809,15 @@ case "${cmd}" in
 
     echo "OK: https://${DOMAIN}  ->  127.0.0.1:${PORT} (${PROJECT_DIR})"
     echo "Log: $LOG_FILE"
+    if (( ${#EXTRA_COMMANDS[@]} > 0 )); then
+      extra_index=0
+      for extra_command in "${EXTRA_COMMANDS[@]}"; do
+        extra_index=$((extra_index + 1))
+        extra_pid="$(read_state_value PID "$(extra_state_file "$extra_index")" 2>/dev/null || true)"
+        printf 'Extra %s: %s (PID %s, log %s)\n' \
+          "$extra_index" "$extra_command" "${extra_pid:-(desconocido)}" "$(extra_log_file "$extra_index")"
+      done
+    fi
     ;;
 
   down)
@@ -1356,6 +1838,7 @@ case "${cmd}" in
       echo "Aviso: Caddy no está en ejecución; el snippet de ${DOMAIN} se ha retirado del disco." >&2
     fi
 
+    stop_project_extras || down_status=1
     stop_state_file "$STATE_FILE" || down_status=1
 
     if (( down_status == 0 )); then
@@ -1433,6 +1916,7 @@ case "${cmd}" in
       fi
     fi
 
+    show_extras_status
     echo "Log: $LOG_FILE"
     show_server_log
     ;;
@@ -1468,7 +1952,9 @@ case "${cmd}" in
       stop_state_file "$state_file" || down_status=1
     done
 
-    echo "OK: todos los servidores PHP detenidos"
+    stop_all_extras || down_status=1
+
+    echo "OK: todos los servidores y extras detenidos"
     (( down_status == 0 )) || exit 1
     ;;
 

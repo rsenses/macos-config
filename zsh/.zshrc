@@ -116,3 +116,14 @@ export CLICOLOR=1  # macOS ls colors
 # bindkey '^y' autosuggest-accept
 bindkey "^H" backward-delete-char
 bindkey "^?" backward-delete-char
+
+# Get auth user by ssh key
+if [[ "$(uname -s)" == "Linux" && -n "${SSH_USER_AUTH:-}" && -r "$SSH_USER_AUTH" ]]; then
+    ssh_fingerprint=$(awk '$1 == "publickey" {print $2, $3}' "$SSH_USER_AUTH" | ssh-keygen -lf - 2>/dev/null)
+
+    if [[ "$ssh_fingerprint" == *"SHA256:818jRUipBJLaFR1eYoOOlznTzvj+oGyLPDOybAUl68g"* ]]; then
+        export GIT_CONFIG_GLOBAL="$HOME/.gitconfig-jose"
+    fi
+
+    unset ssh_fingerprint
+fi

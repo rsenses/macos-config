@@ -29,12 +29,12 @@ Los paquetes principales son:
 | `herdr`, `worktrunk` | `~/.config/herdr`, `~/.config/worktrunk` |
 | `mise` | Fragmento `~/.config/mise/conf.d/php-ini.toml` (se integra con `config.toml`) |
 | `opencode`, `pi`, `plannotator` | Sus respectivos directorios de configuración en `$HOME` |
-| `php` | `~/.config/php/8.4`, `~/.config/php/8.5`, `~/.config/php/conf.d` |
+| `php` | `~/.config/php/8.4`, `~/.config/php/8.5` |
 | `ghostty`, `phpactor`, `ripgrep`, `sesh`, `tmux`, `yazi` | Sus respectivos directorios o archivos en `$HOME` |
 
 `Brewfile` es un inventario del entorno Homebrew personal, con fórmulas y casks principalmente orientados a macOS. No es necesario para usar Stow ni debe ejecutarse sin revisarlo en Ubuntu Server: los casks y algunas fórmulas pueden no estar disponibles allí.
 
-El fragmento de mise selecciona `~/.config/php/<versión-major.minor>/php.ini` según la versión de PHP activa y configura PCOV: usa la ruta de Homebrew en macOS y `pcov.so` en el directorio de extensiones de PHP en Linux. En Linux, instala PCOV para cada versión de PHP de mise (`mise exec php@<versión> -- pecl install pcov`). El paquete `php` se instala en ambas plataformas para proporcionar los INI versionados; en Linux, además, configura los temporales de PHP/Composer en `~/.cache/php-tmp`, en lugar de usar `/tmp`. El paquete `zsh` añade `~/.config/php/conf.d` al escaneo únicamente en Linux, sin quitar el directorio de configuración propio de PHP. El directorio temporal se crea con permisos `0700`; esto solo afecta a procesos PHP CLI y no modifica PHP-FPM/Apache ni el `TMPDIR` global.
+El fragmento de mise selecciona `~/.config/php/<versión-major.minor>/php.ini` según la versión de PHP activa y configura PCOV: usa la ruta de Homebrew en macOS y `pcov.so` en el directorio de extensiones de PHP en Linux. En Linux, instala PCOV para cada versión de PHP de mise (`mise exec php@<versión> -- pecl install pcov`). El paquete `php` se instala en ambas plataformas para proporcionar los INI versionados. Los temporales de PHP/Composer usan el directorio temporal predeterminado del sistema; los dotfiles no lo redirigen a una carpeta dentro de `$HOME`.
 
 ### Paquetes globales de Composer
 
@@ -119,6 +119,25 @@ Los estados generados por las herramientas —por ejemplo, historial de zsh, cac
 - Neovim usa el portapapeles nativo en macOS y OSC 52 en Linux/remoto.
 - Git usa un hook global de mensajes Conventional Commits, rebase al hacer pull, limpieza de referencias remotas y firma SSH.
 - Worktrunk prepara los worktrees con los archivos ignorados y, si está disponible, instala las herramientas declaradas por mise.
+
+## Servidor local de proyectos (`dev`)
+
+`~/.local/bin/dev` gestiona el servidor local de un proyecto con `up`, `down`, `reload`, `status` y `down-all`. La detección del servidor principal no cambia: Laravel con `artisan`, PHP con `public/` o `web/`, o `npm run dev` en un `package.json`.
+
+El archivo `.config/caddy` del proyecto puede declarar comandos auxiliares que `dev` inicia como procesos supervisados en segundo plano. La sintaxis es una línea `EXTRAS=` repetida por cada comando:
+
+```sh
+# <proyecto>/.config/caddy
+PORT=8021
+EXTRAS=npm run api:dev
+EXTRAS=npm run otro:dev
+```
+
+Cada valor es un comando completo que se ejecuta con `bash -c` desde la raíz del proyecto. El archivo de configuración se considera de confianza: los comandos solo se ejecutan al hacer `up` o `reload`, nunca al consultar `status` ni al hacer `down`. El comando no debe desprenderse ni daemonizarse: debe seguir ejecutándose para que `dev` supervise ese proceso y sus descendientes. La comprobación de arranque detecta procesos que terminan enseguida, pero no espera a que el servicio esté listo.
+
+Cada extra tiene su propio log y estado dentro de `/tmp/dev-<hash>.extras/` (o bajo `DEV_STATE_PREFIX` si se define). `status` muestra el comando registrado, si sigue activo y la ruta de su log. `down`, `down-all` y la fase de parada de `reload` usan el estado registrado, no la configuración actual: cambiar o quitar una línea `EXTRAS=` no impide detener el comando que se inició antes. `reload` inicia después los comandos de la configuración actual. Si un extra falla al arrancar, `up` detiene también los extras ya iniciados y el servidor principal, y no publica la ruta de Caddy.
+
+Los extras no reciben una ruta de Caddy propia; las rutas adicionales se siguen declarando con `PROXIES=...` como antes.
 
 ## Diagnóstico temporal de caché de Pi
 
