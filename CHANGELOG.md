@@ -14,6 +14,7 @@ All notable changes to this project are documented here using Keep a Changelog a
 - `dev` accepts repeated `EXTRAS=` commands in a project's `.config/caddy` and manages them through `up`, `down`, `reload`, `status`, and `down-all`. Each command gets an independent log/state file and verified process ownership; startup failures roll back already-started extras, the main server, and Caddy routes, and lifecycle commands stop recorded extras even after the configuration changes.
 
 ### Fixed
+- Pi's domain clarification consistently uses the project's established glossary; `CONTEXT.md` remains the default when none exists.
 - Pi worktree summaries preserve Git pathnames, and new backlogs no longer count their instructional placeholder as pending work.
 - Pi's provider-free regressions now verify completed-plan reuse without depending on obsolete system-prompt wording, and the scout fixture and model table match its current configuration.
 - Pi planning and execution briefs now pass task-relevant skill criteria to children running with skills disabled; full-validation guidance uses project-specific commands and distinguishes user-confirmed checks from agent runs.
