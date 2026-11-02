@@ -69,6 +69,7 @@ cache.json
 context.md
 progress.md
 session.json
+opencode/.config/opencode/service.json
 
 # Pi mixes configuration and private runtime state in the same directory.
 # Deny new top-level files by default; allow only reviewed, declarative config.
