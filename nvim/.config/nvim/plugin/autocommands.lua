@@ -32,6 +32,21 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- Highlight the cursor line only in the active window.
+local cursorline_group = vim.api.nvim_create_augroup('ActiveCursorline', { clear = true })
+vim.api.nvim_create_autocmd({ 'VimEnter', 'WinEnter', 'BufWinEnter' }, {
+  group = cursorline_group,
+  callback = function()
+    vim.wo.cursorline = true
+  end,
+})
+vim.api.nvim_create_autocmd('WinLeave', {
+  group = cursorline_group,
+  callback = function()
+    vim.wo.cursorline = false
+  end,
+})
+
 -- After grep open quickfix
 local ggroup = vim.api.nvim_create_augroup('AutoOpenQuickfix', { clear = true })
 
@@ -109,7 +124,6 @@ vim.api.nvim_create_autocmd('BufWinEnter', {
 -- Native autocomplete
 vim.api.nvim_create_autocmd('LspAttach', {
   callback = function(args)
-    vim.o.signcolumn = 'yes:1'
     local client = assert(vim.lsp.get_client_by_id(args.data.client_id))
     if client:supports_method 'textDocument/completion' then
       vim.lsp.completion.enable(true, client.id, args.buf)
@@ -117,7 +131,12 @@ vim.api.nvim_create_autocmd('LspAttach', {
   end,
 })
 
--- vim.api.nvim_create_autocmd({ 'FocusGained', 'TermLeave', 'BufEnter', 'WinEnter', 'CursorHold', 'CursorHoldI' }, {
---   pattern = '*',
---   command = 'checktime',
--- })
+-- Detect changes made outside Neovim, including by agents in another pane.
+vim.api.nvim_create_autocmd({ 'FocusGained', 'BufEnter', 'CursorHold' }, {
+  group = vim.api.nvim_create_augroup('CheckExternalChanges', { clear = true }),
+  callback = function()
+    if vim.fn.mode() == 'n' and vim.fn.getcmdwintype() == '' then
+      vim.cmd.checktime()
+    end
+  end,
+})

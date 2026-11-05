@@ -24,7 +24,7 @@ end
 
 opt.laststatus = 3
 opt.statusline = '%!v:lua.statusline()'
--- opt.cmdheight = 0
+opt.cmdheight = 0
 
 -- Basic Settings
 opt.number = true -- But show the actual number for the line we're on
@@ -58,7 +58,6 @@ opt.signcolumn = 'yes:1' -- Always show the signcolumn, otherwise it would shift
 -- opt.synmaxcol = 300 -- Syntax highlighting column limit
 opt.virtualedit = 'block' -- Allow the cursor to move where there is no text in visual block mode
 vim.opt.diffopt:append { 'algorithm:patience', 'vertical', 'linematch:60' }
-vim.opt.shortmess:append 'c'
 opt.list = true -- Show some invisible characters (tabs...)
 vim.opt.listchars = { tab = '- ', trail = '·', nbsp = '␣' } -- Set listchars
 opt.winborder = 'rounded'
@@ -98,7 +97,7 @@ opt.autocomplete = true
 opt.wildmode = 'longest:full,full' -- Completion mode for command-line
 -- opt.wildmode = 'full' -- Completion mode for command-line
 opt.wildignorecase = true -- Case-insensitive tab completion in commands
-vim.opt.shortmess:prepend 'c' -- avoid having to press enter on snippet completion
+vim.opt.shortmess:append 'c' -- avoid having to press enter on snippet completion
 vim.opt.path:append { '**' }
 vim.opt.wildignore = {
   '*/node_modules/*',

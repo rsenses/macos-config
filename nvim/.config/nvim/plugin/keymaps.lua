@@ -14,6 +14,16 @@ vim.keymap.set('n', 'N', 'Nzzzv')
 vim.keymap.set('x', 'p', [["_dP]], { desc = 'Paste over selection without losing yanked text' })
 vim.keymap.set({ 'n', 'v' }, '<leader>y', [["+y]], { desc = '[Y]ank to clipboard' })
 
+for _, item in ipairs { { 'f', false }, { 'p', true } } do
+  vim.keymap.set('n', '<leader>y' .. item[1], function()
+    require('custom.references').copy_reference(item[2], false)
+  end, { desc = 'Copy file reference' })
+  vim.keymap.set('x', '<leader>y' .. item[1], ":<C-u>lua require('custom.references').copy_reference(" .. tostring(item[2]) .. ", true)<CR>",
+    { desc = 'Copy selected line range reference' })
+end
+vim.keymap.set('x', '<leader>cc', ":<C-u>lua require('custom.references').copy_codeblock()<CR>",
+  { desc = 'Copy selected lines as Markdown' })
+
 -- surround
 vim.keymap.set('x', '(', 'c(<ESC>pa)')
 vim.keymap.set('x', "'", "c'<ESC>pa'")
@@ -27,6 +37,13 @@ vim.keymap.set('i', 'kj', '<esc>')
 vim.keymap.set('i', 'jj', '<esc>')
 
 -- Splits
+vim.keymap.set('n', 'sh', '<C-w>h', { desc = 'Move to left window' })
+vim.keymap.set('n', 'sj', '<C-w>j', { desc = 'Move to window below' })
+vim.keymap.set('n', 'sk', '<C-w>k', { desc = 'Move to window above' })
+vim.keymap.set('n', 'sl', '<C-w>l', { desc = 'Move to right window' })
+vim.keymap.set('n', 'ss', '<cmd>split<CR>', { desc = 'Split window horizontally' })
+vim.keymap.set('n', 'sv', '<cmd>vsplit<CR>', { desc = 'Split window vertically' })
+
 vim.keymap.set('n', '<C-w>-', function()
   vim.cmd.split()
 end, { desc = 'Split window horizontally' })
@@ -62,6 +79,7 @@ end, { desc = 'Diagnostics proyecto → quickfix' })
 
 -- Editor restart
 vim.keymap.set('n', '<leader>er', '<cmd>restart<cr>', { desc = 'Restart config :restart' })
+vim.keymap.set('n', '<leader>em', 'g<', { desc = 'Open messages pager' })
 
 -- Generic formater
 vim.keymap.set('n', '<leader>cF', 'gg=G``', { desc = 'Format the entire file' })

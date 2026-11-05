@@ -1,34 +1,9 @@
 -- LSPCONFIG
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.workspace.fileOperations.willRename = true
+capabilities.workspace.fileOperations.didRename = true
 vim.lsp.config('*', { capabilities = capabilities })
-
-vim.lsp.config('laravel_lsp', {
-  cmd = { 'laravel-lsp' },
-  filetypes = { 'php', 'blade' },
-  root_markers = { 'artisan', 'composer.json', '.git' },
-})
-
-vim.lsp.config('lua_ls', {
-  settings = {
-    Lua = {
-      workspace = {
-        library = {
-          vim.env.VIMRUNTIME,
-          vim.fn.stdpath 'config',
-        },
-        checkThirdParty = false,
-      },
-      telemetry = {
-        enable = false,
-      },
-    },
-  },
-})
-
-vim.lsp.config('stylelint_lsp', {
-  cmd = { 'stylelint-language-server', '--stdio' },
-})
 
 vim.lsp.enable {
   -- 'laravel_lsp',
