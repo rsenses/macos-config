@@ -1,0 +1,6 @@
+git:
+  diffRenderers:
+    - name: delta
+      command: delta --light --syntax-theme=GitHub --paging=never
+    - name: git
+      type: rawGit

@@ -11,7 +11,7 @@ git clone <url-del-repositorio> ~/dev/contrib/dotfiles
 cd ~/dev/contrib/dotfiles
 
 stow --dir="$PWD" --target="$HOME" \
-  bin ghostty git herdr mise nvim opencode php phpactor pi plannotator \
+  bin ghostty git herdr lazygit mise nvim opencode php phpactor pi plannotator \
   ripgrep salt sesh tmux worktrunk yazi zsh
 ```
 
