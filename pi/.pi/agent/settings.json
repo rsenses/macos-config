@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "1.4.0",
+  "lastChangelogVersion": "1.5.0",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-6.1-sol",
   "defaultThinkingLevel": "low",
@@ -51,5 +51,8 @@
     "node@24",
     "--",
     "npm"
-  ]
+  ],
+  "extensionChangelogVersions": {
+    "{\"source\":\"npm:pi-gpt-search@1.1.0\",\"scope\":\"user\"}": "1.1.0"
+  }
 }
