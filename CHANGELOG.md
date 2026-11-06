@@ -1,10 +1,11 @@
-# Changelog
+# Changelog holi
 
 All notable changes to this project are documented here using Keep a Changelog and Semantic Versioning.
 
 ## [Unreleased]
 
 ### Added
+
 - `dev up` and `dev reload` accept an explicit `--no-reload` for Laravel, allowing installers to update `.env` without interrupting their requests; default startup behavior is unchanged.
 - Pi's manual-only `code-reviewer` subagent reviews existing implementations for fidelity, bugs and integration, simplicity, and maintainability using read-only tools; it does not add an automatic development or validation stage.
 - Pi's manual `/sharpen` command turns an imprecise request into the existing task brief without implementing, saving a plan, or launching subagents.
@@ -14,6 +15,7 @@ All notable changes to this project are documented here using Keep a Changelog a
 - `dev` accepts repeated `EXTRAS=` commands in a project's `.config/caddy` and manages them through `up`, `down`, `reload`, `status`, and `down-all`. Each command gets an independent log/state file and verified process ownership; startup failures roll back already-started extras, the main server, and Caddy routes, and lifecycle commands stop recorded extras even after the configuration changes.
 
 ### Fixed
+
 - Pi's domain clarification consistently uses the project's established glossary; `CONTEXT.md` remains the default when none exists.
 - Pi worktree summaries preserve Git pathnames, and new backlogs no longer count their instructional placeholder as pending work.
 - Pi's provider-free regressions now verify completed-plan reuse without depending on obsolete system-prompt wording, and the scout fixture and model table match its current configuration.
@@ -30,6 +32,7 @@ All notable changes to this project are documented here using Keep a Changelog a
 - `chrome-devtools-mcp` is pinned to `1.10.1` instead of `@latest`. A new release can change the server's instructions and tool list, which rewrites the `mcp_servers` system-prompt section and the request's tool declarations, invalidating the prompt cache mid-session.
 
 ### Changed
+
 - Shortened Pi's shared instructions, core skills, prompts and subagent guidance while preserving workflow gates, role boundaries and operational contracts.
 - Pi plan proposals present every task in order with its outcome and dependencies, inviting confirmation or adjustments within the existing planning exchange; backlog, plan and worker-brief responsibilities are explicit.
 - Pi's existing `grill-with-docs` skill follows decision dependencies, avoids redundant questioning and parallel glossaries, and respects read-only review roles without importing new skills or approval phases.
@@ -56,10 +59,12 @@ All notable changes to this project are documented here using Keep a Changelog a
 - The planner approval dialog now shows the coordinator's suggestion instead of a bare model list: the optional planner-only `subagent` argument `profileReason` carries the concrete justification, the dialog leads with `recommended <level>: <reason>` and marks that option `Approve <level> (recommended)`. Every other level stays selectable and cancel stays last; the dialog was and remains mandatory for planner launches.
 
 ### Removed
+
 - Duplicate changelog policy injected by the memory extension (it is already in `APPEND_SYSTEM.md`) and duplicate ast-grep usage guidelines (the `ast-grep` skill covers them).
 - Stale `design-taste-frontend` and duplicate `security-audit` symlinks from `.pi/agent/skills`; `security-audit` remains in `.agents/skills`.
 
 ### Fixed
+
 - The `subagent` tool description hardcoded the planner model, which could drift from `PLANNER_PROFILES`. It is now derived from that table, whose default is the single source of truth, and the planner agent frontmatter is annotated as documentation only.
 - Moved memory regression tests outside Pi's extension discovery directory so they are not loaded as extension factories.
 - Plan status displays resolve task IDs to descriptions and preserve next-step and blocker explanations instead of relying on opaque task codes.
