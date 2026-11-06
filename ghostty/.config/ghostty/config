@@ -33,6 +33,7 @@ keybind = cmd+g=unbind
 keybind = cmd+m=unbind
 keybind = cmd+r=unbind
 keybind = cmd+z=unbind
+keybind = cmd+n=unbind
 keybind = cmd+shift+d=unbind
 keybind = cmd+shift+f=unbind
 keybind = cmd+shift+g=unbind

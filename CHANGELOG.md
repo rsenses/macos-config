@@ -6,6 +6,7 @@ All notable changes to this project are documented here using Keep a Changelog a
 
 ### Added
 
+- Herdr creates a workspace with `prefix+n` or `cmd+n`; the old Notes shortcut has been removed.
 - Herdr app's personal settings, keyboard shortcuts, theme, layout and mods can now be installed with Stow.
 - `dev up` and `dev reload` accept an explicit `--no-reload` for Laravel, allowing installers to update `.env` without interrupting their requests; default startup behavior is unchanged.
 - Pi's manual-only `code-reviewer` subagent reviews existing implementations for fidelity, bugs and integration, simplicity, and maintainability using read-only tools; it does not add an automatic development or validation stage.

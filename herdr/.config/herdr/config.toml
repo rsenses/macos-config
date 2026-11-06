@@ -71,7 +71,7 @@ prefix = "ctrl+space"
 open_notification_target = ""
 # workspace_picker = "alt+w"
 goto = "prefix+space"
-new_workspace = "prefix+w"
+new_workspace = ["prefix+n", "cmd+n"]
 new_worktree = ""
 # open_worktree = ""    # optional, unset by default
 # remove_worktree = ""  # optional, unset by default; opens confirmation
@@ -86,7 +86,7 @@ next_agent = "ctrl+right"         # optional, unset by default
 new_tab = ["prefix+c", "cmd+t"]
 rename_tab = "prefix+shift+c"
 # previous_tab = ["prefix+p", "cmd+shift+["]
-# next_tab = ["prefix+n", "cmd+shift+]"]
+next_tab = "cmd+shift+]"
 switch_tab = ["prefix+1..9", "cmd+1..9"]
 switch_workspace = "prefix+shift+1..9"
 close_tab = "prefix+shift+x"
@@ -129,11 +129,6 @@ description = "Abrir el directorio del panel en Finder"
 key = ["prefix+l", "cmd+l"]
 type = "pane"
 command = "lazygit"
-
-[[keys.command]]
-key = "prefix+shift+n"
-type = "pane"
-command = "notes"
 
 [[keys.command]]
 key = ["prefix+shift+f", "cmd+shift+f"]

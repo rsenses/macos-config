@@ -1,0 +1,56 @@
+initial-command = /opt/homebrew/bin/zsh -c '/opt/homebrew/bin/herdr'
+
+copy-on-select = clipboard
+
+window-save-state = always
+
+font-family = IosevkaTerm Nerd Font Mono
+font-size = 17
+font-feature = -calt
+font-feature = -liga
+font-feature = -dlig
+font-style = Regular
+
+# theme = base16-grayscale-light
+# theme = zenbones
+# theme = kanso-pearl
+theme = Rose Pine Dawn
+
+window-theme = light
+macos-titlebar-style = hidden
+
+#macos-option-as-alt = false
+
+scrollbar = "system"
+
+# Let Herdr receive Cmd+COSAS instead of switching Ghostty things.
+keybind = cmd+t=unbind
+keybind = cmd+w=unbind
+keybind = cmd+d=unbind
+keybind = cmd+j=unbind
+keybind = cmd+e=unbind
+keybind = cmd+g=unbind
+keybind = cmd+m=unbind
+keybind = cmd+r=unbind
+keybind = cmd+z=unbind
+keybind = cmd+shift+d=unbind
+keybind = cmd+shift+f=unbind
+keybind = cmd+shift+g=unbind
+keybind = cmd+digit_1=unbind
+keybind = cmd+digit_2=unbind
+keybind = cmd+digit_3=unbind
+keybind = cmd+digit_4=unbind
+keybind = cmd+digit_5=unbind
+keybind = cmd+digit_6=unbind
+keybind = cmd+digit_7=unbind
+keybind = cmd+digit_8=unbind
+keybind = cmd+digit_9=unbind
+keybind = cmd+1=unbind
+keybind = cmd+2=unbind
+keybind = cmd+3=unbind
+keybind = cmd+4=unbind
+keybind = cmd+5=unbind
+keybind = cmd+6=unbind
+keybind = cmd+7=unbind
+keybind = cmd+8=unbind
+keybind = cmd+9=unbind

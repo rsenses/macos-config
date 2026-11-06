@@ -10,7 +10,6 @@
     "cmd-z": "pane.zoom",
     "cmd-g": {"command": "terminal.open", "args": {"place": "tab", "argv": ["/bin/sh", "-c", "exec wt switch -x \"${SHELL:-/bin/sh}\" -- -i"]}},
     "cmd-l": {"command": "terminal.open", "args": {"place": "tab", "argv": ["lazygit"]}},
-    "cmd-shift-f": "mod.open:sessionizer-popup",
     "cmd-shift-t": {"command": "terminal.open", "args": {"place": "tab", "argv": ["/bin/sh", "-c", "exec \"${SHELL:-/bin/sh}\" -i"]}},
     "cmd-shift-s": {"command": "terminal.open", "args": {"place": "tab", "argv": ["/bin/sh", "-c", "exec \"$HOME/.local/bin/salt\" ."]}},
     "cmd-e": {"command": "terminal.open", "args": {"place": "tab", "argv": ["nvim", "-c", "CodeDiff --exit-on-close"]}},

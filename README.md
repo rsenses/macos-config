@@ -32,7 +32,7 @@ Los paquetes principales son:
 | `php` | `~/.config/php/8.4`, `~/.config/php/8.5` |
 | `ghostty`, `phpactor`, `ripgrep`, `sesh`, `tmux`, `yazi` | Sus respectivos directorios o archivos en `$HOME` |
 
-El paquete `herdr-app` contiene únicamente ajustes, atajos, tema, layout y mods personales; Herdr mantiene sus archivos generados y su estado de sesión fuera del repositorio. Al instalarlo sobre una configuración existente, haz una copia de seguridad y resuelve los conflictos antes de ejecutar Stow. El mod `sessionizer-popup` también necesita el script del paquete `bin`.
+El paquete `herdr-app` contiene únicamente ajustes, atajos, tema, layout y mods personales; Herdr mantiene sus archivos generados y su estado de sesión fuera del repositorio. Al instalarlo sobre una configuración existente, haz una copia de seguridad y resuelve los conflictos antes de ejecutar Stow.
 
 `Brewfile` es un inventario del entorno Homebrew personal, con fórmulas y casks principalmente orientados a macOS. No es necesario para usar Stow ni debe ejecutarse sin revisarlo en Ubuntu Server: los casks y algunas fórmulas pueden no estar disponibles allí.
 
