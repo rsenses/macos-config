@@ -103,7 +103,7 @@ split_vertical = ["prefix+|", "cmd+d"]
 split_horizontal = ["prefix+minus", "cmd+shift+d"]
 # Close the focused pane, then its tab/workspace when nothing remains.
 close_pane = ["prefix+x", "cmd+w"]
-# zoom = "prefix+z"       # legacy alias: fullscreen
+zoom = ["prefix+z", "cmd+z"]
 resize_mode = ""
 # toggle_sidebar = "prefix+b"
 
