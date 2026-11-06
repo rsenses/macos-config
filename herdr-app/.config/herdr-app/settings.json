@@ -1,0 +1,10 @@
+{
+  "zoom": 1,
+  "theme": "rose-pine-dawn",
+  "sounds": {
+    "enabled": true
+  },
+  "font_ligatures": false,
+  "minimum_contrast": 1,
+  "telemetry": false
+}

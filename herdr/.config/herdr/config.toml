@@ -126,7 +126,7 @@ command = 'open "$HERDR_ACTIVE_PANE_CWD"'
 description = "Abrir el directorio del panel en Finder"
 
 [[keys.command]]
-key = ["prefix+shift+g", "cmd+shift+g"]
+key = ["prefix+l", "cmd+l"]
 type = "pane"
 command = "lazygit"
 

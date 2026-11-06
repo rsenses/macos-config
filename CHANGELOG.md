@@ -6,6 +6,7 @@ All notable changes to this project are documented here using Keep a Changelog a
 
 ### Added
 
+- Herdr app's personal settings, keyboard shortcuts, theme, layout and mods can now be installed with Stow.
 - `dev up` and `dev reload` accept an explicit `--no-reload` for Laravel, allowing installers to update `.env` without interrupting their requests; default startup behavior is unchanged.
 - Pi's manual-only `code-reviewer` subagent reviews existing implementations for fidelity, bugs and integration, simplicity, and maintainability using read-only tools; it does not add an automatic development or validation stage.
 - Pi's manual `/sharpen` command turns an imprecise request into the existing task brief without implementing, saving a plan, or launching subagents.
@@ -33,6 +34,7 @@ All notable changes to this project are documented here using Keep a Changelog a
 
 ### Changed
 
+- Herdr app no longer shows the Files and Changes panels; Cmd+G opens Worktrunk again.
 - Shortened Pi's shared instructions, core skills, prompts and subagent guidance while preserving workflow gates, role boundaries and operational contracts.
 - Pi plan proposals present every task in order with its outcome and dependencies, inviting confirmation or adjustments within the existing planning exchange; backlog, plan and worker-brief responsibilities are explicit.
 - Pi's existing `grill-with-docs` skill follows decision dependencies, avoids redundant questioning and parallel glossaries, and respects read-only review roles without importing new skills or approval phases.

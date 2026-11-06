@@ -11,7 +11,7 @@ git clone <url-del-repositorio> ~/dev/contrib/dotfiles
 cd ~/dev/contrib/dotfiles
 
 stow --dir="$PWD" --target="$HOME" \
-  bin ghostty git herdr lazygit mise nvim opencode php phpactor pi plannotator \
+  bin ghostty git herdr herdr-app lazygit mise nvim opencode php phpactor pi plannotator \
   ripgrep salt sesh tmux worktrunk yazi zsh
 ```
 
@@ -26,11 +26,13 @@ Los paquetes principales son:
 | `zsh` | `~/.zshenv`, `~/.zprofile`, `~/.zshrc`, `~/.config/zsh` |
 | `nvim` | `~/.config/nvim` |
 | `salt` | `~/.config/salt/salt.toml` |
-| `herdr`, `worktrunk` | `~/.config/herdr`, `~/.config/worktrunk` |
+| `herdr`, `herdr-app`, `worktrunk` | `~/.config/herdr`, `~/.config/herdr-app`, `~/.config/worktrunk` |
 | `mise` | Fragmento `~/.config/mise/conf.d/php-ini.toml` (se integra con `config.toml`) |
 | `opencode`, `pi`, `plannotator` | Sus respectivos directorios de configuración en `$HOME` |
 | `php` | `~/.config/php/8.4`, `~/.config/php/8.5` |
 | `ghostty`, `phpactor`, `ripgrep`, `sesh`, `tmux`, `yazi` | Sus respectivos directorios o archivos en `$HOME` |
+
+El paquete `herdr-app` contiene únicamente ajustes, atajos, tema, layout y mods personales; Herdr mantiene sus archivos generados y su estado de sesión fuera del repositorio. Al instalarlo sobre una configuración existente, haz una copia de seguridad y resuelve los conflictos antes de ejecutar Stow. El mod `sessionizer-popup` también necesita el script del paquete `bin`.
 
 `Brewfile` es un inventario del entorno Homebrew personal, con fórmulas y casks principalmente orientados a macOS. No es necesario para usar Stow ni debe ejecutarse sin revisarlo en Ubuntu Server: los casks y algunas fórmulas pueden no estar disponibles allí.
 
