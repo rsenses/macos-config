@@ -128,10 +128,7 @@ description = "Abrir el directorio del panel en Finder"
 [[keys.command]]
 key = ["prefix+shift+g", "cmd+shift+g"]
 type = "pane"
-command = """
-pane=$(herdr pane split --direction right --ratio 0.5 --focus | jq -r '.result.pane.pane_id')
-herdr pane run "$pane" " lazygit ; exit"
-"""
+command = "lazygit"
 
 [[keys.command]]
 key = "prefix+shift+n"
