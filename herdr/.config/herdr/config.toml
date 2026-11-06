@@ -144,7 +144,7 @@ type = "popup"
 command = "herdr-sessionizer"
 
 [[keys.command]]
-key = ["prefix+j", "cmd+j"]
+key = ["prefix+shift+t", "cmd+shift+t"]
 type = "popup"
 command = "exec \"$SHELL\" -i"
 
