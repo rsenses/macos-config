@@ -95,7 +95,7 @@ close_tab = "prefix+shift+x"
 # focus_pane_left = "prefix+h"
 # focus_pane_down = "prefix+j"
 # focus_pane_up = "prefix+k"
-# focus_pane_right = "prefix+l"
+focus_pane_right = ["prefix+l", "cmd+l"]
 # cycle_pane_next = "prefix+tab"
 # cycle_pane_previous = "prefix+shift+tab"
 last_pane = ["prefix+;", "cmd+;"]
@@ -126,7 +126,8 @@ command = 'open "$HERDR_ACTIVE_PANE_CWD"'
 description = "Abrir el directorio del panel en Finder"
 
 [[keys.command]]
-key = ["prefix+l", "cmd+l"]
+# Override the built-in new-worktree shortcut with LazyGit.
+key = ["prefix+shift+g", "cmd+shift+g"]
 type = "pane"
 command = "lazygit"
 
@@ -156,8 +157,7 @@ pane=$(herdr pane split --direction right --ratio 0.5 --focus | jq -r '.result.p
 herdr pane run "$pane" " nvim -c 'CodeDiff --exit-on-close' ; exit"
 """
 
-# Override herdr's built-in "new worktree" key (prefix+shift+g) with worktrunk's
-# default-branch switch/create picker:
+# Open worktrunk's default-branch switch/create picker:
 [[keys.command]]
 key = ["prefix+g", "cmd+g"]
 type = "plugin_action"

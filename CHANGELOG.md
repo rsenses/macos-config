@@ -18,6 +18,7 @@ All notable changes to this project are documented here using Keep a Changelog a
 
 ### Fixed
 
+- Herdr opens LazyGit with `prefix+shift+g` or `cmd+shift+g`, and Herdr app with `cmd+shift+g`; `prefix+l` and `cmd+l` focus the pane to the right instead.
 - Pi's domain clarification consistently uses the project's established glossary; `CONTEXT.md` remains the default when none exists.
 - Pi worktree summaries preserve Git pathnames, and new backlogs no longer count their instructional placeholder as pending work.
 - Pi's provider-free regressions now verify completed-plan reuse without depending on obsolete system-prompt wording, and the scout fixture and model table match its current configuration.
