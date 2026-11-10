@@ -152,10 +152,7 @@ height = "90%"
 [[keys.command]]
 key = ["prefix+e", "cmd+e"]
 type = "pane"
-command = """
-pane=$(herdr pane split --direction right --ratio 0.5 --focus | jq -r '.result.pane.pane_id')
-herdr pane run "$pane" " nvim -c 'CodeDiff --exit-on-close' ; exit"
-"""
+command = "nvim -c 'CodeDiff --exit-on-close'"
 
 # Open worktrunk's default-branch switch/create picker:
 [[keys.command]]

@@ -37,6 +37,7 @@ All notable changes to this project are documented here using Keep a Changelog a
 
 ### Changed
 
+- Herdr opens CodeDiff with `prefix+e` or `cmd+e` in a full temporary pane, like LazyGit.
 - Herdr app no longer shows the Files and Changes panels; Cmd+G opens Worktrunk again.
 - Shortened Pi's shared instructions, core skills, prompts and subagent guidance while preserving workflow gates, role boundaries and operational contracts.
 - Pi plan proposals present every task in order with its outcome and dependencies, inviting confirmation or adjustments within the existing planning exchange; backlog, plan and worker-brief responsibilities are explicit.
