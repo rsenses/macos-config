@@ -1,4 +1,7 @@
 # Select the php.ini and PCOV binary for the PHP version chosen by mise.
+[hooks]
+postinstall = '[ "$(uname -s)" != Linux ] || python3 "$HOME/.config/mise/conf.d/install-pcov.py"'
+
 [env]
 # Share global Composer packages across PHP versions.
 COMPOSER_HOME = "{{ env.HOME }}/.config/composer"

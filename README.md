@@ -36,7 +36,7 @@ El paquete `herdr-app` contiene únicamente ajustes, atajos, tema, layout y mods
 
 `Brewfile` es un inventario del entorno Homebrew personal, con fórmulas y casks principalmente orientados a macOS. No es necesario para usar Stow ni debe ejecutarse sin revisarlo en Ubuntu Server: los casks y algunas fórmulas pueden no estar disponibles allí.
 
-El fragmento de mise selecciona `~/.config/php/<versión-major.minor>/php.ini` según la versión de PHP activa y configura PCOV: usa la ruta de Homebrew en macOS y `pcov.so` en el directorio de extensiones de PHP en Linux. En Linux, instala PCOV para cada versión de PHP de mise (`mise exec php@<versión> -- pecl install pcov`). El paquete `php` se instala en ambas plataformas para proporcionar los INI versionados. Los temporales de PHP/Composer usan el directorio temporal predeterminado del sistema; los dotfiles no lo redirigen a una carpeta dentro de `$HOME`.
+El fragmento de mise selecciona `~/.config/php/<versión-major.minor>/php.ini` según la versión de PHP activa y configura PCOV: usa la ruta de Homebrew en macOS y `pcov.so` en el directorio de extensiones de PHP en Linux. En Linux, el hook global de mise instala PCOV mediante PECL al instalar o actualizar PHP 8.3, 8.4 o 8.5; requiere Python 3 y las dependencias necesarias para compilar la extensión. Para versiones ya instaladas, ejecuta una vez `mise exec php@<versión> -- pecl install pcov`. El hook no se ejecuta si se desactivan los hooks de mise. El paquete `php` se instala en ambas plataformas para proporcionar los INI versionados. Los temporales de PHP/Composer usan el directorio temporal predeterminado del sistema; los dotfiles no lo redirigen a una carpeta dentro de `$HOME`.
 
 ### Paquetes globales de Composer
 

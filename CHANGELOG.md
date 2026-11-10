@@ -6,6 +6,7 @@ All notable changes to this project are documented here using Keep a Changelog a
 
 ### Added
 
+- On Linux, mise installs PCOV automatically when PHP 8.3, 8.4 or 8.5 is installed or updated.
 - Herdr creates a workspace with `prefix+n` or `cmd+n`; the old Notes shortcut has been removed.
 - Herdr app's personal settings, keyboard shortcuts, theme, layout and mods can now be installed with Stow.
 - `dev up` and `dev reload` accept an explicit `--no-reload` for Laravel, allowing installers to update `.env` without interrupting their requests; default startup behavior is unchanged.
