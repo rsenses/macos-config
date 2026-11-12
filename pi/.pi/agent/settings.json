@@ -1,17 +1,19 @@
 {
-  "lastChangelogVersion": "1.5.0",
+  "lastChangelogVersion": "1.5.2",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-6.1-sol",
   "defaultThinkingLevel": "medium",
   "modelThinkingLevels": {
     "openai-codex/gpt-6-luna": "xhigh",
-    "openai-codex/gpt-6.1-sol": "low",
+    "openai-codex/gpt-6.1-sol": "medium",
     "openai-codex/gpt-6.1-terra": "medium",
     "opencode-go/deepseek-v4.1-flash": "max",
     "opencode-go/claude-haiku-5-5": "xhigh"
   },
   "showCacheMissNotices": true,
-  "defaultTools": ["+codemode"],
+  "defaultTools": [
+    "+codemode"
+  ],
   "shellPath": "/bin/zsh",
   "shellCommandPrefix": "eval \"$(mise env -s zsh)\"\nunset APP_URL APP_ENV",
   "theme": "light",
@@ -44,7 +46,13 @@
     "compactionModel": "openai-codex/gpt-6-luna:low",
     "summaryReserveTokens": 16384
   },
-  "npmCommand": ["mise", "exec", "node@24", "--", "npm"],
+  "npmCommand": [
+    "mise",
+    "exec",
+    "node@24",
+    "--",
+    "npm"
+  ],
   "extensionChangelogVersions": {
     "{\"source\":\"npm:pi-gpt-search@1.1.0\",\"scope\":\"user\"}": "1.1.0"
   }
