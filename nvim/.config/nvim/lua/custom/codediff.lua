@@ -6,6 +6,7 @@ require('codediff').setup {
     line_stats = { enabled = true },
   },
   diff = {
+    layout = 'inline',
     compact = true,
     compact_context_lines = 8,
     compact_sync_folds = true,

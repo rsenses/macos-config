@@ -14,13 +14,11 @@ vim.keymap.set('n', 'N', 'Nzzzv')
 vim.keymap.set('x', 'p', [["_dP]], { desc = 'Paste over selection without losing yanked text' })
 vim.keymap.set({ 'n', 'v' }, '<leader>y', [["+y]], { desc = '[Y]ank to clipboard' })
 
-for _, item in ipairs { { 'f', false }, { 'p', true } } do
-  vim.keymap.set('n', '<leader>y' .. item[1], function()
-    require('custom.references').copy_reference(item[2], false)
-  end, { desc = 'Copy file reference' })
-  vim.keymap.set('x', '<leader>y' .. item[1], ":<C-u>lua require('custom.references').copy_reference(" .. tostring(item[2]) .. ", true)<CR>",
-    { desc = 'Copy selected line range reference' })
-end
+vim.keymap.set('n', '<leader>yf', function()
+  require('custom.references').copy_reference(false, false)
+end, { desc = 'Copy file reference' })
+vim.keymap.set('x', '<leader>yf', ":<C-u>lua require('custom.references').copy_reference(false, true)<CR>",
+  { desc = 'Copy selected line range reference' })
 vim.keymap.set('x', '<leader>cc', ":<C-u>lua require('custom.references').copy_codeblock()<CR>",
   { desc = 'Copy selected lines as Markdown' })
 

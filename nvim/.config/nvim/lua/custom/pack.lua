@@ -32,6 +32,7 @@ vim.pack.add({
   'https://github.com/MeanderingProgrammer/render-markdown.nvim',
   'https://github.com/neovim/nvim-lspconfig',
   'https://github.com/esmuellert/codediff.nvim',
+  'https://github.com/MattiasMTS/pjollrig.nvim',
   'https://github.com/nvim-mini/mini.nvim',
   {
     src = 'https://github.com/nvim-treesitter/nvim-treesitter',
@@ -105,6 +106,7 @@ require('kulala').setup {
 
 require 'custom.mini'
 require 'custom.codediff'
+require 'custom.pjollrig'
 
 -- OIL
 -- require('oil').setup {

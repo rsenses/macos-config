@@ -37,6 +37,10 @@
       "rev": "d7220b55e16ed3c04e88086256def5d282429493",
       "src": "https://github.com/windwp/nvim-ts-autotag"
     },
+    "pjollrig.nvim": {
+      "rev": "3184566e75f7c7aba071af9433e3a5e0baa9f03b",
+      "src": "https://github.com/MattiasMTS/pjollrig.nvim"
+    },
     "render-markdown.nvim": {
       "rev": "8e8795368391036643b622875a6da6a51bcd33f4",
       "src": "https://github.com/MeanderingProgrammer/render-markdown.nvim"
