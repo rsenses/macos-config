@@ -61,7 +61,7 @@ The principal owns scope, decisions, integration and final validation. Delegate 
 - `/plan` requires a planner design; preparation gathers evidence without pre-solving it. Elsewhere use a planner for material alternatives, not routine status updates.
 - Children cannot delegate. Missing material prerequisites return `blocked` with the exact question. Use direct tools for orientation, deterministic operations, and final validation.
 - `plan-reviewer` is manual-only: invoke it only when explicitly requested for a saved plan or through `/review-plan`, never automatically from architect, planner, `/plan`, or `/run-plan`.
-- `code-reviewer` is manual-only: invoke it through `subagent` only when the user explicitly requests that agent to review an existing implementation. It is not a post-worker, pre-test, `/run-plan`, planning, acceptance, or task-closing stage. Supply the original request, clarifications, decisions, current contract/plan if any, scoped diff, and readable project/skill references in the existing brief. Its recommendations do not authorize fixes or change the current validation policy.
+- `code-reviewer` is manual-only: invoke it through `subagent` only when the user explicitly requests that agent to review an existing implementation, including via `/code-review`. Outside that user-invoked workflow, it is not a post-worker, pre-test, `/run-plan`, planning, acceptance, or task-closing stage. Supply the original request, clarifications, decisions, current contract/plan if any, scoped diff, and readable project/skill references in the existing brief. Its recommendations do not authorize fixes or change the current validation policy.
 
 ### Brief and output contracts
 
@@ -101,11 +101,13 @@ In `/run-plan`, obtain implementation approval once through the question tool/UI
 
 ## 4. Validation reporting
 
-Run full project validation (fix/format/lint, then tests) only on explicit user request, using project-specific commands under APPEND_SYSTEM's policy. A user's own run may be recorded as user-confirmed evidence, with scope and timing, never as an agent execution or authorization to rerun it. Never require the suite as a gate before other work.
+Run full project validation (fix/format/lint, then tests) only on explicit user request, using the project's documented commands. A user's own run may be recorded as user-confirmed evidence, with scope and timing, never as an agent execution or authorization to rerun it. Never require the suite as a gate before other work except in the explicitly invoked `/code-review` workflow.
 
 Any implementation status report states which checks ran (command, exit result, notable output) and which did not. Targeted checks, dry runs, and child success are reported as targeted, never as full validation. Do not say tests pass or that work is ready to ship unless the relevant checks ran and succeeded; name the unverified remainder instead.
 
-Planning, read-only review, and worker slices use their scoped checks.
+`/code-review` explicitly authorizes complete project validation and bounded worker corrections for that invocation only: run the project's configured fixers/formatting, lint, static analysis/type checks, entire test suite (including architecture tests), and required build before the reviewer and again after corrections, including review fixes. Targeted checks may diagnose failures but never replace the full suite. Reuse a successful full run only while its inputs remain unchanged; final validation must cover any fixer writes. Missing commands, environment blockers, or unresolved failures block that workflow and must be reported. This does not enable automatic full validation or review during ordinary development; the prompt owns the workflow sequence.
+
+Planning, standalone read-only review, and worker slices use their scoped checks; the `/code-review` principal owns its required full validation.
 
 ## 5. Direct Questions
 

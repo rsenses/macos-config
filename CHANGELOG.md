@@ -6,6 +6,7 @@ All notable changes to this project are documented here using Keep a Changelog a
 
 ### Added
 
+- Pi's manual `/code-review` command runs complete project validation, uses workers for scoped corrections, and invokes the read-only reviewer with behavioral evidence; corrections require full revalidation without enabling automatic suites in ordinary sessions.
 - On Linux, mise installs PCOV automatically when PHP 8.3, 8.4 or 8.5 is installed or updated.
 - Herdr creates a workspace with `prefix+n` or `cmd+n`; the old Notes shortcut has been removed.
 - Herdr app's personal settings, keyboard shortcuts, theme, layout and mods can now be installed with Stow.
@@ -37,6 +38,7 @@ All notable changes to this project are documented here using Keep a Changelog a
 
 ### Changed
 
+- Pi's shared system guidance delegates operational rules to `ops`; `/code-review` reuses those contracts with shorter instructions while retaining full-suite validation and bounded correction reviews.
 - Herdr opens CodeDiff with `prefix+e` or `cmd+e` in a full temporary pane, like LazyGit.
 - Herdr app no longer shows the Files and Changes panels; Cmd+G opens Worktrunk again.
 - Shortened Pi's shared instructions, core skills, prompts and subagent guidance while preserving workflow gates, role boundaries and operational contracts.
