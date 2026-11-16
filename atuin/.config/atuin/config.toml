@@ -1,6 +1,7 @@
 auto_sync = true
 sync_frequency = "5m"
 search_mode = "fuzzy"
+enter_accept = false
 [threads]
 capture = true
 capture_tools = false
