@@ -8,6 +8,10 @@ if command -v mise >/dev/null 2>&1 && (( ! ${+functions[mise]} )); then
   eval "$(mise activate zsh)"
 fi
 
+if command -v atuin >/dev/null 2>&1; then
+  eval "$(atuin init zsh)"
+fi
+
 if command -v zoxide >/dev/null 2>&1; then
   eval "$(zoxide init --cmd cd zsh)"
 fi
