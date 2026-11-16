@@ -9,6 +9,7 @@ if command -v mise >/dev/null 2>&1 && (( ! ${+functions[mise]} )); then
 fi
 
 if command -v atuin >/dev/null 2>&1; then
+  export ATUIN_CONFIG_DIR="$HOME/.config/atuin"
   eval "$(atuin init zsh)"
 fi
 
