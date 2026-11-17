@@ -41,7 +41,7 @@ require('conform').setup {
     jsonc = { 'prettierd' },
     yaml = { 'prettierd' },
     markdown = { 'prettierd' },
-    php = { 'pint', 'php_cs_fixer', stop_after_first = true },
+    php = { 'pint' },
     blade = { 'prettierd' },
   },
   notify_on_error = true,

@@ -102,7 +102,7 @@ release_mutation_lock() {
 
   (( LOCK_HELD == 1 )) || return 0
   owner="$(cat "$LOCK_OWNER_FILE" 2>/dev/null || true)"
-  if [[ "$owner" == "$BASHPID" ]]; then
+  if [[ "$owner" == "$$" ]]; then
     rm -f -- "$LOCK_OWNER_FILE"
     rmdir -- "$LOCK_DIR" 2>/dev/null || true
   fi
@@ -134,7 +134,7 @@ acquire_mutation_lock() {
     attempts=$((attempts + 1))
   done
 
-  if ! printf '%s\n' "$BASHPID" > "$LOCK_OWNER_FILE"; then
+  if ! printf '%s\n' "$$" > "$LOCK_OWNER_FILE"; then
     rmdir -- "$LOCK_DIR" 2>/dev/null || true
     echo "Error: no pude crear el propietario del bloqueo ${LOCK_DIR}." >&2
     return 1
