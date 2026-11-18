@@ -2,7 +2,7 @@
 name: plan-reviewer
 description: Manual-only adversarial review of a saved implementation plan against the codebase and domain documentation
 tools: read, grep, find, ls
-model: openai-codex/gpt-6-astra
+model: openai-codex/gpt-6.2-astra
 thinking: medium
 ---
 

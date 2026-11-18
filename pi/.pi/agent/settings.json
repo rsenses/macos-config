@@ -6,6 +6,7 @@
   "modelThinkingLevels": {
     "openai-codex/gpt-6-luna": "xhigh",
     "openai-codex/gpt-6.1-sol": "medium",
+    "openai-codex/gpt-6.2-sol": "medium",
     "openai-codex/gpt-6.1-terra": "medium",
     "opencode-go/deepseek-v4.1-flash": "max",
     "opencode-go/claude-haiku-5-5": "xhigh"
@@ -25,7 +26,8 @@
     "opencode-go/deepseek-v4.1-flash",
     "openai-codex/gpt-6.1-sol",
     "openai-codex/gpt-6.1-terra",
-    "opencode-go/claude-haiku-5-5"
+    "opencode-go/claude-haiku-5-5",
+    "openai-codex/gpt-6.2-sol"
   ],
   "enableInstallTelemetry": false,
   "compaction": {
@@ -41,6 +43,9 @@
         "reserveTokens": 300000
       },
       "openai-codex/gpt-6.1-terra": {
+        "reserveTokens": 300000
+      },
+      "openai-codex/gpt-6.2-sol": {
         "reserveTokens": 300000
       }
     }

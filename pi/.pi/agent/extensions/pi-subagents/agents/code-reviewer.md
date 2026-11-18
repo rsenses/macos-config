@@ -2,7 +2,7 @@
 name: code-reviewer
 description: Manual-only review of existing implementations against the user's request, clarifications, and current contract; never an automatic development or task-closing stage
 tools: read, grep, find, ls
-model: openai-codex/gpt-6-astra
+model: openai-codex/gpt-6.2-astra
 thinking: medium
 ---
 

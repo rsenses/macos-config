@@ -2,7 +2,7 @@
 name: scout
 description: Targeted read-only codebase reconnaissance with evidence
 tools: read, grep, find, ls
-model: openai-codex/gpt-6.1-terra
+model: opencode-go/claude-haiku-5-5
 thinking: medium
 ---
 
