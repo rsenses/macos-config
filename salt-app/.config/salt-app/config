@@ -1,0 +1,5 @@
+# Carpeta inicial de Salt App.
+working-directory = ~/Downloads
+
+# Descomenta esta línea para fijar un tema. Por defecto se usa el de Ghostty.
+# theme = Rose Pine Dawn

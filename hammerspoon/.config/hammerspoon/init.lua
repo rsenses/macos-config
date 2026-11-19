@@ -13,6 +13,7 @@ local excludedApps = {
   ["Calculator"] = true,
   ["Finder"] = true,
   ["Raycast"] = true,
+  ["Salt"] = true,
 }
 
 local filter = hs.window.filter.new()
