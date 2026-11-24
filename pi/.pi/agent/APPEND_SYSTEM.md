@@ -34,6 +34,7 @@ Release preparation is distinct from publication and deployment. Use `/prepare-r
 
 ## Tool economy
 
+- Batch only short instruction documents. Read long documents separately in bounded ranges, completing any required full reads. If a response is truncated, recover the missing required content with offsets or from its saved artifact before relying on it; requesting a read does not establish that its contents were received. Reuse already inspected, still-current instructions rather than rereading them.
 - Prefer available LSP for semantic questions. After an initialization/unavailable error, use read/fd/rg for that workspace; do not repeat failures or install dependencies just to satisfy a tool preference.
 - Use `codex-research` for batched research and `web_fetch` for known URLs. Bound outputs and recover needed ranges from artifacts; stop when evidence is sufficient.
 - Consult official docs or installed source only for material uncertainty. Reuse verified contracts; read relevant sections unless full reads are explicitly required. Report deltas, not repeated routes, components, decisions or inventories.
