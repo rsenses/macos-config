@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "1.5.2",
+  "lastChangelogVersion": "1.6.0",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-6.1-sol",
   "defaultThinkingLevel": "medium",
@@ -12,7 +12,9 @@
     "opencode-go/claude-haiku-5-5": "xhigh"
   },
   "showCacheMissNotices": true,
-  "defaultTools": ["+codemode"],
+  "defaultTools": [
+    "+codemode"
+  ],
   "shellPath": "/bin/zsh",
   "shellCommandPrefix": "eval \"$(mise env -s zsh)\"\nunset APP_URL APP_ENV",
   "theme": "light",
@@ -55,7 +57,13 @@
     "compactionModel": "openai-codex/gpt-6-luna:low",
     "summaryReserveTokens": 16384
   },
-  "npmCommand": ["mise", "exec", "node@24", "--", "npm"],
+  "npmCommand": [
+    "mise",
+    "exec",
+    "node@24",
+    "--",
+    "npm"
+  ],
   "extensionChangelogVersions": {
     "{\"source\":\"npm:pi-gpt-search@1.1.0\",\"scope\":\"user\"}": "1.1.0"
   }
