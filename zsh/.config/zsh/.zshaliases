@@ -127,3 +127,4 @@ alias gmt='command git mergetool'
 
 # tools
 alias art='php artisan'
+alias ci='composer ci'
