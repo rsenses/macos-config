@@ -17,10 +17,6 @@ if command -v zoxide >/dev/null 2>&1; then
   eval "$(zoxide init --cmd cd zsh)"
 fi
 
-if command -v fzf >/dev/null 2>&1 && [[ -t 0 && -t 1 ]]; then
-  eval "$(fzf --zsh)"
-fi
-
 if [[ "${widgets[zle-keymap-select]#user:}" == "starship_zle-keymap-select" || \
       "${widgets[zle-keymap-select]#user:}" == "starship_zle-keymap-select-wrapped" ]]; then
     zle -N zle-keymap-select "";
