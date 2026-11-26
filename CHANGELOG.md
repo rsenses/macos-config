@@ -20,6 +20,7 @@ All notable changes to this project are documented here using Keep a Changelog a
 
 ### Fixed
 
+- Pi's `ops` distinguishes one-task worker stops from coordinator continuity: authorized, dependency-ready work continues past milestones and isolated blockers without expanding scope or bypassing approval gates.
 - Herdr opens LazyGit with `prefix+shift+g` or `cmd+shift+g`, and Herdr app with `cmd+shift+g`; `prefix+l` and `cmd+l` focus the pane to the right instead.
 - Pi's domain clarification consistently uses the project's established glossary; `CONTEXT.md` remains the default when none exists.
 - Pi worktree summaries preserve Git pathnames, and new backlogs no longer count their instructional placeholder as pending work.
@@ -38,6 +39,7 @@ All notable changes to this project are documented here using Keep a Changelog a
 
 ### Changed
 
+- Pi's `ops` ties task acceptance to observable outcomes and agreed evidence, keeps unverified implementations pending, and requires scoped configuration and workflow checks for authorized publications without granting new permissions or automatic full validation.
 - Pi's shared system guidance delegates operational rules to `ops`; `/code-review` reuses those contracts with shorter instructions while retaining full-suite validation and bounded correction reviews.
 - Herdr opens CodeDiff with `prefix+e` or `cmd+e` in a full temporary pane, like LazyGit.
 - Herdr app no longer shows the Files and Changes panels; Cmd+G opens Worktrunk again.
