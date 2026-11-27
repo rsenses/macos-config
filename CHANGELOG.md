@@ -39,6 +39,8 @@ All notable changes to this project are documented here using Keep a Changelog a
 
 ### Changed
 
+- Pi's `ops` loads detailed brief and review-findings contracts only when needed, consolidates clarification rules, and leaves the full validation protocol in `/code-review` while preserving its manual-only scope.
+- Pi separates shared operational policies from plan workflows: a shared memory reference defines selection and format, `/plan` owns proposal creation, and `/run-plan` owns execution and acceptance, including directly authorized plan execution without extra command-specific approval.
 - Pi's `ops` ties task acceptance to observable outcomes and agreed evidence, keeps unverified implementations pending, and requires scoped configuration and workflow checks for authorized publications without granting new permissions or automatic full validation.
 - Pi's shared system guidance delegates operational rules to `ops`; `/code-review` reuses those contracts with shorter instructions while retaining full-suite validation and bounded correction reviews.
 - Herdr opens CodeDiff with `prefix+e` or `cmd+e` in a full temporary pane, like LazyGit.

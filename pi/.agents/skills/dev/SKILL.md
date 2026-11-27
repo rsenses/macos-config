@@ -29,7 +29,7 @@ Use section 2's feedback loop to localize failures. Add behavioral regression co
 
 ## 5. Completion and Verification
 
-Follow `ops` section 4 for scoped versus full validation, readiness and reporting checks run/not run.
+Follow `ops`' Validation reporting section for scoped versus full validation, readiness and reporting checks run/not run.
 
 Before completion, verify scope, security, invariants, observable acceptance and relevant build/UI checks. Inspect the diff for newly unused code and unrelated edits; leave pre-existing issues outside scope. Follow APPEND_SYSTEM's changelog timing and `ops` reporting.
 

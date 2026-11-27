@@ -22,7 +22,7 @@ Keep plans resumable and chat understandable without them. Match the user's lang
 
 ## Operations
 
-Load `ops` before implementing, delegating, or reporting readiness, and for plans, memory, resumption, acceptance, and recovery. It owns workflow formats, reviewer invocation, approval boundaries, validation scope/reporting, and loop control; follow its contracts rather than introducing parallel procedures.
+Load `ops` before implementing, delegating, or reporting readiness for shared safety, delegation, approval, validation and recovery policies. For plans or resumption, read its shared plan-memory reference; `/plan` owns planning and `/run-plan` owns plan execution, acceptance and continuity. Direct work needs no plan workflow. Follow these contracts rather than introducing parallel procedures.
 
 ## Changelog Policy
 

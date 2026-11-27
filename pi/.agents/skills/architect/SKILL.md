@@ -24,4 +24,4 @@ Decompose only when independence or verification benefits. Specify ordered outco
 - **Tracer bullets**: when splitting a feature, prefer vertical tasks delivering verifiable behavior over artificial layer-by-layer tasks. Where integration is uncertain, prioritize an early slice that tests material assumptions through the real path.
 - **Expand–contract**: for broad refactors that cannot keep each isolated change functional, introduce the new contract, migrate consumers, then remove the old contract.
 
-Apply these strategies where useful, not as mandatory phases for small changes. Leave unresolved design risks explicit; `ops` owns plan format, persistence and acceptance.
+Apply these strategies where useful, not as mandatory phases for small changes. Leave unresolved design risks explicit; `ops/references/plan-memory.md` (relative to the skills directory) owns plan format and persistence; `/plan` defines acceptance criteria and `/run-plan` verifies task acceptance.

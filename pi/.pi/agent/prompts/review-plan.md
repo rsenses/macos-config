@@ -3,7 +3,7 @@ description: Review a saved implementation plan manually
 argument-hint: "[plan path or name]"
 ---
 
-Perform a manual-only, read-only review with exactly one `plan-reviewer` subagent. Load `ops` for the delegation contract.
+Perform a manual-only, read-only review with exactly one `plan-reviewer` subagent. Load `ops` for the delegation contract and read `~/.agents/skills/ops/references/plan-memory.md` for plan selection and format.
 
 Resolve the target:
 - With an argument, use the exact path/name: $ARGUMENTS. Locate a supplied filename without substituting another plan.

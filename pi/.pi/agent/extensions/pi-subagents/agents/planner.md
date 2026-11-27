@@ -31,7 +31,7 @@ Brief user orientation; never a substitute for the contract or checklist.
 - Next: none
 - Blockers: none
 
-Use the ops plan format: Current is a task ID or `none`; Next is the next ID or `none`; Blockers names blocking evidence or `none`. Every referenced ID must exist in Tasks. Reflect the proposed ordering, not work already executed.
+Read `~/.agents/skills/ops/references/plan-memory.md` for the shared plan format; if unavailable, report the missing contract instead of inventing one. Acceptance identifies the observable workflow or operational outcome, required environment and evidence; distinguish synthetic checks from real integrations. In Current Step: Current is a task ID or `none`; Next is the next ID or `none`; Blockers names blocking evidence or `none`. Every referenced ID must exist in Tasks. Reflect the proposed ordering, not work already executed.
 
 ## Tasks
 

@@ -3,7 +3,7 @@ description: Revise the active plan from feedback or new evidence
 argument-hint: "<reason>"
 ---
 
-Use `ops`; load `architect` when the feedback requires a design decision.
+Use `ops` and read `~/.agents/skills/ops/references/plan-memory.md`; load `architect` when the feedback requires a design decision. For material design changes, read `~/.pi/agent/prompts/plan.md` for planner delegation and acceptance criteria, without starting a separate plan.
 
 Update the active plan because: "$ARGUMENTS"
 

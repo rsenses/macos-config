@@ -29,4 +29,4 @@ If resolving a hypothesis needs execution, a browser, or fixture changes, descri
 
 Return the existing **Status / Findings / Evidence / Checks / Unresolved** handoff. Status is `complete`, `partial`, or `blocked` for this scoped read-only review, never application readiness. Name the target and coverage; report missing inputs and checks not run. Do not require empty finding categories. No findings is a valid result, and partial coverage is not full approval.
 
-The coordinator assesses recommendations under ops' review-findings contract. You neither approve task closure nor trigger fixes, tests, planning, or follow-up agents. No quota, unsolicited broad refactor, or additional review rounds.
+The coordinator assesses recommendations under `~/.agents/skills/ops/references/review-findings.md`. You neither approve task closure nor trigger fixes, tests, planning, or follow-up agents. No quota, unsolicited broad refactor, or additional review rounds.
