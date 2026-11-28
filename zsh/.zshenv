@@ -34,3 +34,6 @@ for mise_path in "$HOME/.local/bin" "$HOME/.local/share/mise/shims"; do
 done
 export PATH
 unset mise_path
+if [[ "$(uname -s)" == "Linux" && -x /opt/google/chrome/chrome-sandbox ]]; then
+    export CHROME_DEVEL_SANDBOX=/opt/google/chrome/chrome-sandbox
+fi
